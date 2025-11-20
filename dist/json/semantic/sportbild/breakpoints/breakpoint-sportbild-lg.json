@@ -144,44 +144,44 @@
     },
     "Typography": {
       "FontFamily": {
-        "bodyFontFamily": "Gotham XNarrow",
-        "calloutFontFamily": "Gotham",
-        "displayFontFamily": "Gotham",
-        "footnoteFontFamily": "Gotham XNarrow",
-        "headlineFontFamily": "Gotham Condensed",
-        "kickerFontFamily": "Gotham XNarrow",
-        "labelFontFamily": "Gotham XNarrow",
-        "subheadlineFontFamily": "Gotham Condensed",
-        "titleFontFamily": "Gotham",
-        "quoteFontFamily": "Gotham"
+        "bodyFontFamily": "Inter",
+        "calloutFontFamily": "AntennaCond",
+        "displayFontFamily": "AntennaCond",
+        "footnoteFontFamily": "Inter",
+        "headlineFontFamily": "AntennaExtraCond",
+        "kickerFontFamily": "AntennaExtraCond",
+        "labelFontFamily": "AntennaExtraCond",
+        "subheadlineFontFamily": "AntennaCond",
+        "titleFontFamily": "AntennaCond",
+        "quoteFontFamily": "AntennaCond"
       },
       "FontSize": {
         "Body": {
-          "bodyFontSize": 21
+          "bodyFontSize": 17
         },
         "Callout": {
-          "callout1FontSize": 22
+          "callout1FontSize": 24
         },
         "Display": {
-          "Display1FontSize": 120,
-          "Display2FontSize": 64,
-          "Display3FontSize": 40
+          "Display1FontSize": 114,
+          "Display2FontSize": 61,
+          "Display3FontSize": 38
         },
         "Footnote": {
-          "footnote1FontSize": 18,
-          "footnote2FontSize": 16
+          "footnote1FontSize": 15,
+          "footnote2FontSize": 13
         },
         "Headline": {
-          "Headline1FontSize": 100,
-          "Headline2FontSize": 64,
-          "Headline3FontSize": 40,
-          "Headline4FontSize": 32
+          "Headline1FontSize": 80,
+          "Headline2FontSize": 50,
+          "Headline3FontSize": 34,
+          "Headline4FontSize": 26
         },
         "Kicker": {
-          "Kicker1FontSize": 30,
-          "Kicker2FontSize": 24,
-          "Kicker3FontSize": 20,
-          "Kicker4FontSize": 16
+          "Kicker1FontSize": 32,
+          "Kicker2FontSize": 26,
+          "Kicker3FontSize": 22,
+          "Kicker4FontSize": 18
         },
         "Label": {
           "label1FontSize": 17,
@@ -191,10 +191,10 @@
           "label4FontSize": 8
         },
         "Subheadline": {
-          "subheadline1FontSize": 36
+          "subheadline1FontSize": 26
         },
         "Title": {
-          "title1FontSize": 28,
+          "title1FontSize": 30,
           "title2FontSize": 20
         },
         "Quote": {
@@ -218,14 +218,14 @@
         },
         "Headline": {
           "headline1FontWeight": 700,
-          "headline1FontWeightST": "700",
+          "headline1FontWeightST": "Bold Italic",
           "headline2FontWeight": 700,
           "headline3FontWeight": 700,
-          "headline4FontWeight": 600
+          "headline4FontWeight": 700
         },
         "Kicker": {
           "kickerFontWeight": 700,
-          "kickerFontWeightST": "700"
+          "kickerFontWeightST": "Black Italic"
         },
         "Label": {
           "labelFontWeightBook": 400,
@@ -243,10 +243,10 @@
       },
       "LineHeight": {
         "Body": {
-          "bodyLineHeight": 32
+          "bodyLineHeight": 28.05
         },
         "Callout": {
-          "calloutLineHeight": 22
+          "calloutLineHeight": 31.2
         },
         "Display": {
           "display1LineHeight": 120,
@@ -254,37 +254,37 @@
           "display3LineHeight": 40
         },
         "Footnote": {
-          "footnote1LineHeight": 23,
-          "footnote2LineHeight": 21
+          "footnote1LineHeight": 19,
+          "footnote2LineHeight": 17.03
         },
         "Headline": {
-          "Headline1LineHeight": 100,
-          "Headline2LineHeight": 64,
-          "Headline3LineHeight": 40,
-          "headline4LineHeight": 30
+          "Headline1LineHeight": 88,
+          "Headline2LineHeight": 57.6,
+          "Headline3LineHeight": 39.1,
+          "headline4LineHeight": 29.9
         },
         "Kicker": {
-          "Kicker1LineHeight": 30,
-          "Kicker2LineHeight": 24,
-          "Kicker3LineHeight": 20,
-          "Kicker4LineHeight": 16
+          "Kicker1LineHeight": 35.2,
+          "Kicker2LineHeight": 28.6,
+          "Kicker3LineHeight": 24.2,
+          "Kicker4LineHeight": 19.8
         },
         "Label": {
-          "label1LineHeight": 17,
-          "label1ResponsiveLineHeight": 17,
-          "label2LineHeight": 16,
+          "label1LineHeight": 20.4,
+          "label1ResponsiveLineHeight": 20.4,
+          "label2LineHeight": 19.2,
           "label3LineHeight": 14.4,
           "label4LineHeight": 10
         },
         "Subheadline": {
-          "subheadline1LineHeight": 36
+          "subheadline1LineHeight": 33.8
         },
         "Title": {
-          "title1LineHeight": 28,
-          "title2LineHeight": 22
+          "title1LineHeight": 33,
+          "title2LineHeight": 26
         },
         "Quote": {
-          "quoteLineHeight": 22
+          "quoteLineHeight": 26
         }
       },
       "LetterSpacing": {
@@ -325,19 +325,19 @@
     "Avatar": {
       "avatarArticleSize": 48,
       "avatarAuthorPageSize": 130,
-      "avatarLabelFontSize": 18,
+      "avatarLabelFontSize": 15,
       "avatarLabelLineHeight": 23,
       "avatarFontFamily": "UNRESOLVED_CIRCULAR_REF__Component_Avatar_avatarFontFamily",
       "avatarLaneGapSpace": 24,
-      "appAvatarFontFamily": "Gotham"
+      "appAvatarFontFamily": "AntennaCond"
     },
     "Article": {
-      "articleKickerFontSize": 30,
-      "articleHeadlineFontSize": 100,
-      "articleImageCaptionFontSize": 18,
-      "articleImageCaptionLineHeight": 24.75,
+      "articleKickerFontSize": 32,
+      "articleHeadlineFontSize": 80,
+      "articleImageCaptionFontSize": 15,
+      "articleImageCaptionLineHeight": 19.5,
       "articleMetaFontSize": 16,
-      "articleMetaFontFamily": "Gotham",
+      "articleMetaFontFamily": "AntennaCond",
       "articleTopMarginSpace": 16,
       "aricleMobile1ColGridImageMarginSpace": 72,
       "articleHeadingsStackSpace": 16,
@@ -345,8 +345,8 @@
       "articleContentStackSpace": 32,
       "articleContentInlineSpace": 162,
       "articleGalleryATeaserWidth": 300,
-      "articleImageSourceFontSize": 18,
-      "articleImageSourceLineHeight": 23,
+      "articleImageSourceFontSize": 15,
+      "articleImageSourceLineHeight": 19,
       "articleImageContainerStackSpace": 16,
       "articleImageLandscapeInlineSpace": 16,
       "articleImagePortaitInlineSpace": 162,
@@ -362,12 +362,12 @@
       "BadgesInnerInlineSpace": 4
     },
     "Breadcrumb": {
-      "breadcrumbFontFamily": "Gotham XNarrow",
-      "breadcrumbFontSize": 12,
-      "breadcrumbLineHeight": 12,
+      "breadcrumbFontFamily": "Inter",
+      "breadcrumbFontSize": 11,
+      "breadcrumbLineHeight": 11,
       "breadcrumb&ArrowLeftInlineSpace1": 3,
       "breadcrumb&ArrowRightInlineSpace2": 5,
-      "breadcrumbFontWeight": 700,
+      "breadcrumbFontWeight": 400,
       "breadcrumbStackSpace": 16
     },
     "BreakingNews": {
@@ -430,7 +430,7 @@
       "DropDownBorderRadius": 4
     },
     "Footer": {
-      "footerFontFamily": "Gotham XNarrow",
+      "footerFontFamily": "Inter",
       "footerFontSize": 11,
       "footerLineHeight": 14,
       "footerFontSizeUserOfferPages": 18,
@@ -448,7 +448,7 @@
     },
     "Inputfield": {
       "inputFieldFontSize": 16,
-      "inputFieldFontFamily": "Gotham XNarrow",
+      "inputFieldFontFamily": "Inter",
       "inputFieldInlineSpace": 16,
       "inputFieldStackSpace": 6,
       "inputFieldMessageGapSpace": 4,
@@ -471,7 +471,7 @@
       "audioPlayerHeaderStackSpace": 56,
       "podcastPlayButtonSize": 48,
       "vidPlayerBottomBarGapSpace": 16,
-      "videoTimeBadgeFontFamily": "Gotham XNarrow",
+      "videoTimeBadgeFontFamily": "Inter",
       "vidPlayerControlButtonSize": 42,
       "vidPlayerControlButtonIconSizeHover": 28,
       "vidPlayerTimecodeFontSize": 18,
@@ -503,13 +503,13 @@
       "iOSappTopBarHeightSize": 48,
       "iOSappTopBarLeftInlineSpace": 19,
       "iOSappTopBarRightInlineSpace": 19,
-      "appTopbarTitleFontSize": 14,
+      "appTopbarTitleFontSize": 13,
       "appTopbarStageTitleHeight": 17
     },
     "Newsticker": {
       "newsTickerAppCardHeightSize": 150,
       "newsTickerAppCardWidthSize": 300,
-      "newsTickerTimeFontFamily": "Gotham XNarrow",
+      "newsTickerTimeFontFamily": "AntennaExtraCond",
       "newsTickerTimeFontWeight": 700,
       "newsTickerTimeFontSize": 18,
       "newsTickerTimeLineHeight": 23.4,
@@ -603,11 +603,11 @@
     },
     "Teaser": {
       "aTeaser": {
-        "aTeaserKickerFontSize": 24,
-        "aTeaserKickerLineHeight": 24,
-        "aTeaserHeadlineFontSize": 64,
-        "aTeaserHeadlineLineHeight": 64,
-        "aTeaserTitleInlineSpace": 12
+        "aTeaserKickerFontSize": 26,
+        "aTeaserKickerLineHeight": 26,
+        "aTeaserHeadlineFontSize": 50,
+        "aTeaserHeadlineLineHeight": 57.6,
+        "aTeaserTitleInlineSpace": 16
       },
       "bTeaser": {
         "bTeaserTitleInlineSpace": "UNRESOLVED_CIRCULAR_REF__Component_Teaser_bTeaser_bTeaserTitleInlineSpace"
@@ -616,10 +616,10 @@
         "bildPlayTeaserWidthSize": 193
       },
       "mQTeaser": {
-        "mQTeaserHeadlineFontSize": 40,
-        "mQTeaserHeadlineLineHeight": 40,
+        "mQTeaserHeadlineFontSize": 34,
+        "mQTeaserHeadlineLineHeight": 39.1,
         "mQTeaserHeadlineFontWeight": 700,
-        "mqTeaserTitleInlineSpace": 8
+        "mqTeaserTitleInlineSpace": 12
       },
       "teaserBadgesHeightSizeLG": 40,
       "teaserBadgesHeightSizeSM": 32,
@@ -627,10 +627,10 @@
       "TeaserKickerBgInlineSpace": 6,
       "teaserKickerBgStackSpace": 2,
       "qTeaser": {
-        "quadKickerFontSize": 24,
-        "quadHeadlineFontSize": 100,
-        "quadHeadlineLineHeight": 100,
-        "qTeaserTitleInlineSpace": 12
+        "quadKickerFontSize": 26,
+        "quadHeadlineFontSize": 80,
+        "quadHeadlineLineHeight": 88,
+        "qTeaserTitleInlineSpace": 24
       },
       "teaserLayoutGridSpace": 16,
       "stdTeaser": {
@@ -639,7 +639,7 @@
         "stdTeaserKickerHeadlineStackSpace": 2
       },
       "superA": {
-        "superATeaserTitleInlineSpace": 16
+        "superATeaserTitleInlineSpace": 24
       },
       "teaserTitleInlineLeftSpace": "UNRESOLVED_NO_VALUE__space0x",
       "teaserTitleStackSpace": 6,

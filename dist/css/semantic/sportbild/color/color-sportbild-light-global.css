@@ -3,13 +3,13 @@
  */
 
 :root {
-  --semantic-core-core-color-primary: #de0000; /** Used as the main brand color for key interactive elements such as primary buttons, active states, and prominent highlights. It remains constant across Light and Dark Mode. */
+  --semantic-core-core-color-primary: #0a264f; /** Used as the main brand color for key interactive elements such as primary buttons, active states, and prominent highlights. It remains constant across Light and Dark Mode. */
   --semantic-core-core-color-secondary: #ffffff; /** Defines the secondary brand tone. This variable changes across Light and Dark Mode. */
-  --semantic-core-core-color-tertiary: #242629; /** Represents tertiary brand accents. This variable changes across Light and Dark Mode. */
+  --semantic-core-core-color-tertiary: #081729; /** Represents tertiary brand accents. This variable changes across Light and Dark Mode. */
   --semantic-core-core-color-secondary-constant: #ffffff; /** Use this on elements that must maintain the white color even in dark mode. */
-  --semantic-core-core-color-tertiary-constant: #242629; /** Use this on elements that need to maintain the dark color across themes and color modes. */
-  --semantic-attention-accent-color-primary: #de0000; /** Primary accent color used to emphasize interactive or highlight elements such as links, selection states, or focus indicators. Adapts in Darkmode to a fully white tone. */
-  --semantic-attention-accent-color-primary-constant: #de0000; /** Used for accent highlights that must remain visually consistent across themes (e.g., brand identifiers, logos, or fixed emphasis areas). Color value does not change between Light and Dark mode. */
+  --semantic-core-core-color-tertiary-constant: #081729; /** Use this on elements that need to maintain the dark color across themes and color modes. */
+  --semantic-attention-accent-color-primary: #174582; /** Primary accent color used to emphasize interactive or highlight elements such as links, selection states, or focus indicators. Adapts in Darkmode to a fully white tone. */
+  --semantic-attention-accent-color-primary-constant: #174582; /** Used for accent highlights that must remain visually consistent across themes (e.g., brand identifiers, logos, or fixed emphasis areas). Color value does not change between Light and Dark mode. */
   --semantic-attention-attention-color-success-primary: #00c273; /** Primary success color used to indicate positive states, confirmations, or completed actions (e.g., success banners, icons, or badges). Remains the same across modes to ensure recognizability and consistency. */
   --semantic-attention-attention-color-success-secondary: #006e3d; /** Secondary success tone used for secondary states. Maintains the same color in both Light and Dark mode for clarity. */
   --semantic-attention-attention-color-extra-low: #ffffff; /** Very low-contrast background tone used for information or system-neutral surfaces, often for tooltips or quiet information highlights. Dynamic — light neutral in Light mode and dark neutral in Dark mode. */
@@ -76,7 +76,7 @@
    * Used to represent the active or pressed state of primary actions such as tabs or links.
    * Behavior: Constant — identical value across modes for consistent interaction feedback.
    */
-  --semantic-state-color-primary-active: #de0000;
+  --semantic-state-color-primary-active: #174582;
   /**
    * Defines the active state color for secondary actions (e.g., secondary buttons, tabs, or toggles).
    * Behavior: Dynamic — light gray in Light mode and bright gray in Dark mode to maintain perceptual balance.
@@ -116,7 +116,7 @@
    * Inverse of the primary surface, used when Light and Dark surfaces are swapped (e.g., inverse cards or elevated sections).
    * Behavior: Dynamic — switches between dark and light values depending on mode.
    */
-  --semantic-surface-surface-color-primary-inverse: #242629;
+  --semantic-surface-surface-color-primary-inverse: #081729;
   /**
    * A fixed light surface tone used when a consistent light background is required (e.g., light panels within dark layouts).
    * Behavior: Constant — remains the same in both modes.
@@ -126,22 +126,22 @@
    * A fixed dark surface tone used for dark overlays or nested dark sections inside light layouts.
    * Behavior: Constant — identical across Light and Dark mode.
    */
-  --semantic-surface-surface-color-primary-constant-dark: #242629;
+  --semantic-surface-surface-color-primary-constant-dark: #081729;
   /**
    * Used for secondary surface layers such as cards, panels, or nested containers that need to differentiate themselves from the primary surface. .
    * Behavior: Dynamic — adapts brightness level based on mode for appropriate depth contrast.
    */
-  --semantic-surface-surface-color-secondary: #f2f5f5;
+  --semantic-surface-surface-color-secondary: #f7fafc;
   /**
    * Tertiary background layer for inner containers, grouped content, or subtle elevation steps  that need to differentiate themselves from the primary and secondary surfaces.
    * Behavior: Dynamic — switches between light and dark tertiary tones.
    */
-  --semantic-surface-surface-color-tertiary: #e8edf0;
+  --semantic-surface-surface-color-tertiary: #bdc9db;
   /**
    * Inverse tertiary background, applied when Light and Dark surfaces are reversed (e.g., dark-on-light cards).
    * Behavior: Dynamic — swaps values between modes for contrast preservation.
    */
-  --semantic-surface-surface-color-tertiary-inverse: #333d40;
+  --semantic-surface-surface-color-tertiary-inverse: #174582;
   --semantic-surface-surface-color-quartenary: #cfd4d9; /** HIghtest elevation surface color, typically used for grouping or background accents to differentiate themselves from all previous surface color options. Uses corresponding light/dark tones for consistent layering. */
   /**
    * Inverse of the quartenary surface, used for background reversals in mixed-layout areas.
@@ -168,7 +168,7 @@
    * Primary color for headings and display typography. Ensures clear hierarchy and optimal readability on main surfaces. Adapds it´s color based on the brand mode for brand recognition.
    * Behavior: Dynamic — dark text in Light mode, light text in Dark mode.
    */
-  --semantic-heading-headline-color-primary: #242629;
+  --semantic-heading-headline-color-primary: #0a264f;
   /**
    * Fixed white heading color used on dark or colored backgrounds (e.g., hero sections, banners) that remain constant across modes.
    * Behavior: Constant — remains white in both Light and Dark mode.
@@ -178,7 +178,7 @@
    * Used for kicker text and category labels placed directly on standard surface backgrounds.
    * Behavior: Dynamic — adjusts between red for Light and a neutral tone in Dark modes.
    */
-  --semantic-heading-kicker-text-color-on-surface: #de0000;
+  --semantic-heading-kicker-text-color-on-surface: #8c9196;
   /**
    * Specialized kicker color for use on red or brand-colored backgrounds (e.g., red kicker bg within teaser cards).
    * Behavior: Constant — remains consistent across light and darkmode.
@@ -229,12 +229,12 @@
    * Behavior: Constant — always light neutral to guarantee accessibility on dark backgrounds.
    */
   --semantic-text-text-color-on-dark-surface: #ffffff;
-  --semantic-text-text-color-accent: #de0000; /** Accent text color used for links, interactive text, or highlighted key words. Changes from a red in light mode to a white in dark mode. */
+  --semantic-text-text-color-accent: #174582; /** Accent text color used for links, interactive text, or highlighted key words. Changes from a red in light mode to a white in dark mode. */
   /**
    * Applies to text elements requiring fixed brand color usage (e.g., permanent links, brand slogans on constant backgrounds).
    * Behavior: Constant — maintains identical red tone across Light and Dark mode.
    */
-  --semantic-text-text-color-accent-constant: #de0000;
+  --semantic-text-text-color-accent-constant: #174582;
   /**
    * Used for positive or success-related messages (e.g., “Saved”, “Success”, or confirmation text) on success surface colors.
    * Behavior: Constant — green tone remains consistent across both modes.
@@ -311,8 +311,8 @@
   --component-button-primary-button-primary-label-color: #ffffff;
   --component-button-primary-button-primary-neutral-bg-color-idle: #242629; /** Use this variable on the neutral color primary button. Tone changes between light and dark mode. Light mode Bild & SpoBi: Tone 015 ; Dark mode Bild & SpoBi: Tone 100 */
   --component-button-primary-button-primary-neutral-bg-color-hover: #4a5259;
-  --component-button-primary-button-primary-brand-bg-color-idle: #de0000;
-  --component-button-primary-button-primary-brand-bg-color-hover: #b00003;
+  --component-button-primary-button-primary-brand-bg-color-idle: #174582;
+  --component-button-primary-button-primary-brand-bg-color-hover: #0a264f;
   --component-button-primary-button-primary-success-color-idle: #17995c;
   --component-button-primary-button-primary-success-color-hover: #006e3d;
   --component-button-secondary-button-secondary-label-color: #4a5259;
@@ -328,18 +328,18 @@
   --component-button-button-live-ticker-load-new-label-color: #8c9196;
   --component-card-card-surface-bg-color: #ffffff;
   --component-chips-chips-bg-color-idle: #e8edf0;
-  --component-chips-chips-bg-color-active: #de0000;
+  --component-chips-chips-bg-color-active: #174582;
   --component-chips-chips-bg-color-hover: #b00003;
   --component-chips-chips-label-color-idle: #242629;
   --component-chips-chips-label-color-hover: #ffffff;
   --component-dropdown-dropdown-bg-color-idle: #ffffff;
-  --component-dropdown-dropdown-bg-color-hover: #f2f5f5;
+  --component-dropdown-dropdown-bg-color-hover: #f7fafc;
   --component-empties-empties-logo-color: #cfd4d9;
-  --component-empties-empties-bg-color: #f2f5f5;
+  --component-empties-empties-bg-color: #f7fafc;
   --component-foldout-foldout-label-color-idle: #4a5259;
-  --component-foldout-foldout-label-color-active: #de0000;
+  --component-foldout-foldout-label-color-active: #174582;
   --component-gallery-app-image-lightbox-gallery-bg-color: #000000;
-  --component-hey-hey-drawer-surface-color: #f2f5f5;
+  --component-hey-hey-drawer-surface-color: #f7fafc;
   --component-hey-hey-fav-input-field-surface-color: #e8edf0;
   --component-hey-hey-icon-util-color: #4a5259;
   --component-hey-hey-separator-color: #cfd4d9; /** This is the most used color for separators across Bild products. */
@@ -351,7 +351,7 @@
   --component-input-field-input-field-bg-color-dark-low-contrast: #333d40;
   --component-input-field-input-field-bg-color-dark-medium-contrast: #4a5259;
   --component-input-field-input-field-bg-color-dark-high-contrast: #e8edf0;
-  --component-kicker-standard-kicker-bg-color-on-surface: #de0000;
+  --component-kicker-standard-kicker-bg-color-on-surface: #174582;
   --component-kicker-partner-kicker-bz-bg-color: #e3001c;
   --component-kicker-partner-kicker-fitbook-bg-color: #ff96b8;
   --component-kicker-partner-kicker-petbook-bg-color: #badb91;
@@ -379,13 +379,13 @@
   --component-menu-menu-link-lane-label-color-active: UNRESOLVED_CIRCULAR_REF__Component_Menu_menuLinkLaneLabelColorActive;
   --component-menu-app-top-bar-surface-color: UNRESOLVED_CIRCULAR_REF__Component_Menu_appTopBarSurfaceColor;
   --component-menu-app-top-bar-icon-color: UNRESOLVED_CIRCULAR_REF__Component_Menu_appTopBarIconColor;
-  --component-menu-app-top-bar-text-color-primary: #242629;
+  --component-menu-app-top-bar-text-color-primary: #e8edf0;
   --component-menu-app-tob-bar-tab-nav-bottom-border: UNRESOLVED_CIRCULAR_REF__Component_Menu_appTobBarTabNavBottomBorder;
   --component-menu-app-tob-bar-tab-nav-bottom-border-active: UNRESOLVED_CIRCULAR_REF__Component_Menu_appTobBarTabNavBottomBorderActive;
   --component-menu-item-menu-item-label-color-primary: #4a5259;
   --component-menu-item-menu-item-label-color-primary-active: #242629;
   --component-menu-item-menu-item-label-color-secondary: #ffffff; /** The variable can be used on secondary menus that many times show up on dedicated home pages specific to a topic. The menu labels are often times using the color white across color modes. */
-  --component-menu-item-menu-item-border-color-active: #de0000;
+  --component-menu-item-menu-item-border-color-active: #0a264f;
   --component-partner-links-partner-links-bg-color-idle: #ffffff; /** !do not use! these variables have been deprecated and multitext link buttons are now classified as partner buttons. */
   --component-partner-links-partner-links-bg-color-active: #e8edf0; /** !do not use! these variables have been deprecated and multitext link buttons are now classified as partner buttons. */
   --component-partner-links-partner-links-border-color-idle: #cfd4d9; /** !do not use! these variables have been deprecated and multitext link buttons are now classified as partner buttons. */
@@ -394,7 +394,7 @@
   --component-newsticker-news-ticker-timestamp-color: #8c9196;
   --component-newsticker-news-ticker-badge-icons-color: #8c9196;
   --component-pagination-pagination-element-color-default: #cfd4d9;
-  --component-pagination-pagination-element-color-active: #de0000;
+  --component-pagination-pagination-element-color-active: #174582;
   --component-pagination-gallery-pagination-element-active-opacity: 100; /** Use this on gallery slider pagination elements. This can also be applied to hover states of those elements. */
   --component-pagination-scroll-bar-track-bg-color: rgba(0, 0, 0, 0.1); /** Used as the background surface color scroll bars. Found on components that vertically or horizontally stack elements. */
   --component-pagination-scroll-bar-thumb-bg-color: #8c9196; /** Use on the scroll bar interactive element which shows where the scroll view is positioned inside the full extent of the scrolling space. */

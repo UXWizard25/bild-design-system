@@ -121,29 +121,29 @@
   --semantic-size-constant-size-const2-xl: 72; /** 72-72-72-72 – Use for setting fixed height and width of UI elements */
   --semantic-size-constant-size-const3-xl: 96; /** 96-96-96-96 – Use for setting fixed height and width of UI elements */
   --semantic-size-constant-size-const4-xl: 148; /** 148-148-148-148 – Use for setting fixed height and width of UI elements */
-  --semantic-typography-font-family-body-font-family: Gotham XNarrow; /** This variable references the bodyFontFamily variable from the branding collection. */
-  --semantic-typography-font-family-callout-font-family: Gotham;
-  --semantic-typography-font-family-display-font-family: Gotham;
-  --semantic-typography-font-family-footnote-font-family: Gotham XNarrow;
-  --semantic-typography-font-family-headline-font-family: Gotham Condensed;
-  --semantic-typography-font-family-kicker-font-family: Gotham XNarrow;
-  --semantic-typography-font-family-label-font-family: Gotham XNarrow;
-  --semantic-typography-font-family-subheadline-font-family: Gotham Condensed;
-  --semantic-typography-font-family-title-font-family: Gotham;
-  --semantic-typography-font-family-quote-font-family: Gotham;
-  --semantic-typography-font-size-body-body-font-size: 21; /** This variable is used on the body text style's font size parameter. It remains constant at 21. */
+  --semantic-typography-font-family-body-font-family: Inter; /** This variable references the bodyFontFamily variable from the branding collection. */
+  --semantic-typography-font-family-callout-font-family: AntennaCond;
+  --semantic-typography-font-family-display-font-family: AntennaCond;
+  --semantic-typography-font-family-footnote-font-family: Inter;
+  --semantic-typography-font-family-headline-font-family: AntennaExtraCond;
+  --semantic-typography-font-family-kicker-font-family: AntennaExtraCond;
+  --semantic-typography-font-family-label-font-family: AntennaExtraCond;
+  --semantic-typography-font-family-subheadline-font-family: AntennaCond;
+  --semantic-typography-font-family-title-font-family: AntennaCond;
+  --semantic-typography-font-family-quote-font-family: AntennaCond;
+  --semantic-typography-font-size-body-body-font-size: 17; /** This variable is used on the body text style's font size parameter. It remains constant at 21. */
   --semantic-typography-font-size-callout-callout1-font-size: 18; /** This token is used for the font size parameter of the callout text style. 18 - 18 - 22 - 22 */
-  --semantic-typography-font-size-display-display1-font-size: 40; /** This variable is used on the font size parameter for the display1 text style. 40 - 40 - 72 - 120 */
-  --semantic-typography-font-size-display-display2-font-size: 36; /** This variable is used for the font size parameter of the Display2 text style. 36 - 36 - 42 - 64 */
-  --semantic-typography-font-size-display-display3-font-size: 28; /** This variable is used on the display3 font size parameter of the display3 text style. 28 - 28 - 32 - 40 */
-  --semantic-typography-font-size-footnote-footnote1-font-size: 16; /** This token is used on the footnote text style font size parameter. 16 - 16 - 16 - 18 */
-  --semantic-typography-font-size-footnote-footnote2-font-size: 12; /** This token is used in the font size parameter of the footnote2 text style. 12 - 12 - 12 - 16 */
-  --semantic-typography-font-size-headline-headline1-font-size: 48; /** This token is used for the headline1 text style's font size parameter. 48 - 48 - 72 - 100 */
-  --semantic-typography-font-size-headline-headline2-font-size: 40; /** This token is used on the headline2 text style's font size parameter. 40 - 40 - 48 - 64 */
-  --semantic-typography-font-size-headline-headline3-font-size: 28; /** This token is used on the headline3 text style's font size parameter. 28 - 28 - 36 - 40 */
-  --semantic-typography-font-size-headline-headline4-font-size: 22; /** This token controls the headline4 text style's font size parameter: 22 - 22 - 26 - 32 */
-  --semantic-typography-font-size-kicker-kicker1-font-size: 18; /** Values come from NMT Figma File 01_Foundation; in online CSS this is kicker0. 18 - 18 - 22 - 30 - This variable does not exist yet in online css. Online css is called kicker0 for smallest font size. */
-  --semantic-typography-font-size-kicker-kicker2-font-size: 18; /** Values come from comparing NMT Figma File 01_Foundation to online CSS. Online kickers are numbered from 0 to 3. This DS uses 1 to 4 following html convention of h1, h2, h3, etc. 18 - 18 - 22 - 24 */
+  --semantic-typography-font-size-display-display1-font-size: 38; /** This variable is used on the font size parameter for the display1 text style. 40 - 40 - 72 - 120 */
+  --semantic-typography-font-size-display-display2-font-size: 34; /** This variable is used for the font size parameter of the Display2 text style. 36 - 36 - 42 - 64 */
+  --semantic-typography-font-size-display-display3-font-size: 27; /** This variable is used on the display3 font size parameter of the display3 text style. 28 - 28 - 32 - 40 */
+  --semantic-typography-font-size-footnote-footnote1-font-size: 13; /** This token is used on the footnote text style font size parameter. 16 - 16 - 16 - 18 */
+  --semantic-typography-font-size-footnote-footnote2-font-size: 10; /** This token is used in the font size parameter of the footnote2 text style. 12 - 12 - 12 - 16 */
+  --semantic-typography-font-size-headline-headline1-font-size: 42; /** This token is used for the headline1 text style's font size parameter. 48 - 48 - 72 - 100 */
+  --semantic-typography-font-size-headline-headline2-font-size: 42; /** This token is used on the headline2 text style's font size parameter. 40 - 40 - 48 - 64 */
+  --semantic-typography-font-size-headline-headline3-font-size: 30; /** This token is used on the headline3 text style's font size parameter. 28 - 28 - 36 - 40 */
+  --semantic-typography-font-size-headline-headline4-font-size: 21; /** This token controls the headline4 text style's font size parameter: 22 - 22 - 26 - 32 */
+  --semantic-typography-font-size-kicker-kicker1-font-size: 20; /** Values come from NMT Figma File 01_Foundation; in online CSS this is kicker0. 18 - 18 - 22 - 30 - This variable does not exist yet in online css. Online css is called kicker0 for smallest font size. */
+  --semantic-typography-font-size-kicker-kicker2-font-size: 16; /** Values come from comparing NMT Figma File 01_Foundation to online CSS. Online kickers are numbered from 0 to 3. This DS uses 1 to 4 following html convention of h1, h2, h3, etc. 18 - 18 - 22 - 24 */
   --semantic-typography-font-size-kicker-kicker3-font-size: 16; /** Values come from comparing NMT Figma File 01_Foundation to online CSS. Online kickers are numbered from 0 to 3. 16 - 16 - 18 - 20 */
   --semantic-typography-font-size-kicker-kicker4-font-size: 14; /** Values come from comparing NMT Figma File 01_Foundation to online CSS. Online kickers are numbered from 0 to 3. 14 - 14 - 16 - 16 */
   --semantic-typography-font-size-label-label1-font-size: 17; /** This token is used in the label1 text style font size parameter. Its value remains constant at 17 across device sizes. */
@@ -151,8 +151,8 @@
   --semantic-typography-font-size-label-label2-font-size: 15; /** This variable controls the label2 text style's font size parameter. Its value remains constant at 15. */
   --semantic-typography-font-size-label-label3-font-size: 12; /** This token is used in the label3 text style's font size parameter. Its value remains constant at 12 across device sizes. */
   --semantic-typography-font-size-label-label4-font-size: 8; /** This token is used in the font size parameter of the label4 text style. The value remains constant at 8. */
-  --semantic-typography-font-size-subheadline-subheadline1-font-size: 24; /** This token controls the subheadline1 font size parameter. 24 - 24 - 32 - 36 */
-  --semantic-typography-font-size-title-title1-font-size: 22; /** 22 - 22 - 22 - 28 -- html class stage-block-title__text css var --ressort-header-font-size(sm-md-lg) */
+  --semantic-typography-font-size-subheadline-subheadline1-font-size: 18; /** This token controls the subheadline1 font size parameter. 24 - 24 - 32 - 36 */
+  --semantic-typography-font-size-title-title1-font-size: 24; /** 22 - 22 - 22 - 28 -- html class stage-block-title__text css var --ressort-header-font-size(sm-md-lg) */
   --semantic-typography-font-size-title-title2-font-size: 16; /** 16 - 16 - 18 - 20 - html class stage-block-title__text css var --ressort-header-font-size(sm-md-lg) */
   --semantic-typography-font-size-quote-quote-font-size: 16; /** 16 - 16 - 18 - 20 -- This variable is used for controlling the font size of the quote text style. */
   --semantic-typography-font-weight-body-body-font-weight-book: 400;
@@ -162,41 +162,41 @@
   --semantic-typography-font-weight-footnote-footnote-font-weight-bold: 700;
   --semantic-typography-font-weight-footnote-footnote-font-weight-book: 400;
   --semantic-typography-font-weight-headline-headline1-font-weight: 700;
-  --semantic-typography-font-weight-headline-headline1-font-weight-st: 700; /** This variable is a string type variable for controlling not only headline font weight but also the italic style for Sport Bild headlines. */
+  --semantic-typography-font-weight-headline-headline1-font-weight-st: Bold Italic; /** This variable is a string type variable for controlling not only headline font weight but also the italic style for Sport Bild headlines. */
   --semantic-typography-font-weight-headline-headline2-font-weight: 700;
   --semantic-typography-font-weight-headline-headline3-font-weight: 700;
-  --semantic-typography-font-weight-headline-headline4-font-weight: 600;
+  --semantic-typography-font-weight-headline-headline4-font-weight: 700;
   --semantic-typography-font-weight-kicker-kicker-font-weight: 700;
-  --semantic-typography-font-weight-kicker-kicker-font-weight-st: 700;
+  --semantic-typography-font-weight-kicker-kicker-font-weight-st: Black Italic;
   --semantic-typography-font-weight-label-label-font-weight-book: 400;
   --semantic-typography-font-weight-label-label-font-weight-bold: 700;
   --semantic-typography-font-weight-subheadline-subheadline-font-weight: 700;
   --semantic-typography-font-weight-title-title-font-weight: 800;
   --semantic-typography-font-weight-quote-quote-font-weight: 800;
-  --semantic-typography-line-height-body-body-line-height: 28; /** Figma's font line height currently does not allow for multipliers as is used on current website css var(--body-line-height) */
-  --semantic-typography-line-height-callout-callout-line-height: 18;
+  --semantic-typography-line-height-body-body-line-height: 28.05; /** Figma's font line height currently does not allow for multipliers as is used on current website css var(--body-line-height) */
+  --semantic-typography-line-height-callout-callout-line-height: 23.4;
   --semantic-typography-line-height-display-display1-line-height: 40;
   --semantic-typography-line-height-display-display2-line-height: 36;
   --semantic-typography-line-height-display-display3-line-height: 28;
-  --semantic-typography-line-height-footnote-footnote1-line-height: 21;
-  --semantic-typography-line-height-footnote-footnote2-line-height: 15.6;
-  --semantic-typography-line-height-headline-headline1-line-height: 48;
-  --semantic-typography-line-height-headline-headline2-line-height: 40;
-  --semantic-typography-line-height-headline-headline3-line-height: 28;
-  --semantic-typography-line-height-headline-headline4-line-height: 22;
-  --semantic-typography-line-height-kicker-kicker1-line-height: 19.8;
-  --semantic-typography-line-height-kicker-kicker2-line-height: 19.8;
+  --semantic-typography-line-height-footnote-footnote1-line-height: 17.03;
+  --semantic-typography-line-height-footnote-footnote2-line-height: 13;
+  --semantic-typography-line-height-headline-headline1-line-height: 42;
+  --semantic-typography-line-height-headline-headline2-line-height: 42;
+  --semantic-typography-line-height-headline-headline3-line-height: 33;
+  --semantic-typography-line-height-headline-headline4-line-height: 23.1;
+  --semantic-typography-line-height-kicker-kicker1-line-height: 22;
+  --semantic-typography-line-height-kicker-kicker2-line-height: 17.6;
   --semantic-typography-line-height-kicker-kicker3-line-height: 17.6;
   --semantic-typography-line-height-kicker-kicker4-line-height: 15.4;
-  --semantic-typography-line-height-label-label1-line-height: 17; /** This variable is used in the label1 text style's line height parameter. It references branding variables for brand specific line heights. */
-  --semantic-typography-line-height-label-label1-responsive-line-height: 10;
-  --semantic-typography-line-height-label-label2-line-height: 16;
+  --semantic-typography-line-height-label-label1-line-height: 20.4; /** This variable is used in the label1 text style's line height parameter. It references branding variables for brand specific line heights. */
+  --semantic-typography-line-height-label-label1-responsive-line-height: 12;
+  --semantic-typography-line-height-label-label2-line-height: 19.2;
   --semantic-typography-line-height-label-label3-line-height: 14.4;
   --semantic-typography-line-height-label-label4-line-height: 10;
-  --semantic-typography-line-height-subheadline-subheadline1-line-height: 24;
-  --semantic-typography-line-height-title-title1-line-height: 22;
-  --semantic-typography-line-height-title-title2-line-height: 17.6; /** html class stage-block-title__text css var --ressort-header-font-size(sm-md-lg) */
-  --semantic-typography-line-height-quote-quote-line-height: 16; /** This variable is used in the quote text style line height parameter. */
+  --semantic-typography-line-height-subheadline-subheadline1-line-height: 23.4;
+  --semantic-typography-line-height-title-title1-line-height: 26.4;
+  --semantic-typography-line-height-title-title2-line-height: 16.8; /** html class stage-block-title__text css var --ressort-header-font-size(sm-md-lg) */
+  --semantic-typography-line-height-quote-quote-line-height: 20.8; /** This variable is used in the quote text style line height parameter. */
   --semantic-typography-letter-spacing-letter-spacing-positive-lg: 2; /** 2 | 2 | 2 | 3 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
   --semantic-typography-letter-spacing-letter-spacing-positive-md: 1; /** 1 | 1 | 1 | 1 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
   --semantic-typography-letter-spacing-letter-spacing-positive-sm: 0.5; /** 0.5 | 0.5 | 0.5 | 0.5 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
@@ -219,17 +219,17 @@
   --component-accordion-accordion-label-font-family: UNRESOLVED_CIRCULAR_REF__Component_Accordion_accordionLabelFontFamily; /** This variable exists specifically for changing the accordion font family across brands. It is subject to review. Bild: GothamXNarrow, SpoBi: Inter, Ads: LucindaGrande */
   --component-avatar-avatar-article-size: 48; /** This variable is used for setting the size of avatar images in article pages. It references the sizeConstMD variable from the "generic" semantic collection. Its value is 48 across devices. */
   --component-avatar-avatar-author-page-size: 96; /** 96 - 96 - 130 - 130 This variable is used for controlling the size of the avatar image on author pages. */
-  --component-avatar-avatar-label-font-size: 16; /** This variable is used on avatar names in article pages. Bild: 16 - 16 - 16 - 18; SpoBi&Ads: 13 - 13 - 13 - 15 */
+  --component-avatar-avatar-label-font-size: 13; /** This variable is used on avatar names in article pages. Bild: 16 - 16 - 16 - 18; SpoBi&Ads: 13 - 13 - 13 - 15 */
   --component-avatar-avatar-label-line-height: 21; /** This variable is used for controlling the line height of avatar texts. Its values influence the stacking space between avatar texts. 21 - 21 - 21 - 23 */
   --component-avatar-avatar-font-family: UNRESOLVED_CIRCULAR_REF__Component_Avatar_avatarFontFamily; /** This variable is used in avatar text styles. It receives values from the Brand Tokens Collection. Bild: GothamXNarrow; SpoBi: Inter; Ads: LucidaGrande */
   --component-avatar-avatar-lane-gap-space: 16; /** This variable is used for setting the inline space between multiple avatars that are horizontally placed in a lane when an article has multiple authors. 16 - 16 - 24 - 24 */
-  --component-avatar-app-avatar-font-family: Gotham; /** This variable is used for setting the font of avatars on iOS and Android platforms. This is subject to review. */
-  --component-article-article-kicker-font-size: 18; /** This variable is used to control the font size of kickers in the heading section of article pages. 18 - 18 - 22 - 30 */
-  --component-article-article-headline-font-size: 40; /** 40 - 40 - 72 - 100 - This variable uses the semantic variables headline2 for XS&SM, headline1 for MD&LG */
-  --component-article-article-image-caption-font-size: 16; /** CSS --article-figure-meta-font-size 16-16-18-18 */
-  --component-article-article-image-caption-line-height: 19.5; /** this component level variable references the branding variables */
+  --component-avatar-app-avatar-font-family: AntennaCond; /** This variable is used for setting the font of avatars on iOS and Android platforms. This is subject to review. */
+  --component-article-article-kicker-font-size: 20; /** This variable is used to control the font size of kickers in the heading section of article pages. 18 - 18 - 22 - 30 */
+  --component-article-article-headline-font-size: 42; /** 40 - 40 - 72 - 100 - This variable uses the semantic variables headline2 for XS&SM, headline1 for MD&LG */
+  --component-article-article-image-caption-font-size: 13; /** CSS --article-figure-meta-font-size 16-16-18-18 */
+  --component-article-article-image-caption-line-height: 16.9; /** this component level variable references the branding variables */
   --component-article-article-meta-font-size: 12; /** This variable is used on the font size of article day&time stamp that usually shows up along with the article author avatars. On app versions this variable is used for the avatar names. 12 - 12 - 14 - 16 */
-  --component-article-article-meta-font-family: Gotham; /** This variable is used on the font size of article day&time stamp that usually shows up along with the article author avatars. On app versions this variable is used for the avatar names. This variable references variables from the branding collection. */
+  --component-article-article-meta-font-family: AntennaCond; /** This variable is used on the font size of article day&time stamp that usually shows up along with the article author avatars. On app versions this variable is used for the avatar names. This variable references variables from the branding collection. */
   --component-article-article-top-margin-space: 8; /** 8 | 8 | 12 | 16 - This space variable is used at the top edge of the article main content bounding box. */
   --component-article-aricle-mobile1-col-grid-image-margin-space: UNRESOLVED_NO_VALUE__space0x;
   --component-article-article-headings-stack-space: 12; /** 12 | 12 | 12 | 16 - This spacing variable is used for the space between article page heading kickers, headlines and subheadlines. XS&SM need review; correct value might be 8 */
@@ -237,8 +237,8 @@
   --component-article-article-content-stack-space: 16; /** 16 - 16 - 24 - 32 - This variable creates the vertical spacing between different article body elements such as avatars, media players, corssheadings, paragraphs, field sets, images, tables, quotes, videos, social embeds, etc. */
   --component-article-article-content-inline-space: 16; /** 16 | 16 | 72 | 162 - This variable is used for making the left and right spacings around article content blocks. Current css has the article-body class assigned to a div and article body contains these horizontal padding values. */
   --component-article-article-gallery-a-teaser-width: 145; /** same as standard teaser width size variable */
-  --component-article-article-image-source-font-size: 16; /** NMT CSS --article-figure-meta-font-size */
-  --component-article-article-image-source-line-height: 21;
+  --component-article-article-image-source-font-size: 13; /** NMT CSS --article-figure-meta-font-size */
+  --component-article-article-image-source-line-height: 17;
   --component-article-article-image-container-stack-space: 8;
   --component-article-article-image-landscape-inline-space: UNRESOLVED_NO_VALUE__space0x;
   --component-article-article-image-portait-inline-space: UNRESOLVED_NO_VALUE__space0x;
@@ -248,13 +248,13 @@
   --component-badge-ad-label-badge-height-size: 30; /** 30 - 30 - 30 - 30 - This variable is used on the Advert rectangular badge that is found above an ad containers. */
   --component-badge-badges-inner-stack-space: 2; /** This space variable is used for creating the top and bottom space between a badge's text label and the surface that the text label is on top of. */
   --component-badge-badges-inner-inline-space: 4; /** This space variable is used for creating the left and right space between a badge's text label and the badge background surface that the text label is on top of. */
-  --component-breadcrumb-breadcrumb-font-family: Gotham XNarrow;
-  --component-breadcrumb-breadcrumb-font-size: 15; /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
-  --component-breadcrumb-breadcrumb-line-height: 15; /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
+  --component-breadcrumb-breadcrumb-font-family: Inter;
+  --component-breadcrumb-breadcrumb-font-size: 14; /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
+  --component-breadcrumb-breadcrumb-line-height: 14; /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
   --component-breadcrumb-breadcrumb-arrow-left-inline-space1: 3;
   --component-breadcrumb-breadcrumb-arrow-right-inline-space2: 5;
   --component-breadcrumb-breadcrumb-inline-space: 12;
-  --component-breadcrumb-breadcrumb-font-weight: 700;
+  --component-breadcrumb-breadcrumb-font-weight: 400;
   --component-breadcrumb-breadcrumb-stack-space: 14;
   --component-breaking-news-breaking-news-container-height-size: 56;
   --component-breaking-news-breaking-news-badge-inline-space: 6;
@@ -299,7 +299,7 @@
   --component-dropdown-drop-down-item-stack-space: 8;
   --component-dropdown-drop-down-item-inline-space: 12;
   --component-dropdown-drop-down-border-radius: 4;
-  --component-footer-footer-font-family: Gotham XNarrow;
+  --component-footer-footer-font-family: Inter;
   --component-footer-footer-font-size: 11; /** This variable is used on footer links that commonly show up at the bottom of pages. The font size parameter remains constant at 11 px across device sizes. */
   --component-footer-footer-line-height: 14;
   --component-footer-footer-font-size-user-offer-pages: 18;
@@ -311,7 +311,7 @@
   --component-info-element-info-element-teaser-image-width-size: 80;
   --component-info-element-info-element-teaser-badge-height-size: 16;
   --component-inputfield-input-field-font-size: 16; /** This variable controls texts inside of input fields such as dropdowns, date input and other text inputs that appear in forms for example. compact 15 - default 17 - spacious 19 */
-  --component-inputfield-input-field-font-family: Gotham XNarrow;
+  --component-inputfield-input-field-font-family: Inter;
   --component-inputfield-input-field-inline-space: 16;
   --component-inputfield-input-field-stack-space: 6;
   --component-inputfield-input-field-message-gap-space: 4;
@@ -329,7 +329,7 @@
   --component-liveticker-live-ticker-slider-item-width-max-size: 257;
   --component-mediaplayer-audio-player-header-stack-space: 56;
   --component-mediaplayer-podcast-play-button-size: 48;
-  --component-mediaplayer-video-time-badge-font-family: Gotham XNarrow;
+  --component-mediaplayer-video-time-badge-font-family: Inter;
   --component-mediaplayer-vid-player-control-button-size: 42;
   --component-mediaplayer-vid-player-control-button-icon-size-hover: 28;
   --component-mediaplayer-vid-player-timecode-font-size: 14;
@@ -363,7 +363,7 @@
   --component-menu-app-topbar-stage-title-height: 14;
   --component-newsticker-news-ticker-app-card-height-size: 116;
   --component-newsticker-news-ticker-app-card-width-size: 250;
-  --component-newsticker-news-ticker-time-font-family: Gotham XNarrow;
+  --component-newsticker-news-ticker-time-font-family: AntennaExtraCond;
   --component-newsticker-news-ticker-time-font-weight: 700;
   --component-newsticker-news-ticker-time-font-size: 16; /** similar to kicker3 values - 16 - 16 - 16 - 18 */
   --component-newsticker-news-ticker-time-line-height: 20.8; /** Figma currently does not allow for percentages in Line Height variables. The values in this token are the result of multiplying the font size by the line height variable defined on the Bild home css -> newsTickerTime line height: 1.3. Line height for this component does not change across devices. */
@@ -430,29 +430,29 @@
   --component-table-table-item-max-width-size: 224;
   --component-teaser-a-teaser-a-teaser-kicker-font-size: 16; /** 16 - 16 - 22 - 24 This variable references the semantic variables kicker3fontsize and kicker2fontsize. At the 600px breakpoint smaller devices use the kicker3 variable */
   --component-teaser-a-teaser-a-teaser-kicker-line-height: 16;
-  --component-teaser-a-teaser-a-teaser-headline-font-size: 28; /** This variable references the semantic variables headline3 (XS&SM) and headline2 (MD&LG). 28 - 28 - 48 - 64 */
-  --component-teaser-a-teaser-a-teaser-headline-line-height: 28;
-  --component-teaser-a-teaser-a-teaser-title-inline-space: 8;
+  --component-teaser-a-teaser-a-teaser-headline-font-size: 30; /** This variable references the semantic variables headline3 (XS&SM) and headline2 (MD&LG). 28 - 28 - 48 - 64 */
+  --component-teaser-a-teaser-a-teaser-headline-line-height: 30;
+  --component-teaser-a-teaser-a-teaser-title-inline-space: 12;
   --component-teaser-b-teaser-b-teaser-title-inline-space: UNRESOLVED_CIRCULAR_REF__Component_Teaser_bTeaser_bTeaserTitleInlineSpace;
   --component-teaser-bild-play-bild-play-teaser-width-size: 145;
-  --component-teaser-m-q-teaser-m-q-teaser-headline-font-size: 22; /** XS-headline4FontSize:22 // SM-headline4FontSize:22 // MD-headline3FontSize:36 // LG-headline3FontSize:40 */
-  --component-teaser-m-q-teaser-m-q-teaser-headline-line-height: 22;
-  --component-teaser-m-q-teaser-m-q-teaser-headline-font-weight: 600;
-  --component-teaser-m-q-teaser-mq-teaser-title-inline-space: 8;
+  --component-teaser-m-q-teaser-m-q-teaser-headline-font-size: 21; /** XS-headline4FontSize:22 // SM-headline4FontSize:22 // MD-headline3FontSize:36 // LG-headline3FontSize:40 */
+  --component-teaser-m-q-teaser-m-q-teaser-headline-line-height: 23.1;
+  --component-teaser-m-q-teaser-m-q-teaser-headline-font-weight: 700;
+  --component-teaser-m-q-teaser-mq-teaser-title-inline-space: 12;
   --component-teaser-teaser-badges-height-size-lg: 32; /** This token is for controling the height of badges that are inside of teasers. 32 - 32 - 32 - 40 */
   --component-teaser-teaser-badges-height-size-sm: 24;
   --component-teaser-teaser-badges-margin-space: 8; /** This variable is used for creating space around the outside of a subscription badge or video icon badge. */
   --component-teaser-teaser-kicker-bg-inline-space: 6;
   --component-teaser-teaser-kicker-bg-stack-space: 2;
-  --component-teaser-q-teaser-quad-kicker-font-size: 18;
-  --component-teaser-q-teaser-quad-headline-font-size: 48; /** This component level variable is used on the quad teaser headline. It references the semantic level variable headline1. 48 - 48 - 72 - 100 */
-  --component-teaser-q-teaser-quad-headline-line-height: 48;
-  --component-teaser-q-teaser-q-teaser-title-inline-space: 8;
+  --component-teaser-q-teaser-quad-kicker-font-size: 20;
+  --component-teaser-q-teaser-quad-headline-font-size: 42; /** This component level variable is used on the quad teaser headline. It references the semantic level variable headline1. 48 - 48 - 72 - 100 */
+  --component-teaser-q-teaser-quad-headline-line-height: 42;
+  --component-teaser-q-teaser-q-teaser-title-inline-space: 12;
   --component-teaser-teaser-layout-grid-space: 12;
   --component-teaser-std-teaser-std-teaser-badges-margin-space: 4; /** This variable is used for creating space around the outside of a subscription badge or video icon badge. */
   --component-teaser-std-teaser-std-teaser-image-title-gap-space: 4;
   --component-teaser-std-teaser-std-teaser-kicker-headline-stack-space: 2; /** 2 | 2 | 2 | 2 - This variable is used on the standard teaser vertical spacing between the kicker and the headline. It references the semantic variable stackSpaceConst3XS */
-  --component-teaser-super-a-super-a-teaser-title-inline-space: 16; /** 16 - 16 - 16 - 16 */
+  --component-teaser-super-a-super-a-teaser-title-inline-space: 24; /** 16 - 16 - 16 - 16 */
   --component-teaser-teaser-title-inline-left-space: 12;
   --component-teaser-teaser-title-stack-space: 4;
   --component-teaser-teaser-title-gap-space: 4;

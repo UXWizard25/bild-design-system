@@ -144,44 +144,44 @@
     },
     "Typography": {
       "FontFamily": {
-        "bodyFontFamily": "Gotham XNarrow",
-        "calloutFontFamily": "Gotham",
-        "displayFontFamily": "Gotham",
-        "footnoteFontFamily": "Gotham XNarrow",
-        "headlineFontFamily": "Gotham Condensed",
-        "kickerFontFamily": "Gotham XNarrow",
-        "labelFontFamily": "Gotham XNarrow",
-        "subheadlineFontFamily": "Gotham Condensed",
-        "titleFontFamily": "Gotham",
-        "quoteFontFamily": "Gotham"
+        "bodyFontFamily": "Lucida Grande",
+        "calloutFontFamily": "Lucida Grande",
+        "displayFontFamily": "Lucida Grande",
+        "footnoteFontFamily": "Lucida Grande",
+        "headlineFontFamily": "Lucida Grande",
+        "kickerFontFamily": "Lucida Grande",
+        "labelFontFamily": "Lucida Grande",
+        "subheadlineFontFamily": "Lucida Grande",
+        "titleFontFamily": "Lucida Grande",
+        "quoteFontFamily": "Lucida Grande"
       },
       "FontSize": {
         "Body": {
-          "bodyFontSize": 21
+          "bodyFontSize": 17
         },
         "Callout": {
           "callout1FontSize": 22
         },
         "Display": {
-          "Display1FontSize": 72,
-          "Display2FontSize": 42,
-          "Display3FontSize": 32
+          "Display1FontSize": 70,
+          "Display2FontSize": 41,
+          "Display3FontSize": 31
         },
         "Footnote": {
-          "footnote1FontSize": 16,
-          "footnote2FontSize": 12
+          "footnote1FontSize": 13,
+          "footnote2FontSize": 10
         },
         "Headline": {
-          "Headline1FontSize": 72,
-          "Headline2FontSize": 48,
-          "Headline3FontSize": 36,
-          "Headline4FontSize": 26
+          "Headline1FontSize": 54,
+          "Headline2FontSize": 36,
+          "Headline3FontSize": 26,
+          "Headline4FontSize": 20
         },
         "Kicker": {
-          "Kicker1FontSize": 22,
-          "Kicker2FontSize": 22,
-          "Kicker3FontSize": 18,
-          "Kicker4FontSize": 16
+          "Kicker1FontSize": 18,
+          "Kicker2FontSize": 18,
+          "Kicker3FontSize": 14,
+          "Kicker4FontSize": 14
         },
         "Label": {
           "label1FontSize": 17,
@@ -191,14 +191,14 @@
           "label4FontSize": 8
         },
         "Subheadline": {
-          "subheadline1FontSize": 32
+          "subheadline1FontSize": 18
         },
         "Title": {
           "title1FontSize": 22,
-          "title2FontSize": 18
+          "title2FontSize": 16
         },
         "Quote": {
-          "quoteFontSize": 18
+          "quoteFontSize": 16
         }
       },
       "FontWeight": {
@@ -243,10 +243,10 @@
       },
       "LineHeight": {
         "Body": {
-          "bodyLineHeight": 28
+          "bodyLineHeight": 29.75
         },
         "Callout": {
-          "calloutLineHeight": 22
+          "calloutLineHeight": 28.6
         },
         "Display": {
           "display1LineHeight": 72,
@@ -254,37 +254,37 @@
           "display3LineHeight": 32
         },
         "Footnote": {
-          "footnote1LineHeight": 21,
-          "footnote2LineHeight": 15.8
+          "footnote1LineHeight": 16.9,
+          "footnote2LineHeight": 13
         },
         "Headline": {
-          "Headline1LineHeight": 72,
-          "Headline2LineHeight": 48,
-          "Headline3LineHeight": 36,
-          "headline4LineHeight": 22
+          "Headline1LineHeight": 56.7,
+          "Headline2LineHeight": 39.6,
+          "Headline3LineHeight": 28.6,
+          "headline4LineHeight": 19.8
         },
         "Kicker": {
-          "Kicker1LineHeight": 22,
-          "Kicker2LineHeight": 22,
-          "Kicker3LineHeight": 18,
-          "Kicker4LineHeight": 17.6
+          "Kicker1LineHeight": 19.8,
+          "Kicker2LineHeight": 19.8,
+          "Kicker3LineHeight": 15.4,
+          "Kicker4LineHeight": 15.4
         },
         "Label": {
-          "label1LineHeight": 17,
+          "label1LineHeight": 20.4,
           "label1ResponsiveLineHeight": 15,
           "label2LineHeight": 16,
           "label3LineHeight": 14.4,
           "label4LineHeight": 10
         },
         "Subheadline": {
-          "subheadline1LineHeight": 32
+          "subheadline1LineHeight": 23.4
         },
         "Title": {
-          "title1LineHeight": 22,
-          "title2LineHeight": 19.8
+          "title1LineHeight": 26.4,
+          "title2LineHeight": 19.2
         },
         "Quote": {
-          "quoteLineHeight": 18
+          "quoteLineHeight": 20.8
         }
       },
       "LetterSpacing": {
@@ -326,19 +326,19 @@
     "Avatar": {
       "avatarArticleSize": 48,
       "avatarAuthorPageSize": 130,
-      "avatarLabelFontSize": 16,
+      "avatarLabelFontSize": 13,
       "avatarLabelLineHeight": 21,
       "avatarFontFamily": "UNRESOLVED_CIRCULAR_REF__Component_Avatar_avatarFontFamily",
       "avatarLaneGapSpace": 24,
-      "appAvatarFontFamily": "Gotham"
+      "appAvatarFontFamily": "Lucida Grande"
     },
     "Article": {
-      "articleKickerFontSize": 22,
-      "articleHeadlineFontSize": 72,
-      "articleImageCaptionFontSize": 18,
-      "articleImageCaptionLineHeight": 24.75,
+      "articleKickerFontSize": 18,
+      "articleHeadlineFontSize": 54,
+      "articleImageCaptionFontSize": 13,
+      "articleImageCaptionLineHeight": 19.5,
       "articleMetaFontSize": 14,
-      "articleMetaFontFamily": "Gotham",
+      "articleMetaFontFamily": "Lucida Grande",
       "articleTopMarginSpace": 12,
       "aricleMobile1ColGridImageMarginSpace": 72,
       "articleHeadingsStackSpace": 12,
@@ -346,8 +346,8 @@
       "articleContentStackSpace": 24,
       "articleContentInlineSpace": 72,
       "articleGalleryATeaserWidth": 260,
-      "articleImageSourceFontSize": 16,
-      "articleImageSourceLineHeight": 21,
+      "articleImageSourceFontSize": 13,
+      "articleImageSourceLineHeight": 19,
       "articleImageContainerStackSpace": 12,
       "articleImageLandscapeInlineSpace": 12,
       "articleImagePortaitInlineSpace": 72,
@@ -363,7 +363,7 @@
       "BadgesInnerInlineSpace": 4
     },
     "Breadcrumb": {
-      "breadcrumbFontFamily": "Gotham XNarrow",
+      "breadcrumbFontFamily": "Lucida Grande",
       "breadcrumbFontSize": 15,
       "breadcrumbLineHeight": 15,
       "breadcrumb&ArrowLeftInlineSpace1": 3,
@@ -450,7 +450,7 @@
     },
     "Inputfield": {
       "inputFieldFontSize": 16,
-      "inputFieldFontFamily": "Gotham XNarrow",
+      "inputFieldFontFamily": "Lucida Grande",
       "inputFieldInlineSpace": 16,
       "inputFieldStackSpace": 6,
       "inputFieldMessageGapSpace": 4,
@@ -472,7 +472,7 @@
     "Mediaplayer": {
       "audioPlayerHeaderStackSpace": 56,
       "podcastPlayButtonSize": 48,
-      "videoTimeBadgeFontFamily": "Gotham XNarrow",
+      "videoTimeBadgeFontFamily": "Lucida Grande",
       "vidPlayerControlButtonSize": 42,
       "vidPlayerControlButtonIconSizeHover": 28,
       "vidPlayerTimecodeFontSize": 16,
@@ -510,7 +510,7 @@
     "Newsticker": {
       "newsTickerAppCardHeightSize": 150,
       "newsTickerAppCardWidthSize": 300,
-      "newsTickerTimeFontFamily": "Gotham XNarrow",
+      "newsTickerTimeFontFamily": "Lucida Grande",
       "newsTickerTimeFontWeight": 700,
       "newsTickerTimeFontSize": 16,
       "newsTickerTimeLineHeight": 20.8,
@@ -604,10 +604,10 @@
     },
     "Teaser": {
       "aTeaser": {
-        "aTeaserKickerFontSize": 22,
-        "aTeaserKickerLineHeight": 22,
-        "aTeaserHeadlineFontSize": 48,
-        "aTeaserHeadlineLineHeight": 48,
+        "aTeaserKickerFontSize": 18,
+        "aTeaserKickerLineHeight": 18,
+        "aTeaserHeadlineFontSize": 36,
+        "aTeaserHeadlineLineHeight": 39.6,
         "aTeaserTitleInlineSpace": 12
       },
       "bTeaser": {
@@ -617,8 +617,8 @@
         "bildPlayTeaserWidthSize": 169
       },
       "mQTeaser": {
-        "mQTeaserHeadlineFontSize": 36,
-        "mQTeaserHeadlineLineHeight": 36,
+        "mQTeaserHeadlineFontSize": 26,
+        "mQTeaserHeadlineLineHeight": 28.6,
         "mQTeaserHeadlineFontWeight": 700,
         "mqTeaserTitleInlineSpace": 8
       },
@@ -628,9 +628,9 @@
       "TeaserKickerBgInlineSpace": 6,
       "teaserKickerBgStackSpace": 2,
       "qTeaser": {
-        "quadKickerFontSize": 22,
-        "quadHeadlineFontSize": 72,
-        "quadHeadlineLineHeight": 72,
+        "quadKickerFontSize": 18,
+        "quadHeadlineFontSize": 54,
+        "quadHeadlineLineHeight": 56.7,
         "qTeaserTitleInlineSpace": 16
       },
       "teaserLayoutGridSpace": 12,

@@ -2,13 +2,13 @@
  * Do not edit directly, this file was auto-generated.
  */
 
-export const semanticCoreCorecolorprimary = "#de0000"; // Used as the main brand color for key interactive elements such as primary buttons, active states, and prominent highlights. It remains constant across Light and Dark Mode.
-export const semanticCoreCorecolorsecondary = "#242629"; // Defines the secondary brand tone. This variable changes across Light and Dark Mode.
+export const semanticCoreCorecolorprimary = "#0a264f"; // Used as the main brand color for key interactive elements such as primary buttons, active states, and prominent highlights. It remains constant across Light and Dark Mode.
+export const semanticCoreCorecolorsecondary = "#081729"; // Defines the secondary brand tone. This variable changes across Light and Dark Mode.
 export const semanticCoreCorecolortertiary = "#ffffff"; // Represents tertiary brand accents. This variable changes across Light and Dark Mode.
 export const semanticCoreCorecolorsecondaryconstant = "#ffffff"; // Use this on elements that must maintain the white color even in dark mode.
-export const semanticCoreCorecolortertiaryconstant = "#242629"; // Use this on elements that need to maintain the dark color across themes and color modes.
-export const semanticAttentionAccentcolorprimary = "#ffffff"; // Primary accent color used to emphasize interactive or highlight elements such as links, selection states, or focus indicators. Adapts in Darkmode to a fully white tone.
-export const semanticAttentionAccentcolorprimaryconstant = "#de0000"; // Used for accent highlights that must remain visually consistent across themes (e.g., brand identifiers, logos, or fixed emphasis areas). Color value does not change between Light and Dark mode.
+export const semanticCoreCorecolortertiaryconstant = "#081729"; // Use this on elements that need to maintain the dark color across themes and color modes.
+export const semanticAttentionAccentcolorprimary = "#f7fafc"; // Primary accent color used to emphasize interactive or highlight elements such as links, selection states, or focus indicators. Adapts in Darkmode to a fully white tone.
+export const semanticAttentionAccentcolorprimaryconstant = "#174582"; // Used for accent highlights that must remain visually consistent across themes (e.g., brand identifiers, logos, or fixed emphasis areas). Color value does not change between Light and Dark mode.
 export const semanticAttentionAttentioncolorsuccessprimary = "#00c273"; // Primary success color used to indicate positive states, confirmations, or completed actions (e.g., success banners, icons, or badges). Remains the same across modes to ensure recognizability and consistency.
 export const semanticAttentionAttentioncolorsuccesssecondary = "#006e3d"; // Secondary success tone used for secondary states. Maintains the same color in both Light and Dark mode for clarity.
 export const semanticAttentionAttentioncolorextralow = "#333d40"; // Very low-contrast background tone used for information or system-neutral surfaces, often for tooltips or quiet information highlights. Dynamic — light neutral in Light mode and dark neutral in Dark mode.
@@ -53,7 +53,7 @@ export const semanticOverlayOverlayscrimblack = "rgba(0, 0, 0, 0.7)"; // A semi-
 export const semanticOverlayOverlayscrimwhite = "rgba(255, 255, 255, 0.7)";
 // Used to represent the active or pressed state of primary actions such as tabs or links.
 // Behavior: Constant — identical value across modes for consistent interaction feedback.
-export const semanticStateColorprimaryactive = "#de0000";
+export const semanticStateColorprimaryactive = "#174582";
 // Defines the active state color for secondary actions (e.g., secondary buttons, tabs, or toggles).
 // Behavior: Dynamic — light gray in Light mode and bright gray in Dark mode to maintain perceptual balance.
 export const semanticStateColorsecondaryactive = "#f2f5f5";
@@ -74,7 +74,7 @@ export const semanticStateColorsecondarydisabled = "#4a5259";
 export const semanticStateColortertiarydisabled = "#666b70";
 // Primary surface color used for main backgrounds and large layout areas (e.g., page background, primary containers).
 // Behavior: Dynamic — adapts between light and dark surface tokens to maintain legibility and hierarchy.
-export const semanticSurfaceSurfacecolorprimary = "#242629";
+export const semanticSurfaceSurfacecolorprimary = "#081729";
 // Inverse of the primary surface, used when Light and Dark surfaces are swapped (e.g., inverse cards or elevated sections).
 // Behavior: Dynamic — switches between dark and light values depending on mode.
 export const semanticSurfaceSurfacecolorprimaryinverse = "#ffffff";
@@ -83,16 +83,16 @@ export const semanticSurfaceSurfacecolorprimaryinverse = "#ffffff";
 export const semanticSurfaceSurfacecolorprimaryconstantlight = "#ffffff";
 // A fixed dark surface tone used for dark overlays or nested dark sections inside light layouts.
 // Behavior: Constant — identical across Light and Dark mode.
-export const semanticSurfaceSurfacecolorprimaryconstantdark = "#242629";
+export const semanticSurfaceSurfacecolorprimaryconstantdark = "#081729";
 // Used for secondary surface layers such as cards, panels, or nested containers that need to differentiate themselves from the primary surface. .
 // Behavior: Dynamic — adapts brightness level based on mode for appropriate depth contrast.
-export const semanticSurfaceSurfacecolorsecondary = "#2b3038";
+export const semanticSurfaceSurfacecolorsecondary = "#0a264f";
 // Tertiary background layer for inner containers, grouped content, or subtle elevation steps  that need to differentiate themselves from the primary and secondary surfaces.
 // Behavior: Dynamic — switches between light and dark tertiary tones.
-export const semanticSurfaceSurfacecolortertiary = "#333d40";
+export const semanticSurfaceSurfacecolortertiary = "#174582";
 // Inverse tertiary background, applied when Light and Dark surfaces are reversed (e.g., dark-on-light cards).
 // Behavior: Dynamic — swaps values between modes for contrast preservation.
-export const semanticSurfaceSurfacecolortertiaryinverse = "#e8edf0";
+export const semanticSurfaceSurfacecolortertiaryinverse = "#bdc9db";
 export const semanticSurfaceSurfacecolorquartenary = "#4a5259"; // HIghtest elevation surface color, typically used for grouping or background accents to differentiate themselves from all previous surface color options. Uses corresponding light/dark tones for consistent layering.
 // Inverse of the quartenary surface, used for background reversals in mixed-layout areas.
 // Behavior: Dynamic — inverts between dark and light tones depending on mode.
@@ -150,10 +150,10 @@ export const semanticTextTextcolormuted = "#cfd4d9";
 // Used for text displayed on dark surfaces to ensure maximum legibility and contrast.
 // Behavior: Constant — always light neutral to guarantee accessibility on dark backgrounds.
 export const semanticTextTextcolorondarksurface = "#ffffff";
-export const semanticTextTextcoloraccent = "#ffffff"; // Accent text color used for links, interactive text, or highlighted key words. Changes from a red in light mode to a white in dark mode.
+export const semanticTextTextcoloraccent = "#f7fafc"; // Accent text color used for links, interactive text, or highlighted key words. Changes from a red in light mode to a white in dark mode.
 // Applies to text elements requiring fixed brand color usage (e.g., permanent links, brand slogans on constant backgrounds).
 // Behavior: Constant — maintains identical red tone across Light and Dark mode.
-export const semanticTextTextcoloraccentconstant = "#de0000";
+export const semanticTextTextcoloraccentconstant = "#174582";
 // Used for positive or success-related messages (e.g., “Saved”, “Success”, or confirmation text) on success surface colors.
 // Behavior: Constant — green tone remains consistent across both modes.
 export const semanticTextTextcolorsuccessconstant = "#006e3d";
@@ -197,7 +197,7 @@ export const semanticLayeropacityLayeropacity70 = 70;
 export const semanticLayeropacityLayeropacity80 = 80;
 export const semanticLayeropacityLayeropacity90 = 90;
 export const semanticLayeropacityLayeropacity100 = 100;
-export const componentAvatarAvatarlabelcolor = "#ffffff"; // 09-2025 css --article-author-name-color
+export const componentAvatarAvatarlabelcolor = "#e8edf0"; // 09-2025 css --article-author-name-color
 export const componentAvatarAvatarlabelcolorhover =
   "UNRESOLVED_CIRCULAR_REF__Component_Avatar_avatarLabelColorHover"; // 09-2025 css --article-author-name-color
 export const componentAlertAlertsurfacecolor = "#333d40"; // On marketing offer surfaces this variable is usually not used. The alertSurfaceConstant variables should be used. This token changes color between light and dark modes. L:100 / D:025
@@ -210,13 +210,13 @@ export const componentBreakingnewsBreakingnewsbottomtitletextcolor =
   "UNRESOLVED_CIRCULAR_REF__Component_BreakingNews_breakingNewsBottomTitleTextColor";
 export const componentBreakingnewsBreakingnewstitlesurfacecolor =
   "UNRESOLVED_CIRCULAR_REF__Component_BreakingNews_breakingNewsTitleSurfaceColor";
-export const componentBreakingnewsBreakingnewssurfacecolor = "#e8edf0";
+export const componentBreakingnewsBreakingnewssurfacecolor = "#ffbf00";
 export const componentBreakingnewsBreakingnewstextcontentcolor = "#242629";
 export const componentButtonPrimaryButtonprimarylabelcolor = "#ffffff";
 export const componentButtonPrimaryButtonprimaryneutralbgcoloridle = "#ffffff"; // Use this variable on the neutral color primary button. Tone changes between light and dark mode. Light mode Bild & SpoBi: Tone 015 ; Dark mode Bild & SpoBi: Tone 100
-export const componentButtonPrimaryButtonprimaryneutralbgcolorhover = "#e8edf0";
-export const componentButtonPrimaryButtonprimarybrandbgcoloridle = "#de0000";
-export const componentButtonPrimaryButtonprimarybrandbgcolorhover = "#b00003";
+export const componentButtonPrimaryButtonprimaryneutralbgcolorhover = "#bdc9db";
+export const componentButtonPrimaryButtonprimarybrandbgcoloridle = "#305999";
+export const componentButtonPrimaryButtonprimarybrandbgcolorhover = "#174582";
 export const componentButtonPrimaryButtonprimarysuccesscoloridle = "#17995c";
 export const componentButtonPrimaryButtonprimarysuccesscolorhover = "#006e3d";
 export const componentButtonSecondaryButtonsecondarylabelcolor = "#e8edf0";
@@ -232,22 +232,22 @@ export const componentButtonTertiaryButtontertiarysuccessbordercolor =
   "#17995c";
 export const componentButtonGhostButtonghostbgcolorhover =
   "rgba(207, 212, 217, 0.5)";
-export const componentButtonButtonlivetickerloadnewsurfacecolor = "#242629";
+export const componentButtonButtonlivetickerloadnewsurfacecolor = "#081729";
 export const componentButtonButtonlivetickerloadnewlabelcolor = "#f2f5f5";
-export const componentCardCardsurfacebgcolor = "#2b3038";
+export const componentCardCardsurfacebgcolor = "#0a264f";
 export const componentChipsChipsbgcoloridle = "#4a5259";
 export const componentChipsChipsbgcoloractive = "#ffffff";
 export const componentChipsChipsbgcolorhover = "#cfd4d9";
 export const componentChipsChipslabelcoloridle = "#ffffff";
-export const componentChipsChipslabelcolorhover = "#242629";
-export const componentDropdownDropdownbgcoloridle = "#333d40";
+export const componentChipsChipslabelcolorhover = "#081729";
+export const componentDropdownDropdownbgcoloridle = "#174582";
 export const componentDropdownDropdownbgcolorhover = "#4a5259";
 export const componentEmptiesEmptieslogocolor = "#2b3038";
-export const componentEmptiesEmptiesbgcolor = "#333d40";
+export const componentEmptiesEmptiesbgcolor = "#174582";
 export const componentFoldoutFoldoutlabelcoloridle = "#cfd4d9";
 export const componentFoldoutFoldoutlabelcoloractive = "#f2f5f5";
 export const componentGalleryAppimagelightboxgallerybgcolor = "#000000";
-export const componentHeyHeydrawersurfacecolor = "#333d40";
+export const componentHeyHeydrawersurfacecolor = "#174582";
 export const componentHeyHeyfavinputfieldsurfacecolor = "#4a5259";
 export const componentHeyHeyiconutilcolor = "#ffffff";
 export const componentHeyHeyseparatorcolor = "#666b70"; // This is the most used color for separators across Bild products.
@@ -289,21 +289,21 @@ export const componentMediaplayerVidplayerunmutebuttonbgcolor =
   "rgba(0, 0, 0, 0.2)";
 export const componentMediaplayerVidplayerunmutebuttonbgcolorhover =
   "rgba(0, 0, 0, 0.35)";
-export const componentMenuMenusurfacecolor = "#242629";
+export const componentMenuMenusurfacecolor = "#081729";
 export const componentMenuMenuscrolledsurfacegradientcolor =
   "rgba(36, 38, 41, 0.95)"; // Used on a thin part at the top of header in navigation menu.
-export const componentMenuMenulinklanesurfacecolor = "#242629";
-export const componentMenuMenulinklanelabelcolor = "#8c9196";
-export const componentMenuMenulinklanelabelcoloractive = "#ffffff";
-export const componentMenuApptopbarsurfacecolor = "#333d40";
+export const componentMenuMenulinklanesurfacecolor = "#0a264f";
+export const componentMenuMenulinklanelabelcolor = "#adb5ba";
+export const componentMenuMenulinklanelabelcoloractive = "#f7fafc";
+export const componentMenuApptopbarsurfacecolor = "#0a264f";
 export const componentMenuApptopbariconcolor = "#8c9196";
 export const componentMenuApptopbartextcolorprimary = "#e8edf0";
-export const componentMenuApptobbartabnavbottomborder = "#4a5259";
+export const componentMenuApptobbartabnavbottomborder = "#174582";
 export const componentMenuApptobbartabnavbottomborderactive = "#ffffff";
 export const componentMenuitemMenuitemlabelcolorprimary = "#8c9196";
 export const componentMenuitemMenuitemlabelcolorprimaryactive = "#f2f5f5";
 export const componentMenuitemMenuitemlabelcolorsecondary = "#ffffff"; // The variable can be used on secondary menus that many times show up on dedicated home pages specific to a topic. The menu labels are often times using the color white across color modes.
-export const componentMenuitemMenuitembordercoloractive = "#ffffff";
+export const componentMenuitemMenuitembordercoloractive = "#f7fafc";
 export const componentPartnerlinksPartnerlinksbgcoloridle = "#333d40"; // !do not use! these variables have been deprecated and multitext link buttons are now classified as partner buttons.
 export const componentPartnerlinksPartnerlinksbgcoloractive = "#8c9196"; // !do not use! these variables have been deprecated and multitext link buttons are now classified as partner buttons.
 export const componentPartnerlinksPartnerlinksbordercoloridle = "#cfd4d9"; // !do not use! these variables have been deprecated and multitext link buttons are now classified as partner buttons.
@@ -312,7 +312,7 @@ export const componentPartnerlinksPartnerlinkscontainerbordercolor = "#4a5259"; 
 export const componentNewstickerNewstickertimestampcolor = "#8c9196";
 export const componentNewstickerNewstickerbadgeiconscolor = "#8c9196";
 export const componentPaginationPaginationelementcolordefault = "#8c9196";
-export const componentPaginationPaginationelementcoloractive = "#ffffff";
+export const componentPaginationPaginationelementcoloractive = "#f7fafc";
 export const componentPaginationGallerypaginationelementactiveopacity = 100; // Use this on gallery slider pagination elements. This can also be applied to hover states of those elements.
 export const componentPaginationScrollbartrackbgcolor =
   "rgba(255, 255, 255, 0.1)"; // Used as the background surface color scroll bars. Found on components that vertically or horizontally stack elements.
@@ -332,7 +332,7 @@ export const componentSubheaderSubheaderscolor = "#e8edf0";
 export const componentTabTabbgcolorhover = "#333d40";
 export const componentTabTablabelcoloractive = "#f2f5f5";
 export const componentTabTablabelcolordefault = "#ffffff";
-export const componentTabAppbottomtabbarbgcolor = "#333d40";
+export const componentTabAppbottomtabbarbgcolor = "#0a264f";
 export const componentTeaserTeaserhoveropacity = 80; // When users hover over graphical teasers the image reduces opacity to 80%.
 export const componentTeaserTeasertitlebackgroundgradientstart =
   "UNRESOLVED_CIRCULAR_REF__Component_Teaser_teaserTitleBackgroundGradientStart";

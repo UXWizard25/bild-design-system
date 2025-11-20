@@ -1,15 +1,15 @@
 {
   "Semantic": {
     "Core": {
-      "coreColorPrimary": "#de0000",
+      "coreColorPrimary": "#0a264f",
       "coreColorSecondary": "#ffffff",
-      "coreColorTertiary": "#242629",
+      "coreColorTertiary": "#081729",
       "coreColorSecondaryConstant": "#ffffff",
-      "coreColorTertiaryConstant": "#242629"
+      "coreColorTertiaryConstant": "#081729"
     },
     "Attention": {
-      "accentColorPrimary": "#de0000",
-      "accentColorPrimaryConstant": "#de0000",
+      "accentColorPrimary": "#174582",
+      "accentColorPrimaryConstant": "#174582",
       "attentionColorSuccessPrimary": "#00c273",
       "attentionColorSuccessSecondary": "#006e3d",
       "attentionColorExtraLow": "#ffffff",
@@ -40,7 +40,7 @@
       "overlayScrimWhite": "rgba(255, 255, 255, 0.7)"
     },
     "State": {
-      "colorPrimaryActive": "#de0000",
+      "colorPrimaryActive": "#174582",
       "colorSecondaryActive": "#242629",
       "colorSecondaryActiveInverse": "#f2f5f5",
       "colorTertiaryActive": "#00c273",
@@ -50,12 +50,12 @@
     },
     "Surface": {
       "surfaceColorPrimary": "#ffffff",
-      "surfaceColorPrimaryInverse": "#242629",
+      "surfaceColorPrimaryInverse": "#081729",
       "surfaceColorPrimaryConstantLight": "#ffffff",
-      "surfaceColorPrimaryConstantDark": "#242629",
-      "surfaceColorSecondary": "#f2f5f5",
-      "surfaceColorTertiary": "#e8edf0",
-      "surfaceColorTertiaryInverse": "#333d40",
+      "surfaceColorPrimaryConstantDark": "#081729",
+      "surfaceColorSecondary": "#f7fafc",
+      "surfaceColorTertiary": "#bdc9db",
+      "surfaceColorTertiaryInverse": "#174582",
       "surfaceColorQuartenary": "#cfd4d9",
       "surfaceColorQuartenaryInverse": "#4a5259",
       "surfaceColorSuccess": "#cff5e3",
@@ -64,9 +64,9 @@
       "surfaceColorTertiaryGradientStop": "rgba(232, 237, 240, 0)"
     },
     "Heading": {
-      "headlineColorPrimary": "#242629",
+      "headlineColorPrimary": "#0a264f",
       "headlineColorWhiteConst": "#ffffff",
-      "kickerTextColorOnSurface": "#de0000",
+      "kickerTextColorOnSurface": "#8c9196",
       "kickerTextColorOnRed": "#ffffff",
       "kickerTextColorOnDarkBg": "rgba(255, 255, 255, 0.8)",
       "kickerTextColorOnBrightBg": "rgba(0, 0, 0, 0.7)"
@@ -79,8 +79,8 @@
       "textColorSecondary": "#8c9196",
       "textColorMuted": "#666b70",
       "textColorOnDarkSurface": "#ffffff",
-      "textColorAccent": "#de0000",
-      "textColorAccentConstant": "#de0000",
+      "textColorAccent": "#174582",
+      "textColorAccentConstant": "#174582",
       "textColorSuccessConstant": "#006e3d",
       "textColorAttentionHigh": "#de0000",
       "textColorAttentionMedium": "#fc8226"
@@ -134,8 +134,8 @@
         "buttonPrimaryLabelColor": "#ffffff",
         "buttonPrimaryNeutralBgColorIdle": "#242629",
         "buttonPrimaryNeutralBgColorHover": "#4a5259",
-        "buttonPrimaryBrandBgColorIdle": "#de0000",
-        "buttonPrimaryBrandBgColorHover": "#b00003",
+        "buttonPrimaryBrandBgColorIdle": "#174582",
+        "buttonPrimaryBrandBgColorHover": "#0a264f",
         "buttonPrimarySuccessColorIdle": "#17995c",
         "buttonPrimarySuccessColorHover": "#006e3d"
       },
@@ -162,28 +162,28 @@
     },
     "Chips": {
       "chipsBgColorIdle": "#e8edf0",
-      "chipsBgColorActive": "#de0000",
+      "chipsBgColorActive": "#174582",
       "chipsBgColorHover": "#b00003",
       "chipsLabelColorIdle": "#242629",
       "chipsLabelColorHover": "#ffffff"
     },
     "Dropdown": {
       "dropdownBgColorIdle": "#ffffff",
-      "dropdownBgColorHover": "#f2f5f5"
+      "dropdownBgColorHover": "#f7fafc"
     },
     "Empties": {
       "emptiesLogoColor": "#cfd4d9",
-      "emptiesBgColor": "#f2f5f5"
+      "emptiesBgColor": "#f7fafc"
     },
     "Foldout": {
       "foldoutLabelColorIdle": "#4a5259",
-      "foldoutLabelColorActive": "#de0000"
+      "foldoutLabelColorActive": "#174582"
     },
     "Gallery": {
       "appImageLightboxGalleryBgColor": "#000000"
     },
     "Hey": {
-      "heyDrawerSurfaceColor": "#f2f5f5",
+      "heyDrawerSurfaceColor": "#f7fafc",
       "heyFavInputFieldSurfaceColor": "#e8edf0",
       "heyIconUtilColor": "#4a5259",
       "heySeparatorColor": "#cfd4d9",
@@ -200,7 +200,7 @@
     },
     "Kicker": {
       "Standard": {
-        "kickerBgColorOnSurface": "#de0000"
+        "kickerBgColorOnSurface": "#174582"
       },
       "Partner": {
         "kickerBzBgColor": "#e3001c",
@@ -235,7 +235,7 @@
       "menuLinkLaneLabelColorActive": "UNRESOLVED_CIRCULAR_REF__Component_Menu_menuLinkLaneLabelColorActive",
       "appTopBarSurfaceColor": "UNRESOLVED_CIRCULAR_REF__Component_Menu_appTopBarSurfaceColor",
       "appTopBarIconColor": "UNRESOLVED_CIRCULAR_REF__Component_Menu_appTopBarIconColor",
-      "appTopBarTextColorPrimary": "#242629",
+      "appTopBarTextColorPrimary": "#e8edf0",
       "appTobBarTabNavBottomBorder": "UNRESOLVED_CIRCULAR_REF__Component_Menu_appTobBarTabNavBottomBorder",
       "appTobBarTabNavBottomBorderActive": "UNRESOLVED_CIRCULAR_REF__Component_Menu_appTobBarTabNavBottomBorderActive"
     },
@@ -243,7 +243,7 @@
       "menuItemLabelColorPrimary": "#4a5259",
       "menuItemLabelColorPrimaryActive": "#242629",
       "menuItemLabelColorSecondary": "#ffffff",
-      "menuItemBorderColorActive": "#de0000"
+      "menuItemBorderColorActive": "#0a264f"
     },
     "PartnerLinks": {
       "partnerLinksBgColorIdle": "#ffffff",
@@ -258,7 +258,7 @@
     },
     "Pagination": {
       "paginationElementColorDefault": "#cfd4d9",
-      "paginationElementColorActive": "#de0000",
+      "paginationElementColorActive": "#174582",
       "galleryPaginationElementActiveOpacity": 100,
       "scrollBarTrackBgColor": "rgba(0, 0, 0, 0.1)",
       "scrollBarThumbBgColor": "#8c9196"

@@ -144,42 +144,42 @@
     },
     "Typography": {
       "FontFamily": {
-        "bodyFontFamily": "Gotham XNarrow",
-        "calloutFontFamily": "Gotham",
-        "displayFontFamily": "Gotham",
-        "footnoteFontFamily": "Gotham XNarrow",
-        "headlineFontFamily": "Gotham Condensed",
-        "kickerFontFamily": "Gotham XNarrow",
-        "labelFontFamily": "Gotham XNarrow",
-        "subheadlineFontFamily": "Gotham Condensed",
-        "titleFontFamily": "Gotham",
-        "quoteFontFamily": "Gotham"
+        "bodyFontFamily": "Inter",
+        "calloutFontFamily": "AntennaCond",
+        "displayFontFamily": "AntennaCond",
+        "footnoteFontFamily": "Inter",
+        "headlineFontFamily": "AntennaExtraCond",
+        "kickerFontFamily": "AntennaExtraCond",
+        "labelFontFamily": "AntennaExtraCond",
+        "subheadlineFontFamily": "AntennaCond",
+        "titleFontFamily": "AntennaCond",
+        "quoteFontFamily": "AntennaCond"
       },
       "FontSize": {
         "Body": {
-          "bodyFontSize": 21
+          "bodyFontSize": 17
         },
         "Callout": {
           "callout1FontSize": 18
         },
         "Display": {
-          "Display1FontSize": 40,
-          "Display2FontSize": 36,
-          "Display3FontSize": 28
+          "Display1FontSize": 38,
+          "Display2FontSize": 34,
+          "Display3FontSize": 27
         },
         "Footnote": {
-          "footnote1FontSize": 16,
-          "footnote2FontSize": 12
+          "footnote1FontSize": 13,
+          "footnote2FontSize": 10
         },
         "Headline": {
-          "Headline1FontSize": 48,
-          "Headline2FontSize": 40,
-          "Headline3FontSize": 28,
-          "Headline4FontSize": 22
+          "Headline1FontSize": 42,
+          "Headline2FontSize": 42,
+          "Headline3FontSize": 30,
+          "Headline4FontSize": 21
         },
         "Kicker": {
-          "Kicker1FontSize": 18,
-          "Kicker2FontSize": 18,
+          "Kicker1FontSize": 20,
+          "Kicker2FontSize": 16,
           "Kicker3FontSize": 16,
           "Kicker4FontSize": 14
         },
@@ -191,10 +191,10 @@
           "label4FontSize": 8
         },
         "Subheadline": {
-          "subheadline1FontSize": 24
+          "subheadline1FontSize": 18
         },
         "Title": {
-          "title1FontSize": 22,
+          "title1FontSize": 24,
           "title2FontSize": 16
         },
         "Quote": {
@@ -218,14 +218,14 @@
         },
         "Headline": {
           "headline1FontWeight": 700,
-          "headline1FontWeightST": "700",
+          "headline1FontWeightST": "Bold Italic",
           "headline2FontWeight": 700,
           "headline3FontWeight": 700,
-          "headline4FontWeight": 600
+          "headline4FontWeight": 700
         },
         "Kicker": {
           "kickerFontWeight": 700,
-          "kickerFontWeightST": "700"
+          "kickerFontWeightST": "Black Italic"
         },
         "Label": {
           "labelFontWeightBook": 400,
@@ -243,10 +243,10 @@
       },
       "LineHeight": {
         "Body": {
-          "bodyLineHeight": 28
+          "bodyLineHeight": 28.05
         },
         "Callout": {
-          "calloutLineHeight": 18
+          "calloutLineHeight": 23.4
         },
         "Display": {
           "display1LineHeight": 40,
@@ -254,37 +254,37 @@
           "display3LineHeight": 28
         },
         "Footnote": {
-          "footnote1LineHeight": 21,
-          "footnote2LineHeight": 15.6
+          "footnote1LineHeight": 17.03,
+          "footnote2LineHeight": 13
         },
         "Headline": {
-          "Headline1LineHeight": 48,
-          "Headline2LineHeight": 40,
-          "Headline3LineHeight": 28,
-          "headline4LineHeight": 22
+          "Headline1LineHeight": 42,
+          "Headline2LineHeight": 42,
+          "Headline3LineHeight": 33,
+          "headline4LineHeight": 23.1
         },
         "Kicker": {
-          "Kicker1LineHeight": 19.8,
-          "Kicker2LineHeight": 19.8,
+          "Kicker1LineHeight": 22,
+          "Kicker2LineHeight": 17.6,
           "Kicker3LineHeight": 17.6,
           "Kicker4LineHeight": 15.4
         },
         "Label": {
-          "label1LineHeight": 17,
-          "label1ResponsiveLineHeight": 10,
-          "label2LineHeight": 16,
+          "label1LineHeight": 20.4,
+          "label1ResponsiveLineHeight": 12,
+          "label2LineHeight": 19.2,
           "label3LineHeight": 14.4,
           "label4LineHeight": 10
         },
         "Subheadline": {
-          "subheadline1LineHeight": 24
+          "subheadline1LineHeight": 23.4
         },
         "Title": {
-          "title1LineHeight": 22,
-          "title2LineHeight": 17.6
+          "title1LineHeight": 26.4,
+          "title2LineHeight": 20.8
         },
         "Quote": {
-          "quoteLineHeight": 16
+          "quoteLineHeight": 20.8
         }
       },
       "LetterSpacing": {
@@ -325,19 +325,19 @@
     "Avatar": {
       "avatarArticleSize": 48,
       "avatarAuthorPageSize": 96,
-      "avatarLabelFontSize": 16,
+      "avatarLabelFontSize": 13,
       "avatarLabelLineHeight": 21,
       "avatarFontFamily": "UNRESOLVED_CIRCULAR_REF__Component_Avatar_avatarFontFamily",
       "avatarLaneGapSpace": 16,
-      "appAvatarFontFamily": "Gotham"
+      "appAvatarFontFamily": "AntennaCond"
     },
     "Article": {
-      "articleKickerFontSize": 18,
-      "articleHeadlineFontSize": 40,
-      "articleImageCaptionFontSize": 16,
-      "articleImageCaptionLineHeight": 19.5,
+      "articleKickerFontSize": 20,
+      "articleHeadlineFontSize": 42,
+      "articleImageCaptionFontSize": 13,
+      "articleImageCaptionLineHeight": 16.9,
       "articleMetaFontSize": 12,
-      "articleMetaFontFamily": "Gotham",
+      "articleMetaFontFamily": "AntennaCond",
       "articleTopMarginSpace": 8,
       "aricleMobile1ColGridImageMarginSpace": "UNRESOLVED_NO_VALUE__space0x",
       "articleHeadingsStackSpace": 12,
@@ -345,8 +345,8 @@
       "articleContentStackSpace": 16,
       "articleContentInlineSpace": 16,
       "articleGalleryATeaserWidth": 145,
-      "articleImageSourceFontSize": 16,
-      "articleImageSourceLineHeight": 21,
+      "articleImageSourceFontSize": 13,
+      "articleImageSourceLineHeight": 17,
       "articleImageContainerStackSpace": 8,
       "articleImageLandscapeInlineSpace": "UNRESOLVED_NO_VALUE__space0x",
       "articleImagePortaitInlineSpace": "UNRESOLVED_NO_VALUE__space0x",
@@ -362,13 +362,13 @@
       "BadgesInnerInlineSpace": 4
     },
     "Breadcrumb": {
-      "breadcrumbFontFamily": "Gotham XNarrow",
-      "breadcrumbFontSize": 15,
-      "breadcrumbLineHeight": 15,
+      "breadcrumbFontFamily": "Inter",
+      "breadcrumbFontSize": 14,
+      "breadcrumbLineHeight": 14,
       "breadcrumb&ArrowLeftInlineSpace1": 3,
       "breadcrumb&ArrowRightInlineSpace2": 5,
       "breadcrumbInlineSpace": 12,
-      "breadcrumbFontWeight": 700,
+      "breadcrumbFontWeight": 400,
       "breadcrumbStackSpace": 14
     },
     "BreakingNews": {
@@ -431,7 +431,7 @@
       "DropDownBorderRadius": 4
     },
     "Footer": {
-      "footerFontFamily": "Gotham XNarrow",
+      "footerFontFamily": "Inter",
       "footerFontSize": 11,
       "footerLineHeight": 14,
       "footerFontSizeUserOfferPages": 18,
@@ -449,7 +449,7 @@
     },
     "Inputfield": {
       "inputFieldFontSize": 16,
-      "inputFieldFontFamily": "Gotham XNarrow",
+      "inputFieldFontFamily": "Inter",
       "inputFieldInlineSpace": 16,
       "inputFieldStackSpace": 6,
       "inputFieldMessageGapSpace": 4,
@@ -471,7 +471,7 @@
     "Mediaplayer": {
       "audioPlayerHeaderStackSpace": 56,
       "podcastPlayButtonSize": 48,
-      "videoTimeBadgeFontFamily": "Gotham XNarrow",
+      "videoTimeBadgeFontFamily": "Inter",
       "vidPlayerControlButtonSize": 42,
       "vidPlayerControlButtonIconSizeHover": 28,
       "vidPlayerTimecodeFontSize": 14,
@@ -509,7 +509,7 @@
     "Newsticker": {
       "newsTickerAppCardHeightSize": 116,
       "newsTickerAppCardWidthSize": 250,
-      "newsTickerTimeFontFamily": "Gotham XNarrow",
+      "newsTickerTimeFontFamily": "AntennaExtraCond",
       "newsTickerTimeFontWeight": 700,
       "newsTickerTimeFontSize": 16,
       "newsTickerTimeLineHeight": 20.8,
@@ -605,9 +605,9 @@
       "aTeaser": {
         "aTeaserKickerFontSize": 16,
         "aTeaserKickerLineHeight": 16,
-        "aTeaserHeadlineFontSize": 28,
-        "aTeaserHeadlineLineHeight": 28,
-        "aTeaserTitleInlineSpace": 8
+        "aTeaserHeadlineFontSize": 30,
+        "aTeaserHeadlineLineHeight": 30,
+        "aTeaserTitleInlineSpace": 12
       },
       "bTeaser": {
         "bTeaserTitleInlineSpace": "UNRESOLVED_CIRCULAR_REF__Component_Teaser_bTeaser_bTeaserTitleInlineSpace"
@@ -616,10 +616,10 @@
         "bildPlayTeaserWidthSize": 145
       },
       "mQTeaser": {
-        "mQTeaserHeadlineFontSize": 22,
-        "mQTeaserHeadlineLineHeight": 22,
-        "mQTeaserHeadlineFontWeight": 600,
-        "mqTeaserTitleInlineSpace": 8
+        "mQTeaserHeadlineFontSize": 21,
+        "mQTeaserHeadlineLineHeight": 23.1,
+        "mQTeaserHeadlineFontWeight": 700,
+        "mqTeaserTitleInlineSpace": 12
       },
       "teaserBadgesHeightSizeLG": 32,
       "teaserBadgesHeightSizeSM": 24,
@@ -627,10 +627,10 @@
       "TeaserKickerBgInlineSpace": 6,
       "teaserKickerBgStackSpace": 2,
       "qTeaser": {
-        "quadKickerFontSize": 18,
-        "quadHeadlineFontSize": 48,
-        "quadHeadlineLineHeight": 48,
-        "qTeaserTitleInlineSpace": 8
+        "quadKickerFontSize": 20,
+        "quadHeadlineFontSize": 42,
+        "quadHeadlineLineHeight": 42,
+        "qTeaserTitleInlineSpace": 12
       },
       "teaserLayoutGridSpace": 12,
       "stdTeaser": {
@@ -639,7 +639,7 @@
         "stdTeaserKickerHeadlineStackSpace": 2
       },
       "superA": {
-        "superATeaserTitleInlineSpace": 16
+        "superATeaserTitleInlineSpace": 24
       },
       "teaserTitleInlineLeftSpace": 12,
       "teaserTitleStackSpace": 4,
