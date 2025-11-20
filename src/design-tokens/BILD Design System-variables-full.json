@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-11-20T15:27:43.890Z",
+  "lastModified": "2025-11-20T22:16:54.288Z",
   "collections": [
     {
       "id": "VariableCollectionId:470:1450",
@@ -2481,16 +2481,17 @@
         "VariableID:2068:3673",
         "VariableID:14215:155421",
         "VariableID:14215:155422",
+        "VariableID:20773:45",
         "VariableID:5003:3106",
         "VariableID:16279:318800",
-        "VariableID:16279:318946",
         "VariableID:8786:2988",
+        "VariableID:16279:318946",
         "VariableID:18119:28",
         "VariableID:17418:219",
         "VariableID:12684:164993",
         "VariableID:9694:16562",
-        "VariableID:1954:19186",
         "VariableID:12663:137504",
+        "VariableID:1954:19186",
         "VariableID:9598:13708",
         "VariableID:3810:3107",
         "VariableID:12672:137718",
@@ -2804,6 +2805,33 @@
           "variableCollectionId": "VariableCollectionId:588:1979"
         },
         {
+          "id": "VariableID:20773:45",
+          "name": "Semantic/Core/coreColorTertiaryTESTTEST",
+          "description": "this is a test for the token pipeline",
+          "key": "5e1dac97fe72696cbe9a9bc837803eceae8ac95d",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "r": 0.28,
+              "g": 0.43,
+              "b": 0.58,
+              "a": 1
+            },
+            "592:1": {
+              "r": 0.69,
+              "g": 0.82,
+              "b": 0.95,
+              "a": 1
+            }
+          },
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "hiddenFromPublishing": false,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
           "id": "VariableID:5003:3106",
           "name": "Semantic/Attention/accentColorPrimary",
           "description": "Primary accent color used to emphasize interactive or highlight elements such as links, selection states, or focus indicators. Adapts in Darkmode to a fully white tone.",
@@ -2850,29 +2878,6 @@
           "variableCollectionId": "VariableCollectionId:588:1979"
         },
         {
-          "id": "VariableID:16279:318946",
-          "name": "Semantic/Attention/attentionColorSuccessPrimary",
-          "description": "Primary success color used to indicate positive states, confirmations, or completed actions (e.g., success banners, icons, or badges). Remains the same across modes to ensure recognizability and consistency.",
-          "key": "7880ecd20d6afeec4608064f67dd97cb08ae79f3",
-          "resolvedType": "COLOR",
-          "valuesByMode": {
-            "588:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2496:18725"
-            },
-            "592:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2496:18725"
-            }
-          },
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "hiddenFromPublishing": false,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:588:1979"
-        },
-        {
           "id": "VariableID:8786:2988",
           "name": "Semantic/Border/borderColorLowContrast",
           "description": "Used for subtle dividers and low-emphasis borders in neutral areas (e.g., card outlines, input containers).\nDynamic — light gray in Light mode, dark gray in Dark mode.",
@@ -2892,6 +2897,29 @@
             "FRAME_FILL",
             "SHAPE_FILL",
             "STROKE_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:16279:318946",
+          "name": "Semantic/Attention/attentionColorSuccessPrimary",
+          "description": "Primary success color used to indicate positive states, confirmations, or completed actions (e.g., success banners, icons, or badges). Remains the same across modes to ensure recognizability and consistency.",
+          "key": "7880ecd20d6afeec4608064f67dd97cb08ae79f3",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2496:18725"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2496:18725"
+            }
+          },
+          "scopes": [
+            "ALL_SCOPES"
           ],
           "hiddenFromPublishing": false,
           "codeSyntax": {},
@@ -2992,6 +3020,29 @@
           "variableCollectionId": "VariableCollectionId:588:1979"
         },
         {
+          "id": "VariableID:12663:137504",
+          "name": "Semantic/Attention/attentionColorMedium",
+          "description": "Medium-level attention tone representing stronger caution or intermediate alert states. Commonly applied in warning messages. Constant — identical in both modes.",
+          "key": "5f2974c023d82329ad7f3527cd4dcda2ea1052af",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2496:18724"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2496:18724"
+            }
+          },
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "hiddenFromPublishing": false,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
           "id": "VariableID:1954:19186",
           "name": "Semantic/Border/borderColorMediumContrast",
           "description": "Medium-emphasis border color for standard outlines, input fields, or separators that require visible yet non-dominant contrast.\nBehavior: Dynamic — adjusts to maintain legibility in Light and Dark themes.",
@@ -3011,29 +3062,6 @@
             "FRAME_FILL",
             "SHAPE_FILL",
             "STROKE_COLOR"
-          ],
-          "hiddenFromPublishing": false,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:588:1979"
-        },
-        {
-          "id": "VariableID:12663:137504",
-          "name": "Semantic/Attention/attentionColorMedium",
-          "description": "Medium-level attention tone representing stronger caution or intermediate alert states. Commonly applied in warning messages. Constant — identical in both modes.",
-          "key": "5f2974c023d82329ad7f3527cd4dcda2ea1052af",
-          "resolvedType": "COLOR",
-          "valuesByMode": {
-            "588:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2496:18724"
-            },
-            "592:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2496:18724"
-            }
-          },
-          "scopes": [
-            "ALL_SCOPES"
           ],
           "hiddenFromPublishing": false,
           "codeSyntax": {},
@@ -22933,6 +22961,16 @@
         "VariableID:18163:40971",
         "VariableID:18163:40972",
         "VariableID:18321:11220",
+        "VariableID:18163:40984",
+        "VariableID:18163:40986",
+        "VariableID:18163:40976",
+        "VariableID:18163:40977",
+        "VariableID:18163:40978",
+        "VariableID:18163:40979",
+        "VariableID:18163:40980",
+        "VariableID:18163:40981",
+        "VariableID:18163:40982",
+        "VariableID:18163:40983",
         "VariableID:19001:7954",
         "VariableID:19001:7955",
         "VariableID:18345:42121",
@@ -22949,16 +22987,6 @@
         "VariableID:18994:17053",
         "VariableID:18994:17050",
         "VariableID:18994:17051",
-        "VariableID:18163:40984",
-        "VariableID:18163:40986",
-        "VariableID:18163:40976",
-        "VariableID:18163:40977",
-        "VariableID:18163:40978",
-        "VariableID:18163:40979",
-        "VariableID:18163:40980",
-        "VariableID:18163:40981",
-        "VariableID:18163:40982",
-        "VariableID:18163:40983",
         "VariableID:18163:40996",
         "VariableID:18163:40995",
         "VariableID:18163:40994",
@@ -26914,6 +26942,186 @@
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
         {
+          "id": "VariableID:18163:40984",
+          "name": "Component/Breadcrumb/FontFamily/breadcrumbFontFamily",
+          "description": "--breadcrumb-font",
+          "key": "0a41bac547b1adf4a11020ce5f7c821007a1735c",
+          "resolvedType": "STRING",
+          "valuesByMode": {
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:585:1969"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:18056:4790"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:17036:23304"
+            }
+          },
+          "scopes": [
+            "FONT_FAMILY"
+          ],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40986",
+          "name": "Component/Breadcrumb/FontWeight/breadcrumbFontWeight",
+          "description": "--breadcrumb-font-size-sm",
+          "key": "f1982a12d328097d043394af85f62d100abe8932",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:588:1987"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:634:877"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:588:1987"
+            }
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40976",
+          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeXS",
+          "description": "--breadcrumb-font-size-sm",
+          "key": "3892e7311d428109d36a7ae9de1746d306b08239",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 15,
+            "18094:0": 14,
+            "18094:1": 15
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40977",
+          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeSM",
+          "description": "--breadcrumb-font-size-sm",
+          "key": "cab1e06c178402668e4aedbda18915bc98df801a",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 15,
+            "18094:0": 14,
+            "18094:1": 15
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40978",
+          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeMD",
+          "description": "--breadcrumb-font-size-sm",
+          "key": "bb528af57be3cc2f35a7997248695efab8659437",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 15,
+            "18094:0": 14,
+            "18094:1": 15
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40979",
+          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeLG",
+          "description": "--breadcrumb-font-size-lg",
+          "key": "02e3863f296c5d80c664c322e27a1b25889ae94c",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 12,
+            "18094:0": 11,
+            "18094:1": 12
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40980",
+          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightXS",
+          "description": "not defined as variable",
+          "key": "b15577f9e7c225c4697fc14889eb9c3e8297438b",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 15,
+            "18094:0": 14,
+            "18094:1": 15
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40981",
+          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightSM",
+          "description": "not defined as variable",
+          "key": "a36b6c5403d08ca0911f9e6530bbff50be9d027b",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 15,
+            "18094:0": 14,
+            "18094:1": 15
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40982",
+          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightMD",
+          "description": "not defined as variable",
+          "key": "1c649ef76fa5cd9e57c38e86a1be3efe4c5a5bdd",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 15,
+            "18094:0": 14,
+            "18094:1": 15
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
+          "id": "VariableID:18163:40983",
+          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightLG",
+          "description": "not defined as variable",
+          "key": "0fa5ca89bc7eeed791a31bb32dfc5db0ab635a08",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "18038:0": 12,
+            "18094:0": 11,
+            "18094:1": 12
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:18038:10593"
+        },
+        {
           "id": "VariableID:19001:7954",
           "name": "Component/Avatar/avatarFontSizeSM",
           "description": "09-2025 css using footnote var for font sizes SM & LG // Bild: 16; SpoBi: 13; Ads: 13",
@@ -27210,186 +27418,6 @@
             "18038:0": 17,
             "18094:0": 17,
             "18094:1": 17
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40984",
-          "name": "Component/Breadcrumb/FontFamily/breadcrumbFontFamily",
-          "description": "--breadcrumb-font",
-          "key": "0a41bac547b1adf4a11020ce5f7c821007a1735c",
-          "resolvedType": "STRING",
-          "valuesByMode": {
-            "18038:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:585:1969"
-            },
-            "18094:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:18056:4790"
-            },
-            "18094:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:17036:23304"
-            }
-          },
-          "scopes": [
-            "FONT_FAMILY"
-          ],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40986",
-          "name": "Component/Breadcrumb/FontWeight/breadcrumbFontWeight",
-          "description": "--breadcrumb-font-size-sm",
-          "key": "f1982a12d328097d043394af85f62d100abe8932",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:588:1987"
-            },
-            "18094:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:634:877"
-            },
-            "18094:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:588:1987"
-            }
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40976",
-          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeXS",
-          "description": "--breadcrumb-font-size-sm",
-          "key": "3892e7311d428109d36a7ae9de1746d306b08239",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 15,
-            "18094:0": 14,
-            "18094:1": 15
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40977",
-          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeSM",
-          "description": "--breadcrumb-font-size-sm",
-          "key": "cab1e06c178402668e4aedbda18915bc98df801a",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 15,
-            "18094:0": 14,
-            "18094:1": 15
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40978",
-          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeMD",
-          "description": "--breadcrumb-font-size-sm",
-          "key": "bb528af57be3cc2f35a7997248695efab8659437",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 15,
-            "18094:0": 14,
-            "18094:1": 15
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40979",
-          "name": "Component/Breadcrumb/FontSize/breadcrumbFontSizeLG",
-          "description": "--breadcrumb-font-size-lg",
-          "key": "02e3863f296c5d80c664c322e27a1b25889ae94c",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 12,
-            "18094:0": 11,
-            "18094:1": 12
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40980",
-          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightXS",
-          "description": "not defined as variable",
-          "key": "b15577f9e7c225c4697fc14889eb9c3e8297438b",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 15,
-            "18094:0": 14,
-            "18094:1": 15
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40981",
-          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightSM",
-          "description": "not defined as variable",
-          "key": "a36b6c5403d08ca0911f9e6530bbff50be9d027b",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 15,
-            "18094:0": 14,
-            "18094:1": 15
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40982",
-          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightMD",
-          "description": "not defined as variable",
-          "key": "1c649ef76fa5cd9e57c38e86a1be3efe4c5a5bdd",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 15,
-            "18094:0": 14,
-            "18094:1": 15
-          },
-          "scopes": [],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:18038:10593"
-        },
-        {
-          "id": "VariableID:18163:40983",
-          "name": "Component/Breadcrumb/LineHeight/breadcrumbLineHeightLG",
-          "description": "not defined as variable",
-          "key": "0fa5ca89bc7eeed791a31bb32dfc5db0ab635a08",
-          "resolvedType": "FLOAT",
-          "valuesByMode": {
-            "18038:0": 12,
-            "18094:0": 11,
-            "18094:1": 12
           },
           "scopes": [],
           "hiddenFromPublishing": true,
