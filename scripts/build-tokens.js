@@ -17,25 +17,32 @@ const TOKENS_DIR = path.join(__dirname, '../tokens');
 const DIST_DIR = path.join(__dirname, '../dist');
 
 /**
- * Mapping von Collection-Namen zu Output-Strukturen
+ * Mapping von Collection-IDs zu Output-Strukturen
+ * Verwendet stabile Collection IDs aus Figma statt Namen für Robustheit bei Umbenennungen
  */
 const COLLECTION_CONFIG = {
-  // Semantic Layer - ColorMode
+  // Semantic Layer - ColorMode (brand-specific)
   'colormode': {
     layer: 'semantic',
     category: 'color',
     modes: ['light', 'dark'],
     outputPrefix: 'color',
-    figmaCollectionName: 'ColorMode'
+    figmaCollectionId: 'VariableCollectionId:588:1979',
+    figmaCollectionName: 'ColorMode',  // Nur für Logging
+    brandSpecific: true,
+    brands: ['bild', 'sportbild', 'advertorial']
   },
 
-  // Semantic Layer - BreakpointMode
+  // Semantic Layer - BreakpointMode (brand-specific)
   'breakpointmode': {
     layer: 'semantic',
-    category: 'breakpoint',
+    category: 'breakpoints',
     modes: ['xs-320px', 'sm-390px-compact', 'md-600px', 'lg-1024px-regular'],
     outputPrefix: 'breakpoint',
-    figmaCollectionName: 'BreakpointMode',
+    figmaCollectionId: 'VariableCollectionId:7017:25696',
+    figmaCollectionName: 'BreakpointMode',  // Nur für Logging
+    brandSpecific: true,
+    brands: ['bild', 'sportbild', 'advertorial'],
     modeMapping: {
       'xs-320px': 'xs',
       'sm-390px-compact': 'sm',
@@ -44,13 +51,15 @@ const COLLECTION_CONFIG = {
     }
   },
 
-  // Zwischenebene - Density
+  // Zwischenebene - Density (not brand-specific)
   'density': {
     layer: 'density',
     category: 'density',
     modes: ['compact', 'default', 'spacious'],
     outputPrefix: 'density',
-    figmaCollectionName: 'Density'
+    figmaCollectionId: 'VariableCollectionId:5695:5841',
+    figmaCollectionName: 'Density',  // Nur für Logging
+    brandSpecific: false
   },
 
   // Mapping Layer - BrandTokenMapping
@@ -59,7 +68,9 @@ const COLLECTION_CONFIG = {
     category: 'brand',
     modes: ['bild', 'sportbild', 'advertorial'],
     outputPrefix: 'brand',
-    figmaCollectionName: 'BrandTokenMapping'
+    figmaCollectionId: 'VariableCollectionId:18038:10593',
+    figmaCollectionName: 'BrandTokenMapping',  // Nur für Logging
+    brandSpecific: false
   },
 
   // Mapping Layer - BrandColorMapping
@@ -68,7 +79,9 @@ const COLLECTION_CONFIG = {
     category: 'brand-color',
     modes: ['bild', 'sportbild'],
     outputPrefix: 'brand-color',
-    figmaCollectionName: 'BrandColorMapping'
+    figmaCollectionId: 'VariableCollectionId:18212:14495',
+    figmaCollectionName: 'BrandColorMapping',  // Nur für Logging
+    brandSpecific: false
   },
 
   // Base Layer - Primitives
@@ -77,7 +90,9 @@ const COLLECTION_CONFIG = {
     category: 'color-primitive',
     modes: ['value'],
     outputPrefix: 'primitive-color',
-    figmaCollectionName: '_ColorPrimitive'
+    figmaCollectionId: 'VariableCollectionId:539:2238',
+    figmaCollectionName: '_ColorPrimitive',  // Nur für Logging
+    brandSpecific: false
   },
 
   'spaceprimitive': {
@@ -85,7 +100,9 @@ const COLLECTION_CONFIG = {
     category: 'space-primitive',
     modes: ['value'],
     outputPrefix: 'primitive-space',
-    figmaCollectionName: '_SpacePrimitive'
+    figmaCollectionId: 'VariableCollectionId:2726:12077',
+    figmaCollectionName: '_SpacePrimitive',  // Nur für Logging
+    brandSpecific: false
   },
 
   'sizeprimitive': {
@@ -93,7 +110,9 @@ const COLLECTION_CONFIG = {
     category: 'size-primitive',
     modes: ['value'],
     outputPrefix: 'primitive-size',
-    figmaCollectionName: '_SizePrimitive'
+    figmaCollectionId: 'VariableCollectionId:4072:1817',
+    figmaCollectionName: '_SizePrimitive',  // Nur für Logging
+    brandSpecific: false
   },
 
   'fontprimitive': {
@@ -101,16 +120,32 @@ const COLLECTION_CONFIG = {
     category: 'font-primitive',
     modes: ['value'],
     outputPrefix: 'primitive-font',
-    figmaCollectionName: '_FontPrimitive'
+    figmaCollectionId: 'VariableCollectionId:470:1450',
+    figmaCollectionName: '_FontPrimitive',  // Nur für Logging
+    brandSpecific: false
   }
 };
 
 /**
  * Erstellt eine Style Dictionary Konfiguration für einen spezifischen Mode
+ * @param {string} collectionDir - Verzeichnis der Collection
+ * @param {string} modeName - Name des Modes
+ * @param {object} config - Collection Config
+ * @param {string|null} brand - Brand-Name (für brand-spezifische Builds)
  */
-function createStyleDictionaryConfig(collectionDir, modeName, config) {
-  const { layer, category, outputPrefix, modeMapping, figmaCollectionName } = config;
+function createStyleDictionaryConfig(collectionDir, modeName, config, brand = null) {
+  const { layer, category, outputPrefix, modeMapping, figmaCollectionId, figmaCollectionName } = config;
   const outputMode = modeMapping && modeMapping[modeName] ? modeMapping[modeName] : modeName;
+
+  // Brand-spezifische Pfad- und Dateinamen-Anpassung
+  const brandPath = brand ? `${brand}/` : '';
+  const brandPrefix = brand ? `-${brand}` : '';
+  const finalOutputPrefix = `${outputPrefix}${brandPrefix}`;
+
+  // Build-Pfade je nach Layer und Brand
+  const buildPathBase = brand && layer === 'semantic'
+    ? `${DIST_DIR}/{{platform}}/${layer}/${brand}/${category}/`
+    : `${DIST_DIR}/{{platform}}/${layer}/`;
 
   // Filter-Funktion: Exportiert nur Tokens der aktuellen Collection
   const tokenFilter = (token) => {
@@ -121,15 +156,17 @@ function createStyleDictionaryConfig(collectionDir, modeName, config) {
 
     // Für andere Layer: Nur Tokens der aktuellen Collection exportieren
     if (token.$extensions && token.$extensions['com.figma']) {
-      return token.$extensions['com.figma'].collectionName === figmaCollectionName;
+      // Verwende Collection ID (stabil) statt Name (kann sich ändern)
+      return token.$extensions['com.figma'].collectionId === figmaCollectionId;
     }
 
     // Fallback: Token ohne Metadaten nicht exportieren (verhindert Kollisionen)
     return false;
   };
 
-  // Token-Quelldatei
-  const sourceFile = path.join(collectionDir, `${modeName}.json`);
+  // Token-Quelldatei (brand-spezifisch wenn brand gesetzt)
+  const fileName = brand ? `${modeName}-${brand}.json` : `${modeName}.json`;
+  const sourceFile = path.join(collectionDir, fileName);
 
   if (!fs.existsSync(sourceFile)) {
     console.warn(`⚠️  Datei nicht gefunden: ${sourceFile}`);
@@ -167,16 +204,17 @@ function createStyleDictionaryConfig(collectionDir, modeName, config) {
       // CSS Custom Properties
       css: {
         transforms: ['attribute/cti', 'name/kebab', 'color/css'],
-        buildPath: `${DIST_DIR}/css/${layer}/`,
+        buildPath: buildPathBase.replace('{{platform}}', 'css'),
         files: [{
-          destination: `${outputPrefix}-${outputMode}.css`,
+          destination: `${finalOutputPrefix}-${outputMode}.css`,
           format: 'css/variables',
           filter: tokenFilter,
           options: {
             selector: `:root[data-${category}="${outputMode}"]`,
             mode: outputMode,
             layer: layer,
-            category: category
+            category: category,
+            brand: brand
           }
         }]
       },
@@ -184,16 +222,17 @@ function createStyleDictionaryConfig(collectionDir, modeName, config) {
       // CSS Custom Properties (global root)
       'css-global': {
         transforms: ['attribute/cti', 'name/kebab', 'color/css'],
-        buildPath: `${DIST_DIR}/css/${layer}/`,
+        buildPath: buildPathBase.replace('{{platform}}', 'css'),
         files: [{
-          destination: `${outputPrefix}-${outputMode}-global.css`,
+          destination: `${finalOutputPrefix}-${outputMode}-global.css`,
           format: 'css/variables',
           filter: tokenFilter,
           options: {
             selector: ':root',
             mode: outputMode,
             layer: layer,
-            category: category
+            category: category,
+            brand: brand
           }
         }]
       },
@@ -201,15 +240,16 @@ function createStyleDictionaryConfig(collectionDir, modeName, config) {
       // SCSS Variables
       scss: {
         transforms: ['attribute/cti', 'name/kebab', 'color/css'],
-        buildPath: `${DIST_DIR}/scss/${layer}/`,
+        buildPath: buildPathBase.replace('{{platform}}', 'scss'),
         files: [{
-          destination: `${outputPrefix}-${outputMode}.scss`,
+          destination: `${finalOutputPrefix}-${outputMode}.scss`,
           format: 'scss/variables',
           filter: tokenFilter,
           options: {
             mode: outputMode,
             layer: layer,
-            category: category
+            category: category,
+            brand: brand
           }
         }]
       },
@@ -217,15 +257,16 @@ function createStyleDictionaryConfig(collectionDir, modeName, config) {
       // JavaScript ES6
       js: {
         transforms: ['attribute/cti', 'name/js', 'color/css'],
-        buildPath: `${DIST_DIR}/js/${layer}/`,
+        buildPath: buildPathBase.replace('{{platform}}', 'js'),
         files: [{
-          destination: `${outputPrefix}-${outputMode}.js`,
+          destination: `${finalOutputPrefix}-${outputMode}.js`,
           format: 'javascript/es6',
           filter: tokenFilter,
           options: {
             mode: outputMode,
             layer: layer,
-            category: category
+            category: category,
+            brand: brand
           }
         }]
       },
@@ -233,15 +274,16 @@ function createStyleDictionaryConfig(collectionDir, modeName, config) {
       // JSON (strukturiert)
       json: {
         transforms: ['attribute/cti', 'name/js', 'color/css'],
-        buildPath: `${DIST_DIR}/json/${layer}/`,
+        buildPath: buildPathBase.replace('{{platform}}', 'json'),
         files: [{
-          destination: `${outputPrefix}-${outputMode}.json`,
+          destination: `${finalOutputPrefix}-${outputMode}.json`,
           format: 'json/nested',
           filter: tokenFilter,
           options: {
             mode: outputMode,
             layer: layer,
-            category: category
+            category: category,
+            brand: brand
           }
         }]
       }
@@ -261,6 +303,68 @@ function cleanDist() {
 }
 
 /**
+ * Rekursive Funktion zum Erstellen von Index-Dateien
+ */
+function createIndexFilesRecursive(dir, platform, depth = 0) {
+  if (!fs.existsSync(dir)) {
+    return;
+  }
+
+  const entries = fs.readdirSync(dir);
+
+  // Prüfe, ob es Subdirectories gibt
+  const subdirs = entries.filter(e => {
+    const fullPath = path.join(dir, e);
+    return fs.statSync(fullPath).isDirectory();
+  });
+
+  // Wenn Subdirectories existieren, rekursiv durchgehen
+  if (subdirs.length > 0) {
+    subdirs.forEach(subdir => {
+      createIndexFilesRecursive(path.join(dir, subdir), platform, depth + 1);
+    });
+  }
+
+  // Erstelle Index-Datei für aktuelles Verzeichnis
+  const files = entries
+    .filter(f => f.endsWith(`.${platform}`) && !f.includes('-global') && f !== `index.${platform}`)
+    .sort();
+
+  if (files.length === 0) return;
+
+  let indexContent = '';
+  const layerName = path.basename(dir);
+
+  if (platform === 'css') {
+    indexContent = `/**\n * ${layerName.toUpperCase()} - CSS Index\n */\n\n`;
+    files.forEach(file => {
+      indexContent += `@import './${file}';\n`;
+    });
+  } else if (platform === 'scss') {
+    indexContent = `//\n// ${layerName.toUpperCase()} - SCSS Index\n//\n\n`;
+    files.forEach(file => {
+      indexContent += `@import './${file}';\n`;
+    });
+  } else if (platform === 'js') {
+    indexContent = `/**\n * ${layerName.toUpperCase()} - JavaScript Index\n */\n\n`;
+    files.forEach(file => {
+      const varName = file.replace('.js', '').replace(/-/g, '_');
+      indexContent += `import ${varName} from './${file}';\n`;
+    });
+    indexContent += `\nexport {\n`;
+    files.forEach(file => {
+      const varName = file.replace('.js', '').replace(/-/g, '_');
+      indexContent += `  ${varName},\n`;
+    });
+    indexContent += `};\n`;
+  }
+
+  if (indexContent) {
+    fs.writeFileSync(path.join(dir, `index.${platform}`), indexContent, 'utf8');
+  }
+}
+
+/**
  * Erstellt Index-Dateien für jede Platform
  */
 function createIndexFiles() {
@@ -276,49 +380,10 @@ function createIndexFiles() {
       return;
     }
 
-    // Erstelle Index für jede Layer innerhalb der Platform
+    // Erstelle Index für jede Layer innerhalb der Platform (rekursiv)
     layers.forEach(layer => {
       const layerDir = path.join(platformDir, layer);
-
-      if (!fs.existsSync(layerDir)) {
-        return;
-      }
-
-      const files = fs.readdirSync(layerDir)
-        .filter(f => f.endsWith(`.${platform}`) && !f.includes('-global') && f !== 'index' + `.${platform}`)
-        .sort();
-
-      if (files.length === 0) return;
-
-      let indexContent = '';
-
-      if (platform === 'css') {
-        indexContent = `/**\n * ${layer.toUpperCase()} Layer - CSS Index\n * Importiert alle Token-Dateien dieser Layer\n */\n\n`;
-        files.forEach(file => {
-          indexContent += `@import './${file}';\n`;
-        });
-      } else if (platform === 'scss') {
-        indexContent = `//\n// ${layer.toUpperCase()} Layer - SCSS Index\n// Importiert alle Token-Dateien dieser Layer\n//\n\n`;
-        files.forEach(file => {
-          indexContent += `@import './${file}';\n`;
-        });
-      } else if (platform === 'js') {
-        indexContent = `/**\n * ${layer.toUpperCase()} Layer - JavaScript Index\n * Exportiert alle Token-Objekte dieser Layer\n */\n\n`;
-        files.forEach(file => {
-          const varName = file.replace('.js', '').replace(/-/g, '_');
-          indexContent += `import ${varName} from './${file}';\n`;
-        });
-        indexContent += `\nexport {\n`;
-        files.forEach(file => {
-          const varName = file.replace('.js', '').replace(/-/g, '_');
-          indexContent += `  ${varName},\n`;
-        });
-        indexContent += `};\n`;
-      }
-
-      if (indexContent) {
-        fs.writeFileSync(path.join(layerDir, `index.${platform}`), indexContent, 'utf8');
-      }
+      createIndexFilesRecursive(layerDir, platform);
     });
 
     console.log(`  ✅ Index-Dateien erstellt für Platform: ${platform}`);
@@ -442,27 +507,58 @@ async function main() {
 
     const collectionDir = path.join(TOKENS_DIR, collectionName);
 
-    // Erstelle Build für jeden Mode
-    for (const modeName of config.modes) {
-      const sdConfig = createStyleDictionaryConfig(collectionDir, modeName, config);
+    // Prüfe, ob Collection brand-spezifisch ist
+    if (config.brandSpecific) {
+      // Erstelle Build für jede Brand + Mode Kombination
+      for (const brand of config.brands) {
+        console.log(`\n   🏷️  Brand: ${brand}`);
 
-      if (!sdConfig) {
-        continue;
+        for (const modeName of config.modes) {
+          const sdConfig = createStyleDictionaryConfig(collectionDir, modeName, config, brand);
+
+          if (!sdConfig) {
+            continue;
+          }
+
+          try {
+            totalBuilds++;
+            const sd = new StyleDictionary(sdConfig);
+            await sd.buildAllPlatforms();
+            successfulBuilds++;
+
+            const outputMode = config.modeMapping && config.modeMapping[modeName]
+              ? config.modeMapping[modeName]
+              : modeName;
+
+            console.log(`      ✅ ${config.outputPrefix}-${brand}-${outputMode}`);
+          } catch (error) {
+            console.error(`      ❌ Fehler bei ${brand}-${modeName}:`, error.message);
+          }
+        }
       }
+    } else {
+      // Standard-Build ohne Brand-Spezifikation
+      for (const modeName of config.modes) {
+        const sdConfig = createStyleDictionaryConfig(collectionDir, modeName, config);
 
-      try {
-        totalBuilds++;
-        const sd = new StyleDictionary(sdConfig);
-        await sd.buildAllPlatforms();
-        successfulBuilds++;
+        if (!sdConfig) {
+          continue;
+        }
 
-        const outputMode = config.modeMapping && config.modeMapping[modeName]
-          ? config.modeMapping[modeName]
-          : modeName;
+        try {
+          totalBuilds++;
+          const sd = new StyleDictionary(sdConfig);
+          await sd.buildAllPlatforms();
+          successfulBuilds++;
 
-        console.log(`   ✅ ${config.outputPrefix}-${outputMode}`);
-      } catch (error) {
-        console.error(`   ❌ Fehler bei ${modeName}:`, error.message);
+          const outputMode = config.modeMapping && config.modeMapping[modeName]
+            ? config.modeMapping[modeName]
+            : modeName;
+
+          console.log(`   ✅ ${config.outputPrefix}-${outputMode}`);
+        } catch (error) {
+          console.error(`   ❌ Fehler bei ${modeName}:`, error.message);
+        }
       }
     }
   }
@@ -481,14 +577,23 @@ async function main() {
   console.log(`   - Collections verarbeitet: ${collections.length}`);
   console.log(`   - Builds erfolgreich: ${successfulBuilds}/${totalBuilds}`);
   console.log(`   - Output-Verzeichnis: dist/\n`);
-  console.log(`📁 Neue Struktur (nach Platform):`);
+  console.log(`📁 Neue Brand-Spezifische Struktur:`);
   console.log(`   - dist/css/         → CSS Custom Properties`);
   console.log(`     ├── base/         → Primitive Tokens`);
-  console.log(`     ├── mapping/      → Brand-Tokens`);
+  console.log(`     ├── mapping/      → Brand-Mappings`);
   console.log(`     ├── density/      → Density-Variationen`);
-  console.log(`     └── semantic/     → ColorMode, BreakpointMode`);
+  console.log(`     └── semantic/     → Brand-Spezifische Tokens`);
+  console.log(`         ├── bild/`);
+  console.log(`         │   ├── color/          (color-bild-light, color-bild-dark)`);
+  console.log(`         │   └── breakpoints/    (breakpoint-bild-xs, -sm, -md, -lg)`);
+  console.log(`         ├── sportbild/`);
+  console.log(`         │   ├── color/`);
+  console.log(`         │   └── breakpoints/`);
+  console.log(`         └── advertorial/`);
+  console.log(`             ├── color/`);
+  console.log(`             └── breakpoints/`);
   console.log(``);
-  console.log(`   - dist/scss/        → SCSS Variables`);
+  console.log(`   - dist/scss/        → SCSS Variables (gleiche Struktur)`);
   console.log(`   - dist/js/          → JavaScript ES6 Modules`);
   console.log(`   - dist/json/        → JSON (strukturiert)`);
   console.log('');

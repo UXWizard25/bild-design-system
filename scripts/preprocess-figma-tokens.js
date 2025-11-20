@@ -22,6 +22,23 @@ const TYPE_MAPPING = {
   'BOOLEAN': 'boolean'
 };
 
+// Brand-spezifische Collections Konfiguration
+// Verwendet stabile Collection IDs aus Figma statt Namen für Robustheit bei Umbenennungen
+const BRAND_SPECIFIC_COLLECTIONS = {
+  'VariableCollectionId:588:1979': {  // ColorMode
+    collectionName: 'ColorMode',  // Nur für Logging
+    brandSpecific: true,
+    brands: ['bild', 'sportbild', 'advertorial'],
+    brandCollectionIds: ['VariableCollectionId:18038:10593', 'VariableCollectionId:18212:14495']  // BrandTokenMapping, BrandColorMapping
+  },
+  'VariableCollectionId:7017:25696': {  // BreakpointMode
+    collectionName: 'BreakpointMode',  // Nur für Logging
+    brandSpecific: true,
+    brands: ['bild', 'sportbild', 'advertorial'],
+    brandCollectionIds: ['VariableCollectionId:18038:10593']  // BrandTokenMapping
+  }
+};
+
 /**
  * Lädt die Figma JSON Datei
  */
@@ -41,7 +58,8 @@ function createAliasLookup(collections) {
     collection.variables.forEach(variable => {
       lookup.set(variable.id, {
         name: variable.name,
-        collectionName: collection.name,
+        collectionId: collection.id,  // Stabile ID
+        collectionName: collection.name,  // Für Logging
         valuesByMode: variable.valuesByMode,
         resolvedType: variable.resolvedType,
         description: variable.description
@@ -50,6 +68,32 @@ function createAliasLookup(collections) {
   });
 
   return lookup;
+}
+
+/**
+ * Erstellt Brand → Mode-ID Mappings für Brand-Collections
+ */
+function createBrandModeMapping(collections) {
+  const brandModeMap = {};
+
+  // Brand Collection IDs
+  const BRAND_COLLECTION_IDS = [
+    'VariableCollectionId:18038:10593',  // BrandTokenMapping
+    'VariableCollectionId:18212:14495'   // BrandColorMapping
+  ];
+
+  collections.forEach(collection => {
+    if (BRAND_COLLECTION_IDS.includes(collection.id)) {
+      brandModeMap[collection.id] = {};
+
+      collection.modes.forEach(mode => {
+        const brandName = mode.name.toLowerCase();
+        brandModeMap[collection.id][brandName] = mode.modeId;
+      });
+    }
+  });
+
+  return brandModeMap;
 }
 
 /**
@@ -62,7 +106,7 @@ function colorToHex(color) {
   const a = color.a !== undefined ? color.a : 1;
 
   if (a < 1) {
-    // RGBA Format
+    // RGBA Format für Transparenz
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
@@ -106,7 +150,8 @@ function setNestedPath(obj, pathArray, value) {
  * Verarbeitet einen Token-Wert
  */
 function processValue(value, resolvedType, aliasLookup) {
-  if (!value) return null;
+  // WICHTIG: Prüfe auf undefined/null, nicht auf falsy (0, false, "" sind valide Werte!)
+  if (value === undefined || value === null) return null;
 
   // Alias-Referenz
   if (value.type === 'VARIABLE_ALIAS') {
@@ -138,9 +183,15 @@ function processValue(value, resolvedType, aliasLookup) {
 }
 
 /**
- * Löst alle Alias-Referenzen rekursiv auf
+ * Löst alle Alias-Referenzen rekursiv auf (brand-aware)
+ * @param {string} aliasString - Alias im Format {path.to.token}
+ * @param {Map} aliasLookup - Lookup-Map aller Tokens
+ * @param {string} modeId - Aktuelle Mode-ID
+ * @param {object} brandModeMap - Mapping von Brand-Namen zu Mode-IDs in Brand-Collections
+ * @param {string|null} targetBrand - Ziel-Brand (z.B. 'bild', 'sportbild')
+ * @param {Set} visited - Besuchte Tokens (Zirkelschutz)
  */
-function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()) {
+function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targetBrand = null, visited = new Set()) {
   // Extrahiere Token-Pfad aus {path.to.token} Syntax
   const match = aliasString.match(/^\{(.+)\}$/);
   if (!match) {
@@ -150,17 +201,9 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()
 
   const aliasPath = match[1];
 
-  // Zirkuläre Referenz-Erkennung
-  if (visited.has(aliasPath)) {
-    console.warn(`⚠️  Zirkuläre Referenz erkannt: ${aliasPath} - wird als unaufgelöster String beibehalten`);
-    // Entferne geschweifte Klammern, damit Style Dictionary nicht versucht, es aufzulösen
-    return `UNRESOLVED_CIRCULAR_REF__${aliasPath.replace(/\./g, '_')}`;
-  }
-
-  visited.add(aliasPath);
-
   // Finde das referenzierte Token
   let referencedToken = null;
+  let referencedTokenId = null;
   for (const [id, tokenData] of aliasLookup.entries()) {
     const tokenPath = tokenData.name
       .split('/')
@@ -169,6 +212,7 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()
 
     if (tokenPath === aliasPath) {
       referencedToken = tokenData;
+      referencedTokenId = id;
       break;
     }
   }
@@ -179,11 +223,32 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()
     return `UNRESOLVED_MISSING_TOKEN__${aliasPath.replace(/\./g, '_')}`;
   }
 
-  // Hole den Wert für den aktuellen Mode
-  let referencedValue = referencedToken.valuesByMode[modeId];
+  // Zirkuläre Referenz-Erkennung (verwende Variable-ID statt Name, da gleiche Namen in verschiedenen Collections existieren können)
+  if (visited.has(referencedTokenId)) {
+    console.warn(`⚠️  Zirkuläre Referenz erkannt: ${aliasPath} - wird als unaufgelöster String beibehalten`);
+    // Entferne geschweifte Klammern, damit Style Dictionary nicht versucht, es aufzulösen
+    return `UNRESOLVED_CIRCULAR_REF__${aliasPath.replace(/\./g, '_')}`;
+  }
+
+  visited.add(referencedTokenId);
+
+  // Bestimme den richtigen Mode-ID basierend auf der Collection
+  let targetModeId = modeId;
+
+  // Wenn das referenzierte Token aus einer Brand-Collection kommt, verwende den Brand-spezifischen Mode
+  // Verwende Collection ID (stabil) statt Name (kann sich ändern)
+  if (targetBrand && brandModeMap[referencedToken.collectionId]) {
+    if (brandModeMap[referencedToken.collectionId][targetBrand]) {
+      targetModeId = brandModeMap[referencedToken.collectionId][targetBrand];
+    }
+  }
+
+  // Hole den Wert für den richtigen Mode
+  let referencedValue = referencedToken.valuesByMode[targetModeId];
 
   // Fallback: Wenn der spezifische Mode nicht existiert, nutze den ersten verfügbaren Mode
-  if (!referencedValue) {
+  // WICHTIG: Prüfe auf undefined/null, nicht auf falsy (0, false, "" sind valide Werte!)
+  if (referencedValue === undefined || referencedValue === null) {
     const availableModes = Object.keys(referencedToken.valuesByMode);
     if (availableModes.length > 0) {
       const fallbackModeId = availableModes[0];
@@ -192,7 +257,7 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()
     }
   }
 
-  if (!referencedValue) {
+  if (referencedValue === undefined || referencedValue === null) {
     console.warn(`⚠️  Kein Wert verfügbar: ${aliasPath} - wird als unaufgelöster String beibehalten`);
     // Entferne geschweifte Klammern, damit Style Dictionary nicht versucht, es aufzulösen
     return `UNRESOLVED_NO_VALUE__${aliasPath.replace(/\./g, '_')}`;
@@ -200,14 +265,72 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()
 
   // Wenn der referenzierte Wert selbst ein Alias ist, löse rekursiv auf
   if (referencedValue.type === 'VARIABLE_ALIAS') {
-    const nestedAliasLookup = aliasLookup.get(referencedValue.id);
-    if (nestedAliasLookup) {
-      const nestedAliasPath = nestedAliasLookup.name
+    const nestedTokenId = referencedValue.id;
+    const nestedToken = aliasLookup.get(nestedTokenId);
+
+    if (!nestedToken) {
+      console.warn(`⚠️  Verschachtelter Alias nicht gefunden: ${nestedTokenId}`);
+      return `UNRESOLVED_NESTED_ALIAS__${nestedTokenId}`;
+    }
+
+    // Zirkuläre Referenz-Erkennung für verschachtelten Alias
+    if (visited.has(nestedTokenId)) {
+      const nestedAliasPath = nestedToken.name
         .split('/')
         .filter(part => part && !part.startsWith('_'))
         .join('.');
-      return resolveAliasValue(`{${nestedAliasPath}}`, aliasLookup, modeId, visited);
+      console.warn(`⚠️  Zirkuläre Referenz erkannt: ${nestedAliasPath}`);
+      return `UNRESOLVED_CIRCULAR_REF__${nestedAliasPath.replace(/\./g, '_')}`;
     }
+
+    visited.add(nestedTokenId);
+
+    // Bestimme Mode-ID für verschachtelte Referenz
+    let nestedModeId = targetModeId;
+    if (targetBrand && brandModeMap[nestedToken.collectionId]) {
+      if (brandModeMap[nestedToken.collectionId][targetBrand]) {
+        nestedModeId = brandModeMap[nestedToken.collectionId][targetBrand];
+      }
+    }
+
+    // Hole Wert für verschachtelten Token
+    let nestedValue = nestedToken.valuesByMode[nestedModeId];
+
+    // Fallback
+    if (nestedValue === undefined || nestedValue === null) {
+      const availableModes = Object.keys(nestedToken.valuesByMode);
+      if (availableModes.length > 0) {
+        nestedModeId = availableModes[0];
+        nestedValue = nestedToken.valuesByMode[nestedModeId];
+      }
+    }
+
+    if (nestedValue === undefined || nestedValue === null) {
+      const nestedAliasPath = nestedToken.name
+        .split('/')
+        .filter(part => part && !part.startsWith('_'))
+        .join('.');
+      console.warn(`⚠️  Kein Wert verfügbar für verschachtelten Alias: ${nestedAliasPath}`);
+      return `UNRESOLVED_NO_VALUE__${nestedAliasPath.replace(/\./g, '_')}`;
+    }
+
+    // Wenn verschachtelter Wert auch ein Alias ist, rekursiv weiter
+    if (nestedValue.type === 'VARIABLE_ALIAS') {
+      // Rekursiv weiter (visited wird übergeben!)
+      const furtherNestedTokenId = nestedValue.id;
+      const furtherNestedToken = aliasLookup.get(furtherNestedTokenId);
+      if (furtherNestedToken) {
+        const furtherNestedAliasPath = furtherNestedToken.name
+          .split('/')
+          .filter(part => part && !part.startsWith('_'))
+          .join('.');
+        return resolveAliasValue(`{${furtherNestedAliasPath}}`, aliasLookup, nestedModeId, brandModeMap, targetBrand, visited);
+      }
+    }
+
+    // Konvertiere finalen verschachtelten Wert
+    const processedNestedValue = processDirectValue(nestedValue, nestedToken.resolvedType);
+    return processedNestedValue;
   }
 
   // Konvertiere den finalen Wert
@@ -234,9 +357,9 @@ function processDirectValue(value, resolvedType) {
 }
 
 /**
- * Löst alle Aliase in einem Token-Objekt rekursiv auf
+ * Löst alle Aliase in einem Token-Objekt rekursiv auf (brand-aware)
  */
-function resolveAliasesInTokens(tokens, aliasLookup, modeId) {
+function resolveAliasesInTokens(tokens, aliasLookup, modeId, brandModeMap, targetBrand = null) {
   for (const key in tokens) {
     const token = tokens[key];
 
@@ -245,12 +368,12 @@ function resolveAliasesInTokens(tokens, aliasLookup, modeId) {
       if (token.value !== undefined) {
         // Prüfe, ob der Wert ein Alias ist
         if (typeof token.value === 'string' && token.value.match(/^\{.+\}$/)) {
-          const resolvedValue = resolveAliasValue(token.value, aliasLookup, modeId);
+          const resolvedValue = resolveAliasValue(token.value, aliasLookup, modeId, brandModeMap, targetBrand);
           token.value = resolvedValue;
         }
       } else {
         // Rekursiv für verschachtelte Objekte
-        resolveAliasesInTokens(token, aliasLookup, modeId);
+        resolveAliasesInTokens(token, aliasLookup, modeId, brandModeMap, targetBrand);
       }
     }
   }
@@ -288,7 +411,8 @@ function processCollection(collection, aliasLookup) {
             type: TYPE_MAPPING[variable.resolvedType] || 'other',
             $extensions: {
               'com.figma': {
-                collectionName: collection.name,
+                collectionId: collection.id,  // Stabile ID
+                collectionName: collection.name,  // Für Logging
                 variableId: variable.id
               }
             }
@@ -308,9 +432,9 @@ function processCollection(collection, aliasLookup) {
 }
 
 /**
- * Speichert die verarbeiteten Tokens
+ * Speichert die verarbeiteten Tokens (brand-aware)
  */
-function saveTokens(collectionName, modeTokens, aliasLookup, modeMetadata) {
+function saveTokens(collectionId, collectionName, modeTokens, aliasLookup, modeMetadata, brandModeMap) {
   // Erstelle Unterverzeichnis für Collection
   // Entferne führenden Unterstrich und bereinige den Namen
   const cleanCollectionName = collectionName
@@ -326,29 +450,67 @@ function saveTokens(collectionName, modeTokens, aliasLookup, modeMetadata) {
     fs.mkdirSync(collectionDir, { recursive: true });
   }
 
-  // Speichere jeden Mode als separate Datei
-  Object.entries(modeTokens).forEach(([modeName, tokens]) => {
-    // Löse alle Aliase auf
-    const modeId = modeMetadata[modeName];
-    if (modeId) {
-      resolveAliasesInTokens(tokens, aliasLookup, modeId);
-    }
+  // Prüfe, ob Collection brand-spezifisch ist (verwende Collection ID statt Name)
+  const brandConfig = BRAND_SPECIFIC_COLLECTIONS[collectionId];
 
-    // Bereinige Dateinamen: entferne alle Nicht-Alphanumerische Zeichen außer Bindestriche
-    const cleanName = modeName
-      .toLowerCase()
-      .replace(/\s+/g, '-')           // Leerzeichen zu Bindestrichen
-      .replace(/[()]/g, '')            // Entferne Klammern
-      .replace(/[^a-z0-9-]/g, '-')     // Ersetze ungültige Zeichen
-      .replace(/--+/g, '-')            // Mehrfache Bindestriche zu einem
-      .replace(/^-|-$/g, '');          // Entferne führende/folgende Bindestriche
+  if (brandConfig && brandConfig.brandSpecific) {
+    // Brand-spezifische Collection: Erstelle separate Dateien für jede Brand
+    console.log(`    🏷️  Brand-spezifische Collection erkannt`);
 
-    const fileName = `${cleanName}.json`;
-    const filePath = path.join(collectionDir, fileName);
+    Object.entries(modeTokens).forEach(([modeName, originalTokens]) => {
+      const modeId = modeMetadata[modeName];
 
-    fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
-    console.log(`    ✅ Gespeichert: ${path.relative(process.cwd(), filePath)}`);
-  });
+      // Für jede Brand eine separate Datei erstellen
+      brandConfig.brands.forEach(brand => {
+        // Deep Clone der Tokens für jede Brand
+        const tokens = JSON.parse(JSON.stringify(originalTokens));
+
+        // Löse Aliase mit brand-spezifischem Mode auf
+        if (modeId) {
+          resolveAliasesInTokens(tokens, aliasLookup, modeId, brandModeMap, brand);
+        }
+
+        // Bereinige Dateinamen
+        const cleanName = modeName
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[()]/g, '')
+          .replace(/[^a-z0-9-]/g, '-')
+          .replace(/--+/g, '-')
+          .replace(/^-|-$/g, '');
+
+        const fileName = `${cleanName}-${brand}.json`;
+        const filePath = path.join(collectionDir, fileName);
+
+        fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+        console.log(`    ✅ Gespeichert: ${path.relative(process.cwd(), filePath)} (Brand: ${brand})`);
+      });
+    });
+  } else {
+    // Normale Collection: Standard-Verhalten
+    Object.entries(modeTokens).forEach(([modeName, tokens]) => {
+      // Löse alle Aliase auf (ohne brand-spezifischen Mode)
+      const modeId = modeMetadata[modeName];
+      if (modeId) {
+        resolveAliasesInTokens(tokens, aliasLookup, modeId, brandModeMap);
+      }
+
+      // Bereinige Dateinamen
+      const cleanName = modeName
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[()]/g, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/--+/g, '-')
+        .replace(/^-|-$/g, '');
+
+      const fileName = `${cleanName}.json`;
+      const filePath = path.join(collectionDir, fileName);
+
+      fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+      console.log(`    ✅ Gespeichert: ${path.relative(process.cwd(), filePath)}`);
+    });
+  }
 }
 
 /**
@@ -370,12 +532,17 @@ function main() {
   console.log('🔍 Erstelle Alias-Lookup...');
   const aliasLookup = createAliasLookup(figmaData.collections);
 
+  // Erstelle Brand-Mode-Mapping
+  console.log('🏷️  Erstelle Brand-Mode-Mapping...');
+  const brandModeMap = createBrandModeMapping(figmaData.collections);
+  console.log(`    ℹ️  Brand-Modes: ${JSON.stringify(brandModeMap, null, 2)}\n`);
+
   // Verarbeite jede Collection
-  console.log('\n📋 Verarbeite Collections:\n');
+  console.log('📋 Verarbeite Collections:\n');
 
   figmaData.collections.forEach(collection => {
     const { results, modeMetadata } = processCollection(collection, aliasLookup);
-    saveTokens(collection.name, results, aliasLookup, modeMetadata);
+    saveTokens(collection.id, collection.name, results, aliasLookup, modeMetadata, brandModeMap);
   });
 
   // Erstelle Index-Datei mit Metadaten
