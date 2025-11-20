@@ -153,8 +153,9 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
     return false;
   };
 
-  // Token-Quelldatei
-  const sourceFile = path.join(collectionDir, `${modeName}.json`);
+  // Token-Quelldatei (brand-spezifisch wenn brand gesetzt)
+  const fileName = brand ? `${modeName}-${brand}.json` : `${modeName}.json`;
+  const sourceFile = path.join(collectionDir, fileName);
 
   if (!fs.existsSync(sourceFile)) {
     console.warn(`⚠️  Datei nicht gefunden: ${sourceFile}`);

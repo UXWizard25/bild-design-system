@@ -22,6 +22,20 @@ const TYPE_MAPPING = {
   'BOOLEAN': 'boolean'
 };
 
+// Brand-spezifische Collections Konfiguration
+const BRAND_SPECIFIC_COLLECTIONS = {
+  'ColorMode': {
+    brandSpecific: true,
+    brands: ['bild', 'sportbild', 'advertorial'],
+    brandCollections: ['BrandTokenMapping', 'BrandColorMapping']
+  },
+  'BreakpointMode': {
+    brandSpecific: true,
+    brands: ['bild', 'sportbild', 'advertorial'],
+    brandCollections: ['BrandTokenMapping']
+  }
+};
+
 /**
  * Lädt die Figma JSON Datei
  */
@@ -50,6 +64,26 @@ function createAliasLookup(collections) {
   });
 
   return lookup;
+}
+
+/**
+ * Erstellt Brand → Mode-ID Mappings für Brand-Collections
+ */
+function createBrandModeMapping(collections) {
+  const brandModeMap = {};
+
+  collections.forEach(collection => {
+    if (collection.name === 'BrandTokenMapping' || collection.name === 'BrandColorMapping') {
+      brandModeMap[collection.name] = {};
+
+      collection.modes.forEach(mode => {
+        const brandName = mode.name.toLowerCase();
+        brandModeMap[collection.name][brandName] = mode.modeId;
+      });
+    }
+  });
+
+  return brandModeMap;
 }
 
 /**
@@ -138,9 +172,15 @@ function processValue(value, resolvedType, aliasLookup) {
 }
 
 /**
- * Löst alle Alias-Referenzen rekursiv auf
+ * Löst alle Alias-Referenzen rekursiv auf (brand-aware)
+ * @param {string} aliasString - Alias im Format {path.to.token}
+ * @param {Map} aliasLookup - Lookup-Map aller Tokens
+ * @param {string} modeId - Aktuelle Mode-ID
+ * @param {object} brandModeMap - Mapping von Brand-Namen zu Mode-IDs in Brand-Collections
+ * @param {string|null} targetBrand - Ziel-Brand (z.B. 'bild', 'sportbild')
+ * @param {Set} visited - Besuchte Tokens (Zirkelschutz)
  */
-function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()) {
+function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targetBrand = null, visited = new Set()) {
   // Extrahiere Token-Pfad aus {path.to.token} Syntax
   const match = aliasString.match(/^\{(.+)\}$/);
   if (!match) {
@@ -179,8 +219,18 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()
     return `UNRESOLVED_MISSING_TOKEN__${aliasPath.replace(/\./g, '_')}`;
   }
 
-  // Hole den Wert für den aktuellen Mode
-  let referencedValue = referencedToken.valuesByMode[modeId];
+  // Bestimme den richtigen Mode-ID basierend auf der Collection
+  let targetModeId = modeId;
+
+  // Wenn das referenzierte Token aus einer Brand-Collection kommt, verwende den Brand-spezifischen Mode
+  if (targetBrand && (referencedToken.collectionName === 'BrandTokenMapping' || referencedToken.collectionName === 'BrandColorMapping')) {
+    if (brandModeMap[referencedToken.collectionName] && brandModeMap[referencedToken.collectionName][targetBrand]) {
+      targetModeId = brandModeMap[referencedToken.collectionName][targetBrand];
+    }
+  }
+
+  // Hole den Wert für den richtigen Mode
+  let referencedValue = referencedToken.valuesByMode[targetModeId];
 
   // Fallback: Wenn der spezifische Mode nicht existiert, nutze den ersten verfügbaren Mode
   if (!referencedValue) {
@@ -206,7 +256,7 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, visited = new Set()
         .split('/')
         .filter(part => part && !part.startsWith('_'))
         .join('.');
-      return resolveAliasValue(`{${nestedAliasPath}}`, aliasLookup, modeId, visited);
+      return resolveAliasValue(`{${nestedAliasPath}}`, aliasLookup, targetModeId, brandModeMap, targetBrand, visited);
     }
   }
 
@@ -234,9 +284,9 @@ function processDirectValue(value, resolvedType) {
 }
 
 /**
- * Löst alle Aliase in einem Token-Objekt rekursiv auf
+ * Löst alle Aliase in einem Token-Objekt rekursiv auf (brand-aware)
  */
-function resolveAliasesInTokens(tokens, aliasLookup, modeId) {
+function resolveAliasesInTokens(tokens, aliasLookup, modeId, brandModeMap, targetBrand = null) {
   for (const key in tokens) {
     const token = tokens[key];
 
@@ -245,12 +295,12 @@ function resolveAliasesInTokens(tokens, aliasLookup, modeId) {
       if (token.value !== undefined) {
         // Prüfe, ob der Wert ein Alias ist
         if (typeof token.value === 'string' && token.value.match(/^\{.+\}$/)) {
-          const resolvedValue = resolveAliasValue(token.value, aliasLookup, modeId);
+          const resolvedValue = resolveAliasValue(token.value, aliasLookup, modeId, brandModeMap, targetBrand);
           token.value = resolvedValue;
         }
       } else {
         // Rekursiv für verschachtelte Objekte
-        resolveAliasesInTokens(token, aliasLookup, modeId);
+        resolveAliasesInTokens(token, aliasLookup, modeId, brandModeMap, targetBrand);
       }
     }
   }
@@ -308,9 +358,9 @@ function processCollection(collection, aliasLookup) {
 }
 
 /**
- * Speichert die verarbeiteten Tokens
+ * Speichert die verarbeiteten Tokens (brand-aware)
  */
-function saveTokens(collectionName, modeTokens, aliasLookup, modeMetadata) {
+function saveTokens(collectionName, modeTokens, aliasLookup, modeMetadata, brandModeMap) {
   // Erstelle Unterverzeichnis für Collection
   // Entferne führenden Unterstrich und bereinige den Namen
   const cleanCollectionName = collectionName
@@ -326,29 +376,67 @@ function saveTokens(collectionName, modeTokens, aliasLookup, modeMetadata) {
     fs.mkdirSync(collectionDir, { recursive: true });
   }
 
-  // Speichere jeden Mode als separate Datei
-  Object.entries(modeTokens).forEach(([modeName, tokens]) => {
-    // Löse alle Aliase auf
-    const modeId = modeMetadata[modeName];
-    if (modeId) {
-      resolveAliasesInTokens(tokens, aliasLookup, modeId);
-    }
+  // Prüfe, ob Collection brand-spezifisch ist
+  const brandConfig = BRAND_SPECIFIC_COLLECTIONS[collectionName];
 
-    // Bereinige Dateinamen: entferne alle Nicht-Alphanumerische Zeichen außer Bindestriche
-    const cleanName = modeName
-      .toLowerCase()
-      .replace(/\s+/g, '-')           // Leerzeichen zu Bindestrichen
-      .replace(/[()]/g, '')            // Entferne Klammern
-      .replace(/[^a-z0-9-]/g, '-')     // Ersetze ungültige Zeichen
-      .replace(/--+/g, '-')            // Mehrfache Bindestriche zu einem
-      .replace(/^-|-$/g, '');          // Entferne führende/folgende Bindestriche
+  if (brandConfig && brandConfig.brandSpecific) {
+    // Brand-spezifische Collection: Erstelle separate Dateien für jede Brand
+    console.log(`    🏷️  Brand-spezifische Collection erkannt`);
 
-    const fileName = `${cleanName}.json`;
-    const filePath = path.join(collectionDir, fileName);
+    Object.entries(modeTokens).forEach(([modeName, originalTokens]) => {
+      const modeId = modeMetadata[modeName];
 
-    fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
-    console.log(`    ✅ Gespeichert: ${path.relative(process.cwd(), filePath)}`);
-  });
+      // Für jede Brand eine separate Datei erstellen
+      brandConfig.brands.forEach(brand => {
+        // Deep Clone der Tokens für jede Brand
+        const tokens = JSON.parse(JSON.stringify(originalTokens));
+
+        // Löse Aliase mit brand-spezifischem Mode auf
+        if (modeId) {
+          resolveAliasesInTokens(tokens, aliasLookup, modeId, brandModeMap, brand);
+        }
+
+        // Bereinige Dateinamen
+        const cleanName = modeName
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[()]/g, '')
+          .replace(/[^a-z0-9-]/g, '-')
+          .replace(/--+/g, '-')
+          .replace(/^-|-$/g, '');
+
+        const fileName = `${cleanName}-${brand}.json`;
+        const filePath = path.join(collectionDir, fileName);
+
+        fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+        console.log(`    ✅ Gespeichert: ${path.relative(process.cwd(), filePath)} (Brand: ${brand})`);
+      });
+    });
+  } else {
+    // Normale Collection: Standard-Verhalten
+    Object.entries(modeTokens).forEach(([modeName, tokens]) => {
+      // Löse alle Aliase auf (ohne brand-spezifischen Mode)
+      const modeId = modeMetadata[modeName];
+      if (modeId) {
+        resolveAliasesInTokens(tokens, aliasLookup, modeId, brandModeMap);
+      }
+
+      // Bereinige Dateinamen
+      const cleanName = modeName
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[()]/g, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/--+/g, '-')
+        .replace(/^-|-$/g, '');
+
+      const fileName = `${cleanName}.json`;
+      const filePath = path.join(collectionDir, fileName);
+
+      fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+      console.log(`    ✅ Gespeichert: ${path.relative(process.cwd(), filePath)}`);
+    });
+  }
 }
 
 /**
@@ -370,12 +458,17 @@ function main() {
   console.log('🔍 Erstelle Alias-Lookup...');
   const aliasLookup = createAliasLookup(figmaData.collections);
 
+  // Erstelle Brand-Mode-Mapping
+  console.log('🏷️  Erstelle Brand-Mode-Mapping...');
+  const brandModeMap = createBrandModeMapping(figmaData.collections);
+  console.log(`    ℹ️  Brand-Modes: ${JSON.stringify(brandModeMap, null, 2)}\n`);
+
   // Verarbeite jede Collection
-  console.log('\n📋 Verarbeite Collections:\n');
+  console.log('📋 Verarbeite Collections:\n');
 
   figmaData.collections.forEach(collection => {
     const { results, modeMetadata } = processCollection(collection, aliasLookup);
-    saveTokens(collection.name, results, aliasLookup, modeMetadata);
+    saveTokens(collection.name, results, aliasLookup, modeMetadata, brandModeMap);
   });
 
   // Erstelle Index-Datei mit Metadaten
