@@ -87,18 +87,22 @@ function createBrandModeMapping(collections) {
 }
 
 /**
- * Konvertiert Figma-Farbwerte in RGBA-Format
- * Verwendet RGBA statt HEX, um Präzisionsverluste durch doppelte Konvertierung zu vermeiden
+ * Konvertiert Figma-Farbwerte in Hex-Format
  */
-function colorToRGBA(color) {
+function colorToHex(color) {
   const r = Math.round(color.r * 255);
   const g = Math.round(color.g * 255);
   const b = Math.round(color.b * 255);
   const a = color.a !== undefined ? color.a : 1;
 
-  // Immer RGBA-Format verwenden (auch bei a=1)
-  // Dies vermeidet Präzisionsverluste durch HEX-Konvertierung
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
+  if (a < 1) {
+    // RGBA Format für Transparenz
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+
+  // Hex Format
+  const toHex = (n) => n.toString(16).padStart(2, '0');
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 /**
@@ -155,7 +159,7 @@ function processValue(value, resolvedType, aliasLookup) {
   // Direkte Werte basierend auf Typ
   switch (resolvedType) {
     case 'COLOR':
-      return colorToRGBA(value);
+      return colorToHex(value);
     case 'FLOAT':
       return value;
     case 'STRING':
@@ -267,7 +271,7 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targe
 function processDirectValue(value, resolvedType) {
   switch (resolvedType) {
     case 'COLOR':
-      return colorToRGBA(value);
+      return colorToHex(value);
     case 'FLOAT':
       return value;
     case 'STRING':
