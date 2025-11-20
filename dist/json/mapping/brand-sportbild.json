@@ -311,6 +311,26 @@
       "avatarFontSizeSM": 13,
       "avatarFontSizeLG": 15
     },
+    "Breadcrumb": {
+      "FontFamily": {
+        "breadcrumbFontFamily": "Inter"
+      },
+      "FontWeight": {
+        "breadcrumbFontWeight": 400
+      },
+      "FontSize": {
+        "breadcrumbFontSizeXS": 14,
+        "breadcrumbFontSizeSM": 14,
+        "breadcrumbFontSizeMD": 14,
+        "breadcrumbFontSizeLG": 11
+      },
+      "LineHeight": {
+        "breadcrumbLineHeightXS": 14,
+        "breadcrumbLineHeightSM": 14,
+        "breadcrumbLineHeightMD": 14,
+        "breadcrumbLineHeightLG": 11
+      }
+    },
     "BreakingNews": {
       "breakingNewsContentFontSize": 26
     },
@@ -334,26 +354,6 @@
       "appTopBarTitleLineHeightSM": 14,
       "appTopBarTitleLineHeightMD": 17,
       "appTopBarTitleLineHeightLG": 17
-    },
-    "Breadcrumb": {
-      "FontFamily": {
-        "breadcrumbFontFamily": "Inter"
-      },
-      "FontWeight": {
-        "breadcrumbFontWeight": 400
-      },
-      "FontSize": {
-        "breadcrumbFontSizeXS": 14,
-        "breadcrumbFontSizeSM": 14,
-        "breadcrumbFontSizeMD": 14,
-        "breadcrumbFontSizeLG": 11
-      },
-      "LineHeight": {
-        "breadcrumbLineHeightXS": 14,
-        "breadcrumbLineHeightSM": 14,
-        "breadcrumbLineHeightMD": 14,
-        "breadcrumbLineHeightLG": 11
-      }
     },
     "Teaser": {
       "teaserTitleInlineSpaceXS": 12,

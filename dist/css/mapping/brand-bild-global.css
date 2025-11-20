@@ -230,6 +230,16 @@
   --component-avatar-avatar-font-family: Gotham XNarrow; /** current css 09-2025 --article-author-font // Bild: GothamXNarrow; SpoBi: Inter; Ads: LucidaGrande */
   --component-avatar-avatar-font-size-sm: 16; /** 09-2025 css using footnote var for font sizes SM & LG // Bild: 16; SpoBi: 13; Ads: 13 */
   --component-avatar-avatar-font-size-lg: 18; /** 09-2025 css using footnote var for font sizes SM & LG // Bild: 18; SpoBi: 15; Ads: 15 */
+  --component-breadcrumb-font-family-breadcrumb-font-family: Gotham XNarrow; /** --breadcrumb-font */
+  --component-breadcrumb-font-weight-breadcrumb-font-weight: 700; /** --breadcrumb-font-size-sm */
+  --component-breadcrumb-font-size-breadcrumb-font-size-xs: 15; /** --breadcrumb-font-size-sm */
+  --component-breadcrumb-font-size-breadcrumb-font-size-sm: 15; /** --breadcrumb-font-size-sm */
+  --component-breadcrumb-font-size-breadcrumb-font-size-md: 15; /** --breadcrumb-font-size-sm */
+  --component-breadcrumb-font-size-breadcrumb-font-size-lg: 12; /** --breadcrumb-font-size-lg */
+  --component-breadcrumb-line-height-breadcrumb-line-height-xs: 15; /** not defined as variable */
+  --component-breadcrumb-line-height-breadcrumb-line-height-sm: 15; /** not defined as variable */
+  --component-breadcrumb-line-height-breadcrumb-line-height-md: 15; /** not defined as variable */
+  --component-breadcrumb-line-height-breadcrumb-line-height-lg: 12; /** not defined as variable */
   --component-breaking-news-breaking-news-content-font-size: 21;
   --component-footer-footer-link-font-family: Gotham XNarrow;
   --component-inputfield-input-field-label-font-family: Gotham XNarrow;
@@ -244,16 +254,6 @@
   --component-menu-app-top-bar-title-line-height-sm: 14;
   --component-menu-app-top-bar-title-line-height-md: 17;
   --component-menu-app-top-bar-title-line-height-lg: 17;
-  --component-breadcrumb-font-family-breadcrumb-font-family: Gotham XNarrow; /** --breadcrumb-font */
-  --component-breadcrumb-font-weight-breadcrumb-font-weight: 700; /** --breadcrumb-font-size-sm */
-  --component-breadcrumb-font-size-breadcrumb-font-size-xs: 15; /** --breadcrumb-font-size-sm */
-  --component-breadcrumb-font-size-breadcrumb-font-size-sm: 15; /** --breadcrumb-font-size-sm */
-  --component-breadcrumb-font-size-breadcrumb-font-size-md: 15; /** --breadcrumb-font-size-sm */
-  --component-breadcrumb-font-size-breadcrumb-font-size-lg: 12; /** --breadcrumb-font-size-lg */
-  --component-breadcrumb-line-height-breadcrumb-line-height-xs: 15; /** not defined as variable */
-  --component-breadcrumb-line-height-breadcrumb-line-height-sm: 15; /** not defined as variable */
-  --component-breadcrumb-line-height-breadcrumb-line-height-md: 15; /** not defined as variable */
-  --component-breadcrumb-line-height-breadcrumb-line-height-lg: 12; /** not defined as variable */
   --component-teaser-teaser-title-inline-space-xs: 8; /** --teaser-title-padding-xs */
   --component-teaser-teaser-title-inline-space-sm: 8; /** --teaser-title-padding-sm */
   --component-teaser-teaser-title-inline-space-md: 12; /** --teaser-title-padding-md */

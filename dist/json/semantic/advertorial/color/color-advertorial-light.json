@@ -5,7 +5,8 @@
       "coreColorSecondary": "#ffffff",
       "coreColorTertiary": "#242629",
       "coreColorSecondaryConstant": "#ffffff",
-      "coreColorTertiaryConstant": "#242629"
+      "coreColorTertiaryConstant": "#242629",
+      "coreColorTertiaryTESTTEST": "#476e94"
     },
     "Attention": {
       "accentColorPrimary": "#de0000",
