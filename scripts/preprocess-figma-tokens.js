@@ -150,7 +150,8 @@ function setNestedPath(obj, pathArray, value) {
  * Verarbeitet einen Token-Wert
  */
 function processValue(value, resolvedType, aliasLookup) {
-  if (!value) return null;
+  // WICHTIG: Prüfe auf undefined/null, nicht auf falsy (0, false, "" sind valide Werte!)
+  if (value === undefined || value === null) return null;
 
   // Alias-Referenz
   if (value.type === 'VARIABLE_ALIAS') {
@@ -200,17 +201,9 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targe
 
   const aliasPath = match[1];
 
-  // Zirkuläre Referenz-Erkennung
-  if (visited.has(aliasPath)) {
-    console.warn(`⚠️  Zirkuläre Referenz erkannt: ${aliasPath} - wird als unaufgelöster String beibehalten`);
-    // Entferne geschweifte Klammern, damit Style Dictionary nicht versucht, es aufzulösen
-    return `UNRESOLVED_CIRCULAR_REF__${aliasPath.replace(/\./g, '_')}`;
-  }
-
-  visited.add(aliasPath);
-
   // Finde das referenzierte Token
   let referencedToken = null;
+  let referencedTokenId = null;
   for (const [id, tokenData] of aliasLookup.entries()) {
     const tokenPath = tokenData.name
       .split('/')
@@ -219,6 +212,7 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targe
 
     if (tokenPath === aliasPath) {
       referencedToken = tokenData;
+      referencedTokenId = id;
       break;
     }
   }
@@ -228,6 +222,15 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targe
     // Entferne geschweifte Klammern, damit Style Dictionary nicht versucht, es aufzulösen
     return `UNRESOLVED_MISSING_TOKEN__${aliasPath.replace(/\./g, '_')}`;
   }
+
+  // Zirkuläre Referenz-Erkennung (verwende Variable-ID statt Name, da gleiche Namen in verschiedenen Collections existieren können)
+  if (visited.has(referencedTokenId)) {
+    console.warn(`⚠️  Zirkuläre Referenz erkannt: ${aliasPath} - wird als unaufgelöster String beibehalten`);
+    // Entferne geschweifte Klammern, damit Style Dictionary nicht versucht, es aufzulösen
+    return `UNRESOLVED_CIRCULAR_REF__${aliasPath.replace(/\./g, '_')}`;
+  }
+
+  visited.add(referencedTokenId);
 
   // Bestimme den richtigen Mode-ID basierend auf der Collection
   let targetModeId = modeId;
@@ -244,7 +247,8 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targe
   let referencedValue = referencedToken.valuesByMode[targetModeId];
 
   // Fallback: Wenn der spezifische Mode nicht existiert, nutze den ersten verfügbaren Mode
-  if (!referencedValue) {
+  // WICHTIG: Prüfe auf undefined/null, nicht auf falsy (0, false, "" sind valide Werte!)
+  if (referencedValue === undefined || referencedValue === null) {
     const availableModes = Object.keys(referencedToken.valuesByMode);
     if (availableModes.length > 0) {
       const fallbackModeId = availableModes[0];
@@ -253,7 +257,7 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targe
     }
   }
 
-  if (!referencedValue) {
+  if (referencedValue === undefined || referencedValue === null) {
     console.warn(`⚠️  Kein Wert verfügbar: ${aliasPath} - wird als unaufgelöster String beibehalten`);
     // Entferne geschweifte Klammern, damit Style Dictionary nicht versucht, es aufzulösen
     return `UNRESOLVED_NO_VALUE__${aliasPath.replace(/\./g, '_')}`;
@@ -261,14 +265,72 @@ function resolveAliasValue(aliasString, aliasLookup, modeId, brandModeMap, targe
 
   // Wenn der referenzierte Wert selbst ein Alias ist, löse rekursiv auf
   if (referencedValue.type === 'VARIABLE_ALIAS') {
-    const nestedAliasLookup = aliasLookup.get(referencedValue.id);
-    if (nestedAliasLookup) {
-      const nestedAliasPath = nestedAliasLookup.name
+    const nestedTokenId = referencedValue.id;
+    const nestedToken = aliasLookup.get(nestedTokenId);
+
+    if (!nestedToken) {
+      console.warn(`⚠️  Verschachtelter Alias nicht gefunden: ${nestedTokenId}`);
+      return `UNRESOLVED_NESTED_ALIAS__${nestedTokenId}`;
+    }
+
+    // Zirkuläre Referenz-Erkennung für verschachtelten Alias
+    if (visited.has(nestedTokenId)) {
+      const nestedAliasPath = nestedToken.name
         .split('/')
         .filter(part => part && !part.startsWith('_'))
         .join('.');
-      return resolveAliasValue(`{${nestedAliasPath}}`, aliasLookup, targetModeId, brandModeMap, targetBrand, visited);
+      console.warn(`⚠️  Zirkuläre Referenz erkannt: ${nestedAliasPath}`);
+      return `UNRESOLVED_CIRCULAR_REF__${nestedAliasPath.replace(/\./g, '_')}`;
     }
+
+    visited.add(nestedTokenId);
+
+    // Bestimme Mode-ID für verschachtelte Referenz
+    let nestedModeId = targetModeId;
+    if (targetBrand && brandModeMap[nestedToken.collectionId]) {
+      if (brandModeMap[nestedToken.collectionId][targetBrand]) {
+        nestedModeId = brandModeMap[nestedToken.collectionId][targetBrand];
+      }
+    }
+
+    // Hole Wert für verschachtelten Token
+    let nestedValue = nestedToken.valuesByMode[nestedModeId];
+
+    // Fallback
+    if (nestedValue === undefined || nestedValue === null) {
+      const availableModes = Object.keys(nestedToken.valuesByMode);
+      if (availableModes.length > 0) {
+        nestedModeId = availableModes[0];
+        nestedValue = nestedToken.valuesByMode[nestedModeId];
+      }
+    }
+
+    if (nestedValue === undefined || nestedValue === null) {
+      const nestedAliasPath = nestedToken.name
+        .split('/')
+        .filter(part => part && !part.startsWith('_'))
+        .join('.');
+      console.warn(`⚠️  Kein Wert verfügbar für verschachtelten Alias: ${nestedAliasPath}`);
+      return `UNRESOLVED_NO_VALUE__${nestedAliasPath.replace(/\./g, '_')}`;
+    }
+
+    // Wenn verschachtelter Wert auch ein Alias ist, rekursiv weiter
+    if (nestedValue.type === 'VARIABLE_ALIAS') {
+      // Rekursiv weiter (visited wird übergeben!)
+      const furtherNestedTokenId = nestedValue.id;
+      const furtherNestedToken = aliasLookup.get(furtherNestedTokenId);
+      if (furtherNestedToken) {
+        const furtherNestedAliasPath = furtherNestedToken.name
+          .split('/')
+          .filter(part => part && !part.startsWith('_'))
+          .join('.');
+        return resolveAliasValue(`{${furtherNestedAliasPath}}`, aliasLookup, nestedModeId, brandModeMap, targetBrand, visited);
+      }
+    }
+
+    // Konvertiere finalen verschachtelten Wert
+    const processedNestedValue = processDirectValue(nestedValue, nestedToken.resolvedType);
+    return processedNestedValue;
   }
 
   // Konvertiere den finalen Wert
