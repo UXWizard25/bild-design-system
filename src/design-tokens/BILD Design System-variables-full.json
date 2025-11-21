@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-11-20T22:16:54.288Z",
+  "lastModified": "2025-11-21T10:03:30.197Z",
   "collections": [
     {
       "id": "VariableCollectionId:470:1450",
@@ -2806,7 +2806,7 @@
         },
         {
           "id": "VariableID:20773:45",
-          "name": "Semantic/Core/coreColorTertiaryTESTTEST",
+          "name": "Semantic/Core/coreColorTertiaryVvPipeTEST",
           "description": "this is a test for the token pipeline",
           "key": "5e1dac97fe72696cbe9a9bc837803eceae8ac95d",
           "resolvedType": "COLOR",
