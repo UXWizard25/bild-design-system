@@ -63,6 +63,110 @@ Figma Tokens (JSON)
 
 ---
 
+## 📦 Installation
+
+### As NPM Package (Recommended)
+
+This package is published to **GitHub Packages** as `@uxwizard25/design-system-tokens`.
+
+#### 1. Configure NPM Registry
+
+Create or edit `.npmrc` in your project root:
+
+```bash
+@uxwizard25:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+#### 2. Authenticate with GitHub
+
+Create a Personal Access Token (PAT):
+
+1. Go to: https://github.com/settings/tokens
+2. Click **"Generate new token (classic)"**
+3. Name: `npm-packages-read`
+4. Scopes: Select `read:packages`
+5. Click **"Generate token"**
+6. Copy the token
+
+Add the token to your `.npmrc`:
+
+```bash
+//npm.pkg.github.com/:_authToken=ghp_YOUR_TOKEN_HERE
+```
+
+Or use an environment variable:
+
+```bash
+export GITHUB_TOKEN="ghp_YOUR_TOKEN_HERE"
+```
+
+#### 3. Install Package
+
+```bash
+# Latest version
+npm install @uxwizard25/design-system-tokens
+
+# Specific version
+npm install @uxwizard25/design-system-tokens@1.2.3
+
+# As dev dependency
+npm install --save-dev @uxwizard25/design-system-tokens
+```
+
+#### 4. Use in Your Project
+
+**CSS:**
+```css
+/* Import in your main CSS file */
+@import '@uxwizard25/design-system-tokens/css/semantic/bild/color/color-bild-light.css';
+```
+
+**SCSS:**
+```scss
+// Import in your SCSS file
+@import '@uxwizard25/design-system-tokens/scss/semantic/bild/color/color-bild-light';
+
+.my-button {
+  background-color: var(--color-brand-primary);
+}
+```
+
+**JavaScript/TypeScript:**
+```javascript
+// Import tokens as JS module
+import tokens from '@uxwizard25/design-system-tokens/json/semantic/bild/color/color-bild-light.json';
+
+console.log(tokens.color.brand.primary); // "#de0000"
+```
+
+**Webpack/Vite:**
+```javascript
+// In your main.js or main.ts
+import '@uxwizard25/design-system-tokens/css/semantic/bild/color/color-bild-light.css';
+```
+
+### Local Development
+
+If you want to develop the token pipeline itself:
+
+```bash
+# Clone repository
+git clone https://github.com/UXWizard25/vv-token-test-v3.git
+cd vv-token-test-v3
+
+# Install dependencies
+npm install
+
+# Build tokens
+npm run build
+
+# Watch mode (auto-rebuild on changes)
+npm run watch
+```
+
+---
+
 ## 🏗️ Token Architecture
 
 ### Layer Structure
