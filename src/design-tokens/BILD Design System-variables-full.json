@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-11-21T12:49:58.199Z",
+  "lastModified": "2025-11-21T13:46:27.990Z",
   "collections": [
     {
       "id": "VariableCollectionId:470:1450",
@@ -2491,8 +2491,8 @@
         "VariableID:17418:219",
         "VariableID:12684:164993",
         "VariableID:9694:16562",
-        "VariableID:12663:137504",
         "VariableID:1954:19186",
+        "VariableID:12663:137504",
         "VariableID:3810:3107",
         "VariableID:9598:13708",
         "VariableID:12672:137718",
@@ -2577,8 +2577,8 @@
         "VariableID:3746:1627",
         "VariableID:3746:1630",
         "VariableID:3765:1757",
-        "VariableID:3752:3402",
         "VariableID:3765:1758",
+        "VariableID:3752:3402",
         "VariableID:3752:3403",
         "VariableID:3746:1640",
         "VariableID:3746:1633",
@@ -3048,29 +3048,6 @@
           "variableCollectionId": "VariableCollectionId:588:1979"
         },
         {
-          "id": "VariableID:12663:137504",
-          "name": "Semantic/Attention/attentionColorMedium",
-          "description": "Medium-level attention tone representing stronger caution or intermediate alert states. Commonly applied in warning messages. Constant — identical in both modes.",
-          "key": "5f2974c023d82329ad7f3527cd4dcda2ea1052af",
-          "resolvedType": "COLOR",
-          "valuesByMode": {
-            "588:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2496:18724"
-            },
-            "592:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2496:18724"
-            }
-          },
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "hiddenFromPublishing": false,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:588:1979"
-        },
-        {
           "id": "VariableID:1954:19186",
           "name": "Semantic/Border/borderColorMediumContrast",
           "description": "Medium-emphasis border color for standard outlines, input fields, or separators that require visible yet non-dominant contrast.\nBehavior: Dynamic — adjusts to maintain legibility in Light and Dark themes.",
@@ -3090,6 +3067,29 @@
             "FRAME_FILL",
             "SHAPE_FILL",
             "STROKE_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:12663:137504",
+          "name": "Semantic/Attention/attentionColorMedium",
+          "description": "Medium-level attention tone representing stronger caution or intermediate alert states. Commonly applied in warning messages. Constant — identical in both modes.",
+          "key": "5f2974c023d82329ad7f3527cd4dcda2ea1052af",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2496:18724"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2496:18724"
+            }
+          },
+          "scopes": [
+            "ALL_SCOPES"
           ],
           "hiddenFromPublishing": false,
           "codeSyntax": {},
@@ -5101,29 +5101,6 @@
           "variableCollectionId": "VariableCollectionId:588:1979"
         },
         {
-          "id": "VariableID:3752:3402",
-          "name": "Component/Button/Secondary/buttonSecondaryLabelColor",
-          "description": "",
-          "key": "7a23671f857b8070493afecc3da8aba68fadd972",
-          "resolvedType": "COLOR",
-          "valuesByMode": {
-            "588:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:736:2683"
-            },
-            "592:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2881:1765"
-            }
-          },
-          "scopes": [
-            "TEXT_FILL"
-          ],
-          "hiddenFromPublishing": true,
-          "codeSyntax": {},
-          "variableCollectionId": "VariableCollectionId:588:1979"
-        },
-        {
           "id": "VariableID:3765:1758",
           "name": "Component/Button/Primary/buttonPrimarySuccessColorHover",
           "description": "",
@@ -5142,6 +5119,29 @@
           "scopes": [
             "FRAME_FILL",
             "SHAPE_FILL"
+          ],
+          "hiddenFromPublishing": true,
+          "codeSyntax": {},
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:3752:3402",
+          "name": "Component/Button/Secondary/buttonSecondaryLabelColor",
+          "description": "",
+          "key": "7a23671f857b8070493afecc3da8aba68fadd972",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:736:2683"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2881:1765"
+            }
+          },
+          "scopes": [
+            "TEXT_FILL"
           ],
           "hiddenFromPublishing": true,
           "codeSyntax": {},
