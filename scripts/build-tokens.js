@@ -288,24 +288,24 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
         }]
       },
 
-      // iOS - Swift (temporarily disabled due to transform issues with mixed types)
-      /*'ios-swift': {
-        transformGroup: 'ios-swift',
+      // iOS - Swift
+      'ios-swift': {
+        transforms: ['attribute/cti', 'name/ios-swift', 'color/UIColor'],
         buildPath: buildPathBase.replace('{{platform}}', 'ios'),
         files: [{
           destination: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}.swift`,
-          format: 'ios-swift/class.swift',
+          format: 'ios-swift/class',
           filter: tokenFilter,
-          className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
           options: {
+            className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
             outputReferences: false
           }
         }]
-      },*/
+      },
 
-      // Android - XML Resources (temporarily disabled due to transform issues with mixed types)
-      /*android: {
-        transformGroup: 'android',
+      // Android - XML Resources
+      android: {
+        transforms: ['attribute/cti', 'name/snake', 'color/hex8android'],
         buildPath: buildPathBase.replace('{{platform}}', 'android/res/values'),
         files: [{
           destination: `${finalOutputPrefix.replace(/-/g, '_')}_${outputMode}.xml`,
@@ -315,22 +315,22 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
             outputReferences: false
           }
         }]
-      },*/
+      },
 
-      // Flutter - Dart (temporarily disabled due to transform issues with mixed types)
-      /*flutter: {
-        transformGroup: 'flutter',
+      // Flutter - Dart
+      flutter: {
+        transforms: ['attribute/cti', 'name/flutter-dart', 'color/hex8flutter'],
         buildPath: buildPathBase.replace('{{platform}}', 'flutter'),
         files: [{
           destination: `${finalOutputPrefix.replace(/-/g, '_')}_${outputMode}.dart`,
-          format: 'flutter/class.dart',
+          format: 'flutter/class',
           filter: tokenFilter,
-          className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
           options: {
+            className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
             outputReferences: false
           }
         }]
-      }*/
+      }
     }
   };
 }

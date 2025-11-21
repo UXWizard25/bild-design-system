@@ -35,51 +35,69 @@ function determineTokenType(tokenName, collectionName, value) {
   const tokenPath = tokenName.toLowerCase();
   const collection = collectionName.toLowerCase();
 
+  // WICHTIG: Wenn der Wert ein String ist (außer Farben), setze keinen dimension type
+  if (typeof value === 'string' && !value.startsWith('#') && !value.startsWith('rgb')) {
+    // Font Families und andere Strings: kein $type
+    return { $type: null };
+  }
+
   // FontWeight: Bleibt unitless
   if (tokenPath.includes('fontweight') || tokenPath.includes('font-weight')) {
     return { $type: 'fontWeight' };
   }
 
-  // FontSize: Dimension (Style Dictionary fügt px hinzu)
+  // FontSize: Dimension (Style Dictionary fügt px hinzu) - nur wenn numerisch!
   if (tokenPath.includes('fontsize') || tokenPath.includes('font-size')) {
-    return { $type: 'dimension' };
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
   }
 
   // LineHeight: < 10 = unitless (relative), >= 10 = dimension (absolut)
   if (tokenPath.includes('lineheight') || tokenPath.includes('line-height')) {
     if (typeof value === 'number' && value < 10) {
       return { $type: 'number' };  // Relativer LineHeight-Wert
-    } else {
+    } else if (typeof value === 'number') {
       return { $type: 'dimension' };  // Absoluter LineHeight-Wert
     }
   }
 
-  // Size Tokens: Dimension
+  // Size Tokens: Dimension - nur wenn numerisch!
   if (collection.includes('size') || tokenPath.includes('size')) {
     // Ausnahme: wenn es FontSize ist, wurde es bereits oben behandelt
     if (!tokenPath.includes('fontsize') && !tokenPath.includes('font-size')) {
+      if (typeof value === 'number') {
+        return { $type: 'dimension' };
+      }
+    }
+  }
+
+  // Space/Spacing Tokens: Dimension - nur wenn numerisch!
+  if (collection.includes('space') || tokenPath.includes('space') || tokenPath.includes('spacing')) {
+    if (typeof value === 'number') {
       return { $type: 'dimension' };
     }
   }
 
-  // Space/Spacing Tokens: Dimension
-  if (collection.includes('space') || tokenPath.includes('space') || tokenPath.includes('spacing')) {
-    return { $type: 'dimension' };
-  }
-
-  // Breakpoints: Dimension
+  // Breakpoints: Dimension - nur wenn numerisch!
   if (collection.includes('breakpoint') || tokenPath.includes('breakpoint')) {
-    return { $type: 'dimension' };
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
   }
 
-  // Density: Dimension
+  // Density: Dimension - nur wenn numerisch!
   if (collection.includes('density') || tokenPath.includes('density')) {
-    return { $type: 'dimension' };
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
   }
 
-  // Width/Height: Dimension
+  // Width/Height: Dimension - nur wenn numerisch!
   if (tokenPath.includes('width') || tokenPath.includes('height')) {
-    return { $type: 'dimension' };
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
   }
 
   // Fallback: Keine spezielle Behandlung

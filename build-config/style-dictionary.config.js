@@ -106,6 +106,59 @@ const nameJsTransform = {
   }
 };
 
+/**
+ * Transform: Name für iOS Swift (PascalCase, behält Unterstriche in Dezimalzahlen)
+ * Verhindert Namenskollisionen wie size1_25x vs size12_5x -> beide würden Size125x
+ */
+const nameIosSwiftTransform = {
+  name: 'name/ios-swift',
+  type: 'name',
+  transform: (token) => {
+    // Join path segments with dashes
+    const name = token.path.join('-');
+
+    // Split by dash, capitalize first letter of each part
+    const parts = name.split('-');
+    const pascalCased = parts
+      .map(part => {
+        // Preserve underscores within parts (for decimals like 1_25x)
+        // Only capitalize the first letter
+        if (part.length === 0) return part;
+        return part.charAt(0).toUpperCase() + part.slice(1);
+      })
+      .join('');
+
+    return pascalCased;
+  }
+};
+
+/**
+ * Transform: Name für Flutter Dart (camelCase, behält Unterstriche in Dezimalzahlen)
+ */
+const nameFlutterDartTransform = {
+  name: 'name/flutter-dart',
+  type: 'name',
+  transform: (token) => {
+    // Join path segments with dashes
+    const name = token.path.join('-');
+
+    // Split by dash, capitalize first letter of each part except first
+    const parts = name.split('-');
+    const camelCased = parts
+      .map((part, index) => {
+        if (part.length === 0) return part;
+        // First part stays lowercase, rest get capitalized
+        if (index === 0) {
+          return part.toLowerCase();
+        }
+        return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+      })
+      .join('');
+
+    return camelCased;
+  }
+};
+
 // ============================================================================
 // CUSTOM FORMATS
 // ============================================================================
@@ -208,6 +261,93 @@ const jsonNestedFormat = ({ dictionary }) => {
   return JSON.stringify(dictionary.tokens, null, 2);
 };
 
+/**
+ * Format: iOS Swift Class mit korrekter className Handhabung
+ */
+const iosSwiftClassFormat = ({ dictionary, options, file }) => {
+  const className = options.className || file.className || 'StyleDictionary';
+
+  let output = `\n`;
+  output += `//\n`;
+  output += `// ${file.destination}\n`;
+  output += `//\n\n`;
+  output += `// Do not edit directly, this file was auto-generated.\n\n\n`;
+  output += `import UIKit\n\n`;
+  output += `public class ${className} {\n`;
+
+  dictionary.allTokens.forEach(token => {
+    const comment = token.comment || token.description;
+    if (comment) {
+      output += `    /** ${comment} */\n`;
+    }
+
+    // Determine the type based on token type
+    let valueOutput;
+    const value = token.value;
+    const type = token.$type || token.type;
+
+    if (type === 'color') {
+      valueOutput = value; // UIColor value from color/UIColor transform
+    } else if (typeof value === 'number') {
+      valueOutput = value;
+    } else if (typeof value === 'string') {
+      valueOutput = `"${value}"`;
+    } else {
+      valueOutput = value;
+    }
+
+    output += `    public static let ${token.name} = ${valueOutput}\n`;
+  });
+
+  output += `}\n`;
+
+  return output;
+};
+
+/**
+ * Format: Flutter Dart Class mit korrekter className Handhabung
+ */
+const flutterDartClassFormat = ({ dictionary, options, file }) => {
+  const className = options.className || file.className || 'StyleDictionary';
+
+  let output = `\n`;
+  output += `//\n`;
+  output += `// ${file.destination}\n`;
+  output += `//\n\n`;
+  output += `// Do not edit directly, this file was auto-generated.\n\n\n`;
+  output += `\nimport 'dart:ui';\n\n`;
+  output += `class ${className} {\n`;
+  output += `    ${className}._();\n\n`;
+
+  dictionary.allTokens.forEach(token => {
+    const comment = token.comment || token.description;
+    if (comment) {
+      output += `    /** ${comment} */\n`;
+    }
+
+    // Determine the type based on token type
+    let valueOutput;
+    const value = token.value;
+    const type = token.$type || token.type;
+
+    if (type === 'color') {
+      valueOutput = value; // Color value from color/hex8flutter transform
+    } else if (typeof value === 'number') {
+      valueOutput = value;
+    } else if (typeof value === 'string') {
+      valueOutput = `"${value}"`;
+    } else {
+      valueOutput = value;
+    }
+
+    output += `    static const ${token.name} = ${valueOutput};\n`;
+  });
+
+  output += `}\n`;
+
+  return output;
+};
+
 // ============================================================================
 // EXPORTS
 // ============================================================================
@@ -218,12 +358,16 @@ module.exports = {
     'custom/size/px': sizePxTransform,
     'size/rem': sizeRemTransform,
     'name/kebab': nameKebabTransform,
-    'name/js': nameJsTransform
+    'name/js': nameJsTransform,
+    'name/ios-swift': nameIosSwiftTransform,
+    'name/flutter-dart': nameFlutterDartTransform
   },
   formats: {
     'css/variables': cssVariablesFormat,
     'scss/variables': scssVariablesFormat,
     'javascript/es6': javascriptEs6Format,
-    'json/nested': jsonNestedFormat
+    'json/nested': jsonNestedFormat,
+    'ios-swift/class': iosSwiftClassFormat,
+    'flutter/class': flutterDartClassFormat
   }
 };
