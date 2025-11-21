@@ -6,7 +6,9 @@
       "coreColorTertiary": "#081729",
       "coreColorSecondaryConstant": "#ffffff",
       "coreColorTertiaryConstant": "#081729",
-      "coreColorTertiaryVvPipeTEST": "#476e94"
+      "coreColorTertiaryVvPipeTEST": "#476e94",
+      "npmTest": "#476e94",
+      "felipeTestColor": "#e8570a"
     },
     "Attention": {
       "accentColorPrimary": "#174582",
