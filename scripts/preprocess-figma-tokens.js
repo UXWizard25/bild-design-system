@@ -22,6 +22,93 @@ const TYPE_MAPPING = {
   'BOOLEAN': 'boolean'
 };
 
+/**
+ * Bestimmt den Token-Typ basierend auf Collection-Namen und Token-Pfad
+ * Style Dictionary nutzt den $type für transforms (z.B. um px hinzuzufügen)
+ *
+ * @param {string} tokenName - Der Token-Name/Pfad (z.B. "FontWeight/1000UltraFontWeight")
+ * @param {string} collectionName - Der Name der Collection (z.B. "_SizePrimitive", "_FontPrimitive")
+ * @param {any} value - Der Token-Wert
+ * @returns {object} - Objekt mit $type für Style Dictionary
+ */
+function determineTokenType(tokenName, collectionName, value) {
+  const tokenPath = tokenName.toLowerCase();
+  const collection = collectionName.toLowerCase();
+
+  // Color: Hex (#) oder RGBA/RGB Farben
+  if (typeof value === 'string' && (value.startsWith('#') || value.startsWith('rgb'))) {
+    return { $type: 'color' };
+  }
+
+  // WICHTIG: Wenn der Wert ein String ist (außer Farben), setze keinen dimension type
+  if (typeof value === 'string') {
+    // Font Families und andere Strings: kein $type
+    return { $type: null };
+  }
+
+  // FontWeight: Bleibt unitless
+  if (tokenPath.includes('fontweight') || tokenPath.includes('font-weight')) {
+    return { $type: 'fontWeight' };
+  }
+
+  // FontSize: Dimension (Style Dictionary fügt px hinzu) - nur wenn numerisch!
+  if (tokenPath.includes('fontsize') || tokenPath.includes('font-size')) {
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
+  }
+
+  // LineHeight: < 10 = unitless (relative), >= 10 = dimension (absolut)
+  if (tokenPath.includes('lineheight') || tokenPath.includes('line-height')) {
+    if (typeof value === 'number' && value < 10) {
+      return { $type: 'number' };  // Relativer LineHeight-Wert
+    } else if (typeof value === 'number') {
+      return { $type: 'dimension' };  // Absoluter LineHeight-Wert
+    }
+  }
+
+  // Size Tokens: Dimension - nur wenn numerisch!
+  if (collection.includes('size') || tokenPath.includes('size')) {
+    // Ausnahme: wenn es FontSize ist, wurde es bereits oben behandelt
+    if (!tokenPath.includes('fontsize') && !tokenPath.includes('font-size')) {
+      if (typeof value === 'number') {
+        return { $type: 'dimension' };
+      }
+    }
+  }
+
+  // Space/Spacing Tokens: Dimension - nur wenn numerisch!
+  if (collection.includes('space') || tokenPath.includes('space') || tokenPath.includes('spacing')) {
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
+  }
+
+  // Breakpoints: Dimension - nur wenn numerisch!
+  if (collection.includes('breakpoint') || tokenPath.includes('breakpoint')) {
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
+  }
+
+  // Density: Dimension - nur wenn numerisch!
+  if (collection.includes('density') || tokenPath.includes('density')) {
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
+  }
+
+  // Width/Height: Dimension - nur wenn numerisch!
+  if (tokenPath.includes('width') || tokenPath.includes('height')) {
+    if (typeof value === 'number') {
+      return { $type: 'dimension' };
+    }
+  }
+
+  // Fallback: Keine spezielle Behandlung
+  return { $type: null };
+}
+
 // Brand-spezifische Collections Konfiguration
 // Verwendet stabile Collection IDs aus Figma statt Namen für Robustheit bei Umbenennungen
 const BRAND_SPECIFIC_COLLECTIONS = {
@@ -365,11 +452,20 @@ function resolveAliasesInTokens(tokens, aliasLookup, modeId, brandModeMap, targe
 
     if (typeof token === 'object' && token !== null) {
       // Wenn es ein Token-Objekt mit value ist
-      if (token.value !== undefined) {
+      if (token.value !== undefined || token.$value !== undefined) {
+        const valueToResolve = token.$value !== undefined ? token.$value : token.value;
+
         // Prüfe, ob der Wert ein Alias ist
-        if (typeof token.value === 'string' && token.value.match(/^\{.+\}$/)) {
-          const resolvedValue = resolveAliasValue(token.value, aliasLookup, modeId, brandModeMap, targetBrand);
-          token.value = resolvedValue;
+        if (typeof valueToResolve === 'string' && valueToResolve.match(/^\{.+\}$/)) {
+          const resolvedValue = resolveAliasValue(valueToResolve, aliasLookup, modeId, brandModeMap, targetBrand);
+
+          // Update both value and $value
+          if (token.$value !== undefined) {
+            token.$value = resolvedValue;
+          }
+          if (token.value !== undefined) {
+            token.value = resolvedValue;
+          }
         }
       } else {
         // Rekursiv für verschachtelte Objekte
@@ -403,12 +499,17 @@ function processCollection(collection, aliasLookup) {
       const modeValue = variable.valuesByMode[mode.modeId];
 
       if (modeValue !== undefined) {
-        const processedValue = processValue(modeValue, variable.resolvedType, aliasLookup);
+        let processedValue = processValue(modeValue, variable.resolvedType, aliasLookup);
 
         if (processedValue !== null) {
+          // Behalte den Wert numerisch - Style Dictionary transforms fügen Units hinzu
+          // Nur den type anpassen wenn wir einen speziellen $type haben
+          let finalType = TYPE_MAPPING[variable.resolvedType] || 'other';
+
           const tokenObject = {
-            value: processedValue,
-            type: TYPE_MAPPING[variable.resolvedType] || 'other',
+            $value: processedValue,  // DTCG spec requires $value
+            value: processedValue,   // Keep for backward compatibility
+            type: finalType,
             $extensions: {
               'com.figma': {
                 collectionId: collection.id,  // Stabile ID
@@ -417,6 +518,18 @@ function processCollection(collection, aliasLookup) {
               }
             }
           };
+
+          // Setze $type basierend auf Figma's resolvedType und determineTokenType
+          // Für Farben: Nutze resolvedType, auch wenn der aktuelle Wert ein Alias ist
+          if (variable.resolvedType === 'COLOR') {
+            tokenObject.$type = 'color';
+          } else {
+            // Für andere Typen: Nutze determineTokenType basierend auf Wert und Name
+            const typeInfo = determineTokenType(variable.name, collection.name, processedValue);
+            if (typeInfo.$type) {
+              tokenObject.$type = typeInfo.$type;
+            }
+          }
 
           if (variable.description) {
             tokenObject.comment = variable.description;

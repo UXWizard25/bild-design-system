@@ -203,7 +203,7 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
     platforms: {
       // CSS Custom Properties
       css: {
-        transforms: ['attribute/cti', 'name/kebab', 'color/css'],
+        transforms: ['attribute/cti', 'name/kebab', 'color/css', 'custom/size/px'],
         buildPath: buildPathBase.replace('{{platform}}', 'css'),
         files: [{
           destination: `${finalOutputPrefix}-${outputMode}.css`,
@@ -221,7 +221,7 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
 
       // CSS Custom Properties (global root)
       'css-global': {
-        transforms: ['attribute/cti', 'name/kebab', 'color/css'],
+        transforms: ['attribute/cti', 'name/kebab', 'color/css', 'custom/size/px'],
         buildPath: buildPathBase.replace('{{platform}}', 'css'),
         files: [{
           destination: `${finalOutputPrefix}-${outputMode}-global.css`,
@@ -239,7 +239,7 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
 
       // SCSS Variables
       scss: {
-        transforms: ['attribute/cti', 'name/kebab', 'color/css'],
+        transforms: ['attribute/cti', 'name/kebab', 'color/css', 'custom/size/px'],
         buildPath: buildPathBase.replace('{{platform}}', 'scss'),
         files: [{
           destination: `${finalOutputPrefix}-${outputMode}.scss`,
@@ -256,7 +256,7 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
 
       // JavaScript ES6
       js: {
-        transforms: ['attribute/cti', 'name/js', 'color/css'],
+        transforms: ['attribute/cti', 'name/js', 'color/css', 'custom/size/px'],
         buildPath: buildPathBase.replace('{{platform}}', 'js'),
         files: [{
           destination: `${finalOutputPrefix}-${outputMode}.js`,
@@ -273,7 +273,7 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
 
       // JSON (strukturiert)
       json: {
-        transforms: ['attribute/cti', 'name/js', 'color/css'],
+        transforms: ['attribute/cti', 'name/js', 'color/css', 'custom/size/px'],
         buildPath: buildPathBase.replace('{{platform}}', 'json'),
         files: [{
           destination: `${finalOutputPrefix}-${outputMode}.json`,
@@ -290,14 +290,14 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
 
       // iOS - Swift
       'ios-swift': {
-        transformGroup: 'ios-swift',
+        transforms: ['custom/color/UIColor', 'attribute/cti', 'name/ios-swift'],
         buildPath: buildPathBase.replace('{{platform}}', 'ios'),
         files: [{
           destination: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}.swift`,
-          format: 'ios-swift/class.swift',
+          format: 'ios-swift/class',
           filter: tokenFilter,
-          className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
           options: {
+            className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
             outputReferences: false
           }
         }]
@@ -305,13 +305,12 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
 
       // Android - XML Resources
       android: {
-        transformGroup: 'android',
+        transforms: ['attribute/cti', 'name/snake', 'color/hex8android'],
         buildPath: buildPathBase.replace('{{platform}}', 'android/res/values'),
         files: [{
           destination: `${finalOutputPrefix.replace(/-/g, '_')}_${outputMode}.xml`,
           format: 'android/resources',
           filter: tokenFilter,
-          resourceType: 'color',
           options: {
             outputReferences: false
           }
@@ -320,14 +319,14 @@ function createStyleDictionaryConfig(collectionDir, modeName, config, brand = nu
 
       // Flutter - Dart
       flutter: {
-        transformGroup: 'flutter',
+        transforms: ['attribute/cti', 'name/flutter-dart', 'color/hex8flutter'],
         buildPath: buildPathBase.replace('{{platform}}', 'flutter'),
         files: [{
           destination: `${finalOutputPrefix.replace(/-/g, '_')}_${outputMode}.dart`,
-          format: 'flutter/class.dart',
+          format: 'flutter/class',
           filter: tokenFilter,
-          className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
           options: {
+            className: `${finalOutputPrefix.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}${outputMode.charAt(0).toUpperCase() + outputMode.slice(1)}`,
             outputReferences: false
           }
         }]
@@ -577,7 +576,9 @@ async function main() {
 
             console.log(`      ✅ ${config.outputPrefix}-${brand}-${outputMode}`);
           } catch (error) {
-            console.error(`      ❌ Fehler bei ${brand}-${modeName}:`, error.message);
+            console.error(`      ❌ Fehler bei ${brand}-${modeName}:`);
+            console.error(`         Message: ${error.message || 'undefined'}`);
+            console.error(`         Error: ${error}`);
           }
         }
       }
@@ -602,7 +603,9 @@ async function main() {
 
           console.log(`   ✅ ${config.outputPrefix}-${outputMode}`);
         } catch (error) {
-          console.error(`   ❌ Fehler bei ${modeName}:`, error.message);
+          console.error(`   ❌ Fehler bei ${modeName}:`);
+          console.error(`      Message: ${error.message || 'undefined'}`);
+          console.error(`      Error: ${error}`);
         }
       }
     }
