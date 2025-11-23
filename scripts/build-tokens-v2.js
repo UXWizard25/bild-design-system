@@ -522,6 +522,9 @@ async function main() {
   console.log(`   ├── ios/brands/{brand}/sizeclass-{compact|regular}/`);
   console.log(`   └── android/brands/{brand}/sizeclass-{compact|regular}/`);
   console.log('');
+
+  // Explizit success exit code
+  process.exit(0);
 }
 
 // Führe Script aus
