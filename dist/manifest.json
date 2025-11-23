@@ -1,0 +1,51 @@
+{
+  "generated": "2025-11-23T18:45:57.546Z",
+  "version": "2.0.0",
+  "statistics": {
+    "sharedPrimitives": {
+      "total": 4,
+      "successful": 4
+    },
+    "brandSpecific": {
+      "totalBuilds": 30,
+      "successfulBuilds": 30
+    },
+    "typographyTokens": {
+      "totalBuilds": 12,
+      "successfulBuilds": 12
+    },
+    "effectTokens": {
+      "totalBuilds": 6,
+      "successfulBuilds": 6
+    }
+  },
+  "structure": {
+    "brands": [
+      "bild",
+      "sportbild",
+      "advertorial"
+    ],
+    "breakpoints": [
+      "xs",
+      "sm",
+      "md",
+      "lg"
+    ],
+    "colorModes": [
+      "light",
+      "dark"
+    ],
+    "sizeClasses": [
+      "compact",
+      "regular"
+    ],
+    "outputPaths": {
+      "css": {
+        "shared": "css/shared/",
+        "brands": "css/brands/{brand}/"
+      },
+      "ios": "ios/brands/{brand}/sizeclass-{compact|regular}/",
+      "android": "android/brands/{brand}/sizeclass-{compact|regular}/"
+    }
+  }
+}
