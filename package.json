@@ -23,11 +23,11 @@
     "LICENSE"
   ],
   "scripts": {
-    "preprocess": "node scripts/preprocess-figma-tokens.js",
-    "build:tokens": "npm run preprocess && node scripts/build-tokens.js",
+    "preprocess": "node scripts/preprocess-plugin-tokens.js",
+    "build:tokens": "npm run preprocess && node scripts/build-tokens-v2.js",
     "build": "npm run build:tokens",
     "watch": "nodemon --watch src/design-tokens --ext json --exec npm run build:tokens",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist tokens",
     "prepublishOnly": "npm run build"
   },
   "repository": {
