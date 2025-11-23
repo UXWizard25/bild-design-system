@@ -73,11 +73,14 @@ jobs:
           if git diff --staged --quiet; then
             echo "✅ No changes in generated files"
           else
-            git commit -m "chore: update generated design tokens [skip ci]
+            git commit -m "$(cat <<'EOF'
+          chore: update generated design tokens [skip ci]
 
-Generated from Figma tokens
-Successful Builds: ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }}
-Commit: ${{ github.sha }}"
+          Generated from Figma tokens
+          Successful Builds: ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }}
+          Commit: ${{ github.sha }}
+          EOF
+          )"
 
             git push origin figma-tokens
             echo "✅ Generated files committed and pushed to figma-tokens branch"
