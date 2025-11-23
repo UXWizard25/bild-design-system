@@ -31,6 +31,63 @@ const SIZE_CLASS_MAPPING = {
 };
 
 /**
+ * Erstellt Plattform-Konfiguration für Standard-Token (Primitives, Brand-spezifisch, etc.)
+ */
+function createStandardPlatformConfig(buildPath, fileName) {
+  return {
+    css: {
+      transformGroup: 'css',
+      buildPath: `${buildPath}/`,
+      files: [{ destination: `${fileName}.css`, format: 'css/variables', options: { outputReferences: false } }]
+    },
+    scss: {
+      transformGroup: 'scss',
+      buildPath: `${DIST_DIR}/scss/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+      files: [{ destination: `${fileName}.scss`, format: 'scss/variables', options: { outputReferences: false } }]
+    },
+    js: {
+      transformGroup: 'js',
+      buildPath: `${DIST_DIR}/js/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+      files: [{ destination: `${fileName}.js`, format: 'javascript/es6', options: { outputReferences: false } }]
+    },
+    json: {
+      transformGroup: 'js',
+      buildPath: `${DIST_DIR}/json/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+      files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
+    },
+    ios: {
+      transformGroup: 'ios-swift',
+      buildPath: `${DIST_DIR}/ios/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+      files: [{
+        destination: `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`,
+        format: 'ios-swift/class.swift',
+        options: {
+          outputReferences: false,
+          className: fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')
+        }
+      }]
+    },
+    android: {
+      transformGroup: 'android',
+      buildPath: `${DIST_DIR}/android/res/values/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+      files: [{ destination: `${fileName}.xml`, format: 'android/resources', options: { outputReferences: false } }]
+    },
+    flutter: {
+      transformGroup: 'flutter',
+      buildPath: `${DIST_DIR}/flutter/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+      files: [{
+        destination: `${fileName}.dart`,
+        format: 'flutter/class.dart',
+        options: {
+          outputReferences: false,
+          className: fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')
+        }
+      }]
+    }
+  };
+}
+
+/**
  * Bereinigt das Dist-Verzeichnis
  */
 function cleanDist() {
@@ -78,16 +135,17 @@ function createTypographyConfig(brand, breakpoint) {
   }
 
   const brandName = brand.charAt(0).toUpperCase() + brand.slice(1);
+  const fileName = `typography-${breakpoint}`;
 
   return {
     source: [sourceFile],
     platforms: {
-      // CSS: 4 separate files per brand (xs, sm, md, lg)
+      // CSS: Custom format für Typography Classes
       css: {
         transforms: ['attribute/cti'],
         buildPath: `${DIST_DIR}/css/brands/${brand}/semantic/typography/`,
         files: [{
-          destination: `typography-${breakpoint}.css`,
+          destination: `${fileName}.css`,
           format: 'css/typography-classes',
           options: {
             brand: brandName,
@@ -96,7 +154,42 @@ function createTypographyConfig(brand, breakpoint) {
         }]
       },
 
-      // iOS: Nur compact (sm) und regular (lg)
+      // SCSS: Standard variables
+      scss: {
+        transformGroup: 'scss',
+        buildPath: `${DIST_DIR}/scss/brands/${brand}/semantic/typography/`,
+        files: [{ destination: `${fileName}.scss`, format: 'scss/variables', options: { outputReferences: false } }]
+      },
+
+      // JS: Standard ES6
+      js: {
+        transformGroup: 'js',
+        buildPath: `${DIST_DIR}/js/brands/${brand}/semantic/typography/`,
+        files: [{ destination: `${fileName}.js`, format: 'javascript/es6', options: { outputReferences: false } }]
+      },
+
+      // JSON: Standard JSON
+      json: {
+        transformGroup: 'js',
+        buildPath: `${DIST_DIR}/json/brands/${brand}/semantic/typography/`,
+        files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
+      },
+
+      // Flutter: Standard class
+      flutter: {
+        transformGroup: 'flutter',
+        buildPath: `${DIST_DIR}/flutter/brands/${brand}/semantic/typography/`,
+        files: [{
+          destination: `${fileName}.dart`,
+          format: 'flutter/class.dart',
+          options: {
+            outputReferences: false,
+            className: `Typography${brandName}${breakpoint.toUpperCase()}`
+          }
+        }]
+      },
+
+      // iOS: Nur compact (sm) und regular (lg) mit custom format
       ...(SIZE_CLASS_MAPPING[breakpoint] ? {
         ios: {
           transforms: ['attribute/cti'],
@@ -113,7 +206,7 @@ function createTypographyConfig(brand, breakpoint) {
         }
       } : {}),
 
-      // Android: Nur compact (sm) und regular (lg)
+      // Android: Nur compact (sm) und regular (lg) mit custom format
       ...(SIZE_CLASS_MAPPING[breakpoint] ? {
         android: {
           transforms: ['attribute/cti'],
@@ -143,20 +236,77 @@ function createEffectConfig(brand, colorMode) {
   }
 
   const brandName = brand.charAt(0).toUpperCase() + brand.slice(1);
+  const fileName = `effects-${colorMode}`;
 
   return {
     source: [sourceFile],
     platforms: {
-      // CSS
+      // CSS: Custom format für Effect Classes
       css: {
         transforms: ['attribute/cti'],
         buildPath: `${DIST_DIR}/css/brands/${brand}/semantic/effects/`,
         files: [{
-          destination: `effects-${colorMode}.css`,
+          destination: `${fileName}.css`,
           format: 'css/effect-classes',
           options: {
             brand: brandName,
             colorMode
+          }
+        }]
+      },
+
+      // SCSS: Standard variables
+      scss: {
+        transformGroup: 'scss',
+        buildPath: `${DIST_DIR}/scss/brands/${brand}/semantic/effects/`,
+        files: [{ destination: `${fileName}.scss`, format: 'scss/variables', options: { outputReferences: false } }]
+      },
+
+      // JS: Standard ES6
+      js: {
+        transformGroup: 'js',
+        buildPath: `${DIST_DIR}/js/brands/${brand}/semantic/effects/`,
+        files: [{ destination: `${fileName}.js`, format: 'javascript/es6', options: { outputReferences: false } }]
+      },
+
+      // JSON: Standard JSON
+      json: {
+        transformGroup: 'js',
+        buildPath: `${DIST_DIR}/json/brands/${brand}/semantic/effects/`,
+        files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
+      },
+
+      // iOS: Standard Swift class
+      ios: {
+        transformGroup: 'ios-swift',
+        buildPath: `${DIST_DIR}/ios/brands/${brand}/semantic/effects/`,
+        files: [{
+          destination: `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`,
+          format: 'ios-swift/class.swift',
+          options: {
+            outputReferences: false,
+            className: `Effects${brandName}${colorMode.charAt(0).toUpperCase() + colorMode.slice(1)}`
+          }
+        }]
+      },
+
+      // Android: Standard resources
+      android: {
+        transformGroup: 'android',
+        buildPath: `${DIST_DIR}/android/res/values/brands/${brand}/semantic/effects/`,
+        files: [{ destination: `${fileName}.xml`, format: 'android/resources', options: { outputReferences: false } }]
+      },
+
+      // Flutter: Standard class
+      flutter: {
+        transformGroup: 'flutter',
+        buildPath: `${DIST_DIR}/flutter/brands/${brand}/semantic/effects/`,
+        files: [{
+          destination: `${fileName}.dart`,
+          format: 'flutter/class.dart',
+          options: {
+            outputReferences: false,
+            className: `Effects${brandName}${colorMode.charAt(0).toUpperCase() + colorMode.slice(1)}`
           }
         }]
       }
@@ -185,17 +335,7 @@ async function buildSharedPrimitives() {
 
     const config = {
       source: [sourcePath],
-      platforms: {
-        css: {
-          transformGroup: 'css',
-          buildPath: `${DIST_DIR}/css/shared/`,
-          files: [{
-            destination: `${baseName}.css`,
-            format: 'css/variables',
-            options: { outputReferences: false }
-          }]
-        }
-      }
+      platforms: createStandardPlatformConfig(`${DIST_DIR}/css/shared`, baseName)
     };
 
     try {
@@ -234,13 +374,7 @@ async function buildBrandSpecificTokens() {
         const fileName = path.basename(file, '.json');
         const config = {
           source: [path.join(densityDir, file)],
-          platforms: {
-            css: {
-              transformGroup: 'css',
-              buildPath: `${DIST_DIR}/css/brands/${brand}/density/`,
-              files: [{ destination: `${fileName}.css`, format: 'css/variables', options: { outputReferences: false } }]
-            }
-          }
+          platforms: createStandardPlatformConfig(`${DIST_DIR}/css/brands/${brand}/density`, fileName)
         };
 
         try {
@@ -262,13 +396,7 @@ async function buildBrandSpecificTokens() {
         const fileName = path.basename(file, '.json');
         const config = {
           source: [path.join(breakpointsDir, file)],
-          platforms: {
-            css: {
-              transformGroup: 'css',
-              buildPath: `${DIST_DIR}/css/brands/${brand}/semantic/breakpoints/`,
-              files: [{ destination: `${fileName}.css`, format: 'css/variables', options: { outputReferences: false } }]
-            }
-          }
+          platforms: createStandardPlatformConfig(`${DIST_DIR}/css/brands/${brand}/semantic/breakpoints`, fileName)
         };
 
         try {
@@ -290,13 +418,7 @@ async function buildBrandSpecificTokens() {
         const fileName = path.basename(file, '.json');
         const config = {
           source: [path.join(colorDir, file)],
-          platforms: {
-            css: {
-              transformGroup: 'css',
-              buildPath: `${DIST_DIR}/css/brands/${brand}/semantic/color/`,
-              files: [{ destination: `${fileName}.css`, format: 'css/variables', options: { outputReferences: false } }]
-            }
-          }
+          platforms: createStandardPlatformConfig(`${DIST_DIR}/css/brands/${brand}/semantic/color`, fileName)
         };
 
         try {
@@ -318,13 +440,7 @@ async function buildBrandSpecificTokens() {
         const fileName = path.basename(file, '.json');
         const config = {
           source: [path.join(overridesDir, file)],
-          platforms: {
-            css: {
-              transformGroup: 'css',
-              buildPath: `${DIST_DIR}/css/brands/${brand}/overrides/`,
-              files: [{ destination: `${fileName}.css`, format: 'css/variables', options: { outputReferences: false } }]
-            }
-          }
+          platforms: createStandardPlatformConfig(`${DIST_DIR}/css/brands/${brand}/overrides`, fileName)
         };
 
         try {
@@ -442,8 +558,32 @@ function createManifest(stats) {
           shared: 'css/shared/',
           brands: 'css/brands/{brand}/'
         },
-        ios: 'ios/brands/{brand}/sizeclass-{compact|regular}/',
-        android: 'android/brands/{brand}/sizeclass-{compact|regular}/'
+        scss: {
+          shared: 'scss/shared/',
+          brands: 'scss/brands/{brand}/'
+        },
+        js: {
+          shared: 'js/shared/',
+          brands: 'js/brands/{brand}/'
+        },
+        json: {
+          shared: 'json/shared/',
+          brands: 'json/brands/{brand}/'
+        },
+        ios: {
+          shared: 'ios/shared/',
+          brands: 'ios/brands/{brand}/',
+          sizeClasses: 'ios/brands/{brand}/sizeclass-{compact|regular}/'
+        },
+        android: {
+          shared: 'android/res/values/shared/',
+          brands: 'android/res/values/brands/{brand}/',
+          sizeClasses: 'android/brands/{brand}/sizeclass-{compact|regular}/'
+        },
+        flutter: {
+          shared: 'flutter/shared/',
+          brands: 'flutter/brands/{brand}/'
+        }
       }
     }
   };
@@ -516,19 +656,24 @@ async function main() {
 
   console.log(`📁 Struktur:`);
   console.log(`   dist/`);
-  console.log(`   ├── css/`);
-  console.log(`   │   ├── shared/              (primitives)`);
-  console.log(`   │   └── brands/`);
-  console.log(`   │       └── {brand}/`);
-  console.log(`   │           ├── density/     (3 modes)`);
-  console.log(`   │           ├── overrides/   (brand mappings)`);
-  console.log(`   │           └── semantic/`);
-  console.log(`   │               ├── breakpoints/  (4 modes)`);
-  console.log(`   │               ├── color/        (2 modes)`);
-  console.log(`   │               ├── effects/      (2 color modes)`);
-  console.log(`   │               └── typography/   (4 breakpoints)`);
-  console.log(`   ├── ios/brands/{brand}/sizeclass-{compact|regular}/`);
-  console.log(`   └── android/brands/{brand}/sizeclass-{compact|regular}/`);
+  console.log(`   ├── css/        (CSS custom properties)`);
+  console.log(`   ├── scss/       (SCSS variables)`);
+  console.log(`   ├── js/         (JavaScript ES6)`);
+  console.log(`   ├── json/       (JSON)`);
+  console.log(`   ├── ios/        (Swift)`);
+  console.log(`   ├── android/    (Android XML resources)`);
+  console.log(`   └── flutter/    (Dart classes)`);
+  console.log(``);
+  console.log(`   Jede Plattform enthält:`);
+  console.log(`   - shared/              (primitives)`);
+  console.log(`   - brands/{brand}/`);
+  console.log(`       ├── density/       (3 modes)`);
+  console.log(`       ├── overrides/     (brand mappings)`);
+  console.log(`       └── semantic/`);
+  console.log(`           ├── breakpoints/  (4 modes)`);
+  console.log(`           ├── color/        (2 modes)`);
+  console.log(`           ├── effects/      (2 color modes)`);
+  console.log(`           └── typography/   (4 breakpoints)`);
   console.log('');
 
   // Explizit success exit code
