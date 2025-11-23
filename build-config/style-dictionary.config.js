@@ -435,6 +435,188 @@ const flutterDartClassFormat = ({ dictionary, options, file }) => {
 };
 
 // ============================================================================
+// COMPOSITE TOKEN FORMATS
+// ============================================================================
+
+/**
+ * Format: CSS Typography Classes
+ * Generiert fertige CSS-Klassen für Typography Composite Tokens
+ */
+const cssTypographyClassesFormat = ({ dictionary, options }) => {
+  const { brand, breakpoint } = options;
+
+  let output = `/**\n`;
+  output += ` * Typography Classes - ${brand} / ${breakpoint}\n`;
+  output += ` * Generiert am: ${new Date().toISOString()}\n`;
+  output += ` * Nicht manuell bearbeiten!\n`;
+  output += ` */\n\n`;
+
+  dictionary.allTokens.forEach(token => {
+    if (token.$type === 'typography' && token.$value) {
+      const style = token.$value;
+      const className = token.path.join('-');
+
+      if (token.comment) {
+        output += `/* ${token.comment} */\n`;
+      }
+
+      output += `.${className} {\n`;
+      if (style.fontFamily) output += `  font-family: ${style.fontFamily};\n`;
+      if (style.fontWeight) output += `  font-weight: ${style.fontWeight};\n`;
+      if (style.fontSize) output += `  font-size: ${style.fontSize};\n`;
+      if (style.lineHeight) output += `  line-height: ${style.lineHeight};\n`;
+      if (style.letterSpacing) output += `  letter-spacing: ${style.letterSpacing};\n`;
+      if (style.fontStyle && style.fontStyle !== 'null') output += `  font-style: ${style.fontStyle.toLowerCase()};\n`;
+      if (style.textCase && style.textCase !== 'ORIGINAL') {
+        output += `  text-transform: ${style.textCase.toLowerCase()};\n`;
+      }
+      if (style.textDecoration && style.textDecoration !== 'NONE') {
+        output += `  text-decoration: ${style.textDecoration.toLowerCase()};\n`;
+      }
+      output += `}\n\n`;
+    }
+  });
+
+  return output;
+};
+
+/**
+ * Format: CSS Effect Classes
+ * Generiert fertige CSS-Klassen für Effect Composite Tokens
+ */
+const cssEffectClassesFormat = ({ dictionary, options }) => {
+  const { brand, colorMode } = options;
+
+  let output = `/**\n`;
+  output += ` * Effect Classes - ${brand} / ${colorMode}\n`;
+  output += ` * Generiert am: ${new Date().toISOString()}\n`;
+  output += ` * Nicht manuell bearbeiten!\n`;
+  output += ` */\n\n`;
+
+  dictionary.allTokens.forEach(token => {
+    if (token.$type === 'shadow' && Array.isArray(token.$value)) {
+      const className = token.path.join('-');
+
+      if (token.comment) {
+        output += `/* ${token.comment} */\n`;
+      }
+
+      output += `.${className} {\n`;
+
+      // Convert to CSS box-shadow
+      const shadows = token.$value.map(effect => {
+        if (effect.type === 'dropShadow') {
+          return `${effect.offsetX}px ${effect.offsetY}px ${effect.radius}px ${effect.spread}px ${effect.color}`;
+        }
+        return null;
+      }).filter(Boolean);
+
+      if (shadows.length > 0) {
+        output += `  box-shadow: ${shadows.join(', ')};\n`;
+      }
+
+      output += `}\n\n`;
+    }
+  });
+
+  return output;
+};
+
+/**
+ * Format: iOS Swift Typography Extension
+ */
+const iosSwiftTypographyFormat = ({ dictionary, options }) => {
+  const { brand, breakpoint, sizeClass } = options;
+  const className = `Typography${brand}${sizeClass || breakpoint}`;
+
+  let output = `\n`;
+  output += `//\n`;
+  output += `// Typography - ${brand} / ${sizeClass || breakpoint}\n`;
+  output += `//\n\n`;
+  output += `// Do not edit directly, this file was auto-generated.\n\n`;
+  output += `import UIKit\n\n`;
+  output += `extension UIFont {\n`;
+  output += `    struct ${className} {\n`;
+
+  dictionary.allTokens.forEach(token => {
+    if (token.$type === 'typography' && token.$value) {
+      const style = token.$value;
+      const propName = token.path.join('_');
+
+      if (token.comment) {
+        output += `        /** ${token.comment} */\n`;
+      }
+
+      const family = style.fontFamily || 'System';
+      const size = parseFloat(style.fontSize) || 16;
+      const weight = style.fontWeight || 400;
+
+      // Map weight to UIFont.Weight
+      let weightString = 'regular';
+      if (weight >= 900) weightString = 'black';
+      else if (weight >= 800) weightString = 'heavy';
+      else if (weight >= 700) weightString = 'bold';
+      else if (weight >= 600) weightString = 'semibold';
+      else if (weight >= 500) weightString = 'medium';
+      else if (weight >= 300) weightString = 'light';
+      else if (weight >= 200) weightString = 'ultraLight';
+      else if (weight >= 100) weightString = 'thin';
+
+      output += `        static let ${propName} = UIFont(name: "${family}", size: ${size})?.withWeight(.${weightString}) ?? UIFont.systemFont(ofSize: ${size}, weight: .${weightString})\n`;
+    }
+  });
+
+  output += `    }\n`;
+  output += `}\n`;
+
+  return output;
+};
+
+/**
+ * Format: Android XML Typography Styles
+ */
+const androidXmlTypographyFormat = ({ dictionary, options }) => {
+  const { brand, breakpoint } = options;
+
+  let output = `<?xml version="1.0" encoding="utf-8"?>\n`;
+  output += `<!--\n`;
+  output += `  Typography Styles - ${brand} / ${breakpoint}\n`;
+  output += `  Do not edit directly, this file was auto-generated.\n`;
+  output += `-->\n`;
+  output += `<resources>\n`;
+
+  dictionary.allTokens.forEach(token => {
+    if (token.$type === 'typography' && token.$value) {
+      const style = token.$value;
+      const styleName = token.path.join('_');
+
+      output += `    <style name="${styleName}">\n`;
+      if (style.fontFamily) output += `        <item name="android:fontFamily">${style.fontFamily}</item>\n`;
+      if (style.fontSize) {
+        const size = parseFloat(style.fontSize);
+        output += `        <item name="android:textSize">${size}sp</item>\n`;
+      }
+      if (style.fontWeight && style.fontWeight >= 700) {
+        output += `        <item name="android:textStyle">bold</item>\n`;
+      }
+      if (style.lineHeight) {
+        const lineHeight = parseFloat(style.lineHeight);
+        output += `        <item name="android:lineHeight">${lineHeight}sp</item>\n`;
+      }
+      if (style.letterSpacing) {
+        const letterSpacing = parseFloat(style.letterSpacing);
+        output += `        <item name="android:letterSpacing">${letterSpacing / 16}</item>\n`;
+      }
+      output += `    </style>\n`;
+    }
+  });
+
+  output += `</resources>\n`;
+
+  return output;
+};
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 
@@ -450,11 +632,18 @@ module.exports = {
     'name/flutter-dart': nameFlutterDartTransform
   },
   formats: {
+    // Classic Token Formats
     'css/variables': cssVariablesFormat,
     'scss/variables': scssVariablesFormat,
     'javascript/es6': javascriptEs6Format,
     'json/nested': jsonNestedFormat,
     'ios-swift/class': iosSwiftClassFormat,
-    'flutter/class': flutterDartClassFormat
+    'flutter/class': flutterDartClassFormat,
+
+    // Composite Token Formats
+    'css/typography-classes': cssTypographyClassesFormat,
+    'css/effect-classes': cssEffectClassesFormat,
+    'ios-swift/typography': iosSwiftTypographyFormat,
+    'android/typography-styles': androidXmlTypographyFormat
   }
 };
