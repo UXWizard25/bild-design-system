@@ -59,7 +59,31 @@ jobs:
 
           echo "✅ Build successful: $SUCCESSFUL_BUILDS/$TOTAL_BUILDS"
 
-      # 5. Extrahiere geänderte Token-Dateien
+      # 5. Commit generierte Dateien zurück in Branch
+      - name: Commit Generated Files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Füge generierte Dateien hinzu (dist/ ist in .gitignore, daher -f)
+          git add dist/ -f
+          git add tokens/ -f 2>/dev/null || true
+
+          # Prüfe ob es Änderungen gibt
+          if git diff --staged --quiet; then
+            echo "✅ No changes in generated files"
+          else
+            git commit -m "chore: update generated design tokens [skip ci]
+
+Generated from Figma tokens
+Successful Builds: ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }}
+Commit: ${{ github.sha }}"
+
+            git push origin figma-tokens
+            echo "✅ Generated files committed and pushed to figma-tokens branch"
+          fi
+
+      # 6. Extrahiere geänderte Token-Dateien
       - name: Get Changed Token Files
         id: changes
         run: |
@@ -76,7 +100,7 @@ jobs:
           CHANGE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
           echo "change_count=$CHANGE_COUNT" >> $GITHUB_OUTPUT
 
-      # 6. Prüfe ob PR bereits existiert
+      # 7. Prüfe ob PR bereits existiert
       - name: Check for Existing PR
         id: check_pr
         run: |
@@ -93,7 +117,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 7. Erstelle oder Update Pull Request
+      # 8. Erstelle oder Update Pull Request
       - name: Create or Update Pull Request
         run: |
           if [ "${{ steps.check_pr.outputs.exists }}" == "true" ]; then
@@ -174,7 +198,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 8. Build Summary erstellen
+      # 9. Build Summary erstellen
       - name: Create Build Summary
         run: |
           echo "## 🎨 Design Token Build Summary" >> $GITHUB_STEP_SUMMARY
@@ -196,7 +220,7 @@ jobs:
           echo "2. Check the token changes" >> $GITHUB_STEP_SUMMARY
           echo "3. Merge the PR to publish package" >> $GITHUB_STEP_SUMMARY
 
-      # 9. Bei Fehler benachrichtigen
+      # 10. Bei Fehler benachrichtigen
       - name: Notify on Failure
         if: failure()
         run: |

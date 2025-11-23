@@ -144,15 +144,16 @@ jobs:
           echo "- **JavaScript Files:** $(find dist -name '*.js' | wc -l)" >> $GITHUB_STEP_SUMMARY
           echo "- **JSON Files:** $(find dist -name '*.json' | wc -l)" >> $GITHUB_STEP_SUMMARY
 
-      # 8. Optional: Commit generierte Dateien zurück ins Repo
+      # 8. Commit generierte Dateien zurück ins Repo
       - name: Commit Generated Files
-        if: github.event.inputs.commit_outputs == 'true' || (github.event_name == 'push' && contains(github.ref, 'main'))
+        if: github.event.inputs.commit_outputs == 'true' || (github.event_name == 'push' && (contains(github.ref, 'main') || contains(github.ref, 'claude/') || contains(github.ref, 'figma-tokens')))
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Füge generierte Dateien hinzu
-          git add dist/ -f 2>/dev/null || true
+          # Füge generierte Dateien hinzu (dist/ und tokens/ sind in .gitignore, daher -f)
+          git add dist/ -f
+          git add tokens/ -f 2>/dev/null || true
 
           # Prüfe ob es Änderungen gibt
           if git diff --staged --quiet; then
