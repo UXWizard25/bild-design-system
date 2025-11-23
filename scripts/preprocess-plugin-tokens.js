@@ -283,55 +283,251 @@ function setNestedPath(obj, pathArray, value) {
 }
 
 /**
- * Verarbeitet klassische Token-Collections
+ * Verarbeitet Shared Primitive Collections (kein Brand-Kontext)
+ * Output: shared/{collectionName}.json
  */
-function processClassicTokens(collections, aliasLookup) {
-  console.log('\n📋 Verarbeite klassische Token-Collections:\n');
+function processSharedPrimitives(collections, aliasLookup) {
+  console.log('\n📦 Verarbeite Shared Primitives:\n');
 
-  const collectionOutputs = {};
+  const sharedCollectionIds = [
+    COLLECTION_IDS.FONT_PRIMITIVE,
+    COLLECTION_IDS.COLOR_PRIMITIVE,
+    COLLECTION_IDS.SIZE_PRIMITIVE,
+    COLLECTION_IDS.SPACE_PRIMITIVE
+  ];
+
+  const outputs = {};
 
   collections.forEach(collection => {
-    console.log(`  📦 ${collection.name}`);
+    if (!sharedCollectionIds.includes(collection.id)) return;
 
-    const results = {};
-    const modeMetadata = {};
+    console.log(`  ✅ ${collection.name}`);
 
-    // Initialisiere Objekte für jeden Mode
-    collection.modes.forEach(mode => {
-      results[mode.name] = {};
-      modeMetadata[mode.name] = mode.modeId;
-    });
+    const tokens = {};
 
-    // Verarbeite jede Variable
+    // Shared primitives haben nur einen Mode ("Value")
+    const mode = collection.modes[0];
+    if (!mode) return;
+
     collection.variables.forEach(variable => {
       const pathArray = variable.name.split('/').filter(part => part);
+      const modeValue = variable.valuesByMode[mode.modeId];
 
+      if (modeValue !== undefined && modeValue !== null) {
+        let processedValue;
+
+        if (modeValue.type === 'VARIABLE_ALIAS') {
+          processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, {}, new Set());
+        } else {
+          processedValue = processDirectValue(modeValue, variable.resolvedType, variable.name);
+        }
+
+        if (processedValue !== null) {
+          const tokenObject = {
+            $value: processedValue,
+            value: processedValue,
+            type: variable.resolvedType.toLowerCase(),
+            $extensions: {
+              'com.figma': {
+                collectionId: collection.id,
+                collectionName: collection.name,
+                variableId: variable.id
+              }
+            }
+          };
+
+          if (variable.resolvedType === 'COLOR') {
+            tokenObject.$type = 'color';
+          } else {
+            const typeInfo = determineTokenType(variable.name, collection.name, processedValue);
+            if (typeInfo.$type) {
+              tokenObject.$type = typeInfo.$type;
+            }
+          }
+
+          if (variable.description) {
+            tokenObject.comment = variable.description;
+          }
+
+          setNestedPath(tokens, pathArray, tokenObject);
+        }
+      }
+    });
+
+    const cleanName = collection.name
+      .replace(/^_/, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+
+    outputs[cleanName] = tokens;
+  });
+
+  return outputs;
+}
+
+/**
+ * Verarbeitet Brand-spezifische Token Collections
+ * Output: brands/{brand}/{category}/{collectionName}-{mode}.json
+ */
+function processBrandSpecificTokens(collections, aliasLookup) {
+  console.log('\n🏷️  Verarbeite Brand-spezifische Tokens:\n');
+
+  const brandCollectionIds = [
+    COLLECTION_IDS.DENSITY,
+    COLLECTION_IDS.BREAKPOINT_MODE,
+    COLLECTION_IDS.COLOR_MODE
+  ];
+
+  const outputs = {
+    bild: { density: {}, breakpoints: {}, color: {} },
+    sportbild: { density: {}, breakpoints: {}, color: {} },
+    advertorial: { density: {}, breakpoints: {}, color: {} }
+  };
+
+  collections.forEach(collection => {
+    if (!brandCollectionIds.includes(collection.id)) return;
+
+    console.log(`  📦 ${collection.name}`);
+
+    // Bestimme Kategorie
+    let category;
+    if (collection.id === COLLECTION_IDS.DENSITY) category = 'density';
+    else if (collection.id === COLLECTION_IDS.BREAKPOINT_MODE) category = 'breakpoints';
+    else if (collection.id === COLLECTION_IDS.COLOR_MODE) category = 'color';
+
+    // Für jede Brand
+    Object.entries(BRANDS).forEach(([brandName, brandModeId]) => {
+      const brandKey = brandName.toLowerCase();
+
+      // Für jeden Mode in dieser Collection
       collection.modes.forEach(mode => {
+        const tokens = {};
+
+        collection.variables.forEach(variable => {
+          const pathArray = variable.name.split('/').filter(part => part);
+          const modeValue = variable.valuesByMode[mode.modeId];
+
+          if (modeValue !== undefined && modeValue !== null) {
+            let processedValue;
+
+            if (modeValue.type === 'VARIABLE_ALIAS') {
+              // Context mit Brand + Mode
+              const context = {
+                brandModeId,
+                breakpointModeId: collection.id === COLLECTION_IDS.BREAKPOINT_MODE ? mode.modeId : undefined,
+                colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined
+              };
+
+              if (collection.id === COLLECTION_IDS.DENSITY) {
+                context.breakpointModeId = mode.modeId;
+              }
+
+              processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set());
+            } else {
+              processedValue = processDirectValue(modeValue, variable.resolvedType, variable.name);
+            }
+
+            if (processedValue !== null) {
+              const tokenObject = {
+                $value: processedValue,
+                value: processedValue,
+                type: variable.resolvedType.toLowerCase(),
+                $extensions: {
+                  'com.figma': {
+                    collectionId: collection.id,
+                    collectionName: collection.name,
+                    variableId: variable.id
+                  }
+                }
+              };
+
+              if (variable.resolvedType === 'COLOR') {
+                tokenObject.$type = 'color';
+              } else {
+                const typeInfo = determineTokenType(variable.name, collection.name, processedValue);
+                if (typeInfo.$type) {
+                  tokenObject.$type = typeInfo.$type;
+                }
+              }
+
+              if (variable.description) {
+                tokenObject.comment = variable.description;
+              }
+
+              setNestedPath(tokens, pathArray, tokenObject);
+            }
+          }
+        });
+
+        // Speichere brand-spezifischen Output
+        const cleanModeName = mode.name
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[()]/g, '')
+          .replace(/[^a-z0-9-]/g, '-')
+          .replace(/--+/g, '-')
+          .replace(/^-|-$/g, '');
+
+        outputs[brandKey][category][cleanModeName] = tokens;
+      });
+
+      console.log(`     ✅ ${brandKey} (${Object.keys(outputs[brandKey][category]).length} modes)`);
+    });
+  });
+
+  return outputs;
+}
+
+/**
+ * Verarbeitet Brand Overrides (BrandTokenMapping, BrandColorMapping)
+ * Output: brands/{brand}/overrides/{collectionName}.json
+ */
+function processBrandOverrides(collections, aliasLookup) {
+  console.log('\n🎨 Verarbeite Brand Overrides:\n');
+
+  const overrideCollectionIds = [
+    COLLECTION_IDS.BRAND_TOKEN_MAPPING,
+    COLLECTION_IDS.BRAND_COLOR_MAPPING
+  ];
+
+  const outputs = {
+    bild: {},
+    sportbild: {},
+    advertorial: {}
+  };
+
+  collections.forEach(collection => {
+    if (!overrideCollectionIds.includes(collection.id)) return;
+
+    console.log(`  📦 ${collection.name}`);
+
+    // Jeder Mode ist ein Brand - matche nach Mode-Namen statt Mode-ID
+    Object.entries(BRANDS).forEach(([brandName, brandModeId]) => {
+      const brandKey = brandName.toLowerCase();
+
+      // Finde Mode nach Namen (nicht ID), da jede Collection eigene Mode-IDs hat
+      const mode = collection.modes.find(m => m.name === brandName);
+
+      if (!mode) {
+        // Brand existiert in dieser Collection nicht (z.B. Advertorial in BrandColorMapping)
+        return;
+      }
+
+      const tokens = {};
+
+      collection.variables.forEach(variable => {
+        const pathArray = variable.name.split('/').filter(part => part);
         const modeValue = variable.valuesByMode[mode.modeId];
 
         if (modeValue !== undefined && modeValue !== null) {
           let processedValue;
 
-          // Wenn Alias, löse vollständig auf (NICHT Style Dictionary Syntax)
           if (modeValue.type === 'VARIABLE_ALIAS') {
-            // Bestimme Context basierend auf Collection
-            let context = {};
-
-            if (collection.id === COLLECTION_IDS.COLOR_MODE) {
-              context.colorModeModeId = mode.modeId;
-            } else if (collection.id === COLLECTION_IDS.BREAKPOINT_MODE) {
-              context.breakpointModeId = mode.modeId;
-            } else if (collection.id === COLLECTION_IDS.BRAND_TOKEN_MAPPING ||
-                       collection.id === COLLECTION_IDS.BRAND_COLOR_MAPPING) {
-              context.brandModeId = mode.modeId;
-            } else if (collection.id === COLLECTION_IDS.DENSITY) {
-              context.breakpointModeId = mode.modeId; // Density nutzt Breakpoints
-            }
-
-            // Vollständige rekursive Auflösung
+            // Verwende die GLOBALE Brand-Mode-ID (aus BRANDS) für Alias-Resolution
+            // da Aliase auf andere Collections (z.B. BrandTokenMapping) verweisen können
+            const context = { brandModeId };
             processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set());
           } else {
-            // Direkter Wert
             processedValue = processDirectValue(modeValue, variable.resolvedType, variable.name);
           }
 
@@ -349,7 +545,6 @@ function processClassicTokens(collections, aliasLookup) {
               }
             };
 
-            // Setze $type
             if (variable.resolvedType === 'COLOR') {
               tokenObject.$type = 'color';
             } else {
@@ -363,20 +558,22 @@ function processClassicTokens(collections, aliasLookup) {
               tokenObject.comment = variable.description;
             }
 
-            setNestedPath(results[mode.name], pathArray, tokenObject);
+            setNestedPath(tokens, pathArray, tokenObject);
           }
         }
       });
+
+      const cleanCollectionName = collection.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+
+      outputs[brandKey][cleanCollectionName] = tokens;
     });
 
-    collectionOutputs[collection.name] = {
-      results,
-      modeMetadata,
-      collectionId: collection.id
-    };
+    console.log(`     ✅ All brands processed`);
   });
 
-  return collectionOutputs;
+  return outputs;
 }
 
 /**
@@ -558,36 +755,70 @@ function processEffectTokens(effectStyles, aliasLookup) {
 }
 
 /**
- * Speichert verarbeitete Tokens
+ * Speichert Shared Primitives
  */
-function saveClassicTokens(collectionOutputs, aliasLookup) {
-  console.log('\n💾 Speichere klassische Tokens:\n');
+function saveSharedPrimitives(sharedOutputs) {
+  console.log('\n💾 Speichere Shared Primitives:\n');
 
-  Object.entries(collectionOutputs).forEach(([collectionName, data]) => {
-    const cleanName = collectionName
-      .replace(/^_/, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-')
-      .replace(/--+/g, '-')
-      .replace(/^-|-$/g, '');
+  const sharedDir = path.join(OUTPUT_DIR, 'shared');
+  if (!fs.existsSync(sharedDir)) {
+    fs.mkdirSync(sharedDir, { recursive: true });
+  }
 
-    const collectionDir = path.join(OUTPUT_DIR, 'classic', cleanName);
-    if (!fs.existsSync(collectionDir)) {
-      fs.mkdirSync(collectionDir, { recursive: true });
+  Object.entries(sharedOutputs).forEach(([collectionName, tokens]) => {
+    const filePath = path.join(sharedDir, `${collectionName}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+    console.log(`  ✅ ${path.relative(process.cwd(), filePath)}`);
+  });
+}
+
+/**
+ * Speichert Brand-spezifische Tokens
+ */
+function saveBrandSpecificTokens(brandOutputs) {
+  console.log('\n💾 Speichere Brand-spezifische Tokens:\n');
+
+  Object.entries(brandOutputs).forEach(([brand, categories]) => {
+    console.log(`  🏷️  ${brand}:`);
+
+    Object.entries(categories).forEach(([category, modes]) => {
+      const categoryDir = path.join(OUTPUT_DIR, 'brands', brand, category);
+      if (!fs.existsSync(categoryDir)) {
+        fs.mkdirSync(categoryDir, { recursive: true });
+      }
+
+      Object.entries(modes).forEach(([modeName, tokens]) => {
+        const collectionPrefix = category === 'density' ? 'density' :
+                                  category === 'breakpoints' ? 'breakpoint' :
+                                  'colormode';
+        const fileName = `${collectionPrefix}-${modeName}.json`;
+        const filePath = path.join(categoryDir, fileName);
+        fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+        console.log(`     ✅ ${category}/${fileName}`);
+      });
+    });
+  });
+}
+
+/**
+ * Speichert Brand Overrides
+ */
+function saveBrandOverrides(overrideOutputs) {
+  console.log('\n💾 Speichere Brand Overrides:\n');
+
+  Object.entries(overrideOutputs).forEach(([brand, collections]) => {
+    console.log(`  🏷️  ${brand}: (${Object.keys(collections).length} collections)`);
+
+    const overridesDir = path.join(OUTPUT_DIR, 'brands', brand, 'overrides');
+    if (!fs.existsSync(overridesDir)) {
+      fs.mkdirSync(overridesDir, { recursive: true });
     }
 
-    Object.entries(data.results).forEach(([modeName, tokens]) => {
-      const fileName = modeName
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[()]/g, '')
-        .replace(/[^a-z0-9-]/g, '-')
-        .replace(/--+/g, '-')
-        .replace(/^-|-$/g, '');
-
-      const filePath = path.join(collectionDir, `${fileName}.json`);
+    Object.entries(collections).forEach(([collectionName, tokens]) => {
+      const fileName = `${collectionName}.json`;
+      const filePath = path.join(overridesDir, fileName);
       fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
-      console.log(`  ✅ ${path.relative(process.cwd(), filePath)}`);
+      console.log(`     ✅ overrides/${fileName}`);
     });
   });
 }
@@ -598,17 +829,31 @@ function saveClassicTokens(collectionOutputs, aliasLookup) {
 function saveTypographyTokens(typographyOutputs) {
   console.log('\n💾 Speichere Typography Tokens:\n');
 
-  const typographyDir = path.join(OUTPUT_DIR, 'typography');
-  if (!fs.existsSync(typographyDir)) {
-    fs.mkdirSync(typographyDir, { recursive: true });
-  }
-
+  // Gruppiere nach Brand
+  const byBrand = {};
   Object.entries(typographyOutputs).forEach(([key, data]) => {
-    const fileName = `${key}.json`;
-    const filePath = path.join(typographyDir, fileName);
+    const brand = data.brand.toLowerCase();
+    const breakpoint = data.breakpoint;
 
-    fs.writeFileSync(filePath, JSON.stringify(data.tokens, null, 2), 'utf8');
-    console.log(`  ✅ ${path.relative(process.cwd(), filePath)}`);
+    if (!byBrand[brand]) byBrand[brand] = {};
+    byBrand[brand][breakpoint] = data.tokens;
+  });
+
+  // Speichere in brands/{brand}/semantic/typography/
+  Object.entries(byBrand).forEach(([brand, breakpoints]) => {
+    console.log(`  🏷️  ${brand}:`);
+
+    const typographyDir = path.join(OUTPUT_DIR, 'brands', brand, 'semantic', 'typography');
+    if (!fs.existsSync(typographyDir)) {
+      fs.mkdirSync(typographyDir, { recursive: true });
+    }
+
+    Object.entries(breakpoints).forEach(([breakpoint, tokens]) => {
+      const fileName = `typography-${breakpoint}.json`;
+      const filePath = path.join(typographyDir, fileName);
+      fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+      console.log(`     ✅ semantic/typography/${fileName}`);
+    });
   });
 }
 
@@ -618,17 +863,31 @@ function saveTypographyTokens(typographyOutputs) {
 function saveEffectTokens(effectOutputs) {
   console.log('\n💾 Speichere Effect Tokens:\n');
 
-  const effectsDir = path.join(OUTPUT_DIR, 'effects');
-  if (!fs.existsSync(effectsDir)) {
-    fs.mkdirSync(effectsDir, { recursive: true });
-  }
-
+  // Gruppiere nach Brand
+  const byBrand = {};
   Object.entries(effectOutputs).forEach(([key, data]) => {
-    const fileName = `${key}.json`;
-    const filePath = path.join(effectsDir, fileName);
+    const brand = data.brand.toLowerCase();
+    const colorMode = data.colorMode;
 
-    fs.writeFileSync(filePath, JSON.stringify(data.tokens, null, 2), 'utf8');
-    console.log(`  ✅ ${path.relative(process.cwd(), filePath)}`);
+    if (!byBrand[brand]) byBrand[brand] = {};
+    byBrand[brand][colorMode] = data.tokens;
+  });
+
+  // Speichere in brands/{brand}/semantic/effects/
+  Object.entries(byBrand).forEach(([brand, colorModes]) => {
+    console.log(`  🏷️  ${brand}:`);
+
+    const effectsDir = path.join(OUTPUT_DIR, 'brands', brand, 'semantic', 'effects');
+    if (!fs.existsSync(effectsDir)) {
+      fs.mkdirSync(effectsDir, { recursive: true });
+    }
+
+    Object.entries(colorModes).forEach(([colorMode, tokens]) => {
+      const fileName = `effects-${colorMode}.json`;
+      const filePath = path.join(effectsDir, fileName);
+      fs.writeFileSync(filePath, JSON.stringify(tokens, null, 2), 'utf8');
+      console.log(`     ✅ semantic/effects/${fileName}`);
+    });
   });
 }
 
@@ -653,21 +912,27 @@ function main() {
   console.log(`   ℹ️  ${aliasLookup.size} Variablen indexiert`);
 
   // Verarbeite klassische Tokens
-  const classicTokens = processClassicTokens(pluginData.collections, aliasLookup);
+  const sharedPrimitives = processSharedPrimitives(pluginData.collections, aliasLookup);
+  const brandSpecificTokens = processBrandSpecificTokens(pluginData.collections, aliasLookup);
+  const brandOverrides = processBrandOverrides(pluginData.collections, aliasLookup);
 
   // Verarbeite Composite Tokens
   const typographyTokens = processTypographyTokens(pluginData.textStyles || [], aliasLookup);
   const effectTokens = processEffectTokens(pluginData.effectStyles || [], aliasLookup);
 
   // Speichere alles
-  saveClassicTokens(classicTokens, aliasLookup);
+  saveSharedPrimitives(sharedPrimitives);
+  saveBrandSpecificTokens(brandSpecificTokens);
+  saveBrandOverrides(brandOverrides);
   saveTypographyTokens(typographyTokens);
   saveEffectTokens(effectTokens);
 
   // Statistiken
   console.log('\n✨ Preprocessing abgeschlossen!\n');
   console.log(`📊 Statistiken:`);
-  console.log(`   - Collections: ${Object.keys(classicTokens).length}`);
+  console.log(`   - Shared Primitives: ${Object.keys(sharedPrimitives).length}`);
+  console.log(`   - Brand-spezifische Collections: ${Object.keys(brandSpecificTokens).length} brands`);
+  console.log(`   - Brand Overrides: ${Object.keys(brandOverrides).length} brands`);
   console.log(`   - Typography Outputs: ${Object.keys(typographyTokens).length}`);
   console.log(`   - Effect Outputs: ${Object.keys(effectTokens).length}`);
   console.log(`   - Output-Verzeichnis: ${path.relative(process.cwd(), OUTPUT_DIR)}\n`);
