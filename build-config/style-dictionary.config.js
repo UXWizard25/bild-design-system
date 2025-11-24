@@ -6,6 +6,119 @@
  */
 
 // ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Name transformation functions for different platforms
+ */
+const nameTransformers = {
+  // Kebab-case für CSS, SCSS, Android
+  kebab: (str) => {
+    return str
+      .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  },
+
+  // camelCase für JavaScript, Flutter
+  camel: (str) => {
+    const kebab = nameTransformers.kebab(str);
+    let camelCase = kebab.replace(/-([a-z0-9])/g, (_, letter) => letter.toUpperCase());
+
+    // Prefix with underscore if starts with a number (invalid JS identifier)
+    if (/^[0-9]/.test(camelCase)) {
+      camelCase = '_' + camelCase;
+    }
+
+    return camelCase;
+  },
+
+  // PascalCase für iOS Swift
+  pascal: (str) => {
+    const camel = nameTransformers.camel(str);
+    if (camel.length === 0) return camel;
+
+    // If starts with underscore followed by number, keep underscore
+    if (camel.startsWith('_')) {
+      return '_' + camel.charAt(1).toUpperCase() + camel.slice(2);
+    }
+
+    return camel.charAt(0).toUpperCase() + camel.slice(1);
+  }
+};
+
+/**
+ * Generates unique token names by using the minimum number of path segments needed
+ * to avoid collisions. Starts with the last segment, adds previous segments as needed.
+ *
+ * @param {Array} tokens - Array of tokens to process
+ * @param {String} transformType - Type of transformation: 'kebab', 'camel', or 'pascal'
+ * @returns {Map} - Map of token path string to unique name
+ */
+function generateUniqueNames(tokens, transformType = 'kebab') {
+  const transformFn = nameTransformers[transformType];
+  const nameMap = new Map();
+  const collisionGroups = new Map();
+
+  // First pass: Group tokens by their base name (last segment only)
+  tokens.forEach(token => {
+    const lastSegment = token.path[token.path.length - 1];
+    const baseName = transformFn(lastSegment);
+    const pathKey = token.path.join('.');
+
+    if (!collisionGroups.has(baseName)) {
+      collisionGroups.set(baseName, []);
+    }
+    collisionGroups.get(baseName).push({ token, pathKey });
+  });
+
+  // Second pass: Generate unique names, resolving collisions
+  collisionGroups.forEach((tokenGroup, baseName) => {
+    if (tokenGroup.length === 1) {
+      // No collision - use simple name
+      nameMap.set(tokenGroup[0].pathKey, baseName);
+    } else {
+      // Collision detected - resolve by adding more path segments
+      tokenGroup.forEach(({ token, pathKey }) => {
+        let uniqueName = baseName;
+        let segmentCount = 1;
+
+        // Incrementally add more segments until name is unique within this collision group
+        while (segmentCount < token.path.length) {
+          segmentCount++;
+          const segments = token.path.slice(-segmentCount);
+          const candidateName = transformFn(segments.join('-'));
+
+          // Check if candidate is unique within this collision group
+          const hasCollision = tokenGroup.some(other => {
+            if (other.pathKey === pathKey) return false; // Don't compare with self
+            const otherSegments = other.token.path.slice(-segmentCount);
+            return transformFn(otherSegments.join('-')) === candidateName;
+          });
+
+          if (!hasCollision) {
+            uniqueName = candidateName;
+            break;
+          }
+        }
+
+        // Fallback: use full path if still not unique (edge case)
+        if (segmentCount >= token.path.length && tokenGroup.length > 1) {
+          uniqueName = transformFn(token.path.join('-'));
+        }
+
+        nameMap.set(pathKey, uniqueName);
+      });
+    }
+  });
+
+  return nameMap;
+}
+
+// ============================================================================
 // CUSTOM TRANSFORMS
 // ============================================================================
 
@@ -121,16 +234,8 @@ const nameKebabTransform = {
   name: 'name/custom/kebab',
   type: 'name',
   transform: (token) => {
-    // Nimm nur das letzte Pfad-Segment
     const lastSegment = token.path[token.path.length - 1];
-
-    // Konvertiere zu Kebab-Case
-    return lastSegment
-      .replace(/([a-z0-9])([A-Z])/g, '$1-$2')  // camelCase to kebab-case
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
+    return nameTransformers.kebab(lastSegment);
   }
 };
 
@@ -142,14 +247,8 @@ const nameJsTransform = {
   name: 'name/custom/js',
   type: 'name',
   transform: (token) => {
-    // Nimm nur das letzte Pfad-Segment
     const lastSegment = token.path[token.path.length - 1];
-
-    // Konvertiere zu camelCase (erstes Zeichen lowercase)
-    return lastSegment
-      .replace(/^[A-Z]/, (c) => c.toLowerCase())  // Erstes Zeichen lowercase
-      // Stelle sicher, dass es nicht mit einer Zahl beginnt
-      .replace(/^(\d)/, '_$1');
+    return nameTransformers.camel(lastSegment);
   }
 };
 
@@ -161,12 +260,8 @@ const nameIosSwiftTransform = {
   name: 'name/custom/ios-swift',
   type: 'name',
   transform: (token) => {
-    // Nimm nur das letzte Pfad-Segment
     const lastSegment = token.path[token.path.length - 1];
-
-    // Kapitalisiere das erste Zeichen für PascalCase
-    if (lastSegment.length === 0) return lastSegment;
-    return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
+    return nameTransformers.pascal(lastSegment);
   }
 };
 
@@ -178,12 +273,8 @@ const nameFlutterDartTransform = {
   name: 'name/custom/flutter-dart',
   type: 'name',
   transform: (token) => {
-    // Nimm nur das letzte Pfad-Segment
     const lastSegment = token.path[token.path.length - 1];
-
-    // Erstes Zeichen lowercase für camelCase
-    if (lastSegment.length === 0) return lastSegment;
-    return lastSegment.charAt(0).toLowerCase() + lastSegment.slice(1);
+    return nameTransformers.camel(lastSegment);
   }
 };
 
@@ -197,6 +288,9 @@ const nameFlutterDartTransform = {
 const cssVariablesFormat = ({ dictionary, options, file }) => {
   const selector = options.selector || ':root';
   const { mode, layer, brand } = options;
+
+  // Generate unique names with collision detection
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
 
   // Header
   let output = `/**\n`;
@@ -238,13 +332,14 @@ const cssVariablesFormat = ({ dictionary, options, file }) => {
     }
 
     tokens.forEach(token => {
+      const uniqueName = uniqueNames.get(token.path.join('.'));
       const comment = token.comment || token.description;
       if (comment) {
         output += `  /**\n`;
         output += `   * ${comment}\n`;
         output += `   */\n`;
       }
-      output += `  --${token.name}: ${token.value};\n`;
+      output += `  --${uniqueName}: ${token.value};\n`;
     });
   });
 
@@ -258,6 +353,9 @@ const cssVariablesFormat = ({ dictionary, options, file }) => {
  */
 const scssVariablesFormat = ({ dictionary, options, file }) => {
   const { mode, layer, brand } = options;
+
+  // Generate unique names with collision detection
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
 
   let output = `//\n`;
   output += `// ${file.destination}\n`;
@@ -293,11 +391,12 @@ const scssVariablesFormat = ({ dictionary, options, file }) => {
     }
 
     tokens.forEach(token => {
+      const uniqueName = uniqueNames.get(token.path.join('.'));
       const comment = token.comment || token.description;
       if (comment) {
         output += `// ${comment}\n`;
       }
-      output += `$${token.name}: ${token.value};\n`;
+      output += `$${uniqueName}: ${token.value};\n`;
     });
   });
 
@@ -309,6 +408,9 @@ const scssVariablesFormat = ({ dictionary, options, file }) => {
  */
 const javascriptEs6Format = ({ dictionary, options, file }) => {
   const { mode, layer, brand } = options;
+
+  // Generate unique names with collision detection (camelCase for JS)
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'camel');
 
   let output = `/**\n`;
   output += ` * ${file.destination}\n`;
@@ -346,13 +448,14 @@ const javascriptEs6Format = ({ dictionary, options, file }) => {
     }
 
     tokens.forEach(token => {
+      const uniqueName = uniqueNames.get(token.path.join('.'));
       const comment = token.comment || token.description;
       if (comment) {
         output += `  /** ${comment} */\n`;
       }
       // Escape single quotes in values
       const escapedValue = String(token.value).replace(/'/g, "\\'");
-      output += `  '${token.name}': '${escapedValue}',\n`;
+      output += `  '${uniqueName}': '${escapedValue}',\n`;
     });
   });
 
@@ -373,6 +476,9 @@ const jsonNestedFormat = ({ dictionary }) => {
  */
 const iosSwiftClassFormat = ({ dictionary, options, file }) => {
   const className = options.className || file.className || 'StyleDictionary';
+
+  // Generate unique names with collision detection (PascalCase for Swift)
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'pascal');
 
   let output = `\n`;
   output += `//\n`;
@@ -407,6 +513,7 @@ const iosSwiftClassFormat = ({ dictionary, options, file }) => {
     }
 
     tokens.forEach(token => {
+      const uniqueName = uniqueNames.get(token.path.join('.'));
       const comment = token.comment || token.description;
       if (comment) {
         output += `    /** ${comment} */\n`;
@@ -448,7 +555,7 @@ const iosSwiftClassFormat = ({ dictionary, options, file }) => {
         valueOutput = value;
       }
 
-      output += `    public static let ${token.name} = ${valueOutput}\n`;
+      output += `    public static let ${uniqueName} = ${valueOutput}\n`;
     });
   });
 
@@ -462,6 +569,9 @@ const iosSwiftClassFormat = ({ dictionary, options, file }) => {
  */
 const flutterDartClassFormat = ({ dictionary, options, file }) => {
   const className = options.className || file.className || 'StyleDictionary';
+
+  // Generate unique names with collision detection (camelCase for Flutter)
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'camel');
 
   let output = `\n`;
   output += `//\n`;
@@ -497,6 +607,7 @@ const flutterDartClassFormat = ({ dictionary, options, file }) => {
     }
 
     tokens.forEach(token => {
+      const uniqueName = uniqueNames.get(token.path.join('.'));
       const comment = token.comment || token.description;
       if (comment) {
         output += `    /** ${comment} */\n`;
@@ -543,7 +654,7 @@ const flutterDartClassFormat = ({ dictionary, options, file }) => {
         valueOutput = value;
       }
 
-      output += `    static const ${token.name} = ${valueOutput};\n`;
+      output += `    static const ${uniqueName} = ${valueOutput};\n`;
     });
   });
 

@@ -34,26 +34,55 @@ const SIZE_CLASS_MAPPING = {
  * Erstellt Plattform-Konfiguration für Standard-Token (Primitives, Brand-spezifisch, etc.)
  */
 function createStandardPlatformConfig(buildPath, fileName) {
+  // Filter to exclude documentation-only tokens that cause collisions
+  const tokenFilter = (token) => {
+    // Exclude TextLabels tokens - these are documentation-only and cause name collisions
+    if (token.path && token.path.includes('TextLabels')) {
+      return false;
+    }
+    return true;
+  };
+
   return {
     css: {
       transformGroup: 'custom/css',
       buildPath: `${buildPath}/`,
-      files: [{ destination: `${fileName}.css`, format: 'css/variables', options: { outputReferences: false } }]
+      files: [{
+        destination: `${fileName}.css`,
+        format: 'css/variables',
+        filter: tokenFilter,
+        options: { outputReferences: false }
+      }]
     },
     scss: {
       transformGroup: 'custom/scss',
       buildPath: `${DIST_DIR}/scss/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
-      files: [{ destination: `${fileName}.scss`, format: 'scss/variables', options: { outputReferences: false } }]
+      files: [{
+        destination: `${fileName}.scss`,
+        format: 'scss/variables',
+        filter: tokenFilter,
+        options: { outputReferences: false }
+      }]
     },
     js: {
       transformGroup: 'custom/js',
       buildPath: `${DIST_DIR}/js/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
-      files: [{ destination: `${fileName}.js`, format: 'javascript/es6', options: { outputReferences: false } }]
+      files: [{
+        destination: `${fileName}.js`,
+        format: 'javascript/es6',
+        filter: tokenFilter,
+        options: { outputReferences: false }
+      }]
     },
     json: {
       transformGroup: 'custom/js',
       buildPath: `${DIST_DIR}/json/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
-      files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
+      files: [{
+        destination: `${fileName}.json`,
+        format: 'json',
+        filter: tokenFilter,
+        options: { outputReferences: false }
+      }]
     },
     ios: {
       transformGroup: 'custom/ios-swift',
@@ -61,6 +90,7 @@ function createStandardPlatformConfig(buildPath, fileName) {
       files: [{
         destination: `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`,
         format: 'ios-swift/class',
+        filter: tokenFilter,
         options: {
           outputReferences: false,
           className: fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')
@@ -70,7 +100,12 @@ function createStandardPlatformConfig(buildPath, fileName) {
     android: {
       transformGroup: 'custom/android',
       buildPath: `${DIST_DIR}/android/res/values/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
-      files: [{ destination: `${fileName}.xml`, format: 'android/resources', options: { outputReferences: false } }]
+      files: [{
+        destination: `${fileName}.xml`,
+        format: 'android/resources',
+        filter: tokenFilter,
+        options: { outputReferences: false }
+      }]
     },
     flutter: {
       transformGroup: 'custom/flutter',
@@ -78,6 +113,7 @@ function createStandardPlatformConfig(buildPath, fileName) {
       files: [{
         destination: `${fileName}.dart`,
         format: 'flutter/class',
+        filter: tokenFilter,
         options: {
           outputReferences: false,
           className: fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')
