@@ -38,23 +38,23 @@ public class Brandcolormapping {
 
     // MARK: - Component - Button - PrimaryBrand
     /** Bild: 046 ; SpoBi: 029 */
-    public static let ButtonPrimaryBgColorIdle = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 1.000)
+    public static let PrimaryBrandButtonPrimaryBgColorIdle = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 1.000)
     /** This variable controls the primary button idle color for two brands in dark mode. Bild: 046 ; SpoBi: 038 */
-    public static let ButtonPrimaryBgColorIdleDark = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 1.000)
+    public static let PrimaryBrandButtonPrimaryBgColorIdleDark = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 1.000)
     /** Bild: 035 ; SpoBi: 016 */
-    public static let ButtonPrimaryBgColorHover = UIColor(red: 0.686, green: 0.000, blue: 0.008, alpha: 1.000)
+    public static let PrimaryBrandButtonPrimaryBgColorHover = UIColor(red: 0.686, green: 0.000, blue: 0.008, alpha: 1.000)
     /** This variable stores colors for the hover state of primary buttons for two brands in dark mode. Bild: 035 ; SpoBi: 029 */
-    public static let ButtonPrimaryBgColorHoverDark = UIColor(red: 0.686, green: 0.000, blue: 0.008, alpha: 1.000)
+    public static let PrimaryBrandButtonPrimaryBgColorHoverDark = UIColor(red: 0.686, green: 0.000, blue: 0.008, alpha: 1.000)
 
     // MARK: - Component - Button - PrimaryNeutral
     /** Bild & SpoBi: Tone 015 */
-    public static let ButtonPrimaryBgColorIdle = UIColor(red: 0.137, green: 0.149, blue: 0.161, alpha: 1.000)
+    public static let PrimaryNeutralButtonPrimaryBgColorIdle = UIColor(red: 0.137, green: 0.149, blue: 0.161, alpha: 1.000)
     /** Bild & SpoBi: Tone 035 */
-    public static let ButtonPrimaryBgColorHover = UIColor(red: 0.294, green: 0.322, blue: 0.353, alpha: 1.000)
+    public static let PrimaryNeutralButtonPrimaryBgColorHover = UIColor(red: 0.294, green: 0.322, blue: 0.353, alpha: 1.000)
     /** Bild & SpoBi: Tone 100 */
-    public static let ButtonPrimaryBgColorIdleDark = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1.000)
+    public static let PrimaryNeutralButtonPrimaryBgColorIdleDark = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1.000)
     /** Bild: 093 ; SpoBi: 081 */
-    public static let ButtonPrimaryBgColorHoverDark = UIColor(red: 0.914, green: 0.925, blue: 0.937, alpha: 1.000)
+    public static let PrimaryNeutralButtonPrimaryBgColorHoverDark = UIColor(red: 0.914, green: 0.925, blue: 0.937, alpha: 1.000)
 
     // MARK: - Component - Menu
     /** This variable is used for making possible the default color difference between the Bild and SportBild link lanes inside the menu component. */

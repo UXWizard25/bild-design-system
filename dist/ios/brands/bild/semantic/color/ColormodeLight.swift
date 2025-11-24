@@ -218,9 +218,9 @@ public class ColormodeLight {
 
     // MARK: - Component - _DSysDoc
     /** This variable is only for use in Figma's Design System File. It is automating some of the content in documentation pages. */
-    public static let _DSysDocs_labelTextSurfaceColorPrimaryPrimitiveName = "BILD100"
+    public static let DsysDocsLabelTextSurfaceColorPrimaryPrimitiveName = "BILD100"
     /** This is currently for use in this design system's documentation texts. It is a text string made for being used in light and dark mode documentation texts. */
-    public static let _DSysDocs_labelTextColorMode = "(Light Mode)"
+    public static let DsysDocsLabelTextColorMode = "(Light Mode)"
     public static let DsDocSpacingItemBgColor = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 0.100)
     public static let DsDocSpacingItemBorderColor = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 0.500)
 
@@ -277,7 +277,7 @@ Behavior: Constant — retains the same red warning tone in both Light and Dark 
     /** Use this on elements that need to maintain the dark color across themes and color modes. */
     public static let CoreColorTertiaryConstant = UIColor(red: 0.137, green: 0.149, blue: 0.161, alpha: 1.000)
     /** this is a test for the token pipeline */
-    public static let CoreColorTertiaryVvPipeTEST = UIColor(red: 0.278, green: 0.427, blue: 0.576, alpha: 1.000)
+    public static let CoreColorTertiaryVvPipeTest = UIColor(red: 0.278, green: 0.427, blue: 0.576, alpha: 1.000)
     /** this is a test for the token pipeline */
     public static let NpmTest = UIColor(red: 0.278, green: 0.427, blue: 0.576, alpha: 1.000)
     /** this is a test for the token pipeline */

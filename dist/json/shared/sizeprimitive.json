@@ -125,7 +125,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size0_25x",
+    "name": "size025x",
     "attributes": {},
     "path": [
       "size0_25x"
@@ -158,7 +158,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size0_5x",
+    "name": "size05x",
     "attributes": {},
     "path": [
       "size0_5x"
@@ -224,7 +224,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size4_5x",
+    "name": "size45x",
     "attributes": {},
     "path": [
       "size4_5x"
@@ -290,7 +290,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size3_5x",
+    "name": "size35x",
     "attributes": {},
     "path": [
       "size3_5x"
@@ -323,7 +323,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size2_5x",
+    "name": "size25x",
     "attributes": {},
     "path": [
       "size2_5x"
@@ -356,7 +356,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size12_5x",
+    "name": "size125x",
     "attributes": {},
     "path": [
       "size12_5x"
@@ -389,7 +389,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size2_75x",
+    "name": "size275x",
     "attributes": {},
     "path": [
       "size2_75x"
@@ -422,7 +422,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size3_25x",
+    "name": "size325x",
     "attributes": {},
     "path": [
       "size3_25x"
@@ -488,7 +488,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size3_75x",
+    "name": "size375x",
     "attributes": {},
     "path": [
       "size3_75x"
@@ -521,7 +521,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size2_25x",
+    "name": "size225x",
     "attributes": {},
     "path": [
       "size2_25x"
@@ -587,7 +587,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size1_5x",
+    "name": "size15x",
     "attributes": {},
     "path": [
       "size1_5x"
@@ -620,7 +620,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size0_75x",
+    "name": "size075x",
     "attributes": {},
     "path": [
       "size0_75x"
@@ -653,7 +653,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size22_5x",
+    "name": "size225x",
     "attributes": {},
     "path": [
       "size22_5x"
@@ -752,7 +752,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size11_5x",
+    "name": "size115x",
     "attributes": {},
     "path": [
       "size11_5x"
@@ -785,7 +785,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size1_75x",
+    "name": "size175x",
     "attributes": {},
     "path": [
       "size1_75x"
@@ -818,7 +818,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size5_25x",
+    "name": "size525x",
     "attributes": {},
     "path": [
       "size5_25x"
@@ -851,7 +851,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size1_25x",
+    "name": "size125x",
     "attributes": {},
     "path": [
       "size1_25x"
@@ -917,7 +917,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size17_5x",
+    "name": "size175x",
     "attributes": {},
     "path": [
       "size17_5x"
@@ -1148,7 +1148,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size16_25",
+    "name": "size1625",
     "attributes": {},
     "path": [
       "size16_25"
@@ -1181,7 +1181,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size87_5x",
+    "name": "size875x",
     "attributes": {},
     "path": [
       "size87_5x"
@@ -1412,7 +1412,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size27_5x",
+    "name": "size275x",
     "attributes": {},
     "path": [
       "size27_5x"
@@ -1478,7 +1478,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size116_25x",
+    "name": "size11625x",
     "attributes": {},
     "path": [
       "size116_25x"
@@ -1511,7 +1511,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size18_5x",
+    "name": "size185x",
     "attributes": {},
     "path": [
       "size18_5x"
@@ -1610,7 +1610,7 @@
       },
       "$type": "dimension"
     },
-    "name": "size0_125x",
+    "name": "size0125x",
     "attributes": {},
     "path": [
       "size0_125x"

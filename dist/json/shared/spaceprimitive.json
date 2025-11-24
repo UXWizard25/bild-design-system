@@ -59,7 +59,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space0_5x",
+    "name": "space05x",
     "attributes": {},
     "path": [
       "space0_5x"
@@ -92,7 +92,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space0_25x",
+    "name": "space025x",
     "attributes": {},
     "path": [
       "space0_25x"
@@ -158,7 +158,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space1_5x",
+    "name": "space15x",
     "attributes": {},
     "path": [
       "space1_5x"
@@ -488,7 +488,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space2_5x",
+    "name": "space25x",
     "attributes": {},
     "path": [
       "space2_5x"
@@ -521,7 +521,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space-0_25x",
+    "name": "space025x",
     "attributes": {},
     "path": [
       "space-0_25x"
@@ -554,7 +554,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space0_75x",
+    "name": "space075x",
     "attributes": {},
     "path": [
       "space0_75x"
@@ -587,7 +587,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space1_25x",
+    "name": "space125x",
     "attributes": {},
     "path": [
       "space1_25x"
@@ -620,7 +620,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space2_75x",
+    "name": "space275x",
     "attributes": {},
     "path": [
       "space2_75x"
@@ -653,7 +653,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space4_5x",
+    "name": "space45x",
     "attributes": {},
     "path": [
       "space4_5x"
@@ -686,7 +686,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space7_5x",
+    "name": "space75x",
     "attributes": {},
     "path": [
       "space7_5x"
@@ -752,7 +752,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space1_75x",
+    "name": "space175x",
     "attributes": {},
     "path": [
       "space1_75x"
@@ -785,7 +785,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space8_5x",
+    "name": "space85x",
     "attributes": {},
     "path": [
       "space8_5x"
@@ -818,7 +818,7 @@
       },
       "$type": "dimension"
     },
-    "name": "space3_5x",
+    "name": "space35x",
     "attributes": {},
     "path": [
       "space3_5x"

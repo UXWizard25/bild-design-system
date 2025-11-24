@@ -221,9 +221,9 @@ class ColormodeDark {
 
     // Component - _DSysDoc
     /** This variable is only for use in Figma's Design System File. It is automating some of the content in documentation pages. */
-    static const _DSysDocs_labelTextSurfaceColorPrimaryPrimitiveName = "BILD010";
+    static const dsysDocsLabelTextSurfaceColorPrimaryPrimitiveName = "BILD010";
     /** This is currently for use in this design system's documentation texts. It is a text string made for being used in light and dark mode documentation texts. */
-    static const _DSysDocs_labelTextColorMode = "(Dark Mode)";
+    static const dsysDocsLabelTextColorMode = "(Dark Mode)";
     static const dsDocSpacingItemBgColor = Color(0x33ffffff);
     static const dsDocSpacingItemBorderColor = Color(0xccffffff);
 
@@ -280,7 +280,7 @@ Behavior: Constant — retains the same red warning tone in both Light and Dark 
     /** Use this on elements that need to maintain the dark color across themes and color modes. */
     static const coreColorTertiaryConstant = Color(0xFF232629);
     /** this is a test for the token pipeline */
-    static const coreColorTertiaryVvPipeTEST = Color(0xFFB0D1F3);
+    static const coreColorTertiaryVvPipeTest = Color(0xFFB0D1F3);
     /** this is a test for the token pipeline */
     static const npmTest = Color(0xFFB0D1F3);
     /** this is a test for the token pipeline */

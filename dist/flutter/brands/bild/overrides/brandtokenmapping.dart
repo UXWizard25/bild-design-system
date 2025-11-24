@@ -21,47 +21,47 @@ class Brandtokenmapping {
 
     // Component - Article - FontSize
     /** --article-figure-caption-font-size-sm */
-    static const articleImageCaptionFontSizeXS = "16px";
+    static const articleImageCaptionFontSizeXs = "16px";
     /** --article-figure-caption-font-size-md */
-    static const articleImageCaptionFontSizeMD = "18px";
+    static const articleImageCaptionFontSizeMd = "18px";
     /** --article-figure-caption-font-size-lg */
-    static const articleImageCaptionFontSizeLG = "18px";
+    static const articleImageCaptionFontSizeLg = "18px";
     /** --article-figure-caption-font-size-sm */
-    static const articleImageCaptionFontSizeSM = "16px";
+    static const articleImageCaptionFontSizeSm = "16px";
     /** --article-figure-meta-font-size-sm */
-    static const articleImageSourceFontSizeXS = "16px";
+    static const articleImageSourceFontSizeXs = "16px";
     /** --article-figure-meta-font-size-sm */
-    static const articleImageSourceFontSizeSM = "16px";
+    static const articleImageSourceFontSizeSm = "16px";
     /** --article-figure-meta-font-size-sm */
-    static const articleImageSourceFontSizeMD = "16px";
+    static const articleImageSourceFontSizeMd = "16px";
     /** --article-figure-meta-font-size-lg */
-    static const articleImageSourceFontSizeLG = "18px";
+    static const articleImageSourceFontSizeLg = "18px";
 
     // Component - Article - LineHeight
     /** --article-figure-caption-line-height-sm ; Bild: 19.5 // SpoBi: 16.9 // Ad: 19.5 */
-    static const articleImageCaptionLineHeightXS = "19.5px";
+    static const articleImageCaptionLineHeightXs = "19.5px";
     /** --article-figure-caption-line-height-md ; Bild: 24.75 // SpoBi: 16.9 // Ad: 19.5 */
-    static const articleImageCaptionLineHeightMD = "24.75px";
+    static const articleImageCaptionLineHeightMd = "24.75px";
     /** --article-figure-caption-line-height-lg ; Bild: 24.75 // SpoBi: 19.5 // Ad: 24 */
-    static const articleImageCaptionLineHeightLG = "24.75px";
+    static const articleImageCaptionLineHeightLg = "24.75px";
     /** --article-figure-caption-line-height-sm ; Bild: 19.5 // SpoBi: 16.9 // Ad: 19.5 */
-    static const articleImageCaptionLineHeightSM = "19.5px";
+    static const articleImageCaptionLineHeightSm = "19.5px";
     /** --article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19 */
-    static const articleImageSourceLineHeightMD = "21px";
+    static const articleImageSourceLineHeightMd = "21px";
     /** --article-figure-meta-line-height-lg ; Bild: 23 // SpoBi: 19 // Ad: 24 */
-    static const articleImageSourceLineHeightLG = "23px";
+    static const articleImageSourceLineHeightLg = "23px";
     /** --article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19 */
-    static const articleImageSourceLineHeightXS = "21px";
+    static const articleImageSourceLineHeightXs = "21px";
     /** --article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19 */
-    static const articleImageSourceLineHeightSM = "21px";
+    static const articleImageSourceLineHeightSm = "21px";
 
     // Component - Avatar
     /** current css 09-2025 --article-author-font // Bild: GothamXNarrow; SpoBi: Inter; Ads: LucidaGrande */
     static const avatarFontFamily = "Gotham XNarrow";
     /** 09-2025 css using footnote var for font sizes SM & LG // Bild: 16; SpoBi: 13; Ads: 13 */
-    static const avatarFontSizeSM = "16px";
+    static const avatarFontSizeSm = "16px";
     /** 09-2025 css using footnote var for font sizes SM & LG // Bild: 18; SpoBi: 15; Ads: 15 */
-    static const avatarFontSizeLG = "18px";
+    static const avatarFontSizeLg = "18px";
 
     // Component - Breadcrumb - FontFamily
     /** --breadcrumb-font */
@@ -69,13 +69,13 @@ class Brandtokenmapping {
 
     // Component - Breadcrumb - FontSize
     /** --breadcrumb-font-size-sm */
-    static const breadcrumbFontSizeXS = "15px";
+    static const breadcrumbFontSizeXs = "15px";
     /** --breadcrumb-font-size-sm */
-    static const breadcrumbFontSizeSM = "15px";
+    static const breadcrumbFontSizeSm = "15px";
     /** --breadcrumb-font-size-sm */
-    static const breadcrumbFontSizeMD = "15px";
+    static const breadcrumbFontSizeMd = "15px";
     /** --breadcrumb-font-size-lg */
-    static const breadcrumbFontSizeLG = "12px";
+    static const breadcrumbFontSizeLg = "12px";
 
     // Component - Breadcrumb - FontWeight
     /** --breadcrumb-font-size-sm */
@@ -83,13 +83,13 @@ class Brandtokenmapping {
 
     // Component - Breadcrumb - LineHeight
     /** not defined as variable */
-    static const breadcrumbLineHeightXS = "15px";
+    static const breadcrumbLineHeightXs = "15px";
     /** not defined as variable */
-    static const breadcrumbLineHeightSM = "15px";
+    static const breadcrumbLineHeightSm = "15px";
     /** not defined as variable */
-    static const breadcrumbLineHeightMD = "15px";
+    static const breadcrumbLineHeightMd = "15px";
     /** not defined as variable */
-    static const breadcrumbLineHeightLG = "12px";
+    static const breadcrumbLineHeightLg = "12px";
 
     // Component - BreakingNews
     static const breakingNewsContentFontSize = "21px";
@@ -107,52 +107,52 @@ class Brandtokenmapping {
     /** --nav-btn-font-size */
     static const menuItemFontSize = "15px";
     /** --caption-1-font-size-md */
-    static const appTopBarTitleFontSizeMD = "14px";
+    static const appTopBarTitleFontSizeMd = "14px";
     /** --caption-1-font-size-lg */
-    static const appTopBarTitleFontSizeLG = "14px";
+    static const appTopBarTitleFontSizeLg = "14px";
     /** --caption-1-font-size-sm */
-    static const appTopBarTitleFontSizeXS = "12px";
+    static const appTopBarTitleFontSizeXs = "12px";
     /** --caption-1-font-size-sm */
-    static const appTopBarTitleFontSizeSM = "12px";
-    static const appTopBarTitleLineHeightMD = "17px";
-    static const appTopBarTitleLineHeightLG = "17px";
-    static const appTopBarTitleLineHeightXS = "14px";
-    static const appTopBarTitleLineHeightSM = "14px";
+    static const appTopBarTitleFontSizeSm = "12px";
+    static const appTopBarTitleLineHeightMd = "17px";
+    static const appTopBarTitleLineHeightLg = "17px";
+    static const appTopBarTitleLineHeightXs = "14px";
+    static const appTopBarTitleLineHeightSm = "14px";
     static const menuItemFontWeight = "700";
 
     // Component - Teaser
     /** --teaser-title-padding-lg */
-    static const teaserTitleInlineSpaceLG = "12px";
+    static const teaserTitleInlineSpaceLg = "12px";
     /** --teaser-title-padding-md */
-    static const teaserTitleInlineSpaceMD = "12px";
+    static const teaserTitleInlineSpaceMd = "12px";
     /** --teaser-title-padding-sm */
-    static const teaserTitleInlineSpaceSM = "8px";
+    static const teaserTitleInlineSpaceSm = "8px";
     /** --teaser-title-padding-xs */
-    static const teaserTitleInlineSpaceXS = "8px";
+    static const teaserTitleInlineSpaceXs = "8px";
 
     // Component - Teaser - 2xaTeaser
-    static const 2xaTeaserTitleInlineSpace = "8px";
+    static const _2xaTeaserTitleInlineSpace = "8px";
 
     // Component - Teaser - Quad
-    static const qTeaserTitleInlineSpaceLG = "12px";
-    static const qTeaserTitleInlineSpaceMD = "16px";
-    static const qTeaserTitleInlineSpaceSM = "8px";
-    static const qTeaserTitleInlineSpaceXS = "8px";
+    static const qTeaserTitleInlineSpaceLg = "12px";
+    static const qTeaserTitleInlineSpaceMd = "16px";
+    static const qTeaserTitleInlineSpaceSm = "8px";
+    static const qTeaserTitleInlineSpaceXs = "8px";
 
     // Component - Teaser - aTeaser
-    static const aTeaserTitleInlineSpaceLG = "12px";
-    static const aTeaserTitleInlineSpaceMD = "12px";
-    static const aTeaserTitleInlineSpaceXS = "8px";
-    static const aTeaserTitleInlineSpaceSM = "8px";
+    static const aTeaserTitleInlineSpaceLg = "12px";
+    static const aTeaserTitleInlineSpaceMd = "12px";
+    static const aTeaserTitleInlineSpaceXs = "8px";
+    static const aTeaserTitleInlineSpaceSm = "8px";
 
     // Component - Teaser - bTeaser
     static const bTeaserTitleInlineSpace = "8px";
 
     // Component - Teaser - miniQ
-    static const miniQTeaserTitleInlineSpaceMD = "8px";
-    static const miniQTeaserTitleInlineSpaceLG = "8px";
-    static const miniQTeaserTitleInlineSpaceSM = "8px";
-    static const miniQTeaserTitleInlineSpaceXS = "8px";
+    static const miniQteaserTitleInlineSpaceMd = "8px";
+    static const miniQteaserTitleInlineSpaceLg = "8px";
+    static const miniQteaserTitleInlineSpaceSm = "8px";
+    static const miniQteaserTitleInlineSpaceXs = "8px";
 
     // Component - Teaser - superA
     static const superAteaserTitleInlineSpace = "16px";
@@ -181,176 +181,176 @@ class Brandtokenmapping {
 
     // Global - Typography - FontSize - Body
     /** Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size */
-    static const bodyFontSizeXS = "21px";
+    static const bodyFontSizeXs = "21px";
     /** Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size */
-    static const bodyFontSizeSM = "21px";
+    static const bodyFontSizeSm = "21px";
     /** Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for medium device sizes. Current online css: --body-font-size */
-    static const bodyFontSizeMD = "21px";
+    static const bodyFontSizeMd = "21px";
     /** Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for large device sizes. Current online css: --body-font-size */
-    static const bodyFontSizeLG = "21px";
+    static const bodyFontSizeLg = "21px";
 
     // Global - Typography - FontSize - Callout
     /** Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css: */
-    static const callout1FontSizeXS = "18px";
+    static const callout1FontSizeXs = "18px";
     /** Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css: */
-    static const callout1FontSizeSM = "18px";
+    static const callout1FontSizeSm = "18px";
     /** Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for medium device sizes. Current online css: */
-    static const callout1FontSizeMD = "22px";
+    static const callout1FontSizeMd = "22px";
     /** Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for large device sizes. Current online css: */
-    static const callout1FontSizeLG = "22px";
+    static const callout1FontSizeLg = "22px";
 
     // Global - Typography - FontSize - Display
     /** Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes. */
-    static const display1FontSizeXS = "40px";
+    static const display1FontSizeXs = "40px";
     /** Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes. */
-    static const display1FontSizeSM = "40px";
+    static const display1FontSizeSm = "40px";
     /** Bild: 72 | SpoBi: 68 | Ads: 70 | This variable is used in the display1 text style font size parameter for medium device sizes. */
-    static const display1FontSizeMD = "72px";
+    static const display1FontSizeMd = "72px";
     /** Bild: 120 | SpoBi: 114 | Ads: 116 | This variable is used in the display1 text style font size parameter for large device sizes. */
-    static const display1FontSizeLG = "120px";
+    static const display1FontSizeLg = "120px";
     /** Bild: 36 | SpoBi: 34 | Ads: 35 | This variable is used in the display2 text style font size parameter for small device sizes. */
-    static const display2FontSizeXS = "36px";
+    static const display2FontSizeXs = "36px";
     /** Bild: 36 | SpoBi: 34 | Ads: 35 | This variable is used in the display2 text style font size parameter for small device sizes. */
-    static const display2FontSizeSM = "36px";
+    static const display2FontSizeSm = "36px";
     /** Bild: 42 | SpoBi: 40 | Ads: 41 | This variable is used in the display2 text style font size parameter for medium device sizes. */
-    static const display2FontSizeMD = "42px";
+    static const display2FontSizeMd = "42px";
     /** Bild: 64 | SpoBi: 61 | Ads: 62 | This variable is used in the display2 text style font size parameter for large device sizes. */
-    static const display2FontSizeLG = "64px";
+    static const display2FontSizeLg = "64px";
     /** Bild: 28 | SpoBi: 27 | Ads: 27 | This variable is used in the display3 text style font size parameter for small device sizes. */
-    static const display3FontSizeSM = "28px";
+    static const display3FontSizeSm = "28px";
     /** Bild: 32 | SpoBi: 30 | Ads: 31 | This variable is used in the display3 text style font size parameter for medium device sizes. */
-    static const display3FontSizeMD = "32px";
+    static const display3FontSizeMd = "32px";
     /** Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display3 text style font size parameter for large device sizes. */
-    static const display3FontSizeLG = "40px";
+    static const display3FontSizeLg = "40px";
     /** Bild: 28 | SpoBi: 27 | Ads: 27 | This variable is used in the display3 text style font size parameter for small device sizes. */
-    static const display3FontSizeXS = "28px";
+    static const display3FontSizeXs = "28px";
 
     // Global - Typography - FontSize - Footnote
     /** --footnote-font-size-sm */
-    static const footnote1FontSizeXS = "16px";
+    static const footnote1FontSizeXs = "16px";
     /** --footnote-font-size-sm */
-    static const footnote1FontSizeSM = "16px";
-    static const footnote1FontSizeMD = "16px";
+    static const footnote1FontSizeSm = "16px";
+    static const footnote1FontSizeMd = "16px";
     /** --footnote-font-size-lg */
-    static const footnote1FontSizeLG = "18px";
-    static const footnote2FontSizeXS = "12px";
-    static const footnote2FontSizeSM = "12px";
-    static const footnote2FontSizeMD = "12px";
-    static const footnote2FontSizeLG = "16px";
+    static const footnote1FontSizeLg = "18px";
+    static const footnote2FontSizeXs = "12px";
+    static const footnote2FontSizeSm = "12px";
+    static const footnote2FontSizeMd = "12px";
+    static const footnote2FontSizeLg = "16px";
 
     // Global - Typography - FontSize - Headline
     /** Bild: 48 | SpoBi: 42 | Ads: 36 | This variable is used in the headline1 text style font size parameter for small device sizes. */
-    static const headline1FontSizeXS = "48px";
+    static const headline1FontSizeXs = "48px";
     /** Bild: 48 | SpoBi: 42 | Ads: 36 | This variable is used in the headline1 text style font size parameter for small device sizes. */
-    static const headline1FontSizeSM = "48px";
+    static const headline1FontSizeSm = "48px";
     /** Bild: 72 | SpoBi: 60 | Ads: 54 | This variable is used in the headline1 text style font size parameter for medium device sizes. */
-    static const headline1FontSizeMD = "72px";
+    static const headline1FontSizeMd = "72px";
     /** Bild: 100 | SpoBi: 80 | Ads: 70 | This variable is used in the headline1 text style font size parameter for large device sizes. */
-    static const headline1FontSizeLG = "100px";
+    static const headline1FontSizeLg = "100px";
     /** Bild: 40 | SpoBi: 42 | Ads: 30 | This variable is used in the headline2 text style font size parameter for small device sizes. */
-    static const headline2FontSizeXS = "40px";
+    static const headline2FontSizeXs = "40px";
     /** Bild: 40 | SpoBi: 42 | Ads: 30 | This variable is used in the headline2 text style font size parameter for small device sizes. */
-    static const headline2FontSizeSM = "40px";
+    static const headline2FontSizeSm = "40px";
     /** Bild: 48 | SpoBi: 44 | Ads: 36 | This variable is used in the headline2 text style font size parameter for medium device sizes. */
-    static const headline2FontSizeMD = "48px";
+    static const headline2FontSizeMd = "48px";
     /** Bild: 64 | SpoBi: 50 | Ads: 48 | This variable is used in the headline2 text style font size parameter for large device sizes. */
-    static const headline2FontSizeLG = "64px";
+    static const headline2FontSizeLg = "64px";
     /** Bild: 28 | SpoBi: 30 | Ads: 24 | This variable is used in the headline3 text style font size parameter for small device sizes. */
-    static const headline3FontSizeXS = "28px";
+    static const headline3FontSizeXs = "28px";
     /** Bild: 28 | SpoBi: 30 | Ads: 24 | This variable is used in the headline3 text style font size parameter for small device sizes. */
-    static const headline3FontSizeSM = "28px";
+    static const headline3FontSizeSm = "28px";
     /** Bild: 36 | SpoBi: 30 | Ads: 26 | This variable is used in the headline3 text style font size parameter for medium device sizes. */
-    static const headline3FontSizeMD = "36px";
+    static const headline3FontSizeMd = "36px";
     /** Bild: 40 | SpoBi: 34 | Ads: 32 | This variable is used in the headline3 text style font size parameter for large device sizes. */
-    static const headline3FontSizeLG = "40px";
+    static const headline3FontSizeLg = "40px";
     /** Bild: 22 | SpoBi: 21 | Ads: 16 | This variable is used in the headline4 text style font size parameter for small device sizes. */
-    static const headline4FontSizeXS = "22px";
+    static const headline4FontSizeXs = "22px";
     /** Bild: 22 | SpoBi: 21 | Ads: 16 | This variable is used in the headline4 text style font size parameter for small device sizes. */
-    static const headline4FontSizeSM = "22px";
+    static const headline4FontSizeSm = "22px";
     /** Bild: 26 | SpoBi: 26 | Ads: 20 | This variable is used in the headline4 text style font size parameter for medium device sizes. */
-    static const headline4FontSizeMD = "26px";
+    static const headline4FontSizeMd = "26px";
     /** Bild: 32 | SpoBi: 26 | Ads: 22 | This variable is used in the headline4 text style font size parameter for large device sizes. */
-    static const headline4FontSizeLG = "32px";
+    static const headline4FontSizeLg = "32px";
     /** This variable is used for controlling the alignment of headlines across brands. current online css example var: --headline-text-align-lg */
     static const headlineTextAlign = "center";
 
     // Global - Typography - FontSize - Kicker
     /** Bild: 18 | SpoBi: 20 | Ads: 16 | This variable is used in the kicker1 text style font size parameter for small device sizes. Current online css: --kicker-0-font-size-sm */
-    static const kicker1FontSizeXS = "18px";
+    static const kicker1FontSizeXs = "18px";
     /** Bild: 18 | SpoBi: 20 | Ads: 16 | This variable is used in the kicker1 text style font size parameter for small device sizes. Current online css: --kicker-0-font-size-sm */
-    static const kicker1FontSizeSM = "18px";
+    static const kicker1FontSizeSm = "18px";
     /** Bild: 22 | SpoBi: 26 | Ads: 18 | This variable is used in the kicker1 text style font size parameter for medium device sizes. Current online css: --kicker-0-font-size-md */
-    static const kicker1FontSizeMD = "22px";
+    static const kicker1FontSizeMd = "22px";
     /** Bild: 30 | SpoBi: 32 | Ads: 25 | This variable is used in the kicker1 text style font size parameter for large device sizes. Current online css: --kicker-0-font-size-lg */
-    static const kicker1FontSizeLG = "30px";
+    static const kicker1FontSizeLg = "30px";
     /** Bild: 18 | SpoBi: 16 | Ads: 16 | This variable is used in the kicker2 text style font size parameter for small device sizes. Current online css: --kicker-1-font-size-sm */
-    static const kicker2FontSizeXS = "18px";
+    static const kicker2FontSizeXs = "18px";
     /** Bild: 18 | SpoBi: 16 | Ads: 16 | This variable is used in the kicker2 text style font size parameter for small device sizes. Current online css: --kicker-1-font-size-sm */
-    static const kicker2FontSizeSM = "18px";
+    static const kicker2FontSizeSm = "18px";
     /** Bild: 22 | SpoBi: 26 | Ads: 18 | This variable is used in the kicker2 text style font size parameter for medium device sizes. Current online css: --kicker-1-font-size-md */
-    static const kicker2FontSizeMD = "22px";
+    static const kicker2FontSizeMd = "22px";
     /** Bild: 24 | SpoBi: 26 | Ads: 21 | This variable is used in the kicker2 text style font size parameter for large device sizes. Current online css: --kicker-1-font-size-lg */
-    static const kicker2FontSizeLG = "24px";
+    static const kicker2FontSizeLg = "24px";
     /** Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for small device sizes. Current online css: --kicker-2-font-size-sm */
-    static const kicker3FontSizeXS = "16px";
+    static const kicker3FontSizeXs = "16px";
     /** Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for small device sizes. Current online css: --kicker-2-font-size-sm */
-    static const kicker3FontSizeSM = "16px";
+    static const kicker3FontSizeSm = "16px";
     /** Bild: 18 | SpoBi: 20 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for medium device sizes. Current online css: --kicker-2-font-size-md */
-    static const kicker3FontSizeMD = "18px";
+    static const kicker3FontSizeMd = "18px";
     /** Bild: 20 | SpoBi: 22 | Ads: 16 | This variable is used in the kicker3 text style font size parameter for large device sizes. Current online css: --kicker-2-font-size-lg */
-    static const kicker3FontSizeLG = "20px";
+    static const kicker3FontSizeLg = "20px";
     /** Bild: 14 | SpoBi: 14 | Ads: 12 | This variable is used in the kicker4 text style font size parameter for small device sizes. Current online css: --kicker-3-font-size-sm */
-    static const kicker4FontSizeXS = "14px";
+    static const kicker4FontSizeXs = "14px";
     /** Bild: 14 | SpoBi: 14 | Ads: 12 | This variable is used in the kicker4 text style font size parameter for small device sizes. Current online css: --kicker-3-font-size-sm */
-    static const kicker4FontSizeSM = "14px";
+    static const kicker4FontSizeSm = "14px";
     /** Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker4 text style font size parameter for medium device sizes. Current online css: --kicker-3-font-size-md */
-    static const kicker4FontSizeMD = "16px";
+    static const kicker4FontSizeMd = "16px";
     /** Bild: 16 | SpoBi: 18 | Ads: 14 | This variable is used in the kicker4 text style font size parameter for large device sizes. Current online css: --kicker-3-font-size-lg */
-    static const kicker4FontSizeLG = "16px";
+    static const kicker4FontSizeLg = "16px";
 
     // Global - Typography - FontSize - Label
     static const label1FontSize = "17px";
     static const label2FontSize = "15px";
     static const label3FontSize = "12px";
     static const label4FontSize = "8px";
-    static const label1RespFontSizeXS = "10px";
-    static const label1RespFontSizeSM = "10px";
-    static const label1RespFontSizeMD = "15px";
-    static const label1RespFontSizeLG = "17px";
+    static const label1RespFontSizeXs = "10px";
+    static const label1RespFontSizeSm = "10px";
+    static const label1RespFontSizeMd = "15px";
+    static const label1RespFontSizeLg = "17px";
 
     // Global - Typography - FontSize - Quote
-    static const quoteFontSizeXS = "16px";
-    static const quoteFontSizeSM = "16px";
-    static const quoteFontSizeMD = "18px";
-    static const quoteFontSizeLG = "20px";
+    static const quoteFontSizeXs = "16px";
+    static const quoteFontSizeSm = "16px";
+    static const quoteFontSizeMd = "18px";
+    static const quoteFontSizeLg = "20px";
 
     // Global - Typography - FontSize - Subheadline
     /** Bild: 24 | SpoBi: 18 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for small device sizes. */
-    static const subheadline1FontSizeXS = "24px";
+    static const subheadline1FontSizeXs = "24px";
     /** Bild: 24 | SpoBi: 18 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for small device sizes. */
-    static const subheadline1FontSizeSM = "24px";
+    static const subheadline1FontSizeSm = "24px";
     /** Bild: 32 | SpoBi: 22 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for medium device sizes. */
-    static const subheadline1FontSizeMD = "32px";
+    static const subheadline1FontSizeMd = "32px";
     /** Bild: 36 | SpoBi: 26 | Ads: 28 | This variable is used in the subheadline1 text style font size parameter for large device sizes. */
-    static const subheadline1FontSizeLG = "36px";
+    static const subheadline1FontSizeLg = "36px";
 
     // Global - Typography - FontSize - Title
     /** Bild 22 | SpoBi 24 | Ads 22 | current online css: --ressort-header-font-size-sm */
-    static const title1FontSizeXS = "22px";
+    static const title1FontSizeXs = "22px";
     /** Bild 22 | SpoBi 24 | Ads 22 | current online css: --ressort-header-font-size-sm */
-    static const title1FontSizeSM = "22px";
+    static const title1FontSizeSm = "22px";
     /** Bild 22 | SpoBi 28 | Ads 22 | current online css: --ressort-header-font-size-md */
-    static const title1FontSizeMD = "22px";
+    static const title1FontSizeMd = "22px";
     /** Bild 28 | SpoBi 30 | Ads 28 | current online css: --ressort-header-font-size-lg */
-    static const title1FontSizeLG = "28px";
+    static const title1FontSizeLg = "28px";
     /** Bild 16 | SpoBi 16 | Ads 14 | current online css var: --caption-1-font-size-sm */
-    static const title2FontSizeXS = "16px";
+    static const title2FontSizeXs = "16px";
     /** Bild 16 | SpoBi 16 | Ads 14 | current online css: --caption-1-font-size-sm */
-    static const title2FontSizeSM = "16px";
+    static const title2FontSizeSm = "16px";
     /** Bild 18 | SpoBi 18 | Ads 16 | current online css: --caption-1-font-size-md */
-    static const title2FontSizeMD = "18px";
+    static const title2FontSizeMd = "18px";
     /** Bild 20 | SpoBi 20 | Ads 18 | current online css: --caption-1-font-size-lg */
-    static const title2FontSizeLG = "20px";
+    static const title2FontSizeLg = "20px";
 
     // Global - Typography - FontWeight - Body
     static const bodyFontWeightBook = 400;
@@ -378,7 +378,7 @@ class Brandtokenmapping {
 
     // Global - Typography - FontWeight - Kicker
     static const kickerFontWeight = 700;
-    static const kickerFontWeightST = "700";
+    static const kickerFontWeightSt = "700";
 
     // Global - Typography - FontWeight - Label
     static const labelFontWeightBook = 400;
@@ -394,88 +394,88 @@ class Brandtokenmapping {
     static const titleFontWeight = 800;
 
     // Global - Typography - LineHeight - Body
-    static const bodyLineHeightXS = "28px";
-    static const bodyLineHeightSM = "28px";
-    static const bodyLineHeightMD = "28px";
-    static const bodyLineHeightLG = "32px";
+    static const bodyLineHeightXs = "28px";
+    static const bodyLineHeightSm = "28px";
+    static const bodyLineHeightMd = "28px";
+    static const bodyLineHeightLg = "32px";
 
     // Global - Typography - LineHeight - Callout
-    static const callout1LineHeightXS = "18px";
-    static const callout1LineHeightSM = "18px";
-    static const callout1LineHeightMD = "22px";
-    static const callout1LineHeightLG = "22px";
+    static const callout1LineHeightXs = "18px";
+    static const callout1LineHeightSm = "18px";
+    static const callout1LineHeightMd = "22px";
+    static const callout1LineHeightLg = "22px";
 
     // Global - Typography - LineHeight - Display
-    static const display1LineHeightXS = "40px";
-    static const display1LineHeightSM = "40px";
-    static const display1LineHeightMD = "72px";
-    static const display1LineHeightLG = "120px";
-    static const display2LineHeightXS = "36px";
-    static const display2LineHeightSM = "36px";
-    static const display2LineHeightMD = "42px";
-    static const display2LineHeightLG = "64px";
-    static const display3LineHeightLG = "40px";
-    static const display3LineHeightMD = "32px";
-    static const display3LineHeightSM = "28px";
-    static const display3LineHeightXS = "28px";
+    static const display1LineHeightXs = "40px";
+    static const display1LineHeightSm = "40px";
+    static const display1LineHeightMd = "72px";
+    static const display1LineHeightLg = "120px";
+    static const display2LineHeightXs = "36px";
+    static const display2LineHeightSm = "36px";
+    static const display2LineHeightMd = "42px";
+    static const display2LineHeightLg = "64px";
+    static const display3LineHeightLg = "40px";
+    static const display3LineHeightMd = "32px";
+    static const display3LineHeightSm = "28px";
+    static const display3LineHeightXs = "28px";
 
     // Global - Typography - LineHeight - Footnote
-    static const footnote1LineHeightXS = "21px";
-    static const footnote1LineHeightSM = "21px";
-    static const footnote1LineHeightMD = "21px";
-    static const footnote1LineHeightLG = "23px";
-    static const footnote2LineHeightXS = "15.600000381469727px";
-    static const footnote2LineHeightSM = "15.600000381469727px";
-    static const footnote2LineHeightMD = "15.800000190734863px";
-    static const footnote2LineHeightLG = "21px";
+    static const footnote1LineHeightXs = "21px";
+    static const footnote1LineHeightSm = "21px";
+    static const footnote1LineHeightMd = "21px";
+    static const footnote1LineHeightLg = "23px";
+    static const footnote2LineHeightXs = "15.600000381469727px";
+    static const footnote2LineHeightSm = "15.600000381469727px";
+    static const footnote2LineHeightMd = "15.800000190734863px";
+    static const footnote2LineHeightLg = "21px";
 
     // Global - Typography - LineHeight - Headline
-    static const headline1LineHeightXS = "48px";
-    static const headline1LineHeightSM = "48px";
-    static const headline1LineHeightMD = "72px";
-    static const headline1LineHeightLG = "100px";
-    static const headline2LineHeightXS = "40px";
-    static const headline2LineHeightSM = "40px";
-    static const headline2LineHeightMD = "48px";
-    static const headline2LineHeightLG = "64px";
-    static const headline3LineHeightXS = "28px";
-    static const headline3LineHeightSM = "28px";
-    static const headline3LineHeightMD = "36px";
-    static const headline3LineHeightLG = "40px";
-    static const headline4LineHeightXS = "22px";
-    static const headline4LineHeightSM = "22px";
-    static const headline4LineHeightMD = "22px";
-    static const headline4LineHeightLG = "30px";
+    static const headline1LineHeightXs = "48px";
+    static const headline1LineHeightSm = "48px";
+    static const headline1LineHeightMd = "72px";
+    static const headline1LineHeightLg = "100px";
+    static const headline2LineHeightXs = "40px";
+    static const headline2LineHeightSm = "40px";
+    static const headline2LineHeightMd = "48px";
+    static const headline2LineHeightLg = "64px";
+    static const headline3LineHeightXs = "28px";
+    static const headline3LineHeightSm = "28px";
+    static const headline3LineHeightMd = "36px";
+    static const headline3LineHeightLg = "40px";
+    static const headline4LineHeightXs = "22px";
+    static const headline4LineHeightSm = "22px";
+    static const headline4LineHeightMd = "22px";
+    static const headline4LineHeightLg = "30px";
 
     // Global - Typography - LineHeight - Kicker
-    static const kicker1LineHeightXS = "19.799999237060547px";
-    static const kicker1LineHeightSM = "19.799999237060547px";
-    static const kicker1LineHeightMD = "22px";
-    static const kicker1LineHeightLG = "30px";
-    static const kicker2LineHeightXS = "19.799999237060547px";
-    static const kicker2LineHeightSM = "19.799999237060547px";
-    static const kicker2LineHeightMD = "22px";
-    static const kicker2LineHeightLG = "24px";
-    static const kicker3LineHeightXS = "17.600000381469727px";
-    static const kicker3LineHeightSM = "17.600000381469727px";
-    static const kicker3LineHeightMD = "18px";
-    static const kicker3LineHeightLG = "20px";
-    static const kicker4LineHeightXS = "15.399999618530273px";
-    static const kicker4LineHeightSM = "15.399999618530273px";
-    static const kicker4LineHeightMD = "17.600000381469727px";
-    static const kicker4LineHeightLG = "16px";
+    static const kicker1LineHeightXs = "19.799999237060547px";
+    static const kicker1LineHeightSm = "19.799999237060547px";
+    static const kicker1LineHeightMd = "22px";
+    static const kicker1LineHeightLg = "30px";
+    static const kicker2LineHeightXs = "19.799999237060547px";
+    static const kicker2LineHeightSm = "19.799999237060547px";
+    static const kicker2LineHeightMd = "22px";
+    static const kicker2LineHeightLg = "24px";
+    static const kicker3LineHeightXs = "17.600000381469727px";
+    static const kicker3LineHeightSm = "17.600000381469727px";
+    static const kicker3LineHeightMd = "18px";
+    static const kicker3LineHeightLg = "20px";
+    static const kicker4LineHeightXs = "15.399999618530273px";
+    static const kicker4LineHeightSm = "15.399999618530273px";
+    static const kicker4LineHeightMd = "17.600000381469727px";
+    static const kicker4LineHeightLg = "16px";
 
     // Global - Typography - LineHeight - Label
     /** Bild 17 | SpoBi 20.4 | Ads 20.4 | The label 1 text style uses this variable for its line height parameter. */
     static const label1LineHeight = "17px";
     /** Bild 10 | SpoBi 12 | Ads 10 | The label1 responsive text style uses this variable for its line height parameter. */
-    static const label1RespLineHeightXS = "10px";
+    static const label1RespLineHeightXs = "10px";
     /** Bild 10 | SpoBi 12 | Ads 10 | The label1 responsive text style uses this variable for its line height parameter. */
-    static const label1RespLineHeightSM = "10px";
+    static const label1RespLineHeightSm = "10px";
     /** Bild 15 | SpoBi 18 | Ads 15 | The label1 responsive text style uses this variable for its line height parameter. */
-    static const label1RespLineHeightMD = "15px";
+    static const label1RespLineHeightMd = "15px";
     /** Bild 17 | SpoBi 20.4 | Ads 17 | The label1 responsive text style uses this variable for its line height parameter. */
-    static const label1RespLineHeightLG = "17px";
+    static const label1RespLineHeightLg = "17px";
     /** Bild 16 | SpoBi 19.2 | Ads 16 | The label 2 text style uses this variable for its line height parameter. */
     static const label2LineHeight = "16px";
     /** Bild 14.4 | SpoBi 14.4 | Ads 14.4 | The label 3 text style uses this variable for its line height parameter. */
@@ -484,32 +484,32 @@ class Brandtokenmapping {
     static const label4LineHeight = "10px";
 
     // Global - Typography - LineHeight - Quote
-    static const quoteLineHeightXS = "16px";
-    static const quoteLineHeightSM = "16px";
-    static const quoteLineHeightMD = "18px";
-    static const quoteLineHeightLG = "22px";
+    static const quoteLineHeightXs = "16px";
+    static const quoteLineHeightSm = "16px";
+    static const quoteLineHeightMd = "18px";
+    static const quoteLineHeightLg = "22px";
 
     // Global - Typography - LineHeight - Subheadline
-    static const subheadline1LineHeightXS = "24px";
-    static const subheadline1LineHeightSM = "24px";
-    static const subheadline1LineHeightMD = "32px";
-    static const subheadline1LineHeightLG = "36px";
+    static const subheadline1LineHeightXs = "24px";
+    static const subheadline1LineHeightSm = "24px";
+    static const subheadline1LineHeightMd = "32px";
+    static const subheadline1LineHeightLg = "36px";
 
     // Global - Typography - LineHeight - Title
-    static const title1LineHeightXS = "22px";
-    static const title1LineHeightSM = "22px";
-    static const title1LineHeightMD = "22px";
-    static const title1LineHeightLG = "28px";
-    static const title2LineHeightXS = "17.600000381469727px";
-    static const title2LineHeightSM = "17.600000381469727px";
-    static const title2LineHeightMD = "19.799999237060547px";
-    static const title2LineHeightLG = "22px";
+    static const title1LineHeightXs = "22px";
+    static const title1LineHeightSm = "22px";
+    static const title1LineHeightMd = "22px";
+    static const title1LineHeightLg = "28px";
+    static const title2LineHeightXs = "17.600000381469727px";
+    static const title2LineHeightSm = "17.600000381469727px";
+    static const title2LineHeightMd = "19.799999237060547px";
+    static const title2LineHeightLg = "22px";
 
     // Global - Visibilty
-    static const hideOnBILD = false;
-    static const hideOnSportBILD = true;
+    static const hideOnBild = false;
+    static const hideOnSportBild = true;
     static const onlyAdvertorial = false;
     static const hideOnAdvertorial = true;
-    static const onlyBILD = true;
-    static const onlySportBILD = false;
+    static const onlyBild = true;
+    static const onlySportBild = false;
 }

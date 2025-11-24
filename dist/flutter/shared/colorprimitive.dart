@@ -12,44 +12,6 @@ import 'dart:ui';
 class Colorprimitive {
     Colorprimitive._();
 
-    // BILD - TextLabels
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDRed = "BILDRed";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD100 = "BILD100";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD096 = "BILD096";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD085 = "BILD085";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD060 = "BILD060";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD035 = "BILD035";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD025 = "BILD025";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD015 = "BILD015";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDOrange = "BILDOrange";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDRed053 = "BILDRed053";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDRed035 = "BILDRed035";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDGreen093 = "BILDGreen093";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDGreen070 = "BILDGreen070";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDGreen063 = "BILDGreen063";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD093 = "BILD093";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILDYellow = "BILDYellow";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD073 = "BILD073";
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    static const bILD045 = "BILD045";
-
     // BILD - alpha
     static const alphaBlack20 = Color(0x33000000);
     static const alphaBlack10 = Color(0x1a000000);
@@ -67,7 +29,7 @@ class Colorprimitive {
     static const alphaWhite70 = Color(0xb2ffffff);
     static const alphaWhite35 = Color(0x59ffffff);
     /** Used on elevation effects. */
-    static const alphaBILDRed80 = Color(0xccdd0000);
+    static const alphaBildred80 = Color(0xccdd0000);
     /** Used on elevation effects. */
     static const alphaBlack80 = Color(0xcc000000);
     /** Used on elevation effects. */
@@ -79,54 +41,54 @@ class Colorprimitive {
 
     // BILD - blue
     /** This Blue color was taken from the Weather 2024 project. Tone: 069 */
-    static const bILDBlue = Color(0xFF00B1FF);
+    static const bildblue = Color(0xFF00B1FF);
 
     // BILD - gray
-    static const bILD015 = Color(0xFF232629);
-    static const bILD085 = Color(0xFFCED4DA);
-    static const bILD035 = Color(0xFF4B525A);
-    static const bILD025 = Color(0xFF343C41);
-    static const bILD060 = Color(0xFF8C9196);
-    static const bILD096 = Color(0xFFF2F4F5);
-    static const bILD093 = Color(0xFFE9ECEF);
+    static const bild015 = Color(0xFF232629);
+    static const bild085 = Color(0xFFCED4DA);
+    static const bild035 = Color(0xFF4B525A);
+    static const bild025 = Color(0xFF343C41);
+    static const bild060 = Color(0xFF8C9196);
+    static const bild096 = Color(0xFFF2F4F5);
+    static const bild093 = Color(0xFFE9ECEF);
     /** The 50% opacity on this color makes it equivalent to BILD093. */
-    static const bILD085-50 = Color(0x80ced4da);
-    static const bILD073 = Color(0xFFAEB4B9);
-    static const bILD045 = Color(0xFF666B70);
-    static const bILD010 = Color(0xFF1C1C1C);
-    static const bILD020 = Color(0xFF2C3138);
+    static const bild08550 = Color(0x80ced4da);
+    static const bild073 = Color(0xFFAEB4B9);
+    static const bild045 = Color(0xFF666B70);
+    static const bild010 = Color(0xFF1C1C1C);
+    static const bild020 = Color(0xFF2C3138);
 
     // BILD - green
-    static const bILDGreen070 = Color(0xFF00C373);
-    static const bILDGreen063 = Color(0xFF00AF67);
-    static const bILDGreen093 = Color(0xFFCEF4E4);
-    static const bILDGreen093-50 = Color(0x80cef4e4);
-    static const bILDGreen056-50 = Color(0x80009b5a);
+    static const bildgreen070 = Color(0xFF00C373);
+    static const bildgreen063 = Color(0xFF00AF67);
+    static const bildgreen093 = Color(0xFFCEF4E4);
+    static const bildgreen09350 = Color(0x80cef4e4);
+    static const bildgreen05650 = Color(0x80009b5a);
     /** This value of green was found in a text field's text color. */
-    static const bILDGreen040 = Color(0xFF006E3E);
-    static const bILDGreen056 = Color(0xFF18995C);
+    static const bildgreen040 = Color(0xFF006E3E);
+    static const bildgreen056 = Color(0xFF18995C);
 
     // BILD - neutral
-    static const bILD100 = Color(0xFFFFFFFF);
-    static const bILDBlack = Color(0xFF000000);
+    static const bild100 = Color(0xFFFFFFFF);
+    static const bildblack = Color(0xFF000000);
 
     // BILD - orange
     /** Tone: 067 */
-    static const bILDOrange = Color(0xFFFD8227);
+    static const bildorange = Color(0xFFFD8227);
 
     // BILD - purple
     /** Tone: 020 */
-    static const bILDBerry = Color(0xFF551937);
+    static const bildberry = Color(0xFF551937);
 
     // BILD - red
     /** Tone 046 */
-    static const bILDRed = Color(0xFFDD0000);
-    static const bILDRed035 = Color(0xFFAF0002);
-    static const bILDRed053 = Color(0xFFF52D2D);
+    static const bildred = Color(0xFFDD0000);
+    static const bildred035 = Color(0xFFAF0002);
+    static const bildred053 = Color(0xFFF52D2D);
 
     // BILD - yellow
     /** Tone: 081 */
-    static const bILDYellow = Color(0xFFFFBF00);
+    static const bildyellow = Color(0xFFFFBF00);
 
     // Opacity
     static const opacity05 = "5px";
@@ -170,8 +132,8 @@ class Colorprimitive {
     static const travelbookCore = Color(0xFF8EF0ED);
 
     // SportBILD - alpha
-    static const spobiBlue016-0 = Color(0x000a2750);
-    static const spobiBlue016-70 = Color(0xb20a2750);
+    static const spobiBlue0160 = Color(0x000a2750);
+    static const spobiBlue01670 = Color(0xb20a2750);
 
     // SportBILD - blue
     static const spobiBlue098 = Color(0xFFF7F9FD);

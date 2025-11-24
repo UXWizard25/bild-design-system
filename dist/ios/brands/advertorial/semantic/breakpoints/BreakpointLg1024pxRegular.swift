@@ -23,7 +23,7 @@ public class BreakpointLg1024pxRegular {
     /** 40 - 40 - 72 - 100 - This variable uses the semantic variables headline2 for XS&SM, headline1 for MD&LG */
     public static let ArticleHeadlineFontSize = "70px"
     /** same as standard teaser width size variable */
-    public static let ArticleGalleryATeaserWidth = "300px"
+    public static let ArticleGalleryAteaserWidth = "300px"
     /** CSS --article-figure-meta-font-size 16-16-18-18 */
     public static let ArticleImageCaptionFontSize = "16px"
     /** NMT CSS --article-figure-meta-font-size */
@@ -81,8 +81,8 @@ public class BreakpointLg1024pxRegular {
     /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
     public static let BreadcrumbFontSize = "12px"
     public static let BreadcrumbFontFamily = "Lucida Grande"
-    public static let Breadcrumb&ArrowLeftInlineSpace1 = "3px"
-    public static let Breadcrumb&ArrowRightInlineSpace2 = "5px"
+    public static let BreadcrumbArrowLeftInlineSpace1 = "3px"
+    public static let BreadcrumbArrowRightInlineSpace2 = "5px"
     public static let BreadcrumbInlineSpace = "0px"
     /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
     public static let BreadcrumbLineHeight = "12px"
@@ -177,7 +177,7 @@ public class BreakpointLg1024pxRegular {
     public static let InputFieldMiniLabelInlineSpace = "4px"
     /** This variable controls texts inside of input fields such as dropdowns, date input and other text inputs that appear in forms for example. compact 15 - default 17 - spacious 19 */
     public static let InputFieldFontSize = "16px"
-    public static let InputFieldIMessageInlineSpace = "16px"
+    public static let InputFieldImessageInlineSpace = "16px"
     public static let InputFieldHeightSize = "36px"
     public static let HeyInputContainerInlineSpace = "16px"
     public static let InputFieldMessageGapSpace = "4px"
@@ -190,7 +190,7 @@ public class BreakpointLg1024pxRegular {
     public static let TimeStampFontFamily = "Gotham XNarrow"
     /** This variable is used for the live ticker time stamp font size. 14 - 14 - 16 - 16 */
     public static let LiveTickerTimeStampFontSize = "16px"
-    public static let LiveTickerTime&HeadlineStackSpace = "4px"
+    public static let LiveTickerTimeHeadlineStackSpace = "4px"
     public static let LiveTickerSliderItemWidthMaxSize = "537px"
     public static let LiveTickerAppCardHeightSize = "128px"
     public static let LiveTickerAppCardWidthSize = "300px"
@@ -233,9 +233,9 @@ public class BreakpointLg1024pxRegular {
     public static let HeyInputShadowVisibility = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.100)
     public static let AppTopbarTitleFontSize = "14px"
     public static let AppTopbarStageTitleHeight = "17px"
-    public static let IOSappTopBarHeightSize = "48px"
-    public static let IOSappTopBarLeftInlineSpace = "19px"
-    public static let IOSappTopBarRightInlineSpace = "19px"
+    public static let IOsappTopBarHeightSize = "48px"
+    public static let IOsappTopBarLeftInlineSpace = "19px"
+    public static let IOsappTopBarRightInlineSpace = "19px"
 
     // MARK: - Component - Newsticker
     /** similar to kicker3 values - 16 - 16 - 16 - 18 */
@@ -248,7 +248,7 @@ public class BreakpointLg1024pxRegular {
     public static let NewsTickerKickerInnerStackSpace = "2px"
     public static let NewsTickerTitlesInlineSpace = "30px"
     public static let NewsTickerBadgesInlineSpace = "16px"
-    public static let NewsTickerTime&KickerStackSpace = "6px"
+    public static let NewsTickerTimeKickerStackSpace = "6px"
     public static let NewsTickerEntriesStackSpace = "22px"
     public static let NewsTickerKickerInnerInlineSpace = "4px"
     public static let NewsTickerSkeletonBottomSpace = "0px"
@@ -295,9 +295,9 @@ public class BreakpointLg1024pxRegular {
     public static let SectionTitleInnerStackBottomSpace = "12px"
     public static let SectionTitleHeightSize = "40px"
     /** This variable is used on large title headings that are h2 elements in html and indicate a new section in the user interface. This space changes when a user hovers over the large title. */
-    public static let SectionTitle&ArrowInlineSpace = "5px"
+    public static let SectionTitleArrowInlineSpace = "5px"
     /** This variable is used for increasing the space between the text and the arrow at the end of the large title text. On mobile devices there is no hover state so this variables values are the same as the default state values. */
-    public static let SectionTitle&ArrowInlineSpaceActive = "8px"
+    public static let SectionTitleArrowInlineSpaceActive = "8px"
 
     // MARK: - Component - Separators
     public static let SeparatorThicknessSize = "2px"
@@ -320,15 +320,15 @@ public class BreakpointLg1024pxRegular {
     // MARK: - Component - Spinners
     public static let VideoSpinnerSize = "80px"
     public static let VideoSpinnerStrokeSize = "4px"
-    public static let VideoSpinnerSize0_5x = "40px"
+    public static let VideoSpinnerSize05x = "40px"
 
     // MARK: - Component - Table
     public static let TableColumnWidthSize1x = "140px"
     public static let TableColumnWidthSize2x = "220px"
-    public static let TableColumnWidthSize0_5x = "72px"
-    public static let TableColumnWidthSize1_5x = "180px"
-    public static let TableColumnWidthSize2_5x = "240px"
-    public static let TableColumnWidthSize0_75x = "100px"
+    public static let TableColumnWidthSize05x = "72px"
+    public static let TableColumnWidthSize15x = "180px"
+    public static let TableColumnWidthSize25x = "240px"
+    public static let TableColumnWidthSize075x = "100px"
     public static let TableColumnWidthSize3x = "280px"
     public static let TableItemMaxWidthSize = "224px"
 
@@ -354,9 +354,9 @@ public class BreakpointLg1024pxRegular {
     /** This variable is used for creating space around the outside of a subscription badge or video icon badge. */
     public static let TeaserBadgesMarginSpace = "8px"
     /** This token is for controling the height of badges that are inside of teasers. 32 - 32 - 32 - 40 */
-    public static let TeaserBadgesHeightSizeLG = "40px"
+    public static let TeaserBadgesHeightSizeLg = "40px"
     public static let TeaserTitleBottomStackSpace = "16px"
-    public static let TeaserBadgesHeightSizeSM = "32px"
+    public static let TeaserBadgesHeightSizeSm = "32px"
     public static let TeaserLayoutGridSpace = "16px"
 
     // MARK: - Component - Teaser - aTeaser
@@ -376,9 +376,9 @@ public class BreakpointLg1024pxRegular {
 
     // MARK: - Component - Teaser - mQTeaser
     /** XS-headline4FontSize:22 // SM-headline4FontSize:22 // MD-headline3FontSize:36 // LG-headline3FontSize:40 */
-    public static let MQTeaserHeadlineFontSize = "32px"
-    public static let MQTeaserHeadlineFontWeight = 700
-    public static let MQTeaserHeadlineLineHeight = "35.20000076293945px"
+    public static let MQteaserHeadlineFontSize = "32px"
+    public static let MQteaserHeadlineFontWeight = 700
+    public static let MQteaserHeadlineLineHeight = "35.20000076293945px"
     public static let MqTeaserTitleInlineSpace = "8px"
 
     // MARK: - Component - Teaser - qTeaser
@@ -397,7 +397,7 @@ public class BreakpointLg1024pxRegular {
 
     // MARK: - Component - Teaser - superA
     /** 16 - 16 - 16 - 16 */
-    public static let SuperATeaserTitleInlineSpace = "16px"
+    public static let SuperAteaserTitleInlineSpace = "16px"
 
     // MARK: - Component - ToggleSwitch
     /** This variable is used on labels in list items with toggle switches found in app preferences. 14 - 14 - 16 - 18 */
@@ -427,16 +427,16 @@ public class BreakpointLg1024pxRegular {
     public static let BildDesignFrameSpace = "64px"
     /** This variable is used on documentation pages. This is an alternative variable to the main container max width variable. 0 - 0 - 68 - 68 */
     public static let DsMainContainerSpace = "68px"
-    public static let DSysDocsWidthSize = "1440px"
+    public static let DsysDocsWidthSize = "1440px"
     /** This variable is used as a max width size for content blocks. For mobile devices this var references the DSysDocsWidthSize var 320 - 750 - 962 - 1024 */
     public static let MainContentStageSize = "1024px"
     /** This variable is used on documentation pages that have an artistic banner at the top of the page that is related to the foundation topic on the page. 80 - 80 -80 - 140 */
     public static let FoundationsBannerHeightSize = "140px"
     /** This variable is used in documentation pages that have small caption or lables along with a UI component documented. 4 - 4 - 6 - 8 */
-    public static let DsCaptionStackSpace0_5x = "8px"
+    public static let DsCaptionStackSpace05x = "8px"
     public static let DsCaptionStackSpace1x = "16px"
     /** This variable is used only for this design system's component tests. */
-    public static let 1columnMobile = "656px"
+    public static let _1columnMobile = "656px"
     /** This variable is currently used on a thin gallery that appears on desktop websites with petbook and other "books" content. Its height changes to a large height on mobile sites. 558 - 558 - 558 - 186 */
     public static let ThinBannerVerticalHeightSize = "186px"
     /** This variable is used only for texts and labels that form part of this design system's documentation. */
@@ -446,15 +446,15 @@ public class BreakpointLg1024pxRegular {
 
     // MARK: - Semantic - Border - BorderRadius
     /** 2-2-2-2 use for corner rounding on very small UI elements such as tooltips and badges. */
-    public static let BorderRadiusXS = "2px"
+    public static let BorderRadiusXs = "2px"
     /** 8-8-8-8 – Standard radius for buttons, chips, input fields, and medium-sized interactive elements. */
-    public static let BorderRadiusMD = "8px"
+    public static let BorderRadiusMd = "8px"
     /** 4-4-4-4 – use for corner rounding on compact components like checkboxes or small input controls. */
-    public static let BorderRadiusSM = "4px"
+    public static let BorderRadiusSm = "4px"
     /** 24-24-24-24 – use for corner rounding on larger cards, overlays, dialogs, and other container components. */
-    public static let BorderRadiusXL = "24px"
+    public static let BorderRadiusXl = "24px"
     /** 16-16-16-16 – use for corner rounding on small cards, overlays, and modal surfaces. */
-    public static let BorderRadiusLG = "16px"
+    public static let BorderRadiusLg = "16px"
     /** 0-0-0-0 – no corner rounding. Used as default for flat layouts, content modules, images, and teaser elements. */
     public static let BorderRadiusNone = "0px"
     /** creates fully rounded shapes, typically used for circular elements like avatars. */
@@ -498,9 +498,9 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
 
     // MARK: - Semantic - Layout - Grid - Constant
     /** 16-16-16-16 – use for fixed side paddings and gutters */
-    public static let GridSpaceConstLG = "16px"
+    public static let GridSpaceConstLg = "16px"
     /** 12-12-12-12 – use for fixed side paddings and gutters */
-    public static let GridSpaceConstSM = "12px"
+    public static let GridSpaceConstSm = "12px"
 
     // MARK: - Semantic - Layout - Grid - LayoutGuide
     /** Used to set the column count in Figma Layout guide Grids */
@@ -508,13 +508,13 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
 
     // MARK: - Semantic - Layout - Grid - Responsive
     /** 24-24-32-32 – use for side paddings and gutters in responsive layouts */
-    public static let GridSpaceRespLG = "32px"
+    public static let GridSpaceRespLg = "32px"
     /** 48-48-64-64 – use for side paddings and gutters in responsive layouts */
-    public static let GridSpaceRespXL = "64px"
+    public static let GridSpaceRespXl = "64px"
     /** 12-12-12-16 – use for side paddings and gutters in responsive layouts */
     public static let GridSpaceRespBase = "16px"
     /** 6-6-6-8 – use for side paddings and gutters in responsive layouts */
-    public static let GridSpaceRespSM = "8px"
+    public static let GridSpaceRespSm = "8px"
     /** 0-0-0-16 – This token is used on the main homepages content container, ensuring full-width layout (no horizontal padding) on mobile and tablet breakpoints. */
     public static let PageInlineSpace = "16px"
 
@@ -522,155 +522,155 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
     /** 36-36-48-48 – Use for vertical spacing between sections in a layout. */
     public static let SectionSpaceBase = "48px"
     /** 72-72-96-96 – Use for vertical spacing between sections in a layout */
-    public static let SectionSpaceLG = "96px"
+    public static let SectionSpaceLg = "96px"
     /** 16-16-32-32 – Use for spacing after paragraphs in text content */
     public static let ParagraphEndSpace = "32px"
     /** 24-24-36-36 – Use for vertical spacing between subsections in a layout */
-    public static let SectionSpaceSM = "36px"
+    public static let SectionSpaceSm = "36px"
 
     // MARK: - Semantic - Size - Constant
     /** 16-16-16-16 – Use for setting fixed height and width of UI elements */
-    public static let SizeConst3XS = "16px"
+    public static let SizeConst3Xs = "16px"
     /** 24-24-24-24 – Use for setting fixed height and width of UI elements */
-    public static let SizeConst2XS = "24px"
+    public static let SizeConst2Xs = "24px"
     /** 32-32-32-32 – Use for setting fixed height and width of UI elements */
-    public static let SizeConstXS = "32px"
+    public static let SizeConstXs = "32px"
     /** 40-40-40-40 – Use for setting fixed height and width of UI elements */
-    public static let SizeConstSM = "40px"
+    public static let SizeConstSm = "40px"
     /** 48-48-48-48 Use for setting fixed height and width of UI elements */
-    public static let SizeConstMD = "48px"
+    public static let SizeConstMd = "48px"
     /** 56-56-56-56 – Use for setting fixed height and width of UI elements */
-    public static let SizeConstLG = "56px"
+    public static let SizeConstLg = "56px"
     /** 64-64-64-64 – Use for setting fixed height and width of UI elements */
-    public static let SizeConstXL = "64px"
+    public static let SizeConstXl = "64px"
     /** 96-96-96-96 – Use for setting fixed height and width of UI elements */
-    public static let SizeConst3XL = "96px"
+    public static let SizeConst3Xl = "96px"
     /** 148-148-148-148 – Use for setting fixed height and width of UI elements */
-    public static let SizeConst4XL = "148px"
+    public static let SizeConst4Xl = "148px"
     /** 72-72-72-72 – Use for setting fixed height and width of UI elements */
-    public static let SizeConst2XL = "72px"
+    public static let SizeConst2Xl = "72px"
     /** 8-8-8-8 – Use for setting fixed height and width of UI elements */
-    public static let SizeConst4XS = "8px"
+    public static let SizeConst4Xs = "8px"
 
     // MARK: - Semantic - Size - Responsive
     /** 16-16-16-24 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeResp3XS = "24px"
+    public static let SizeResp3Xs = "24px"
     /** 24-24-32-32 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeResp2XS = "32px"
+    public static let SizeResp2Xs = "32px"
     /** 32-32-40-48 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeRespXS = "48px"
+    public static let SizeRespXs = "48px"
     /** 40-40-48-56 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeRespSM = "56px"
+    public static let SizeRespSm = "56px"
     /** 48-48-64-72 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeRespMD = "72px"
+    public static let SizeRespMd = "72px"
     /** 56-56-72-92 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeRespLG = "92px"
+    public static let SizeRespLg = "92px"
     /** 64-64-80-96 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeRespXL = "96px"
+    public static let SizeRespXl = "96px"
     /** 72-72-92-100 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeResp2XL = "100px"
+    public static let SizeResp2Xl = "100px"
     /** 96-96-120-148 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeResp3XL = "148px"
+    public static let SizeResp3Xl = "148px"
     /** 148-148-160-180 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeResp4XL = "180px"
+    public static let SizeResp4Xl = "180px"
     /** 12-12-14-16 – Use for setting height and width of UI elements that scale across breakpoints */
-    public static let SizeResp4XS = "16px"
+    public static let SizeResp4Xs = "16px"
 
     // MARK: - Semantic - Space - Gap - Constant
     /** 2-2-2-2 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConst2XS = "2px"
+    public static let GapSpaceConst2Xs = "2px"
     /** 4-4-4-4 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConstXS = "4px"
+    public static let GapSpaceConstXs = "4px"
     /** 8-8-8-8 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConstSM = "8px"
+    public static let GapSpaceConstSm = "8px"
     /** 12-12-12-12 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConstMD = "12px"
+    public static let GapSpaceConstMd = "12px"
     /** 16-16-16-16 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConstLG = "16px"
+    public static let GapSpaceConstLg = "16px"
     /** 24-24-24-24 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConstXL = "24px"
+    public static let GapSpaceConstXl = "24px"
     /** 32-32-32-32 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConst2XL = "32px"
+    public static let GapSpaceConst2Xl = "32px"
     /** 48-48-48-48 – Use for fixed gaps between items inside of UI elements */
-    public static let GapSpaceConst3XL = "48px"
+    public static let GapSpaceConst3Xl = "48px"
 
     // MARK: - Semantic - Space - Gap - Responsive
     /** 4-4-6-8 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceRespXS = "8px"
+    public static let GapSpaceRespXs = "8px"
     /** 16-16-24-32 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceRespLG = "32px"
+    public static let GapSpaceRespLg = "32px"
     /** 24-24-32-48 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceRespXL = "48px"
+    public static let GapSpaceRespXl = "48px"
     /** 32-32-48-64 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceResp2XL = "64px"
+    public static let GapSpaceResp2Xl = "64px"
     /** 12-12-16-24 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceRespMD = "24px"
+    public static let GapSpaceRespMd = "24px"
     /** 8-8-12-16 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceRespSM = "16px"
+    public static let GapSpaceRespSm = "16px"
     /** 2-2-4-6 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceResp2XS = "6px"
+    public static let GapSpaceResp2Xs = "6px"
     /** 48-48-72-96 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    public static let GapSpaceResp3XL = "96px"
+    public static let GapSpaceResp3Xl = "96px"
 
     // MARK: - Semantic - Space - Inline - Constant
     /** 8-8-8-8 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConstSM = "8px"
+    public static let InlineSpaceConstSm = "8px"
     /** 12-12-12-12 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConstMD = "12px"
+    public static let InlineSpaceConstMd = "12px"
     /** 16-16-16-16 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConstLG = "16px"
+    public static let InlineSpaceConstLg = "16px"
     /** 32-32-32-32 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConst2XL = "32px"
+    public static let InlineSpaceConst2Xl = "32px"
     /** 24-24-24-24 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConstXL = "24px"
+    public static let InlineSpaceConstXl = "24px"
     /** 6-6-6-6 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConstXS = "6px"
+    public static let InlineSpaceConstXs = "6px"
     /** 2-2-2-2 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConst3XS = "2px"
+    public static let InlineSpaceConst3Xs = "2px"
     /** 4-4-4-4 – Use for fixed horizontal (left/right) padding of UI elements */
-    public static let InlineSpaceConst2XS = "4px"
+    public static let InlineSpaceConst2Xs = "4px"
 
     // MARK: - Semantic - Space - Inline - Responsive
     /** 8-8-12-16 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    public static let InlineSpaceRespSM = "16px"
+    public static let InlineSpaceRespSm = "16px"
     /** 12-12-16-24 use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    public static let InlineSpaceRespMD = "24px"
+    public static let InlineSpaceRespMd = "24px"
     /** 16-16-24-32 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    public static let InlineSpaceRespLG = "32px"
+    public static let InlineSpaceRespLg = "32px"
     /** 32-32-48-64 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    public static let InlineSpaceResp2XL = "64px"
+    public static let InlineSpaceResp2Xl = "64px"
     /** 24-24-32-40 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    public static let InlineSpaceRespXL = "40px"
+    public static let InlineSpaceRespXl = "40px"
 
     // MARK: - Semantic - Space - Stack - Constant
     /** 8-8-8-8 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConstSM = "8px"
+    public static let StackSpaceConstSm = "8px"
     /** 12-12-12-12 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConstMD = "12px"
+    public static let StackSpaceConstMd = "12px"
     /** 16-16-16-16 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConstLG = "16px"
+    public static let StackSpaceConstLg = "16px"
     /** 32-32-32-32 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConst2XL = "32px"
+    public static let StackSpaceConst2Xl = "32px"
     /** 24-24-24-24 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConstXL = "24px"
+    public static let StackSpaceConstXl = "24px"
     /** 6-6-6-6 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConstXS = "6px"
+    public static let StackSpaceConstXs = "6px"
     /** 2-2-2-2 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConst3XS = "2px"
+    public static let StackSpaceConst3Xs = "2px"
     /** 4-4-4-4 – Use for fixed vertical (top/bottom) padding of UI elements */
-    public static let StackSpaceConst2XS = "4px"
+    public static let StackSpaceConst2Xs = "4px"
 
     // MARK: - Semantic - Space - Stack - Responsive
     /** 12-12-16-24 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    public static let StackSpaceRespMD = "24px"
+    public static let StackSpaceRespMd = "24px"
     /** 16-16-24-32 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    public static let StackSpaceRespLG = "32px"
+    public static let StackSpaceRespLg = "32px"
     /** 32-32-48-64 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    public static let StackSpaceResp2XL = "64px"
+    public static let StackSpaceResp2Xl = "64px"
     /** 8-8-12-16 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    public static let StackSpaceRespSM = "16px"
+    public static let StackSpaceRespSm = "16px"
     /** 24-24-32-40 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    public static let StackSpaceRespXL = "40px"
+    public static let StackSpaceRespXl = "40px"
 
     // MARK: - Semantic - Typography - FontFamily
     /** This variable references the bodyFontFamily variable from the branding collection. */
@@ -773,11 +773,11 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
     public static let Headline3FontWeight = 700
     public static let Headline4FontWeight = 600
     /** This variable is a string type variable for controlling not only headline font weight but also the italic style for Sport Bild headlines. */
-    public static let Headline1FontWeightST = "700"
+    public static let Headline1FontWeightSt = "700"
 
     // MARK: - Semantic - Typography - FontWeight - Kicker
     public static let KickerFontWeight = 700
-    public static let KickerFontWeightST = "700"
+    public static let KickerFontWeightSt = "700"
 
     // MARK: - Semantic - Typography - FontWeight - Label
     public static let LabelFontWeightBold = 700
@@ -794,23 +794,23 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
 
     // MARK: - Semantic - Typography - LetterSpacing
     /** 0.5 | 0.5 | 0.5 | 0.5 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    public static let LetterSpacingPositiveSM = "0.5px"
+    public static let LetterSpacingPositiveSm = "0.5px"
     /** 2 | 2 | 2 | 3 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    public static let LetterSpacingPositiveLG = "3px"
+    public static let LetterSpacingPositiveLg = "3px"
     /** 1 | 1 | 1 | 1 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    public static let LetterSpacingPositiveMD = "1px"
+    public static let LetterSpacingPositiveMd = "1px"
     /** 0 | 0 | 0 | 0 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
     public static let LetterSpacingNone = "0px"
     /** -0.5 | -0.5 | -0.25 | -0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    public static let LetterSpacingNegativeSM = "-0.25px"
+    public static let LetterSpacingNegativeSm = "-0.25px"
     /** -1 | -1 | -1 | -1 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    public static let LetterSpacingNegativeMD = "-1px"
+    public static let LetterSpacingNegativeMd = "-1px"
     /** -2 | -2 | -2 | -3 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    public static let LetterSpacingNegativeLG = "-3px"
+    public static let LetterSpacingNegativeLg = "-3px"
     /** -0.25 | -0.25 | -0.25 | -0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. This letter spacing was only found in large titles on iOS mobile app large title component. */
-    public static let LetterSpacingNegativeXS = "-0.25px"
+    public static let LetterSpacingNegativeXs = "-0.25px"
     /** 0.25 | 0.25 | 0.25 | 0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    public static let LetterSpacingPositiveXS = "0.25px"
+    public static let LetterSpacingPositiveXs = "0.25px"
 
     // MARK: - Semantic - Typography - LetterSpacing - display
     /** -0.5 | -0.5 | -1 | -2 | This variable is used for the letter spacing parameter of the display1 text style. On smaller devices the value is smaller than on larger devices. On desktop devices the letter spacing is further reduced for making the text style more compact. */
@@ -885,9 +885,9 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
     public static let HideOnDesktop = false
 
     // MARK: - Semantic - Visibility - VariantSwitch
-    public static let ChangeOnLG = "lg"
+    public static let ChangeOnLg = "lg"
     /** This variable is used for controlling size changes across device sizes on some components such as the vertical newsticker cards and the search results cards. Both have cards that change layouts at different breakpoints. */
-    public static let ChangeOnMD = "md/lg"
+    public static let ChangeOnMd = "md/lg"
     public static let BpSpecificWeb = "lg"
     public static let BpSpecificApp = "regular"
 }

@@ -26,7 +26,7 @@
             }
           }
         },
-        "name": "fontFamilyGothamXNarrow",
+        "name": "fontFamilyGothamXnarrow",
         "attributes": {},
         "path": [
           "FontFamily",
@@ -640,7 +640,7 @@
           }
         }
       },
-      "name": "boldItalicFontWeightST",
+      "name": "boldItalicFontWeightSt",
       "attributes": {},
       "path": [
         "FontWeight",
@@ -672,7 +672,7 @@
           }
         }
       },
-      "name": "blackFontWeightST",
+      "name": "blackFontWeightSt",
       "attributes": {},
       "path": [
         "FontWeight",
@@ -708,7 +708,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic text styles that need to use a subtle small letter spacing value of -0.25."
       },
-      "name": "letterSpace-0_25",
+      "name": "letterSpace025",
       "attributes": {},
       "path": [
         "LetterSpacing",
@@ -742,7 +742,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic text styles that need to use a default letter spacing value of 0."
       },
-      "name": "letterSpace-0",
+      "name": "letterSpace0",
       "attributes": {},
       "path": [
         "LetterSpacing",
@@ -810,7 +810,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic text styles that need to use a slight positive letter spacing value of 0.5."
       },
-      "name": "letterSpace0_5",
+      "name": "letterSpace05",
       "attributes": {},
       "path": [
         "LetterSpacing",
@@ -844,7 +844,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic text styles that need to use a subtle positive letter spacing value of 0.25."
       },
-      "name": "letterSpace0_25",
+      "name": "letterSpace025",
       "attributes": {},
       "path": [
         "LetterSpacing",
@@ -878,7 +878,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic variables that need to use a subtle negative letter spacing value of -0.5."
       },
-      "name": "letterSpace-0_5",
+      "name": "letterSpace05",
       "attributes": {},
       "path": [
         "LetterSpacing",
@@ -946,7 +946,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic variables that need to use a negative letter spacing value of -1."
       },
-      "name": "letterSpace-1",
+      "name": "letterSpace1",
       "attributes": {},
       "path": [
         "LetterSpacing",
@@ -980,7 +980,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic text styles that need to use a large negative letter spacing value of -2. This is usually reserved for large texts styles that are used on titles or headlines."
       },
-      "name": "letterSpace-2",
+      "name": "letterSpace2",
       "attributes": {},
       "path": [
         "LetterSpacing",
@@ -1048,7 +1048,7 @@
         },
         "comment": "This variable is a primitive for use in creating semantic text styles that need to use a large negative letter spacing value of -3. Text styles that have larger font sizes should use increasingly negative values for their letter spacings on larger device sizes."
       },
-      "name": "letterSpace-3",
+      "name": "letterSpace3",
       "attributes": {},
       "path": [
         "LetterSpacing",

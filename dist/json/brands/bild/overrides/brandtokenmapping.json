@@ -32,7 +32,7 @@
               "$type": "dimension",
               "comment": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes."
             },
-            "name": "display1FontSizeXS",
+            "name": "display1FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -71,7 +71,7 @@
               "$type": "dimension",
               "comment": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes."
             },
-            "name": "display1FontSizeSM",
+            "name": "display1FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -110,7 +110,7 @@
               "$type": "dimension",
               "comment": "Bild: 72 | SpoBi: 68 | Ads: 70 | This variable is used in the display1 text style font size parameter for medium device sizes."
             },
-            "name": "display1FontSizeMD",
+            "name": "display1FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -149,7 +149,7 @@
               "$type": "dimension",
               "comment": "Bild: 120 | SpoBi: 114 | Ads: 116 | This variable is used in the display1 text style font size parameter for large device sizes."
             },
-            "name": "display1FontSizeLG",
+            "name": "display1FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -188,7 +188,7 @@
               "$type": "dimension",
               "comment": "Bild: 36 | SpoBi: 34 | Ads: 35 | This variable is used in the display2 text style font size parameter for small device sizes."
             },
-            "name": "display2FontSizeXS",
+            "name": "display2FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -227,7 +227,7 @@
               "$type": "dimension",
               "comment": "Bild: 36 | SpoBi: 34 | Ads: 35 | This variable is used in the display2 text style font size parameter for small device sizes."
             },
-            "name": "display2FontSizeSM",
+            "name": "display2FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -266,7 +266,7 @@
               "$type": "dimension",
               "comment": "Bild: 42 | SpoBi: 40 | Ads: 41 | This variable is used in the display2 text style font size parameter for medium device sizes."
             },
-            "name": "display2FontSizeMD",
+            "name": "display2FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -305,7 +305,7 @@
               "$type": "dimension",
               "comment": "Bild: 64 | SpoBi: 61 | Ads: 62 | This variable is used in the display2 text style font size parameter for large device sizes."
             },
-            "name": "display2FontSizeLG",
+            "name": "display2FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -344,7 +344,7 @@
               "$type": "dimension",
               "comment": "Bild: 28 | SpoBi: 27 | Ads: 27 | This variable is used in the display3 text style font size parameter for small device sizes."
             },
-            "name": "display3FontSizeSM",
+            "name": "display3FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -383,7 +383,7 @@
               "$type": "dimension",
               "comment": "Bild: 32 | SpoBi: 30 | Ads: 31 | This variable is used in the display3 text style font size parameter for medium device sizes."
             },
-            "name": "display3FontSizeMD",
+            "name": "display3FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -422,7 +422,7 @@
               "$type": "dimension",
               "comment": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display3 text style font size parameter for large device sizes."
             },
-            "name": "display3FontSizeLG",
+            "name": "display3FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -461,7 +461,7 @@
               "$type": "dimension",
               "comment": "Bild: 28 | SpoBi: 27 | Ads: 27 | This variable is used in the display3 text style font size parameter for small device sizes."
             },
-            "name": "display3FontSizeXS",
+            "name": "display3FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -502,7 +502,7 @@
               "$type": "dimension",
               "comment": "Bild: 48 | SpoBi: 42 | Ads: 36 | This variable is used in the headline1 text style font size parameter for small device sizes."
             },
-            "name": "headline1FontSizeXS",
+            "name": "headline1FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -541,7 +541,7 @@
               "$type": "dimension",
               "comment": "Bild: 48 | SpoBi: 42 | Ads: 36 | This variable is used in the headline1 text style font size parameter for small device sizes."
             },
-            "name": "headline1FontSizeSM",
+            "name": "headline1FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -580,7 +580,7 @@
               "$type": "dimension",
               "comment": "Bild: 72 | SpoBi: 60 | Ads: 54 | This variable is used in the headline1 text style font size parameter for medium device sizes."
             },
-            "name": "headline1FontSizeMD",
+            "name": "headline1FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -619,7 +619,7 @@
               "$type": "dimension",
               "comment": "Bild: 100 | SpoBi: 80 | Ads: 70 | This variable is used in the headline1 text style font size parameter for large device sizes."
             },
-            "name": "headline1FontSizeLG",
+            "name": "headline1FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -658,7 +658,7 @@
               "$type": "dimension",
               "comment": "Bild: 40 | SpoBi: 42 | Ads: 30 | This variable is used in the headline2 text style font size parameter for small device sizes."
             },
-            "name": "headline2FontSizeXS",
+            "name": "headline2FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -697,7 +697,7 @@
               "$type": "dimension",
               "comment": "Bild: 40 | SpoBi: 42 | Ads: 30 | This variable is used in the headline2 text style font size parameter for small device sizes."
             },
-            "name": "headline2FontSizeSM",
+            "name": "headline2FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -736,7 +736,7 @@
               "$type": "dimension",
               "comment": "Bild: 48 | SpoBi: 44 | Ads: 36 | This variable is used in the headline2 text style font size parameter for medium device sizes."
             },
-            "name": "headline2FontSizeMD",
+            "name": "headline2FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -775,7 +775,7 @@
               "$type": "dimension",
               "comment": "Bild: 64 | SpoBi: 50 | Ads: 48 | This variable is used in the headline2 text style font size parameter for large device sizes."
             },
-            "name": "headline2FontSizeLG",
+            "name": "headline2FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -814,7 +814,7 @@
               "$type": "dimension",
               "comment": "Bild: 28 | SpoBi: 30 | Ads: 24 | This variable is used in the headline3 text style font size parameter for small device sizes."
             },
-            "name": "headline3FontSizeXS",
+            "name": "headline3FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -853,7 +853,7 @@
               "$type": "dimension",
               "comment": "Bild: 28 | SpoBi: 30 | Ads: 24 | This variable is used in the headline3 text style font size parameter for small device sizes."
             },
-            "name": "headline3FontSizeSM",
+            "name": "headline3FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -892,7 +892,7 @@
               "$type": "dimension",
               "comment": "Bild: 36 | SpoBi: 30 | Ads: 26 | This variable is used in the headline3 text style font size parameter for medium device sizes."
             },
-            "name": "headline3FontSizeMD",
+            "name": "headline3FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -931,7 +931,7 @@
               "$type": "dimension",
               "comment": "Bild: 40 | SpoBi: 34 | Ads: 32 | This variable is used in the headline3 text style font size parameter for large device sizes."
             },
-            "name": "headline3FontSizeLG",
+            "name": "headline3FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -970,7 +970,7 @@
               "$type": "dimension",
               "comment": "Bild: 22 | SpoBi: 21 | Ads: 16 | This variable is used in the headline4 text style font size parameter for small device sizes."
             },
-            "name": "headline4FontSizeXS",
+            "name": "headline4FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -1009,7 +1009,7 @@
               "$type": "dimension",
               "comment": "Bild: 22 | SpoBi: 21 | Ads: 16 | This variable is used in the headline4 text style font size parameter for small device sizes."
             },
-            "name": "headline4FontSizeSM",
+            "name": "headline4FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -1048,7 +1048,7 @@
               "$type": "dimension",
               "comment": "Bild: 26 | SpoBi: 26 | Ads: 20 | This variable is used in the headline4 text style font size parameter for medium device sizes."
             },
-            "name": "headline4FontSizeMD",
+            "name": "headline4FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -1087,7 +1087,7 @@
               "$type": "dimension",
               "comment": "Bild: 32 | SpoBi: 26 | Ads: 22 | This variable is used in the headline4 text style font size parameter for large device sizes."
             },
-            "name": "headline4FontSizeLG",
+            "name": "headline4FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -1165,7 +1165,7 @@
               "$type": "dimension",
               "comment": "Bild: 18 | SpoBi: 20 | Ads: 16 | This variable is used in the kicker1 text style font size parameter for small device sizes. Current online css: --kicker-0-font-size-sm"
             },
-            "name": "kicker1FontSizeXS",
+            "name": "kicker1FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -1204,7 +1204,7 @@
               "$type": "dimension",
               "comment": "Bild: 18 | SpoBi: 20 | Ads: 16 | This variable is used in the kicker1 text style font size parameter for small device sizes. Current online css: --kicker-0-font-size-sm"
             },
-            "name": "kicker1FontSizeSM",
+            "name": "kicker1FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -1243,7 +1243,7 @@
               "$type": "dimension",
               "comment": "Bild: 22 | SpoBi: 26 | Ads: 18 | This variable is used in the kicker1 text style font size parameter for medium device sizes. Current online css: --kicker-0-font-size-md"
             },
-            "name": "kicker1FontSizeMD",
+            "name": "kicker1FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -1282,7 +1282,7 @@
               "$type": "dimension",
               "comment": "Bild: 30 | SpoBi: 32 | Ads: 25 | This variable is used in the kicker1 text style font size parameter for large device sizes. Current online css: --kicker-0-font-size-lg"
             },
-            "name": "kicker1FontSizeLG",
+            "name": "kicker1FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -1321,7 +1321,7 @@
               "$type": "dimension",
               "comment": "Bild: 18 | SpoBi: 16 | Ads: 16 | This variable is used in the kicker2 text style font size parameter for small device sizes. Current online css: --kicker-1-font-size-sm"
             },
-            "name": "kicker2FontSizeXS",
+            "name": "kicker2FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -1360,7 +1360,7 @@
               "$type": "dimension",
               "comment": "Bild: 18 | SpoBi: 16 | Ads: 16 | This variable is used in the kicker2 text style font size parameter for small device sizes. Current online css: --kicker-1-font-size-sm"
             },
-            "name": "kicker2FontSizeSM",
+            "name": "kicker2FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -1399,7 +1399,7 @@
               "$type": "dimension",
               "comment": "Bild: 22 | SpoBi: 26 | Ads: 18 | This variable is used in the kicker2 text style font size parameter for medium device sizes. Current online css: --kicker-1-font-size-md"
             },
-            "name": "kicker2FontSizeMD",
+            "name": "kicker2FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -1438,7 +1438,7 @@
               "$type": "dimension",
               "comment": "Bild: 24 | SpoBi: 26 | Ads: 21 | This variable is used in the kicker2 text style font size parameter for large device sizes. Current online css: --kicker-1-font-size-lg"
             },
-            "name": "kicker2FontSizeLG",
+            "name": "kicker2FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -1477,7 +1477,7 @@
               "$type": "dimension",
               "comment": "Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for small device sizes. Current online css: --kicker-2-font-size-sm"
             },
-            "name": "kicker3FontSizeXS",
+            "name": "kicker3FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -1516,7 +1516,7 @@
               "$type": "dimension",
               "comment": "Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for small device sizes. Current online css: --kicker-2-font-size-sm"
             },
-            "name": "kicker3FontSizeSM",
+            "name": "kicker3FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -1555,7 +1555,7 @@
               "$type": "dimension",
               "comment": "Bild: 18 | SpoBi: 20 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for medium device sizes. Current online css: --kicker-2-font-size-md"
             },
-            "name": "kicker3FontSizeMD",
+            "name": "kicker3FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -1594,7 +1594,7 @@
               "$type": "dimension",
               "comment": "Bild: 20 | SpoBi: 22 | Ads: 16 | This variable is used in the kicker3 text style font size parameter for large device sizes. Current online css: --kicker-2-font-size-lg"
             },
-            "name": "kicker3FontSizeLG",
+            "name": "kicker3FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -1633,7 +1633,7 @@
               "$type": "dimension",
               "comment": "Bild: 14 | SpoBi: 14 | Ads: 12 | This variable is used in the kicker4 text style font size parameter for small device sizes. Current online css: --kicker-3-font-size-sm"
             },
-            "name": "kicker4FontSizeXS",
+            "name": "kicker4FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -1672,7 +1672,7 @@
               "$type": "dimension",
               "comment": "Bild: 14 | SpoBi: 14 | Ads: 12 | This variable is used in the kicker4 text style font size parameter for small device sizes. Current online css: --kicker-3-font-size-sm"
             },
-            "name": "kicker4FontSizeSM",
+            "name": "kicker4FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -1711,7 +1711,7 @@
               "$type": "dimension",
               "comment": "Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker4 text style font size parameter for medium device sizes. Current online css: --kicker-3-font-size-md"
             },
-            "name": "kicker4FontSizeMD",
+            "name": "kicker4FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -1750,7 +1750,7 @@
               "$type": "dimension",
               "comment": "Bild: 16 | SpoBi: 18 | Ads: 14 | This variable is used in the kicker4 text style font size parameter for large device sizes. Current online css: --kicker-3-font-size-lg"
             },
-            "name": "kicker4FontSizeLG",
+            "name": "kicker4FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -1791,7 +1791,7 @@
               "$type": "dimension",
               "comment": "Bild: 24 | SpoBi: 18 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for small device sizes."
             },
-            "name": "subheadline1FontSizeXS",
+            "name": "subheadline1FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -1830,7 +1830,7 @@
               "$type": "dimension",
               "comment": "Bild: 24 | SpoBi: 18 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for small device sizes."
             },
-            "name": "subheadline1FontSizeSM",
+            "name": "subheadline1FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -1869,7 +1869,7 @@
               "$type": "dimension",
               "comment": "Bild: 32 | SpoBi: 22 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for medium device sizes."
             },
-            "name": "subheadline1FontSizeMD",
+            "name": "subheadline1FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -1908,7 +1908,7 @@
               "$type": "dimension",
               "comment": "Bild: 36 | SpoBi: 26 | Ads: 28 | This variable is used in the subheadline1 text style font size parameter for large device sizes."
             },
-            "name": "subheadline1FontSizeLG",
+            "name": "subheadline1FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -1949,7 +1949,7 @@
               "$type": "dimension",
               "comment": "Bild 22 | SpoBi 24 | Ads 22 | current online css: --ressort-header-font-size-sm"
             },
-            "name": "title1FontSizeXS",
+            "name": "title1FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -1988,7 +1988,7 @@
               "$type": "dimension",
               "comment": "Bild 22 | SpoBi 24 | Ads 22 | current online css: --ressort-header-font-size-sm"
             },
-            "name": "title1FontSizeSM",
+            "name": "title1FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -2027,7 +2027,7 @@
               "$type": "dimension",
               "comment": "Bild 22 | SpoBi 28 | Ads 22 | current online css: --ressort-header-font-size-md"
             },
-            "name": "title1FontSizeMD",
+            "name": "title1FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -2066,7 +2066,7 @@
               "$type": "dimension",
               "comment": "Bild 28 | SpoBi 30 | Ads 28 | current online css: --ressort-header-font-size-lg"
             },
-            "name": "title1FontSizeLG",
+            "name": "title1FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -2105,7 +2105,7 @@
               "$type": "dimension",
               "comment": "Bild 16 | SpoBi 16 | Ads 14 | current online css var: --caption-1-font-size-sm"
             },
-            "name": "title2FontSizeXS",
+            "name": "title2FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -2144,7 +2144,7 @@
               "$type": "dimension",
               "comment": "Bild 16 | SpoBi 16 | Ads 14 | current online css: --caption-1-font-size-sm"
             },
-            "name": "title2FontSizeSM",
+            "name": "title2FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -2183,7 +2183,7 @@
               "$type": "dimension",
               "comment": "Bild 18 | SpoBi 18 | Ads 16 | current online css: --caption-1-font-size-md"
             },
-            "name": "title2FontSizeMD",
+            "name": "title2FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -2222,7 +2222,7 @@
               "$type": "dimension",
               "comment": "Bild 20 | SpoBi 20 | Ads 18 | current online css: --caption-1-font-size-lg"
             },
-            "name": "title2FontSizeLG",
+            "name": "title2FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -2263,7 +2263,7 @@
               "$type": "dimension",
               "comment": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:"
             },
-            "name": "callout1FontSizeXS",
+            "name": "callout1FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -2302,7 +2302,7 @@
               "$type": "dimension",
               "comment": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:"
             },
-            "name": "callout1FontSizeSM",
+            "name": "callout1FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -2341,7 +2341,7 @@
               "$type": "dimension",
               "comment": "Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for medium device sizes. Current online css:"
             },
-            "name": "callout1FontSizeMD",
+            "name": "callout1FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -2380,7 +2380,7 @@
               "$type": "dimension",
               "comment": "Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for large device sizes. Current online css:"
             },
-            "name": "callout1FontSizeLG",
+            "name": "callout1FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -2421,7 +2421,7 @@
               "$type": "dimension",
               "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size"
             },
-            "name": "bodyFontSizeXS",
+            "name": "bodyFontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -2460,7 +2460,7 @@
               "$type": "dimension",
               "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size"
             },
-            "name": "bodyFontSizeSM",
+            "name": "bodyFontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -2499,7 +2499,7 @@
               "$type": "dimension",
               "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for medium device sizes. Current online css: --body-font-size"
             },
-            "name": "bodyFontSizeMD",
+            "name": "bodyFontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -2538,7 +2538,7 @@
               "$type": "dimension",
               "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for large device sizes. Current online css: --body-font-size"
             },
-            "name": "bodyFontSizeLG",
+            "name": "bodyFontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -2579,7 +2579,7 @@
               "$type": "dimension",
               "comment": "--footnote-font-size-sm"
             },
-            "name": "footnote1FontSizeXS",
+            "name": "footnote1FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -2618,7 +2618,7 @@
               "$type": "dimension",
               "comment": "--footnote-font-size-sm"
             },
-            "name": "footnote1FontSizeSM",
+            "name": "footnote1FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -2655,7 +2655,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote1FontSizeMD",
+            "name": "footnote1FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -2694,7 +2694,7 @@
               "$type": "dimension",
               "comment": "--footnote-font-size-lg"
             },
-            "name": "footnote1FontSizeLG",
+            "name": "footnote1FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -2731,7 +2731,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2FontSizeXS",
+            "name": "footnote2FontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -2768,7 +2768,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2FontSizeSM",
+            "name": "footnote2FontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -2805,7 +2805,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2FontSizeMD",
+            "name": "footnote2FontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -2842,7 +2842,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2FontSizeLG",
+            "name": "footnote2FontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -2881,7 +2881,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteFontSizeXS",
+            "name": "quoteFontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -2918,7 +2918,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteFontSizeSM",
+            "name": "quoteFontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -2955,7 +2955,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteFontSizeMD",
+            "name": "quoteFontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -2992,7 +2992,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteFontSizeLG",
+            "name": "quoteFontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -3179,7 +3179,7 @@
               },
               "$type": "dimension"
             },
-            "name": "label1RespFontSizeXS",
+            "name": "label1RespFontSizeXs",
             "attributes": {},
             "path": [
               "Global",
@@ -3216,7 +3216,7 @@
               },
               "$type": "dimension"
             },
-            "name": "label1RespFontSizeSM",
+            "name": "label1RespFontSizeSm",
             "attributes": {},
             "path": [
               "Global",
@@ -3253,7 +3253,7 @@
               },
               "$type": "dimension"
             },
-            "name": "label1RespFontSizeMD",
+            "name": "label1RespFontSizeMd",
             "attributes": {},
             "path": [
               "Global",
@@ -3290,7 +3290,7 @@
               },
               "$type": "dimension"
             },
-            "name": "label1RespFontSizeLG",
+            "name": "label1RespFontSizeLg",
             "attributes": {},
             "path": [
               "Global",
@@ -3331,7 +3331,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display1LineHeightXS",
+            "name": "display1LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -3368,7 +3368,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display1LineHeightSM",
+            "name": "display1LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -3405,7 +3405,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display1LineHeightMD",
+            "name": "display1LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -3442,7 +3442,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display1LineHeightLG",
+            "name": "display1LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -3479,7 +3479,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display2LineHeightXS",
+            "name": "display2LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -3516,7 +3516,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display2LineHeightSM",
+            "name": "display2LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -3553,7 +3553,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display2LineHeightMD",
+            "name": "display2LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -3590,7 +3590,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display2LineHeightLG",
+            "name": "display2LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -3627,7 +3627,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display3LineHeightLG",
+            "name": "display3LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -3664,7 +3664,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display3LineHeightMD",
+            "name": "display3LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -3701,7 +3701,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display3LineHeightSM",
+            "name": "display3LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -3738,7 +3738,7 @@
               },
               "$type": "dimension"
             },
-            "name": "display3LineHeightXS",
+            "name": "display3LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -3777,7 +3777,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline1LineHeightXS",
+            "name": "headline1LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -3814,7 +3814,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline1LineHeightSM",
+            "name": "headline1LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -3851,7 +3851,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline1LineHeightMD",
+            "name": "headline1LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -3888,7 +3888,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline1LineHeightLG",
+            "name": "headline1LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -3925,7 +3925,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline2LineHeightXS",
+            "name": "headline2LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -3962,7 +3962,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline2LineHeightSM",
+            "name": "headline2LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -3999,7 +3999,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline2LineHeightMD",
+            "name": "headline2LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -4036,7 +4036,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline2LineHeightLG",
+            "name": "headline2LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -4073,7 +4073,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline3LineHeightXS",
+            "name": "headline3LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -4110,7 +4110,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline3LineHeightSM",
+            "name": "headline3LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -4147,7 +4147,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline3LineHeightMD",
+            "name": "headline3LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -4184,7 +4184,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline3LineHeightLG",
+            "name": "headline3LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -4221,7 +4221,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline4LineHeightXS",
+            "name": "headline4LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -4258,7 +4258,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline4LineHeightSM",
+            "name": "headline4LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -4295,7 +4295,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline4LineHeightMD",
+            "name": "headline4LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -4332,7 +4332,7 @@
               },
               "$type": "dimension"
             },
-            "name": "headline4LineHeightLG",
+            "name": "headline4LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -4371,7 +4371,7 @@
               },
               "$type": "dimension"
             },
-            "name": "subheadline1LineHeightXS",
+            "name": "subheadline1LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -4408,7 +4408,7 @@
               },
               "$type": "dimension"
             },
-            "name": "subheadline1LineHeightSM",
+            "name": "subheadline1LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -4445,7 +4445,7 @@
               },
               "$type": "dimension"
             },
-            "name": "subheadline1LineHeightMD",
+            "name": "subheadline1LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -4482,7 +4482,7 @@
               },
               "$type": "dimension"
             },
-            "name": "subheadline1LineHeightLG",
+            "name": "subheadline1LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -4521,7 +4521,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker1LineHeightXS",
+            "name": "kicker1LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -4558,7 +4558,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker1LineHeightSM",
+            "name": "kicker1LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -4595,7 +4595,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker1LineHeightMD",
+            "name": "kicker1LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -4632,7 +4632,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker1LineHeightLG",
+            "name": "kicker1LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -4669,7 +4669,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker2LineHeightXS",
+            "name": "kicker2LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -4706,7 +4706,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker2LineHeightSM",
+            "name": "kicker2LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -4743,7 +4743,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker2LineHeightMD",
+            "name": "kicker2LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -4780,7 +4780,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker2LineHeightLG",
+            "name": "kicker2LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -4817,7 +4817,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker3LineHeightXS",
+            "name": "kicker3LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -4854,7 +4854,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker3LineHeightSM",
+            "name": "kicker3LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -4891,7 +4891,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker3LineHeightMD",
+            "name": "kicker3LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -4928,7 +4928,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker3LineHeightLG",
+            "name": "kicker3LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -4965,7 +4965,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker4LineHeightXS",
+            "name": "kicker4LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -5002,7 +5002,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker4LineHeightSM",
+            "name": "kicker4LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -5039,7 +5039,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker4LineHeightMD",
+            "name": "kicker4LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -5076,7 +5076,7 @@
               },
               "$type": "dimension"
             },
-            "name": "kicker4LineHeightLG",
+            "name": "kicker4LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -5115,7 +5115,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title1LineHeightXS",
+            "name": "title1LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -5152,7 +5152,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title1LineHeightSM",
+            "name": "title1LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -5189,7 +5189,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title1LineHeightMD",
+            "name": "title1LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -5226,7 +5226,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title1LineHeightLG",
+            "name": "title1LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -5263,7 +5263,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title2LineHeightXS",
+            "name": "title2LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -5300,7 +5300,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title2LineHeightSM",
+            "name": "title2LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -5337,7 +5337,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title2LineHeightMD",
+            "name": "title2LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -5374,7 +5374,7 @@
               },
               "$type": "dimension"
             },
-            "name": "title2LineHeightLG",
+            "name": "title2LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -5413,7 +5413,7 @@
               },
               "$type": "dimension"
             },
-            "name": "callout1LineHeightXS",
+            "name": "callout1LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -5450,7 +5450,7 @@
               },
               "$type": "dimension"
             },
-            "name": "callout1LineHeightSM",
+            "name": "callout1LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -5487,7 +5487,7 @@
               },
               "$type": "dimension"
             },
-            "name": "callout1LineHeightMD",
+            "name": "callout1LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -5524,7 +5524,7 @@
               },
               "$type": "dimension"
             },
-            "name": "callout1LineHeightLG",
+            "name": "callout1LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -5563,7 +5563,7 @@
               },
               "$type": "dimension"
             },
-            "name": "bodyLineHeightXS",
+            "name": "bodyLineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -5600,7 +5600,7 @@
               },
               "$type": "dimension"
             },
-            "name": "bodyLineHeightSM",
+            "name": "bodyLineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -5637,7 +5637,7 @@
               },
               "$type": "dimension"
             },
-            "name": "bodyLineHeightMD",
+            "name": "bodyLineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -5674,7 +5674,7 @@
               },
               "$type": "dimension"
             },
-            "name": "bodyLineHeightLG",
+            "name": "bodyLineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -5713,7 +5713,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote1LineHeightXS",
+            "name": "footnote1LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -5750,7 +5750,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote1LineHeightSM",
+            "name": "footnote1LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -5787,7 +5787,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote1LineHeightMD",
+            "name": "footnote1LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -5824,7 +5824,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote1LineHeightLG",
+            "name": "footnote1LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -5861,7 +5861,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2LineHeightXS",
+            "name": "footnote2LineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -5898,7 +5898,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2LineHeightSM",
+            "name": "footnote2LineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -5935,7 +5935,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2LineHeightMD",
+            "name": "footnote2LineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -5972,7 +5972,7 @@
               },
               "$type": "dimension"
             },
-            "name": "footnote2LineHeightLG",
+            "name": "footnote2LineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -6052,7 +6052,7 @@
               "$type": "dimension",
               "comment": "Bild 10 | SpoBi 12 | Ads 10 | The label1 responsive text style uses this variable for its line height parameter."
             },
-            "name": "label1RespLineHeightXS",
+            "name": "label1RespLineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -6091,7 +6091,7 @@
               "$type": "dimension",
               "comment": "Bild 10 | SpoBi 12 | Ads 10 | The label1 responsive text style uses this variable for its line height parameter."
             },
-            "name": "label1RespLineHeightSM",
+            "name": "label1RespLineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -6130,7 +6130,7 @@
               "$type": "dimension",
               "comment": "Bild 15 | SpoBi 18 | Ads 15 | The label1 responsive text style uses this variable for its line height parameter."
             },
-            "name": "label1RespLineHeightMD",
+            "name": "label1RespLineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -6169,7 +6169,7 @@
               "$type": "dimension",
               "comment": "Bild 17 | SpoBi 20.4 | Ads 17 | The label1 responsive text style uses this variable for its line height parameter."
             },
-            "name": "label1RespLineHeightLG",
+            "name": "label1RespLineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -6325,7 +6325,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteLineHeightXS",
+            "name": "quoteLineHeightXs",
             "attributes": {},
             "path": [
               "Global",
@@ -6362,7 +6362,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteLineHeightSM",
+            "name": "quoteLineHeightSm",
             "attributes": {},
             "path": [
               "Global",
@@ -6399,7 +6399,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteLineHeightMD",
+            "name": "quoteLineHeightMd",
             "attributes": {},
             "path": [
               "Global",
@@ -6436,7 +6436,7 @@
               },
               "$type": "dimension"
             },
-            "name": "quoteLineHeightLG",
+            "name": "quoteLineHeightLg",
             "attributes": {},
             "path": [
               "Global",
@@ -7147,7 +7147,7 @@
                 }
               }
             },
-            "name": "kickerFontWeightST",
+            "name": "kickerFontWeightSt",
             "attributes": {},
             "path": [
               "Global",
@@ -7626,7 +7626,7 @@
             }
           }
         },
-        "name": "hideOnBILD",
+        "name": "hideOnBild",
         "attributes": {},
         "path": [
           "Global",
@@ -7659,7 +7659,7 @@
             }
           }
         },
-        "name": "hideOnSportBILD",
+        "name": "hideOnSportBild",
         "attributes": {},
         "path": [
           "Global",
@@ -7758,7 +7758,7 @@
             }
           }
         },
-        "name": "onlyBILD",
+        "name": "onlyBild",
         "attributes": {},
         "path": [
           "Global",
@@ -7791,7 +7791,7 @@
             }
           }
         },
-        "name": "onlySportBILD",
+        "name": "onlySportBild",
         "attributes": {},
         "path": [
           "Global",
@@ -7833,7 +7833,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-font-size-sm"
           },
-          "name": "articleImageCaptionFontSizeXS",
+          "name": "articleImageCaptionFontSizeXs",
           "attributes": {},
           "path": [
             "Component",
@@ -7871,7 +7871,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-font-size-md"
           },
-          "name": "articleImageCaptionFontSizeMD",
+          "name": "articleImageCaptionFontSizeMd",
           "attributes": {},
           "path": [
             "Component",
@@ -7909,7 +7909,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-font-size-lg"
           },
-          "name": "articleImageCaptionFontSizeLG",
+          "name": "articleImageCaptionFontSizeLg",
           "attributes": {},
           "path": [
             "Component",
@@ -7947,7 +7947,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-font-size-sm"
           },
-          "name": "articleImageCaptionFontSizeSM",
+          "name": "articleImageCaptionFontSizeSm",
           "attributes": {},
           "path": [
             "Component",
@@ -7985,7 +7985,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-font-size-sm"
           },
-          "name": "articleImageSourceFontSizeXS",
+          "name": "articleImageSourceFontSizeXs",
           "attributes": {},
           "path": [
             "Component",
@@ -8023,7 +8023,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-font-size-sm"
           },
-          "name": "articleImageSourceFontSizeSM",
+          "name": "articleImageSourceFontSizeSm",
           "attributes": {},
           "path": [
             "Component",
@@ -8061,7 +8061,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-font-size-sm"
           },
-          "name": "articleImageSourceFontSizeMD",
+          "name": "articleImageSourceFontSizeMd",
           "attributes": {},
           "path": [
             "Component",
@@ -8099,7 +8099,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-font-size-lg"
           },
-          "name": "articleImageSourceFontSizeLG",
+          "name": "articleImageSourceFontSizeLg",
           "attributes": {},
           "path": [
             "Component",
@@ -8139,7 +8139,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-line-height-sm ; Bild: 19.5 // SpoBi: 16.9 // Ad: 19.5"
           },
-          "name": "articleImageCaptionLineHeightXS",
+          "name": "articleImageCaptionLineHeightXs",
           "attributes": {},
           "path": [
             "Component",
@@ -8177,7 +8177,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-line-height-md ; Bild: 24.75 // SpoBi: 16.9 // Ad: 19.5"
           },
-          "name": "articleImageCaptionLineHeightMD",
+          "name": "articleImageCaptionLineHeightMd",
           "attributes": {},
           "path": [
             "Component",
@@ -8215,7 +8215,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-line-height-lg ; Bild: 24.75 // SpoBi: 19.5 // Ad: 24"
           },
-          "name": "articleImageCaptionLineHeightLG",
+          "name": "articleImageCaptionLineHeightLg",
           "attributes": {},
           "path": [
             "Component",
@@ -8253,7 +8253,7 @@
             "$type": "dimension",
             "comment": "--article-figure-caption-line-height-sm ; Bild: 19.5 // SpoBi: 16.9 // Ad: 19.5"
           },
-          "name": "articleImageCaptionLineHeightSM",
+          "name": "articleImageCaptionLineHeightSm",
           "attributes": {},
           "path": [
             "Component",
@@ -8291,7 +8291,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19"
           },
-          "name": "articleImageSourceLineHeightMD",
+          "name": "articleImageSourceLineHeightMd",
           "attributes": {},
           "path": [
             "Component",
@@ -8329,7 +8329,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-line-height-lg ; Bild: 23 // SpoBi: 19 // Ad: 24"
           },
-          "name": "articleImageSourceLineHeightLG",
+          "name": "articleImageSourceLineHeightLg",
           "attributes": {},
           "path": [
             "Component",
@@ -8367,7 +8367,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19"
           },
-          "name": "articleImageSourceLineHeightXS",
+          "name": "articleImageSourceLineHeightXs",
           "attributes": {},
           "path": [
             "Component",
@@ -8405,7 +8405,7 @@
             "$type": "dimension",
             "comment": "--article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19"
           },
-          "name": "articleImageSourceLineHeightSM",
+          "name": "articleImageSourceLineHeightSm",
           "attributes": {},
           "path": [
             "Component",
@@ -8447,7 +8447,7 @@
             "$type": "dimension",
             "comment": "--breadcrumb-font-size-sm"
           },
-          "name": "breadcrumbFontSizeXS",
+          "name": "breadcrumbFontSizeXs",
           "attributes": {},
           "path": [
             "Component",
@@ -8485,7 +8485,7 @@
             "$type": "dimension",
             "comment": "--breadcrumb-font-size-sm"
           },
-          "name": "breadcrumbFontSizeSM",
+          "name": "breadcrumbFontSizeSm",
           "attributes": {},
           "path": [
             "Component",
@@ -8523,7 +8523,7 @@
             "$type": "dimension",
             "comment": "--breadcrumb-font-size-sm"
           },
-          "name": "breadcrumbFontSizeMD",
+          "name": "breadcrumbFontSizeMd",
           "attributes": {},
           "path": [
             "Component",
@@ -8561,7 +8561,7 @@
             "$type": "dimension",
             "comment": "--breadcrumb-font-size-lg"
           },
-          "name": "breadcrumbFontSizeLG",
+          "name": "breadcrumbFontSizeLg",
           "attributes": {},
           "path": [
             "Component",
@@ -8601,7 +8601,7 @@
             "$type": "dimension",
             "comment": "not defined as variable"
           },
-          "name": "breadcrumbLineHeightXS",
+          "name": "breadcrumbLineHeightXs",
           "attributes": {},
           "path": [
             "Component",
@@ -8639,7 +8639,7 @@
             "$type": "dimension",
             "comment": "not defined as variable"
           },
-          "name": "breadcrumbLineHeightSM",
+          "name": "breadcrumbLineHeightSm",
           "attributes": {},
           "path": [
             "Component",
@@ -8677,7 +8677,7 @@
             "$type": "dimension",
             "comment": "not defined as variable"
           },
-          "name": "breadcrumbLineHeightMD",
+          "name": "breadcrumbLineHeightMd",
           "attributes": {},
           "path": [
             "Component",
@@ -8715,7 +8715,7 @@
             "$type": "dimension",
             "comment": "not defined as variable"
           },
-          "name": "breadcrumbLineHeightLG",
+          "name": "breadcrumbLineHeightLg",
           "attributes": {},
           "path": [
             "Component",
@@ -8871,7 +8871,7 @@
           "$type": "dimension",
           "comment": "--caption-1-font-size-md"
         },
-        "name": "appTopBarTitleFontSizeMD",
+        "name": "appTopBarTitleFontSizeMd",
         "attributes": {},
         "path": [
           "Component",
@@ -8908,7 +8908,7 @@
           "$type": "dimension",
           "comment": "--caption-1-font-size-lg"
         },
-        "name": "appTopBarTitleFontSizeLG",
+        "name": "appTopBarTitleFontSizeLg",
         "attributes": {},
         "path": [
           "Component",
@@ -8945,7 +8945,7 @@
           "$type": "dimension",
           "comment": "--caption-1-font-size-sm"
         },
-        "name": "appTopBarTitleFontSizeXS",
+        "name": "appTopBarTitleFontSizeXs",
         "attributes": {},
         "path": [
           "Component",
@@ -8982,7 +8982,7 @@
           "$type": "dimension",
           "comment": "--caption-1-font-size-sm"
         },
-        "name": "appTopBarTitleFontSizeSM",
+        "name": "appTopBarTitleFontSizeSm",
         "attributes": {},
         "path": [
           "Component",
@@ -9017,7 +9017,7 @@
           },
           "$type": "dimension"
         },
-        "name": "appTopBarTitleLineHeightMD",
+        "name": "appTopBarTitleLineHeightMd",
         "attributes": {},
         "path": [
           "Component",
@@ -9052,7 +9052,7 @@
           },
           "$type": "dimension"
         },
-        "name": "appTopBarTitleLineHeightLG",
+        "name": "appTopBarTitleLineHeightLg",
         "attributes": {},
         "path": [
           "Component",
@@ -9087,7 +9087,7 @@
           },
           "$type": "dimension"
         },
-        "name": "appTopBarTitleLineHeightXS",
+        "name": "appTopBarTitleLineHeightXs",
         "attributes": {},
         "path": [
           "Component",
@@ -9122,7 +9122,7 @@
           },
           "$type": "dimension"
         },
-        "name": "appTopBarTitleLineHeightSM",
+        "name": "appTopBarTitleLineHeightSm",
         "attributes": {},
         "path": [
           "Component",
@@ -9192,7 +9192,7 @@
           },
           "comment": "--teaser-title-padding-lg"
         },
-        "name": "teaserTitleInlineSpaceLG",
+        "name": "teaserTitleInlineSpaceLg",
         "attributes": {},
         "path": [
           "Component",
@@ -9227,7 +9227,7 @@
           },
           "comment": "--teaser-title-padding-md"
         },
-        "name": "teaserTitleInlineSpaceMD",
+        "name": "teaserTitleInlineSpaceMd",
         "attributes": {},
         "path": [
           "Component",
@@ -9262,7 +9262,7 @@
           },
           "comment": "--teaser-title-padding-sm"
         },
-        "name": "teaserTitleInlineSpaceSM",
+        "name": "teaserTitleInlineSpaceSm",
         "attributes": {},
         "path": [
           "Component",
@@ -9297,7 +9297,7 @@
           },
           "comment": "--teaser-title-padding-xs"
         },
-        "name": "teaserTitleInlineSpaceXS",
+        "name": "teaserTitleInlineSpaceXs",
         "attributes": {},
         "path": [
           "Component",
@@ -9331,7 +9331,7 @@
               }
             }
           },
-          "name": "qTeaserTitleInlineSpaceLG",
+          "name": "qTeaserTitleInlineSpaceLg",
           "attributes": {},
           "path": [
             "Component",
@@ -9365,7 +9365,7 @@
               }
             }
           },
-          "name": "qTeaserTitleInlineSpaceMD",
+          "name": "qTeaserTitleInlineSpaceMd",
           "attributes": {},
           "path": [
             "Component",
@@ -9399,7 +9399,7 @@
               }
             }
           },
-          "name": "qTeaserTitleInlineSpaceSM",
+          "name": "qTeaserTitleInlineSpaceSm",
           "attributes": {},
           "path": [
             "Component",
@@ -9433,7 +9433,7 @@
               }
             }
           },
-          "name": "qTeaserTitleInlineSpaceXS",
+          "name": "qTeaserTitleInlineSpaceXs",
           "attributes": {},
           "path": [
             "Component",
@@ -9469,7 +9469,7 @@
               }
             }
           },
-          "name": "aTeaserTitleInlineSpaceLG",
+          "name": "aTeaserTitleInlineSpaceLg",
           "attributes": {},
           "path": [
             "Component",
@@ -9503,7 +9503,7 @@
               }
             }
           },
-          "name": "aTeaserTitleInlineSpaceMD",
+          "name": "aTeaserTitleInlineSpaceMd",
           "attributes": {},
           "path": [
             "Component",
@@ -9537,7 +9537,7 @@
               }
             }
           },
-          "name": "aTeaserTitleInlineSpaceXS",
+          "name": "aTeaserTitleInlineSpaceXs",
           "attributes": {},
           "path": [
             "Component",
@@ -9571,7 +9571,7 @@
               }
             }
           },
-          "name": "aTeaserTitleInlineSpaceSM",
+          "name": "aTeaserTitleInlineSpaceSm",
           "attributes": {},
           "path": [
             "Component",
@@ -9679,7 +9679,7 @@
               }
             }
           },
-          "name": "miniQTeaserTitleInlineSpaceMD",
+          "name": "miniQteaserTitleInlineSpaceMd",
           "attributes": {},
           "path": [
             "Component",
@@ -9713,7 +9713,7 @@
               }
             }
           },
-          "name": "miniQTeaserTitleInlineSpaceLG",
+          "name": "miniQteaserTitleInlineSpaceLg",
           "attributes": {},
           "path": [
             "Component",
@@ -9747,7 +9747,7 @@
               }
             }
           },
-          "name": "miniQTeaserTitleInlineSpaceSM",
+          "name": "miniQteaserTitleInlineSpaceSm",
           "attributes": {},
           "path": [
             "Component",
@@ -9781,7 +9781,7 @@
               }
             }
           },
-          "name": "miniQTeaserTitleInlineSpaceXS",
+          "name": "miniQteaserTitleInlineSpaceXs",
           "attributes": {},
           "path": [
             "Component",
@@ -9893,7 +9893,7 @@
           "$type": "dimension",
           "comment": "09-2025 css using footnote var for font sizes SM & LG // Bild: 16; SpoBi: 13; Ads: 13"
         },
-        "name": "avatarFontSizeSM",
+        "name": "avatarFontSizeSm",
         "attributes": {},
         "path": [
           "Component",
@@ -9930,7 +9930,7 @@
           "$type": "dimension",
           "comment": "09-2025 css using footnote var for font sizes SM & LG // Bild: 18; SpoBi: 15; Ads: 15"
         },
-        "name": "avatarFontSizeLG",
+        "name": "avatarFontSizeLg",
         "attributes": {},
         "path": [
           "Component",

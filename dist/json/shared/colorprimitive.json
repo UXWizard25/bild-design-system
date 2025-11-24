@@ -30,7 +30,7 @@
           "$type": "color",
           "comment": "Tone 046"
         },
-        "name": "bILDRed",
+        "name": "bildred",
         "attributes": {},
         "path": [
           "BILD",
@@ -65,7 +65,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDRed035",
+        "name": "bildred035",
         "attributes": {},
         "path": [
           "BILD",
@@ -100,7 +100,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDRed053",
+        "name": "bildred053",
         "attributes": {},
         "path": [
           "BILD",
@@ -137,7 +137,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD015",
+        "name": "bild015",
         "attributes": {},
         "path": [
           "BILD",
@@ -172,7 +172,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD085",
+        "name": "bild085",
         "attributes": {},
         "path": [
           "BILD",
@@ -207,7 +207,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD035",
+        "name": "bild035",
         "attributes": {},
         "path": [
           "BILD",
@@ -242,7 +242,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD025",
+        "name": "bild025",
         "attributes": {},
         "path": [
           "BILD",
@@ -277,7 +277,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD060",
+        "name": "bild060",
         "attributes": {},
         "path": [
           "BILD",
@@ -312,7 +312,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD096",
+        "name": "bild096",
         "attributes": {},
         "path": [
           "BILD",
@@ -347,7 +347,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD093",
+        "name": "bild093",
         "attributes": {},
         "path": [
           "BILD",
@@ -384,7 +384,7 @@
           "$type": "color",
           "comment": "The 50% opacity on this color makes it equivalent to BILD093."
         },
-        "name": "bILD085-50",
+        "name": "bild08550",
         "attributes": {},
         "path": [
           "BILD",
@@ -419,7 +419,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD073",
+        "name": "bild073",
         "attributes": {},
         "path": [
           "BILD",
@@ -454,7 +454,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD045",
+        "name": "bild045",
         "attributes": {},
         "path": [
           "BILD",
@@ -489,7 +489,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD010",
+        "name": "bild010",
         "attributes": {},
         "path": [
           "BILD",
@@ -524,7 +524,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD020",
+        "name": "bild020",
         "attributes": {},
         "path": [
           "BILD",
@@ -561,7 +561,7 @@
           },
           "$type": "color"
         },
-        "name": "bILD100",
+        "name": "bild100",
         "attributes": {},
         "path": [
           "BILD",
@@ -596,7 +596,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDBlack",
+        "name": "bildblack",
         "attributes": {},
         "path": [
           "BILD",
@@ -635,7 +635,7 @@
           "$type": "color",
           "comment": "Tone: 067"
         },
-        "name": "bILDOrange",
+        "name": "bildorange",
         "attributes": {},
         "path": [
           "BILD",
@@ -672,7 +672,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDGreen070",
+        "name": "bildgreen070",
         "attributes": {},
         "path": [
           "BILD",
@@ -707,7 +707,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDGreen063",
+        "name": "bildgreen063",
         "attributes": {},
         "path": [
           "BILD",
@@ -742,7 +742,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDGreen093",
+        "name": "bildgreen093",
         "attributes": {},
         "path": [
           "BILD",
@@ -777,7 +777,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDGreen093-50",
+        "name": "bildgreen09350",
         "attributes": {},
         "path": [
           "BILD",
@@ -812,7 +812,7 @@
           },
           "$type": "color"
         },
-        "name": "bILDGreen056-50",
+        "name": "bildgreen05650",
         "attributes": {},
         "path": [
           "BILD",
@@ -849,7 +849,7 @@
           "$type": "color",
           "comment": "This value of green was found in a text field's text color."
         },
-        "name": "bILDGreen040",
+        "name": "bildgreen040",
         "attributes": {},
         "path": [
           "BILD",
@@ -884,644 +884,12 @@
           },
           "$type": "color"
         },
-        "name": "bILDGreen056",
+        "name": "bildgreen056",
         "attributes": {},
         "path": [
           "BILD",
           "green",
           "BILDGreen056"
-        ]
-      }
-    },
-    "TextLabels": {
-      "BILDRed": {
-        "$value": "BILDRed",
-        "value": "BILDRed",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:864"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDRed",
-          "value": "BILDRed",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:864"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDRed",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDRed"
-        ]
-      },
-      "BILD100": {
-        "$value": "BILD100",
-        "value": "BILD100",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:865"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD100",
-          "value": "BILD100",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:865"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD100",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD100"
-        ]
-      },
-      "BILD096": {
-        "$value": "BILD096",
-        "value": "BILD096",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:866"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD096",
-          "value": "BILD096",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:866"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD096",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD096"
-        ]
-      },
-      "BILD085": {
-        "$value": "BILD085",
-        "value": "BILD085",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:867"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD085",
-          "value": "BILD085",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:867"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD085",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD085"
-        ]
-      },
-      "BILD060": {
-        "$value": "BILD060",
-        "value": "BILD060",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:868"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD060",
-          "value": "BILD060",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:868"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD060",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD060"
-        ]
-      },
-      "BILD035": {
-        "$value": "BILD035",
-        "value": "BILD035",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:869"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD035",
-          "value": "BILD035",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:869"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD035",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD035"
-        ]
-      },
-      "BILD025": {
-        "$value": "BILD025",
-        "value": "BILD025",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:870"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD025",
-          "value": "BILD025",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:870"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD025",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD025"
-        ]
-      },
-      "BILD015": {
-        "$value": "BILD015",
-        "value": "BILD015",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:871"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD015",
-          "value": "BILD015",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:871"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD015",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD015"
-        ]
-      },
-      "BILDOrange": {
-        "$value": "BILDOrange",
-        "value": "BILDOrange",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:872"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDOrange",
-          "value": "BILDOrange",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:872"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDOrange",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDOrange"
-        ]
-      },
-      "BILDRed053": {
-        "$value": "BILDRed053",
-        "value": "BILDRed053",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:873"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDRed053",
-          "value": "BILDRed053",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:873"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDRed053",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDRed053"
-        ]
-      },
-      "BILDRed035": {
-        "$value": "BILDRed035",
-        "value": "BILDRed035",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:874"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDRed035",
-          "value": "BILDRed035",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:874"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDRed035",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDRed035"
-        ]
-      },
-      "BILDGreen093": {
-        "$value": "BILDGreen093",
-        "value": "BILDGreen093",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:875"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDGreen093",
-          "value": "BILDGreen093",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:875"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDGreen093",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDGreen093"
-        ]
-      },
-      "BILDGreen070": {
-        "$value": "BILDGreen070",
-        "value": "BILDGreen070",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:876"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDGreen070",
-          "value": "BILDGreen070",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:876"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDGreen070",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDGreen070"
-        ]
-      },
-      "BILDGreen063": {
-        "$value": "BILDGreen063",
-        "value": "BILDGreen063",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2857:877"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDGreen063",
-          "value": "BILDGreen063",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2857:877"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDGreen063",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDGreen063"
-        ]
-      },
-      "BILD093": {
-        "$value": "BILD093",
-        "value": "BILD093",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2880:10484"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD093",
-          "value": "BILD093",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2880:10484"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD093",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD093"
-        ]
-      },
-      "BILDYellow": {
-        "$value": "BILDYellow",
-        "value": "BILDYellow",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:2979:10318"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILDYellow",
-          "value": "BILDYellow",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:2979:10318"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILDYellow",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILDYellow"
-        ]
-      },
-      "BILD073": {
-        "$value": "BILD073",
-        "value": "BILD073",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:3912:4270"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD073",
-          "value": "BILD073",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:3912:4270"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD073",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD073"
-        ]
-      },
-      "BILD045": {
-        "$value": "BILD045",
-        "value": "BILD045",
-        "type": "string",
-        "$extensions": {
-          "com.figma": {
-            "collectionId": "VariableCollectionId:539:2238",
-            "collectionName": "_ColorPrimitive",
-            "variableId": "VariableID:3912:4272"
-          }
-        },
-        "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages.",
-        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/shared/colorprimitive.json",
-        "isSource": true,
-        "original": {
-          "$value": "BILD045",
-          "value": "BILD045",
-          "type": "string",
-          "$extensions": {
-            "com.figma": {
-              "collectionId": "VariableCollectionId:539:2238",
-              "collectionName": "_ColorPrimitive",
-              "variableId": "VariableID:3912:4272"
-            }
-          },
-          "comment": "This is a variable used only for documentation purposes in the design system Figma Foundations pages."
-        },
-        "name": "bILD045",
-        "attributes": {},
-        "path": [
-          "BILD",
-          "TextLabels",
-          "BILD045"
         ]
       }
     },
@@ -1555,7 +923,7 @@
           "$type": "color",
           "comment": "Tone: 081"
         },
-        "name": "bILDYellow",
+        "name": "bildyellow",
         "attributes": {},
         "path": [
           "BILD",
@@ -1594,7 +962,7 @@
           "$type": "color",
           "comment": "Tone: 020"
         },
-        "name": "bILDBerry",
+        "name": "bildberry",
         "attributes": {},
         "path": [
           "BILD",
@@ -2026,7 +1394,7 @@
           "$type": "color",
           "comment": "Used on elevation effects."
         },
-        "name": "alphaBILDRed80",
+        "name": "alphaBildred80",
         "attributes": {},
         "path": [
           "BILD",
@@ -2279,7 +1647,7 @@
           "$type": "color",
           "comment": "This Blue color was taken from the Weather 2024 project. Tone: 069"
         },
-        "name": "bILDBlue",
+        "name": "bildblue",
         "attributes": {},
         "path": [
           "BILD",
@@ -2906,7 +2274,7 @@
           },
           "$type": "color"
         },
-        "name": "spobiBlue016-0",
+        "name": "spobiBlue0160",
         "attributes": {},
         "path": [
           "SportBILD",
@@ -2941,7 +2309,7 @@
           },
           "$type": "color"
         },
-        "name": "spobiBlue016-70",
+        "name": "spobiBlue01670",
         "attributes": {},
         "path": [
           "SportBILD",

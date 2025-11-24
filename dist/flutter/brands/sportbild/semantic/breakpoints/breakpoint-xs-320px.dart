@@ -26,7 +26,7 @@ class BreakpointXs320px {
     /** 40 - 40 - 72 - 100 - This variable uses the semantic variables headline2 for XS&SM, headline1 for MD&LG */
     static const articleHeadlineFontSize = "42px";
     /** same as standard teaser width size variable */
-    static const articleGalleryATeaserWidth = "145px";
+    static const articleGalleryAteaserWidth = "145px";
     /** CSS --article-figure-meta-font-size 16-16-18-18 */
     static const articleImageCaptionFontSize = "13px";
     /** NMT CSS --article-figure-meta-font-size */
@@ -84,8 +84,8 @@ class BreakpointXs320px {
     /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
     static const breadcrumbFontSize = "14px";
     static const breadcrumbFontFamily = "Inter";
-    static const breadcrumb&ArrowLeftInlineSpace1 = "3px";
-    static const breadcrumb&ArrowRightInlineSpace2 = "5px";
+    static const breadcrumbArrowLeftInlineSpace1 = "3px";
+    static const breadcrumbArrowRightInlineSpace2 = "5px";
     static const breadcrumbInlineSpace = "12px";
     /** 15 - 15 - 15 - 12 -- Breadcrumbs have a slightly larger font size on mobile devices compared to when they are rendered on larger desktop devices. */
     static const breadcrumbLineHeight = "14px";
@@ -180,7 +180,7 @@ class BreakpointXs320px {
     static const inputFieldMiniLabelInlineSpace = "4px";
     /** This variable controls texts inside of input fields such as dropdowns, date input and other text inputs that appear in forms for example. compact 15 - default 17 - spacious 19 */
     static const inputFieldFontSize = "16px";
-    static const inputFieldIMessageInlineSpace = "16px";
+    static const inputFieldImessageInlineSpace = "16px";
     static const inputFieldHeightSize = "36px";
     static const heyInputContainerInlineSpace = "8px";
     static const inputFieldMessageGapSpace = "4px";
@@ -193,7 +193,7 @@ class BreakpointXs320px {
     static const timeStampFontFamily = "Gotham XNarrow";
     /** This variable is used for the live ticker time stamp font size. 14 - 14 - 16 - 16 */
     static const liveTickerTimeStampFontSize = "14px";
-    static const liveTickerTime&HeadlineStackSpace = "4px";
+    static const liveTickerTimeHeadlineStackSpace = "4px";
     static const liveTickerSliderItemWidthMaxSize = "257px";
     static const liveTickerAppCardHeightSize = "96px";
     static const liveTickerAppCardWidthSize = "250px";
@@ -236,9 +236,9 @@ class BreakpointXs320px {
     static const heyInputShadowVisibility = Color(0x00000000);
     static const appTopbarTitleFontSize = "12px";
     static const appTopbarStageTitleHeight = "14px";
-    static const iOSappTopBarHeightSize = "44px";
-    static const iOSappTopBarLeftInlineSpace = "12px";
-    static const iOSappTopBarRightInlineSpace = "16px";
+    static const iOsappTopBarHeightSize = "44px";
+    static const iOsappTopBarLeftInlineSpace = "12px";
+    static const iOsappTopBarRightInlineSpace = "16px";
 
     // Component - Newsticker
     /** similar to kicker3 values - 16 - 16 - 16 - 18 */
@@ -251,7 +251,7 @@ class BreakpointXs320px {
     static const newsTickerKickerInnerStackSpace = "2px";
     static const newsTickerTitlesInlineSpace = "18px";
     static const newsTickerBadgesInlineSpace = "8px";
-    static const newsTickerTime&KickerStackSpace = "4px";
+    static const newsTickerTimeKickerStackSpace = "4px";
     static const newsTickerEntriesStackSpace = "22px";
     static const newsTickerKickerInnerInlineSpace = "4px";
     static const newsTickerSkeletonBottomSpace = "64px";
@@ -298,9 +298,9 @@ class BreakpointXs320px {
     static const sectionTitleInnerStackBottomSpace = "12px";
     static const sectionTitleHeightSize = "32px";
     /** This variable is used on large title headings that are h2 elements in html and indicate a new section in the user interface. This space changes when a user hovers over the large title. */
-    static const sectionTitle&ArrowInlineSpace = "5px";
+    static const sectionTitleArrowInlineSpace = "5px";
     /** This variable is used for increasing the space between the text and the arrow at the end of the large title text. On mobile devices there is no hover state so this variables values are the same as the default state values. */
-    static const sectionTitle&ArrowInlineSpaceActive = "5px";
+    static const sectionTitleArrowInlineSpaceActive = "5px";
 
     // Component - Separators
     static const separatorThicknessSize = "2px";
@@ -323,15 +323,15 @@ class BreakpointXs320px {
     // Component - Spinners
     static const videoSpinnerSize = "40px";
     static const videoSpinnerStrokeSize = "2px";
-    static const videoSpinnerSize0_5x = "20px";
+    static const videoSpinnerSize05x = "20px";
 
     // Component - Table
     static const tableColumnWidthSize1x = "80px";
     static const tableColumnWidthSize2x = "140px";
-    static const tableColumnWidthSize0_5x = "40px";
-    static const tableColumnWidthSize1_5x = "120px";
-    static const tableColumnWidthSize2_5x = "180px";
-    static const tableColumnWidthSize0_75x = "56px";
+    static const tableColumnWidthSize05x = "40px";
+    static const tableColumnWidthSize15x = "120px";
+    static const tableColumnWidthSize25x = "180px";
+    static const tableColumnWidthSize075x = "56px";
     static const tableColumnWidthSize3x = "200px";
     static const tableItemMaxWidthSize = "224px";
 
@@ -357,9 +357,9 @@ class BreakpointXs320px {
     /** This variable is used for creating space around the outside of a subscription badge or video icon badge. */
     static const teaserBadgesMarginSpace = "8px";
     /** This token is for controling the height of badges that are inside of teasers. 32 - 32 - 32 - 40 */
-    static const teaserBadgesHeightSizeLG = "32px";
+    static const teaserBadgesHeightSizeLg = "32px";
     static const teaserTitleBottomStackSpace = "12px";
-    static const teaserBadgesHeightSizeSM = "24px";
+    static const teaserBadgesHeightSizeSm = "24px";
     static const teaserLayoutGridSpace = "12px";
 
     // Component - Teaser - aTeaser
@@ -379,9 +379,9 @@ class BreakpointXs320px {
 
     // Component - Teaser - mQTeaser
     /** XS-headline4FontSize:22 // SM-headline4FontSize:22 // MD-headline3FontSize:36 // LG-headline3FontSize:40 */
-    static const mQTeaserHeadlineFontSize = "21px";
-    static const mQTeaserHeadlineFontWeight = 700;
-    static const mQTeaserHeadlineLineHeight = "23.100000381469727px";
+    static const mQteaserHeadlineFontSize = "21px";
+    static const mQteaserHeadlineFontWeight = 700;
+    static const mQteaserHeadlineLineHeight = "23.100000381469727px";
     static const mqTeaserTitleInlineSpace = "12px";
 
     // Component - Teaser - qTeaser
@@ -400,7 +400,7 @@ class BreakpointXs320px {
 
     // Component - Teaser - superA
     /** 16 - 16 - 16 - 16 */
-    static const superATeaserTitleInlineSpace = "24px";
+    static const superAteaserTitleInlineSpace = "24px";
 
     // Component - ToggleSwitch
     /** This variable is used on labels in list items with toggle switches found in app preferences. 14 - 14 - 16 - 18 */
@@ -430,16 +430,16 @@ class BreakpointXs320px {
     static const bildDesignFrameSpace = "12px";
     /** This variable is used on documentation pages. This is an alternative variable to the main container max width variable. 0 - 0 - 68 - 68 */
     static const dsMainContainerSpace = "0px";
-    static const dSysDocsWidthSize = "320px";
+    static const dsysDocsWidthSize = "320px";
     /** This variable is used as a max width size for content blocks. For mobile devices this var references the DSysDocsWidthSize var 320 - 750 - 962 - 1024 */
     static const mainContentStageSize = "320px";
     /** This variable is used on documentation pages that have an artistic banner at the top of the page that is related to the foundation topic on the page. 80 - 80 -80 - 140 */
     static const foundationsBannerHeightSize = "80px";
     /** This variable is used in documentation pages that have small caption or lables along with a UI component documented. 4 - 4 - 6 - 8 */
-    static const dsCaptionStackSpace0_5x = "4px";
+    static const dsCaptionStackSpace05x = "4px";
     static const dsCaptionStackSpace1x = "8px";
     /** This variable is used only for this design system's component tests. */
-    static const 1columnMobile = "320px";
+    static const _1columnMobile = "320px";
     /** This variable is currently used on a thin gallery that appears on desktop websites with petbook and other "books" content. Its height changes to a large height on mobile sites. 558 - 558 - 558 - 186 */
     static const thinBannerVerticalHeightSize = "558px";
     /** This variable is used only for texts and labels that form part of this design system's documentation. */
@@ -449,15 +449,15 @@ class BreakpointXs320px {
 
     // Semantic - Border - BorderRadius
     /** 2-2-2-2 use for corner rounding on very small UI elements such as tooltips and badges. */
-    static const borderRadiusXS = "2px";
+    static const borderRadiusXs = "2px";
     /** 8-8-8-8 – Standard radius for buttons, chips, input fields, and medium-sized interactive elements. */
-    static const borderRadiusMD = "8px";
+    static const borderRadiusMd = "8px";
     /** 4-4-4-4 – use for corner rounding on compact components like checkboxes or small input controls. */
-    static const borderRadiusSM = "4px";
+    static const borderRadiusSm = "4px";
     /** 24-24-24-24 – use for corner rounding on larger cards, overlays, dialogs, and other container components. */
-    static const borderRadiusXL = "24px";
+    static const borderRadiusXl = "24px";
     /** 16-16-16-16 – use for corner rounding on small cards, overlays, and modal surfaces. */
-    static const borderRadiusLG = "16px";
+    static const borderRadiusLg = "16px";
     /** 0-0-0-0 – no corner rounding. Used as default for flat layouts, content modules, images, and teaser elements. */
     static const borderRadiusNone = "0px";
     /** creates fully rounded shapes, typically used for circular elements like avatars. */
@@ -501,9 +501,9 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
 
     // Semantic - Layout - Grid - Constant
     /** 16-16-16-16 – use for fixed side paddings and gutters */
-    static const gridSpaceConstLG = "16px";
+    static const gridSpaceConstLg = "16px";
     /** 12-12-12-12 – use for fixed side paddings and gutters */
-    static const gridSpaceConstSM = "12px";
+    static const gridSpaceConstSm = "12px";
 
     // Semantic - Layout - Grid - LayoutGuide
     /** Used to set the column count in Figma Layout guide Grids */
@@ -511,13 +511,13 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
 
     // Semantic - Layout - Grid - Responsive
     /** 24-24-32-32 – use for side paddings and gutters in responsive layouts */
-    static const gridSpaceRespLG = "24px";
+    static const gridSpaceRespLg = "24px";
     /** 48-48-64-64 – use for side paddings and gutters in responsive layouts */
-    static const gridSpaceRespXL = "48px";
+    static const gridSpaceRespXl = "48px";
     /** 12-12-12-16 – use for side paddings and gutters in responsive layouts */
     static const gridSpaceRespBase = "12px";
     /** 6-6-6-8 – use for side paddings and gutters in responsive layouts */
-    static const gridSpaceRespSM = "6px";
+    static const gridSpaceRespSm = "6px";
     /** 0-0-0-16 – This token is used on the main homepages content container, ensuring full-width layout (no horizontal padding) on mobile and tablet breakpoints. */
     static const pageInlineSpace = "0px";
 
@@ -525,155 +525,155 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
     /** 36-36-48-48 – Use for vertical spacing between sections in a layout. */
     static const sectionSpaceBase = "36px";
     /** 72-72-96-96 – Use for vertical spacing between sections in a layout */
-    static const sectionSpaceLG = "72px";
+    static const sectionSpaceLg = "72px";
     /** 16-16-32-32 – Use for spacing after paragraphs in text content */
     static const paragraphEndSpace = "16px";
     /** 24-24-36-36 – Use for vertical spacing between subsections in a layout */
-    static const sectionSpaceSM = "24px";
+    static const sectionSpaceSm = "24px";
 
     // Semantic - Size - Constant
     /** 16-16-16-16 – Use for setting fixed height and width of UI elements */
-    static const sizeConst3XS = "16px";
+    static const sizeConst3Xs = "16px";
     /** 24-24-24-24 – Use for setting fixed height and width of UI elements */
-    static const sizeConst2XS = "24px";
+    static const sizeConst2Xs = "24px";
     /** 32-32-32-32 – Use for setting fixed height and width of UI elements */
-    static const sizeConstXS = "32px";
+    static const sizeConstXs = "32px";
     /** 40-40-40-40 – Use for setting fixed height and width of UI elements */
-    static const sizeConstSM = "40px";
+    static const sizeConstSm = "40px";
     /** 48-48-48-48 Use for setting fixed height and width of UI elements */
-    static const sizeConstMD = "48px";
+    static const sizeConstMd = "48px";
     /** 56-56-56-56 – Use for setting fixed height and width of UI elements */
-    static const sizeConstLG = "56px";
+    static const sizeConstLg = "56px";
     /** 64-64-64-64 – Use for setting fixed height and width of UI elements */
-    static const sizeConstXL = "64px";
+    static const sizeConstXl = "64px";
     /** 96-96-96-96 – Use for setting fixed height and width of UI elements */
-    static const sizeConst3XL = "96px";
+    static const sizeConst3Xl = "96px";
     /** 148-148-148-148 – Use for setting fixed height and width of UI elements */
-    static const sizeConst4XL = "148px";
+    static const sizeConst4Xl = "148px";
     /** 72-72-72-72 – Use for setting fixed height and width of UI elements */
-    static const sizeConst2XL = "72px";
+    static const sizeConst2Xl = "72px";
     /** 8-8-8-8 – Use for setting fixed height and width of UI elements */
-    static const sizeConst4XS = "8px";
+    static const sizeConst4Xs = "8px";
 
     // Semantic - Size - Responsive
     /** 16-16-16-24 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeResp3XS = "16px";
+    static const sizeResp3Xs = "16px";
     /** 24-24-32-32 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeResp2XS = "24px";
+    static const sizeResp2Xs = "24px";
     /** 32-32-40-48 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeRespXS = "32px";
+    static const sizeRespXs = "32px";
     /** 40-40-48-56 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeRespSM = "40px";
+    static const sizeRespSm = "40px";
     /** 48-48-64-72 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeRespMD = "48px";
+    static const sizeRespMd = "48px";
     /** 56-56-72-92 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeRespLG = "56px";
+    static const sizeRespLg = "56px";
     /** 64-64-80-96 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeRespXL = "64px";
+    static const sizeRespXl = "64px";
     /** 72-72-92-100 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeResp2XL = "72px";
+    static const sizeResp2Xl = "72px";
     /** 96-96-120-148 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeResp3XL = "96px";
+    static const sizeResp3Xl = "96px";
     /** 148-148-160-180 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeResp4XL = "148px";
+    static const sizeResp4Xl = "148px";
     /** 12-12-14-16 – Use for setting height and width of UI elements that scale across breakpoints */
-    static const sizeResp4XS = "12px";
+    static const sizeResp4Xs = "12px";
 
     // Semantic - Space - Gap - Constant
     /** 2-2-2-2 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConst2XS = "2px";
+    static const gapSpaceConst2Xs = "2px";
     /** 4-4-4-4 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConstXS = "4px";
+    static const gapSpaceConstXs = "4px";
     /** 8-8-8-8 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConstSM = "8px";
+    static const gapSpaceConstSm = "8px";
     /** 12-12-12-12 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConstMD = "12px";
+    static const gapSpaceConstMd = "12px";
     /** 16-16-16-16 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConstLG = "16px";
+    static const gapSpaceConstLg = "16px";
     /** 24-24-24-24 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConstXL = "24px";
+    static const gapSpaceConstXl = "24px";
     /** 32-32-32-32 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConst2XL = "32px";
+    static const gapSpaceConst2Xl = "32px";
     /** 48-48-48-48 – Use for fixed gaps between items inside of UI elements */
-    static const gapSpaceConst3XL = "48px";
+    static const gapSpaceConst3Xl = "48px";
 
     // Semantic - Space - Gap - Responsive
     /** 4-4-6-8 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceRespXS = "4px";
+    static const gapSpaceRespXs = "4px";
     /** 16-16-24-32 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceRespLG = "16px";
+    static const gapSpaceRespLg = "16px";
     /** 24-24-32-48 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceRespXL = "24px";
+    static const gapSpaceRespXl = "24px";
     /** 32-32-48-64 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceResp2XL = "32px";
+    static const gapSpaceResp2Xl = "32px";
     /** 12-12-16-24 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceRespMD = "12px";
+    static const gapSpaceRespMd = "12px";
     /** 8-8-12-16 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceRespSM = "8px";
+    static const gapSpaceRespSm = "8px";
     /** 2-2-4-6 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceResp2XS = "2px";
+    static const gapSpaceResp2Xs = "2px";
     /** 48-48-72-96 – Use for gaps between items inside of UI elements that scale across breakpoints */
-    static const gapSpaceResp3XL = "48px";
+    static const gapSpaceResp3Xl = "48px";
 
     // Semantic - Space - Inline - Constant
     /** 8-8-8-8 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConstSM = "8px";
+    static const inlineSpaceConstSm = "8px";
     /** 12-12-12-12 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConstMD = "12px";
+    static const inlineSpaceConstMd = "12px";
     /** 16-16-16-16 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConstLG = "16px";
+    static const inlineSpaceConstLg = "16px";
     /** 32-32-32-32 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConst2XL = "32px";
+    static const inlineSpaceConst2Xl = "32px";
     /** 24-24-24-24 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConstXL = "24px";
+    static const inlineSpaceConstXl = "24px";
     /** 6-6-6-6 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConstXS = "6px";
+    static const inlineSpaceConstXs = "6px";
     /** 2-2-2-2 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConst3XS = "2px";
+    static const inlineSpaceConst3Xs = "2px";
     /** 4-4-4-4 – Use for fixed horizontal (left/right) padding of UI elements */
-    static const inlineSpaceConst2XS = "4px";
+    static const inlineSpaceConst2Xs = "4px";
 
     // Semantic - Space - Inline - Responsive
     /** 8-8-12-16 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    static const inlineSpaceRespSM = "8px";
+    static const inlineSpaceRespSm = "8px";
     /** 12-12-16-24 use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    static const inlineSpaceRespMD = "12px";
+    static const inlineSpaceRespMd = "12px";
     /** 16-16-24-32 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    static const inlineSpaceRespLG = "16px";
+    static const inlineSpaceRespLg = "16px";
     /** 32-32-48-64 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    static const inlineSpaceResp2XL = "32px";
+    static const inlineSpaceResp2Xl = "32px";
     /** 24-24-32-40 – use for horizontal (left/right) padding of UI elements that scales across breakpoints */
-    static const inlineSpaceRespXL = "24px";
+    static const inlineSpaceRespXl = "24px";
 
     // Semantic - Space - Stack - Constant
     /** 8-8-8-8 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConstSM = "8px";
+    static const stackSpaceConstSm = "8px";
     /** 12-12-12-12 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConstMD = "12px";
+    static const stackSpaceConstMd = "12px";
     /** 16-16-16-16 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConstLG = "16px";
+    static const stackSpaceConstLg = "16px";
     /** 32-32-32-32 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConst2XL = "32px";
+    static const stackSpaceConst2Xl = "32px";
     /** 24-24-24-24 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConstXL = "24px";
+    static const stackSpaceConstXl = "24px";
     /** 6-6-6-6 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConstXS = "6px";
+    static const stackSpaceConstXs = "6px";
     /** 2-2-2-2 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConst3XS = "2px";
+    static const stackSpaceConst3Xs = "2px";
     /** 4-4-4-4 – Use for fixed vertical (top/bottom) padding of UI elements */
-    static const stackSpaceConst2XS = "4px";
+    static const stackSpaceConst2Xs = "4px";
 
     // Semantic - Space - Stack - Responsive
     /** 12-12-16-24 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    static const stackSpaceRespMD = "12px";
+    static const stackSpaceRespMd = "12px";
     /** 16-16-24-32 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    static const stackSpaceRespLG = "16px";
+    static const stackSpaceRespLg = "16px";
     /** 32-32-48-64 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    static const stackSpaceResp2XL = "32px";
+    static const stackSpaceResp2Xl = "32px";
     /** 8-8-12-16 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    static const stackSpaceRespSM = "8px";
+    static const stackSpaceRespSm = "8px";
     /** 24-24-32-40 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints */
-    static const stackSpaceRespXL = "24px";
+    static const stackSpaceRespXl = "24px";
 
     // Semantic - Typography - FontFamily
     /** This variable references the bodyFontFamily variable from the branding collection. */
@@ -776,11 +776,11 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
     static const headline3FontWeight = 700;
     static const headline4FontWeight = 700;
     /** This variable is a string type variable for controlling not only headline font weight but also the italic style for Sport Bild headlines. */
-    static const headline1FontWeightST = "Bold Italic";
+    static const headline1FontWeightSt = "Bold Italic";
 
     // Semantic - Typography - FontWeight - Kicker
     static const kickerFontWeight = 700;
-    static const kickerFontWeightST = "Black Italic";
+    static const kickerFontWeightSt = "Black Italic";
 
     // Semantic - Typography - FontWeight - Label
     static const labelFontWeightBold = 700;
@@ -797,23 +797,23 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
 
     // Semantic - Typography - LetterSpacing
     /** 0.5 | 0.5 | 0.5 | 0.5 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    static const letterSpacingPositiveSM = "0.5px";
+    static const letterSpacingPositiveSm = "0.5px";
     /** 2 | 2 | 2 | 3 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    static const letterSpacingPositiveLG = "2px";
+    static const letterSpacingPositiveLg = "2px";
     /** 1 | 1 | 1 | 1 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    static const letterSpacingPositiveMD = "1px";
+    static const letterSpacingPositiveMd = "1px";
     /** 0 | 0 | 0 | 0 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
     static const letterSpacingNone = "0px";
     /** -0.5 | -0.5 | -0.25 | -0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    static const letterSpacingNegativeSM = "-0.5px";
+    static const letterSpacingNegativeSm = "-0.5px";
     /** -1 | -1 | -1 | -1 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    static const letterSpacingNegativeMD = "-1px";
+    static const letterSpacingNegativeMd = "-1px";
     /** -2 | -2 | -2 | -3 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    static const letterSpacingNegativeLG = "-2px";
+    static const letterSpacingNegativeLg = "-2px";
     /** -0.25 | -0.25 | -0.25 | -0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. This letter spacing was only found in large titles on iOS mobile app large title component. */
-    static const letterSpacingNegativeXS = "-0.25px";
+    static const letterSpacingNegativeXs = "-0.25px";
     /** 0.25 | 0.25 | 0.25 | 0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. */
-    static const letterSpacingPositiveXS = "0.25px";
+    static const letterSpacingPositiveXs = "0.25px";
 
     // Semantic - Typography - LetterSpacing - display
     /** -0.5 | -0.5 | -1 | -2 | This variable is used for the letter spacing parameter of the display1 text style. On smaller devices the value is smaller than on larger devices. On desktop devices the letter spacing is further reduced for making the text style more compact. */
@@ -888,9 +888,9 @@ Apply this token to the main frame of page layouts to simulate realistic maximum
     static const hideOnDesktop = true;
 
     // Semantic - Visibility - VariantSwitch
-    static const changeOnLG = "xs/sm/md";
+    static const changeOnLg = "xs/sm/md";
     /** This variable is used for controlling size changes across device sizes on some components such as the vertical newsticker cards and the search results cards. Both have cards that change layouts at different breakpoints. */
-    static const changeOnMD = "xs/sm";
+    static const changeOnMd = "xs/sm";
     static const bpSpecificWeb = "xs/sm";
     static const bpSpecificApp = "compact";
 }

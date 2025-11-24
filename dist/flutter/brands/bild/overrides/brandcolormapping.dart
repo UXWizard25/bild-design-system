@@ -41,23 +41,23 @@ class Brandcolormapping {
 
     // Component - Button - PrimaryBrand
     /** Bild: 046 ; SpoBi: 029 */
-    static const buttonPrimaryBgColorIdle = Color(0xFFDD0000);
+    static const primaryBrandButtonPrimaryBgColorIdle = Color(0xFFDD0000);
     /** This variable controls the primary button idle color for two brands in dark mode. Bild: 046 ; SpoBi: 038 */
-    static const buttonPrimaryBgColorIdleDark = Color(0xFFDD0000);
+    static const primaryBrandButtonPrimaryBgColorIdleDark = Color(0xFFDD0000);
     /** Bild: 035 ; SpoBi: 016 */
-    static const buttonPrimaryBgColorHover = Color(0xFFAF0002);
+    static const primaryBrandButtonPrimaryBgColorHover = Color(0xFFAF0002);
     /** This variable stores colors for the hover state of primary buttons for two brands in dark mode. Bild: 035 ; SpoBi: 029 */
-    static const buttonPrimaryBgColorHoverDark = Color(0xFFAF0002);
+    static const primaryBrandButtonPrimaryBgColorHoverDark = Color(0xFFAF0002);
 
     // Component - Button - PrimaryNeutral
     /** Bild & SpoBi: Tone 015 */
-    static const buttonPrimaryBgColorIdle = Color(0xFF232629);
+    static const primaryNeutralButtonPrimaryBgColorIdle = Color(0xFF232629);
     /** Bild & SpoBi: Tone 035 */
-    static const buttonPrimaryBgColorHover = Color(0xFF4B525A);
+    static const primaryNeutralButtonPrimaryBgColorHover = Color(0xFF4B525A);
     /** Bild & SpoBi: Tone 100 */
-    static const buttonPrimaryBgColorIdleDark = Color(0xFFFFFFFF);
+    static const primaryNeutralButtonPrimaryBgColorIdleDark = Color(0xFFFFFFFF);
     /** Bild: 093 ; SpoBi: 081 */
-    static const buttonPrimaryBgColorHoverDark = Color(0xFFE9ECEF);
+    static const primaryNeutralButtonPrimaryBgColorHoverDark = Color(0xFFE9ECEF);
 
     // Component - Menu
     /** This variable is used for making possible the default color difference between the Bild and SportBild link lanes inside the menu component. */

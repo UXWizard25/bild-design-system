@@ -1927,7 +1927,7 @@
           "$type": "color",
           "comment": "this is a test for the token pipeline"
         },
-        "name": "coreColorTertiaryVvPipeTEST",
+        "name": "coreColorTertiaryVvPipeTest",
         "attributes": {},
         "path": [
           "Semantic",
@@ -6185,7 +6185,7 @@
           },
           "comment": "This variable is only for use in Figma's Design System File. It is automating some of the content in documentation pages."
         },
-        "name": "_DSysDocs_labelTextSurfaceColorPrimaryPrimitiveName",
+        "name": "dsysDocsLabelTextSurfaceColorPrimaryPrimitiveName",
         "attributes": {},
         "path": [
           "Component",
@@ -6220,7 +6220,7 @@
           },
           "comment": "This is currently for use in this design system's documentation texts. It is a text string made for being used in light and dark mode documentation texts."
         },
-        "name": "_DSysDocs_labelTextColorMode",
+        "name": "dsysDocsLabelTextColorMode",
         "attributes": {},
         "path": [
           "Component",

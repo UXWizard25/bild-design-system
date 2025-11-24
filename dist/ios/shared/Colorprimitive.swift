@@ -9,44 +9,6 @@
 import UIKit
 
 public class Colorprimitive {
-    // MARK: - BILD - TextLabels
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDRed = "BILDRed"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD100 = "BILD100"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD096 = "BILD096"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD085 = "BILD085"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD060 = "BILD060"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD035 = "BILD035"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD025 = "BILD025"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD015 = "BILD015"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDOrange = "BILDOrange"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDRed053 = "BILDRed053"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDRed035 = "BILDRed035"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDGreen093 = "BILDGreen093"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDGreen070 = "BILDGreen070"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDGreen063 = "BILDGreen063"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD093 = "BILD093"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILDYellow = "BILDYellow"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD073 = "BILD073"
-    /** This is a variable used only for documentation purposes in the design system Figma Foundations pages. */
-    public static let BILD045 = "BILD045"
-
     // MARK: - BILD - alpha
     public static let AlphaBlack20 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.200)
     public static let AlphaBlack10 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.100)
@@ -64,7 +26,7 @@ public class Colorprimitive {
     public static let AlphaWhite70 = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 0.700)
     public static let AlphaWhite35 = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 0.350)
     /** Used on elevation effects. */
-    public static let AlphaBILDRed80 = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 0.800)
+    public static let AlphaBildred80 = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 0.800)
     /** Used on elevation effects. */
     public static let AlphaBlack80 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.800)
     /** Used on elevation effects. */
@@ -76,54 +38,54 @@ public class Colorprimitive {
 
     // MARK: - BILD - blue
     /** This Blue color was taken from the Weather 2024 project. Tone: 069 */
-    public static let BILDBlue = UIColor(red: 0.000, green: 0.694, blue: 1.000, alpha: 1.000)
+    public static let Bildblue = UIColor(red: 0.000, green: 0.694, blue: 1.000, alpha: 1.000)
 
     // MARK: - BILD - gray
-    public static let BILD015 = UIColor(red: 0.137, green: 0.149, blue: 0.161, alpha: 1.000)
-    public static let BILD085 = UIColor(red: 0.808, green: 0.831, blue: 0.855, alpha: 1.000)
-    public static let BILD035 = UIColor(red: 0.294, green: 0.322, blue: 0.353, alpha: 1.000)
-    public static let BILD025 = UIColor(red: 0.204, green: 0.235, blue: 0.255, alpha: 1.000)
-    public static let BILD060 = UIColor(red: 0.549, green: 0.569, blue: 0.588, alpha: 1.000)
-    public static let BILD096 = UIColor(red: 0.949, green: 0.957, blue: 0.961, alpha: 1.000)
-    public static let BILD093 = UIColor(red: 0.914, green: 0.925, blue: 0.937, alpha: 1.000)
+    public static let Bild015 = UIColor(red: 0.137, green: 0.149, blue: 0.161, alpha: 1.000)
+    public static let Bild085 = UIColor(red: 0.808, green: 0.831, blue: 0.855, alpha: 1.000)
+    public static let Bild035 = UIColor(red: 0.294, green: 0.322, blue: 0.353, alpha: 1.000)
+    public static let Bild025 = UIColor(red: 0.204, green: 0.235, blue: 0.255, alpha: 1.000)
+    public static let Bild060 = UIColor(red: 0.549, green: 0.569, blue: 0.588, alpha: 1.000)
+    public static let Bild096 = UIColor(red: 0.949, green: 0.957, blue: 0.961, alpha: 1.000)
+    public static let Bild093 = UIColor(red: 0.914, green: 0.925, blue: 0.937, alpha: 1.000)
     /** The 50% opacity on this color makes it equivalent to BILD093. */
-    public static let BILD085-50 = UIColor(red: 0.808, green: 0.831, blue: 0.855, alpha: 0.500)
-    public static let BILD073 = UIColor(red: 0.682, green: 0.706, blue: 0.725, alpha: 1.000)
-    public static let BILD045 = UIColor(red: 0.400, green: 0.420, blue: 0.439, alpha: 1.000)
-    public static let BILD010 = UIColor(red: 0.110, green: 0.110, blue: 0.110, alpha: 1.000)
-    public static let BILD020 = UIColor(red: 0.173, green: 0.192, blue: 0.220, alpha: 1.000)
+    public static let Bild08550 = UIColor(red: 0.808, green: 0.831, blue: 0.855, alpha: 0.500)
+    public static let Bild073 = UIColor(red: 0.682, green: 0.706, blue: 0.725, alpha: 1.000)
+    public static let Bild045 = UIColor(red: 0.400, green: 0.420, blue: 0.439, alpha: 1.000)
+    public static let Bild010 = UIColor(red: 0.110, green: 0.110, blue: 0.110, alpha: 1.000)
+    public static let Bild020 = UIColor(red: 0.173, green: 0.192, blue: 0.220, alpha: 1.000)
 
     // MARK: - BILD - green
-    public static let BILDGreen070 = UIColor(red: 0.000, green: 0.765, blue: 0.451, alpha: 1.000)
-    public static let BILDGreen063 = UIColor(red: 0.000, green: 0.686, blue: 0.404, alpha: 1.000)
-    public static let BILDGreen093 = UIColor(red: 0.808, green: 0.957, blue: 0.894, alpha: 1.000)
-    public static let BILDGreen093-50 = UIColor(red: 0.808, green: 0.957, blue: 0.894, alpha: 0.500)
-    public static let BILDGreen056-50 = UIColor(red: 0.000, green: 0.608, blue: 0.353, alpha: 0.500)
+    public static let Bildgreen070 = UIColor(red: 0.000, green: 0.765, blue: 0.451, alpha: 1.000)
+    public static let Bildgreen063 = UIColor(red: 0.000, green: 0.686, blue: 0.404, alpha: 1.000)
+    public static let Bildgreen093 = UIColor(red: 0.808, green: 0.957, blue: 0.894, alpha: 1.000)
+    public static let Bildgreen09350 = UIColor(red: 0.808, green: 0.957, blue: 0.894, alpha: 0.500)
+    public static let Bildgreen05650 = UIColor(red: 0.000, green: 0.608, blue: 0.353, alpha: 0.500)
     /** This value of green was found in a text field's text color. */
-    public static let BILDGreen040 = UIColor(red: 0.000, green: 0.431, blue: 0.243, alpha: 1.000)
-    public static let BILDGreen056 = UIColor(red: 0.094, green: 0.600, blue: 0.361, alpha: 1.000)
+    public static let Bildgreen040 = UIColor(red: 0.000, green: 0.431, blue: 0.243, alpha: 1.000)
+    public static let Bildgreen056 = UIColor(red: 0.094, green: 0.600, blue: 0.361, alpha: 1.000)
 
     // MARK: - BILD - neutral
-    public static let BILD100 = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1.000)
-    public static let BILDBlack = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)
+    public static let Bild100 = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1.000)
+    public static let Bildblack = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)
 
     // MARK: - BILD - orange
     /** Tone: 067 */
-    public static let BILDOrange = UIColor(red: 0.992, green: 0.510, blue: 0.153, alpha: 1.000)
+    public static let Bildorange = UIColor(red: 0.992, green: 0.510, blue: 0.153, alpha: 1.000)
 
     // MARK: - BILD - purple
     /** Tone: 020 */
-    public static let BILDBerry = UIColor(red: 0.333, green: 0.098, blue: 0.216, alpha: 1.000)
+    public static let Bildberry = UIColor(red: 0.333, green: 0.098, blue: 0.216, alpha: 1.000)
 
     // MARK: - BILD - red
     /** Tone 046 */
-    public static let BILDRed = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 1.000)
-    public static let BILDRed035 = UIColor(red: 0.686, green: 0.000, blue: 0.008, alpha: 1.000)
-    public static let BILDRed053 = UIColor(red: 0.961, green: 0.176, blue: 0.176, alpha: 1.000)
+    public static let Bildred = UIColor(red: 0.867, green: 0.000, blue: 0.000, alpha: 1.000)
+    public static let Bildred035 = UIColor(red: 0.686, green: 0.000, blue: 0.008, alpha: 1.000)
+    public static let Bildred053 = UIColor(red: 0.961, green: 0.176, blue: 0.176, alpha: 1.000)
 
     // MARK: - BILD - yellow
     /** Tone: 081 */
-    public static let BILDYellow = UIColor(red: 1.000, green: 0.749, blue: 0.000, alpha: 1.000)
+    public static let Bildyellow = UIColor(red: 1.000, green: 0.749, blue: 0.000, alpha: 1.000)
 
     // MARK: - Opacity
     public static let Opacity05 = "5px"
@@ -167,8 +129,8 @@ public class Colorprimitive {
     public static let TravelbookCore = UIColor(red: 0.557, green: 0.941, blue: 0.929, alpha: 1.000)
 
     // MARK: - SportBILD - alpha
-    public static let SpobiBlue016-0 = UIColor(red: 0.039, green: 0.153, blue: 0.314, alpha: 0.000)
-    public static let SpobiBlue016-70 = UIColor(red: 0.039, green: 0.153, blue: 0.314, alpha: 0.700)
+    public static let SpobiBlue0160 = UIColor(red: 0.039, green: 0.153, blue: 0.314, alpha: 0.000)
+    public static let SpobiBlue01670 = UIColor(red: 0.039, green: 0.153, blue: 0.314, alpha: 0.700)
 
     // MARK: - SportBILD - blue
     public static let SpobiBlue098 = UIColor(red: 0.969, green: 0.976, blue: 0.992, alpha: 1.000)

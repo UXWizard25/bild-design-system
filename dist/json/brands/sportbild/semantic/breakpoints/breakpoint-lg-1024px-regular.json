@@ -176,7 +176,7 @@
           "$type": "dimension",
           "comment": "same as standard teaser width size variable"
         },
-        "name": "articleGalleryATeaserWidth",
+        "name": "articleGalleryAteaserWidth",
         "attributes": {},
         "path": [
           "Component",
@@ -828,7 +828,7 @@
           },
           "$type": "dimension"
         },
-        "name": "dSysDocsWidthSize",
+        "name": "dsysDocsWidthSize",
         "attributes": {},
         "path": [
           "Component",
@@ -939,7 +939,7 @@
           "$type": "dimension",
           "comment": "This variable is used in documentation pages that have small caption or lables along with a UI component documented. 4 - 4 - 6 - 8"
         },
-        "name": "dsCaptionStackSpace0_5x",
+        "name": "dsCaptionStackSpace05x",
         "attributes": {},
         "path": [
           "Component",
@@ -1933,7 +1933,7 @@
           },
           "$type": "dimension"
         },
-        "name": "iOSappTopBarHeightSize",
+        "name": "iOsappTopBarHeightSize",
         "attributes": {},
         "path": [
           "Component",
@@ -1968,7 +1968,7 @@
           },
           "$type": "dimension"
         },
-        "name": "iOSappTopBarLeftInlineSpace",
+        "name": "iOsappTopBarLeftInlineSpace",
         "attributes": {},
         "path": [
           "Component",
@@ -2003,7 +2003,7 @@
           },
           "$type": "dimension"
         },
-        "name": "iOSappTopBarRightInlineSpace",
+        "name": "iOsappTopBarRightInlineSpace",
         "attributes": {},
         "path": [
           "Component",
@@ -2113,7 +2113,7 @@
             "$type": "dimension",
             "comment": "XS-headline4FontSize:22 // SM-headline4FontSize:22 // MD-headline3FontSize:36 // LG-headline3FontSize:40"
           },
-          "name": "mQTeaserHeadlineFontSize",
+          "name": "mQteaserHeadlineFontSize",
           "attributes": {},
           "path": [
             "Component",
@@ -2149,7 +2149,7 @@
             },
             "$type": "fontWeight"
           },
-          "name": "mQTeaserHeadlineFontWeight",
+          "name": "mQteaserHeadlineFontWeight",
           "attributes": {},
           "path": [
             "Component",
@@ -2185,7 +2185,7 @@
             },
             "$type": "dimension"
           },
-          "name": "mQTeaserHeadlineLineHeight",
+          "name": "mQteaserHeadlineLineHeight",
           "attributes": {},
           "path": [
             "Component",
@@ -2850,7 +2850,7 @@
           "$type": "dimension",
           "comment": "This token is for controling the height of badges that are inside of teasers. 32 - 32 - 32 - 40"
         },
-        "name": "teaserBadgesHeightSizeLG",
+        "name": "teaserBadgesHeightSizeLg",
         "attributes": {},
         "path": [
           "Component",
@@ -2920,7 +2920,7 @@
           },
           "$type": "dimension"
         },
-        "name": "teaserBadgesHeightSizeSM",
+        "name": "teaserBadgesHeightSizeSm",
         "attributes": {},
         "path": [
           "Component",
@@ -3031,7 +3031,7 @@
             "$type": "dimension",
             "comment": "16 - 16 - 16 - 16"
           },
-          "name": "superATeaserTitleInlineSpace",
+          "name": "superAteaserTitleInlineSpace",
           "attributes": {},
           "path": [
             "Component",
@@ -3178,7 +3178,7 @@
           },
           "$type": "dimension"
         },
-        "name": "tableColumnWidthSize0_5x",
+        "name": "tableColumnWidthSize05x",
         "attributes": {},
         "path": [
           "Component",
@@ -3213,7 +3213,7 @@
           },
           "$type": "dimension"
         },
-        "name": "tableColumnWidthSize1_5x",
+        "name": "tableColumnWidthSize15x",
         "attributes": {},
         "path": [
           "Component",
@@ -3248,7 +3248,7 @@
           },
           "$type": "dimension"
         },
-        "name": "tableColumnWidthSize2_5x",
+        "name": "tableColumnWidthSize25x",
         "attributes": {},
         "path": [
           "Component",
@@ -3283,7 +3283,7 @@
           },
           "$type": "dimension"
         },
-        "name": "tableColumnWidthSize0_75x",
+        "name": "tableColumnWidthSize075x",
         "attributes": {},
         "path": [
           "Component",
@@ -4357,7 +4357,7 @@
           },
           "$type": "dimension"
         },
-        "name": "newsTickerTime&KickerStackSpace",
+        "name": "newsTickerTimeKickerStackSpace",
         "attributes": {},
         "path": [
           "Component",
@@ -4816,7 +4816,7 @@
           },
           "$type": "dimension"
         },
-        "name": "liveTickerTime&HeadlineStackSpace",
+        "name": "liveTickerTimeHeadlineStackSpace",
         "attributes": {},
         "path": [
           "Component",
@@ -5750,7 +5750,7 @@
           },
           "$type": "dimension"
         },
-        "name": "inputFieldIMessageInlineSpace",
+        "name": "inputFieldImessageInlineSpace",
         "attributes": {},
         "path": [
           "Component",
@@ -5995,7 +5995,7 @@
           },
           "$type": "dimension"
         },
-        "name": "breadcrumb&ArrowLeftInlineSpace1",
+        "name": "breadcrumbArrowLeftInlineSpace1",
         "attributes": {},
         "path": [
           "Component",
@@ -6030,7 +6030,7 @@
           },
           "$type": "dimension"
         },
-        "name": "breadcrumb&ArrowRightInlineSpace2",
+        "name": "breadcrumbArrowRightInlineSpace2",
         "attributes": {},
         "path": [
           "Component",
@@ -6466,7 +6466,7 @@
           "$type": "dimension",
           "comment": "This variable is used on large title headings that are h2 elements in html and indicate a new section in the user interface. This space changes when a user hovers over the large title."
         },
-        "name": "sectionTitle&ArrowInlineSpace",
+        "name": "sectionTitleArrowInlineSpace",
         "attributes": {},
         "path": [
           "Component",
@@ -6503,7 +6503,7 @@
           "$type": "dimension",
           "comment": "This variable is used for increasing the space between the text and the arrow at the end of the large title text. On mobile devices there is no hover state so this variables values are the same as the default state values."
         },
-        "name": "sectionTitle&ArrowInlineSpaceActive",
+        "name": "sectionTitleArrowInlineSpaceActive",
         "attributes": {},
         "path": [
           "Component",
@@ -7046,7 +7046,7 @@
           },
           "$type": "dimension"
         },
-        "name": "videoSpinnerSize0_5x",
+        "name": "videoSpinnerSize05x",
         "attributes": {},
         "path": [
           "Component",
@@ -9585,7 +9585,7 @@
               "$type": "dimension",
               "comment": "24-24-32-32 – use for side paddings and gutters in responsive layouts"
             },
-            "name": "gridSpaceRespLG",
+            "name": "gridSpaceRespLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -9624,7 +9624,7 @@
               "$type": "dimension",
               "comment": "48-48-64-64 – use for side paddings and gutters in responsive layouts"
             },
-            "name": "gridSpaceRespXL",
+            "name": "gridSpaceRespXl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -9702,7 +9702,7 @@
               "$type": "dimension",
               "comment": "6-6-6-8 – use for side paddings and gutters in responsive layouts"
             },
-            "name": "gridSpaceRespSM",
+            "name": "gridSpaceRespSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -9782,7 +9782,7 @@
               "$type": "dimension",
               "comment": "16-16-16-16 – use for fixed side paddings and gutters"
             },
-            "name": "gridSpaceConstLG",
+            "name": "gridSpaceConstLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -9821,7 +9821,7 @@
               "$type": "dimension",
               "comment": "12-12-12-12 – use for fixed side paddings and gutters"
             },
-            "name": "gridSpaceConstSM",
+            "name": "gridSpaceConstSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -9942,7 +9942,7 @@
             "$type": "dimension",
             "comment": "72-72-96-96 – Use for vertical spacing between sections in a layout"
           },
-          "name": "sectionSpaceLG",
+          "name": "sectionSpaceLg",
           "attributes": {},
           "path": [
             "Semantic",
@@ -10018,7 +10018,7 @@
             "$type": "dimension",
             "comment": "24-24-36-36 – Use for vertical spacing between subsections in a layout"
           },
-          "name": "sectionSpaceSM",
+          "name": "sectionSpaceSm",
           "attributes": {},
           "path": [
             "Semantic",
@@ -11891,7 +11891,7 @@
                 }
               }
             },
-            "name": "kickerFontWeightST",
+            "name": "kickerFontWeightSt",
             "attributes": {},
             "path": [
               "Semantic",
@@ -12117,7 +12117,7 @@
               },
               "comment": "This variable is a string type variable for controlling not only headline font weight but also the italic style for Sport Bild headlines."
             },
-            "name": "headline1FontWeightST",
+            "name": "headline1FontWeightSt",
             "attributes": {},
             "path": [
               "Semantic",
@@ -13270,7 +13270,7 @@
             "$type": "dimension",
             "comment": "0.5 | 0.5 | 0.5 | 0.5 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes."
           },
-          "name": "letterSpacingPositiveSM",
+          "name": "letterSpacingPositiveSm",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13308,7 +13308,7 @@
             "$type": "dimension",
             "comment": "2 | 2 | 2 | 3 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes."
           },
-          "name": "letterSpacingPositiveLG",
+          "name": "letterSpacingPositiveLg",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13346,7 +13346,7 @@
             "$type": "dimension",
             "comment": "1 | 1 | 1 | 1 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes."
           },
-          "name": "letterSpacingPositiveMD",
+          "name": "letterSpacingPositiveMd",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13422,7 +13422,7 @@
             "$type": "dimension",
             "comment": "-0.5 | -0.5 | -0.25 | -0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes."
           },
-          "name": "letterSpacingNegativeSM",
+          "name": "letterSpacingNegativeSm",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13460,7 +13460,7 @@
             "$type": "dimension",
             "comment": "-1 | -1 | -1 | -1 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes."
           },
-          "name": "letterSpacingNegativeMD",
+          "name": "letterSpacingNegativeMd",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13498,7 +13498,7 @@
             "$type": "dimension",
             "comment": "-2 | -2 | -2 | -3 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes."
           },
-          "name": "letterSpacingNegativeLG",
+          "name": "letterSpacingNegativeLg",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13536,7 +13536,7 @@
             "$type": "dimension",
             "comment": "-0.25 | -0.25 | -0.25 | -0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes. This letter spacing was only found in large titles on iOS mobile app large title component."
           },
-          "name": "letterSpacingNegativeXS",
+          "name": "letterSpacingNegativeXs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13574,7 +13574,7 @@
             "$type": "dimension",
             "comment": "0.25 | 0.25 | 0.25 | 0.25 | This variable takes primitive letter spacing variables and creates this semantic variable for use on designs that change across device sizes."
           },
-          "name": "letterSpacingPositiveXS",
+          "name": "letterSpacingPositiveXs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13735,7 +13735,7 @@
             "$type": "dimension",
             "comment": "2-2-2-2 use for corner rounding on very small UI elements such as tooltips and badges."
           },
-          "name": "borderRadiusXS",
+          "name": "borderRadiusXs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13773,7 +13773,7 @@
             "$type": "dimension",
             "comment": "8-8-8-8 – Standard radius for buttons, chips, input fields, and medium-sized interactive elements."
           },
-          "name": "borderRadiusMD",
+          "name": "borderRadiusMd",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13811,7 +13811,7 @@
             "$type": "dimension",
             "comment": "4-4-4-4 – use for corner rounding on compact components like checkboxes or small input controls."
           },
-          "name": "borderRadiusSM",
+          "name": "borderRadiusSm",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13849,7 +13849,7 @@
             "$type": "dimension",
             "comment": "24-24-24-24 – use for corner rounding on larger cards, overlays, dialogs, and other container components."
           },
-          "name": "borderRadiusXL",
+          "name": "borderRadiusXl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -13887,7 +13887,7 @@
             "$type": "dimension",
             "comment": "16-16-16-16 – use for corner rounding on small cards, overlays, and modal surfaces."
           },
-          "name": "borderRadiusLG",
+          "name": "borderRadiusLg",
           "attributes": {},
           "path": [
             "Semantic",
@@ -14371,7 +14371,7 @@
               }
             }
           },
-          "name": "changeOnLG",
+          "name": "changeOnLg",
           "attributes": {},
           "path": [
             "Semantic",
@@ -14407,7 +14407,7 @@
             },
             "comment": "This variable is used for controlling size changes across device sizes on some components such as the vertical newsticker cards and the search results cards. Both have cards that change layouts at different breakpoints."
           },
-          "name": "changeOnMD",
+          "name": "changeOnMd",
           "attributes": {},
           "path": [
             "Semantic",
@@ -14518,7 +14518,7 @@
               "$type": "dimension",
               "comment": "8-8-12-16 – use for horizontal (left/right) padding of UI elements that scales across breakpoints"
             },
-            "name": "inlineSpaceRespSM",
+            "name": "inlineSpaceRespSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14557,7 +14557,7 @@
               "$type": "dimension",
               "comment": "12-12-16-24 use for horizontal (left/right) padding of UI elements that scales across breakpoints"
             },
-            "name": "inlineSpaceRespMD",
+            "name": "inlineSpaceRespMd",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14596,7 +14596,7 @@
               "$type": "dimension",
               "comment": "16-16-24-32 – use for horizontal (left/right) padding of UI elements that scales across breakpoints"
             },
-            "name": "inlineSpaceRespLG",
+            "name": "inlineSpaceRespLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14635,7 +14635,7 @@
               "$type": "dimension",
               "comment": "32-32-48-64 – use for horizontal (left/right) padding of UI elements that scales across breakpoints"
             },
-            "name": "inlineSpaceResp2XL",
+            "name": "inlineSpaceResp2Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14674,7 +14674,7 @@
               "$type": "dimension",
               "comment": "24-24-32-40 – use for horizontal (left/right) padding of UI elements that scales across breakpoints"
             },
-            "name": "inlineSpaceRespXL",
+            "name": "inlineSpaceRespXl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14715,7 +14715,7 @@
               "$type": "dimension",
               "comment": "8-8-8-8 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConstSM",
+            "name": "inlineSpaceConstSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14754,7 +14754,7 @@
               "$type": "dimension",
               "comment": "12-12-12-12 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConstMD",
+            "name": "inlineSpaceConstMd",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14793,7 +14793,7 @@
               "$type": "dimension",
               "comment": "16-16-16-16 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConstLG",
+            "name": "inlineSpaceConstLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14832,7 +14832,7 @@
               "$type": "dimension",
               "comment": "32-32-32-32 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConst2XL",
+            "name": "inlineSpaceConst2Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14871,7 +14871,7 @@
               "$type": "dimension",
               "comment": "24-24-24-24 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConstXL",
+            "name": "inlineSpaceConstXl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14910,7 +14910,7 @@
               "$type": "dimension",
               "comment": "6-6-6-6 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConstXS",
+            "name": "inlineSpaceConstXs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14949,7 +14949,7 @@
               "$type": "dimension",
               "comment": "2-2-2-2 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConst3XS",
+            "name": "inlineSpaceConst3Xs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -14988,7 +14988,7 @@
               "$type": "dimension",
               "comment": "4-4-4-4 – Use for fixed horizontal (left/right) padding of UI elements"
             },
-            "name": "inlineSpaceConst2XS",
+            "name": "inlineSpaceConst2Xs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15031,7 +15031,7 @@
               "$type": "dimension",
               "comment": "12-12-16-24 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints"
             },
-            "name": "stackSpaceRespMD",
+            "name": "stackSpaceRespMd",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15070,7 +15070,7 @@
               "$type": "dimension",
               "comment": "16-16-24-32 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints"
             },
-            "name": "stackSpaceRespLG",
+            "name": "stackSpaceRespLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15109,7 +15109,7 @@
               "$type": "dimension",
               "comment": "32-32-48-64 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints"
             },
-            "name": "stackSpaceResp2XL",
+            "name": "stackSpaceResp2Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15148,7 +15148,7 @@
               "$type": "dimension",
               "comment": "8-8-12-16 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints"
             },
-            "name": "stackSpaceRespSM",
+            "name": "stackSpaceRespSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15187,7 +15187,7 @@
               "$type": "dimension",
               "comment": "24-24-32-40 – use for vertical (top/bottom) padding of UI elements that scales across breakpoints"
             },
-            "name": "stackSpaceRespXL",
+            "name": "stackSpaceRespXl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15228,7 +15228,7 @@
               "$type": "dimension",
               "comment": "8-8-8-8 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConstSM",
+            "name": "stackSpaceConstSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15267,7 +15267,7 @@
               "$type": "dimension",
               "comment": "12-12-12-12 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConstMD",
+            "name": "stackSpaceConstMd",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15306,7 +15306,7 @@
               "$type": "dimension",
               "comment": "16-16-16-16 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConstLG",
+            "name": "stackSpaceConstLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15345,7 +15345,7 @@
               "$type": "dimension",
               "comment": "32-32-32-32 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConst2XL",
+            "name": "stackSpaceConst2Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15384,7 +15384,7 @@
               "$type": "dimension",
               "comment": "24-24-24-24 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConstXL",
+            "name": "stackSpaceConstXl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15423,7 +15423,7 @@
               "$type": "dimension",
               "comment": "6-6-6-6 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConstXS",
+            "name": "stackSpaceConstXs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15462,7 +15462,7 @@
               "$type": "dimension",
               "comment": "2-2-2-2 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConst3XS",
+            "name": "stackSpaceConst3Xs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15501,7 +15501,7 @@
               "$type": "dimension",
               "comment": "4-4-4-4 – Use for fixed vertical (top/bottom) padding of UI elements"
             },
-            "name": "stackSpaceConst2XS",
+            "name": "stackSpaceConst2Xs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15544,7 +15544,7 @@
               "$type": "dimension",
               "comment": "4-4-6-8 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceRespXS",
+            "name": "gapSpaceRespXs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15583,7 +15583,7 @@
               "$type": "dimension",
               "comment": "16-16-24-32 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceRespLG",
+            "name": "gapSpaceRespLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15622,7 +15622,7 @@
               "$type": "dimension",
               "comment": "24-24-32-48 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceRespXL",
+            "name": "gapSpaceRespXl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15661,7 +15661,7 @@
               "$type": "dimension",
               "comment": "32-32-48-64 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceResp2XL",
+            "name": "gapSpaceResp2Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15700,7 +15700,7 @@
               "$type": "dimension",
               "comment": "12-12-16-24 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceRespMD",
+            "name": "gapSpaceRespMd",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15739,7 +15739,7 @@
               "$type": "dimension",
               "comment": "8-8-12-16 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceRespSM",
+            "name": "gapSpaceRespSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15778,7 +15778,7 @@
               "$type": "dimension",
               "comment": "2-2-4-6 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceResp2XS",
+            "name": "gapSpaceResp2Xs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15817,7 +15817,7 @@
               "$type": "dimension",
               "comment": "48-48-72-96 – Use for gaps between items inside of UI elements that scale across breakpoints"
             },
-            "name": "gapSpaceResp3XL",
+            "name": "gapSpaceResp3Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15858,7 +15858,7 @@
               "$type": "dimension",
               "comment": "2-2-2-2 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConst2XS",
+            "name": "gapSpaceConst2Xs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15897,7 +15897,7 @@
               "$type": "dimension",
               "comment": "4-4-4-4 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConstXS",
+            "name": "gapSpaceConstXs",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15936,7 +15936,7 @@
               "$type": "dimension",
               "comment": "8-8-8-8 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConstSM",
+            "name": "gapSpaceConstSm",
             "attributes": {},
             "path": [
               "Semantic",
@@ -15975,7 +15975,7 @@
               "$type": "dimension",
               "comment": "12-12-12-12 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConstMD",
+            "name": "gapSpaceConstMd",
             "attributes": {},
             "path": [
               "Semantic",
@@ -16014,7 +16014,7 @@
               "$type": "dimension",
               "comment": "16-16-16-16 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConstLG",
+            "name": "gapSpaceConstLg",
             "attributes": {},
             "path": [
               "Semantic",
@@ -16053,7 +16053,7 @@
               "$type": "dimension",
               "comment": "24-24-24-24 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConstXL",
+            "name": "gapSpaceConstXl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -16092,7 +16092,7 @@
               "$type": "dimension",
               "comment": "32-32-32-32 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConst2XL",
+            "name": "gapSpaceConst2Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -16131,7 +16131,7 @@
               "$type": "dimension",
               "comment": "48-48-48-48 – Use for fixed gaps between items inside of UI elements"
             },
-            "name": "gapSpaceConst3XL",
+            "name": "gapSpaceConst3Xl",
             "attributes": {},
             "path": [
               "Semantic",
@@ -16175,7 +16175,7 @@
             "$type": "dimension",
             "comment": "16-16-16-16 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConst3XS",
+          "name": "sizeConst3Xs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16213,7 +16213,7 @@
             "$type": "dimension",
             "comment": "24-24-24-24 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConst2XS",
+          "name": "sizeConst2Xs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16251,7 +16251,7 @@
             "$type": "dimension",
             "comment": "32-32-32-32 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConstXS",
+          "name": "sizeConstXs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16289,7 +16289,7 @@
             "$type": "dimension",
             "comment": "40-40-40-40 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConstSM",
+          "name": "sizeConstSm",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16327,7 +16327,7 @@
             "$type": "dimension",
             "comment": "48-48-48-48 Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConstMD",
+          "name": "sizeConstMd",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16365,7 +16365,7 @@
             "$type": "dimension",
             "comment": "56-56-56-56 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConstLG",
+          "name": "sizeConstLg",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16403,7 +16403,7 @@
             "$type": "dimension",
             "comment": "64-64-64-64 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConstXL",
+          "name": "sizeConstXl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16441,7 +16441,7 @@
             "$type": "dimension",
             "comment": "96-96-96-96 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConst3XL",
+          "name": "sizeConst3Xl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16479,7 +16479,7 @@
             "$type": "dimension",
             "comment": "148-148-148-148 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConst4XL",
+          "name": "sizeConst4Xl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16517,7 +16517,7 @@
             "$type": "dimension",
             "comment": "72-72-72-72 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConst2XL",
+          "name": "sizeConst2Xl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16555,7 +16555,7 @@
             "$type": "dimension",
             "comment": "8-8-8-8 – Use for setting fixed height and width of UI elements"
           },
-          "name": "sizeConst4XS",
+          "name": "sizeConst4Xs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16595,7 +16595,7 @@
             "$type": "dimension",
             "comment": "16-16-16-24 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeResp3XS",
+          "name": "sizeResp3Xs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16633,7 +16633,7 @@
             "$type": "dimension",
             "comment": "24-24-32-32 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeResp2XS",
+          "name": "sizeResp2Xs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16671,7 +16671,7 @@
             "$type": "dimension",
             "comment": "32-32-40-48 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeRespXS",
+          "name": "sizeRespXs",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16709,7 +16709,7 @@
             "$type": "dimension",
             "comment": "40-40-48-56 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeRespSM",
+          "name": "sizeRespSm",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16747,7 +16747,7 @@
             "$type": "dimension",
             "comment": "48-48-64-72 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeRespMD",
+          "name": "sizeRespMd",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16785,7 +16785,7 @@
             "$type": "dimension",
             "comment": "56-56-72-92 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeRespLG",
+          "name": "sizeRespLg",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16823,7 +16823,7 @@
             "$type": "dimension",
             "comment": "64-64-80-96 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeRespXL",
+          "name": "sizeRespXl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16861,7 +16861,7 @@
             "$type": "dimension",
             "comment": "72-72-92-100 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeResp2XL",
+          "name": "sizeResp2Xl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16899,7 +16899,7 @@
             "$type": "dimension",
             "comment": "96-96-120-148 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeResp3XL",
+          "name": "sizeResp3Xl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16937,7 +16937,7 @@
             "$type": "dimension",
             "comment": "148-148-160-180 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeResp4XL",
+          "name": "sizeResp4Xl",
           "attributes": {},
           "path": [
             "Semantic",
@@ -16975,7 +16975,7 @@
             "$type": "dimension",
             "comment": "12-12-14-16 – Use for setting height and width of UI elements that scale across breakpoints"
           },
-          "name": "sizeResp4XS",
+          "name": "sizeResp4Xs",
           "attributes": {},
           "path": [
             "Semantic",
