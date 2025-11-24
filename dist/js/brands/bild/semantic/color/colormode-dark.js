@@ -1,6 +1,6 @@
 /**
  * colormode-dark.js
- * Generiert am: 2025-11-24T18:28:18.081Z
+ * Generiert am: 2025-11-24T21:01:59.042Z
  * Nicht manuell bearbeiten!
  */
 
