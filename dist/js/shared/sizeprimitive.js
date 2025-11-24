@@ -1,6 +1,6 @@
 /**
  * sizeprimitive.js
- * Generiert am: 2025-11-24T21:22:59.402Z
+ * Generiert am: 2025-11-24T21:40:39.501Z
  * Nicht manuell bearbeiten!
  */
 

@@ -1,6 +1,6 @@
 /**
  * brandcolormapping.js
- * Generiert am: 2025-11-24T21:23:02.105Z
+ * Generiert am: 2025-11-24T21:40:42.215Z
  * Nicht manuell bearbeiten!
  */
 
