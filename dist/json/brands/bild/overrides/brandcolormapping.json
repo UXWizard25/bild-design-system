@@ -14,7 +14,7 @@
         },
         "$type": "color",
         "comment": "Bild: 046; SpoBi: 016 current css calls this variable main tenant color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -51,7 +51,7 @@
         },
         "$type": "color",
         "comment": "Bild&SpoBi Tone 100",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -88,7 +88,7 @@
         },
         "$type": "color",
         "comment": "Bild: 015 ; SpoBi: 010",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -125,7 +125,7 @@
         },
         "$type": "color",
         "comment": "Bild: 015 ; SpoBi: 010",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -162,7 +162,7 @@
         },
         "$type": "color",
         "comment": "Bild&SpoBi: 100",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -201,7 +201,7 @@
         },
         "$type": "color",
         "comment": "Bild: Tone 046 ; SpoBi: 016 This variable is used on small UI elements such as the background color for kickers.",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -238,7 +238,7 @@
         },
         "$type": "color",
         "comment": "Bild: 100 ; SpoBi: 098",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -277,7 +277,7 @@
         },
         "$type": "color",
         "comment": "Bild: 100 ; SpoBi: 100",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -314,7 +314,7 @@
         },
         "$type": "color",
         "comment": "Bild: 015 ; SpoBi: 010",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -351,7 +351,7 @@
         },
         "$type": "color",
         "comment": "Bild: 096 ; SpoBi: 098",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#F2F4F5",
@@ -388,7 +388,7 @@
         },
         "$type": "color",
         "comment": "Bild: 020 ; SpoBi: 016",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#2C3138",
@@ -425,7 +425,7 @@
         },
         "$type": "color",
         "comment": "Bild: 093 ; SpoBi: 081",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#E9ECEF",
@@ -462,7 +462,7 @@
         },
         "$type": "color",
         "comment": "Bild: 025 ; SpoBi: 029",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#343C41",
@@ -499,7 +499,7 @@
         },
         "$type": "color",
         "comment": "Bild: 085 ; SpoBi: 085",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#CED4DA",
@@ -536,7 +536,7 @@
         },
         "$type": "color",
         "comment": "Bild: 035 ; SpoBi: 035",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#4B525A",
@@ -575,7 +575,7 @@
         },
         "$type": "color",
         "comment": "Bild: 046 ; SpoBi: 029",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -612,7 +612,7 @@
         },
         "$type": "color",
         "comment": "Bild: 046 ; SpoBi: 098",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -651,7 +651,7 @@
         },
         "$type": "color",
         "comment": "Bild & SpoBi: Tone 015",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -688,7 +688,7 @@
         },
         "$type": "color",
         "comment": "Bild & SpoBi: Tone 093",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#E9ECEF",
@@ -725,7 +725,7 @@
         },
         "$type": "color",
         "comment": "Bild: 015 ; SpoBi: 016",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -762,7 +762,7 @@
         },
         "$type": "color",
         "comment": "Bild&SpoBi: Tone 100",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -799,7 +799,7 @@
         },
         "$type": "color",
         "comment": "This variable is used on kicker texts that are on top of a color that is different from the outer color of the overall user interface. Bild & SpoBi: Tone 100",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -836,7 +836,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for the color of kicker texts that are not no top of a different color of the overall user interface. Bild: 046 ; SpoBi: 060",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -873,7 +873,7 @@
         },
         "$type": "color",
         "comment": "Use this variable for kicker texts that are directly on top of the color of the overall user interface. Bild & SpoBi tone 060.",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#8C9196",
@@ -910,7 +910,7 @@
         },
         "$type": "color",
         "comment": "Bild & SpoBi: Tone 060",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#8C9196",
@@ -947,7 +947,7 @@
         },
         "$type": "color",
         "comment": "Bild & SpoBi: Tone 060",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#8C9196",
@@ -984,7 +984,7 @@
         },
         "$type": "color",
         "comment": "Use this variable for the color immediately behind the bounding box of the kicker text element. Bild: 046 ; SpoBi: 029",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -1021,7 +1021,7 @@
         },
         "$type": "color",
         "comment": "Use this variable for the dark mode color of the background immediately around the kicker text element. Bild: 060 ; SpoBi: 060",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#8C9196",
@@ -1063,7 +1063,7 @@
           },
           "$type": "color",
           "comment": "Bild & SpoBi: Tone 015",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#232629",
@@ -1101,7 +1101,7 @@
           },
           "$type": "color",
           "comment": "Bild & SpoBi: Tone 035",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#4B525A",
@@ -1139,7 +1139,7 @@
           },
           "$type": "color",
           "comment": "Bild & SpoBi: Tone 100",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#FFFFFF",
@@ -1177,7 +1177,7 @@
           },
           "$type": "color",
           "comment": "Bild: 093 ; SpoBi: 081",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#E9ECEF",
@@ -1217,7 +1217,7 @@
           },
           "$type": "color",
           "comment": "Bild: 046 ; SpoBi: 029",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#DD0000",
@@ -1255,7 +1255,7 @@
           },
           "$type": "color",
           "comment": "This variable controls the primary button idle color for two brands in dark mode. Bild: 046 ; SpoBi: 038",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#DD0000",
@@ -1293,7 +1293,7 @@
           },
           "$type": "color",
           "comment": "Bild: 035 ; SpoBi: 016",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#AF0002",
@@ -1331,7 +1331,7 @@
           },
           "$type": "color",
           "comment": "This variable stores colors for the hover state of primary buttons for two brands in dark mode. Bild: 035 ; SpoBi: 029",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
           "isSource": true,
           "original": {
             "$value": "#AF0002",
@@ -1372,7 +1372,7 @@
         },
         "$type": "color",
         "comment": "This variable is used on the text for headlines in the horizontally animated breaking news strip. Bild: 100 ; SpoBi: 015",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -1409,7 +1409,7 @@
         },
         "$type": "color",
         "comment": "This variable is used on the breaking news strip that has horizontally animated headlines. Bild: 015 ; SpoBi: 081",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -1446,7 +1446,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for the background color of the \"Breaking News\" title. Bild: 067 ; SpoBi: 016",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FD8227",
@@ -1483,7 +1483,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for the color of the \"breaking\" word in the \"breaking news\" horizontally animated headlines strip. Bild: 010 ; SpoBi: 081",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#1C1C1C",
@@ -1520,7 +1520,7 @@
         },
         "$type": "color",
         "comment": "This variable is for the background color of the horizontally animated strip with headlines for breaking news on dark mode.  Bild: 093 ; SpoBi: 081",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#E9ECEF",
@@ -1557,7 +1557,7 @@
         },
         "$type": "color",
         "comment": "This variable is used on the text for headlines in the horizontally animated breaking news strip on dark mode. Bild&SpoBi: 015",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -1594,7 +1594,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for the color of the \"News\" word in the breaking news horizontal animated headlines strip. Bild: 010 ; SpoBi: 100",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#1C1C1C",
@@ -1632,7 +1632,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "rgba(0, 0, 0, 0.699999988079071)",
@@ -1667,7 +1667,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "rgba(0, 0, 0, 0)",
@@ -1705,7 +1705,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for making possible the default color difference between the Bild and SportBild link lanes inside the menu component.",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -1742,7 +1742,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for making possible the default color difference between the Bild and SportBild link lane labels inside the menu component.",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#4B525A",
@@ -1778,7 +1778,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#8C9196",
@@ -1814,7 +1814,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for making possible the default color difference between the Bild and SportBild link lanes inside the menu component on Dark mode.",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -1850,7 +1850,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -1885,7 +1885,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -1921,7 +1921,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for making possible the active color difference between the Bild and SportBild link lane labels inside the menu component.",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -1957,7 +1957,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -1992,7 +1992,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#343C41",
@@ -2027,7 +2027,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -2062,7 +2062,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#343C41",
@@ -2097,7 +2097,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#4B525A",
@@ -2132,7 +2132,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#8C9196",
@@ -2167,7 +2167,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -2202,7 +2202,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#E9ECEF",
@@ -2237,7 +2237,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#E9ECEF",
@@ -2272,7 +2272,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#4B525A",
@@ -2307,7 +2307,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -2342,7 +2342,7 @@
           }
         },
         "$type": "color",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -2380,7 +2380,7 @@
         },
         "$type": "color",
         "comment": "09-2025 css --article-author-name-color // Bild: 015; SpoBi: 045",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#232629",
@@ -2417,7 +2417,7 @@
         },
         "$type": "color",
         "comment": "09-2025 css --article-author-name-color // Bild: 100; SpoBi: 093",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#FFFFFF",
@@ -2454,7 +2454,7 @@
         },
         "$type": "color",
         "comment": "This variable is used for decorating the avatar text's underline color. Bild: 046; SpoBi: 029",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
         "isSource": true,
         "original": {
           "$value": "#DD0000",
@@ -2491,7 +2491,7 @@
         }
       },
       "$type": "color",
-      "filePath": "/home/user/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
+      "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/bild/overrides/brandcolormapping.json",
       "isSource": true,
       "original": {
         "$value": "#DD0000",

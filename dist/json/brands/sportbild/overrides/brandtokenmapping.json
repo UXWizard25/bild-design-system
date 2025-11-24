@@ -16,7 +16,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "38px",
@@ -55,7 +55,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "38px",
@@ -94,7 +94,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 72 | SpoBi: 68 | Ads: 70 | This variable is used in the display1 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "68px",
@@ -133,7 +133,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 120 | SpoBi: 114 | Ads: 116 | This variable is used in the display1 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "114px",
@@ -172,7 +172,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 36 | SpoBi: 34 | Ads: 35 | This variable is used in the display2 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "34px",
@@ -211,7 +211,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 36 | SpoBi: 34 | Ads: 35 | This variable is used in the display2 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "34px",
@@ -250,7 +250,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 42 | SpoBi: 40 | Ads: 41 | This variable is used in the display2 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "40px",
@@ -289,7 +289,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 64 | SpoBi: 61 | Ads: 62 | This variable is used in the display2 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "61px",
@@ -328,7 +328,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 28 | SpoBi: 27 | Ads: 27 | This variable is used in the display3 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "27px",
@@ -367,7 +367,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 32 | SpoBi: 30 | Ads: 31 | This variable is used in the display3 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "30px",
@@ -406,7 +406,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display3 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "38px",
@@ -445,7 +445,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 28 | SpoBi: 27 | Ads: 27 | This variable is used in the display3 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "27px",
@@ -486,7 +486,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 48 | SpoBi: 42 | Ads: 36 | This variable is used in the headline1 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -525,7 +525,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 48 | SpoBi: 42 | Ads: 36 | This variable is used in the headline1 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -564,7 +564,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 72 | SpoBi: 60 | Ads: 54 | This variable is used in the headline1 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "60px",
@@ -603,7 +603,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 100 | SpoBi: 80 | Ads: 70 | This variable is used in the headline1 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "80px",
@@ -642,7 +642,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 40 | SpoBi: 42 | Ads: 30 | This variable is used in the headline2 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -681,7 +681,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 40 | SpoBi: 42 | Ads: 30 | This variable is used in the headline2 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -720,7 +720,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 48 | SpoBi: 44 | Ads: 36 | This variable is used in the headline2 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "44px",
@@ -759,7 +759,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 64 | SpoBi: 50 | Ads: 48 | This variable is used in the headline2 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "50px",
@@ -798,7 +798,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 28 | SpoBi: 30 | Ads: 24 | This variable is used in the headline3 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "30px",
@@ -837,7 +837,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 28 | SpoBi: 30 | Ads: 24 | This variable is used in the headline3 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "30px",
@@ -876,7 +876,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 36 | SpoBi: 30 | Ads: 26 | This variable is used in the headline3 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "30px",
@@ -915,7 +915,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 40 | SpoBi: 34 | Ads: 32 | This variable is used in the headline3 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "34px",
@@ -954,7 +954,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 22 | SpoBi: 21 | Ads: 16 | This variable is used in the headline4 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "21px",
@@ -993,7 +993,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 22 | SpoBi: 21 | Ads: 16 | This variable is used in the headline4 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "21px",
@@ -1032,7 +1032,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 26 | SpoBi: 26 | Ads: 20 | This variable is used in the headline4 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -1071,7 +1071,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 32 | SpoBi: 26 | Ads: 22 | This variable is used in the headline4 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -1109,7 +1109,7 @@
               }
             },
             "comment": "This variable is used for controlling the alignment of headlines across brands. current online css example var: --headline-text-align-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "left",
@@ -1149,7 +1149,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 18 | SpoBi: 20 | Ads: 16 | This variable is used in the kicker1 text style font size parameter for small device sizes. Current online css: --kicker-0-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20px",
@@ -1188,7 +1188,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 18 | SpoBi: 20 | Ads: 16 | This variable is used in the kicker1 text style font size parameter for small device sizes. Current online css: --kicker-0-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20px",
@@ -1227,7 +1227,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 22 | SpoBi: 26 | Ads: 18 | This variable is used in the kicker1 text style font size parameter for medium device sizes. Current online css: --kicker-0-font-size-md",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -1266,7 +1266,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 30 | SpoBi: 32 | Ads: 25 | This variable is used in the kicker1 text style font size parameter for large device sizes. Current online css: --kicker-0-font-size-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "32px",
@@ -1305,7 +1305,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 18 | SpoBi: 16 | Ads: 16 | This variable is used in the kicker2 text style font size parameter for small device sizes. Current online css: --kicker-1-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -1344,7 +1344,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 18 | SpoBi: 16 | Ads: 16 | This variable is used in the kicker2 text style font size parameter for small device sizes. Current online css: --kicker-1-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -1383,7 +1383,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 22 | SpoBi: 26 | Ads: 18 | This variable is used in the kicker2 text style font size parameter for medium device sizes. Current online css: --kicker-1-font-size-md",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -1422,7 +1422,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 24 | SpoBi: 26 | Ads: 21 | This variable is used in the kicker2 text style font size parameter for large device sizes. Current online css: --kicker-1-font-size-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -1461,7 +1461,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for small device sizes. Current online css: --kicker-2-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -1500,7 +1500,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for small device sizes. Current online css: --kicker-2-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -1539,7 +1539,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 18 | SpoBi: 20 | Ads: 14 | This variable is used in the kicker3 text style font size parameter for medium device sizes. Current online css: --kicker-2-font-size-md",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20px",
@@ -1578,7 +1578,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 20 | SpoBi: 22 | Ads: 16 | This variable is used in the kicker3 text style font size parameter for large device sizes. Current online css: --kicker-2-font-size-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "22px",
@@ -1617,7 +1617,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 14 | SpoBi: 14 | Ads: 12 | This variable is used in the kicker4 text style font size parameter for small device sizes. Current online css: --kicker-3-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "14px",
@@ -1656,7 +1656,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 14 | SpoBi: 14 | Ads: 12 | This variable is used in the kicker4 text style font size parameter for small device sizes. Current online css: --kicker-3-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "14px",
@@ -1695,7 +1695,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 16 | SpoBi: 16 | Ads: 14 | This variable is used in the kicker4 text style font size parameter for medium device sizes. Current online css: --kicker-3-font-size-md",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -1734,7 +1734,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 16 | SpoBi: 18 | Ads: 14 | This variable is used in the kicker4 text style font size parameter for large device sizes. Current online css: --kicker-3-font-size-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -1775,7 +1775,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 24 | SpoBi: 18 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -1814,7 +1814,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 24 | SpoBi: 18 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for small device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -1853,7 +1853,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 32 | SpoBi: 22 | Ads: 18 | This variable is used in the subheadline1 text style font size parameter for medium device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "22px",
@@ -1892,7 +1892,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 36 | SpoBi: 26 | Ads: 28 | This variable is used in the subheadline1 text style font size parameter for large device sizes.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -1933,7 +1933,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 22 | SpoBi 24 | Ads 22 | current online css: --ressort-header-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "24px",
@@ -1972,7 +1972,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 22 | SpoBi 24 | Ads 22 | current online css: --ressort-header-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "24px",
@@ -2011,7 +2011,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 22 | SpoBi 28 | Ads 22 | current online css: --ressort-header-font-size-md",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28px",
@@ -2050,7 +2050,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 28 | SpoBi 30 | Ads 28 | current online css: --ressort-header-font-size-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "30px",
@@ -2089,7 +2089,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 16 | SpoBi 16 | Ads 14 | current online css var: --caption-1-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -2128,7 +2128,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 16 | SpoBi 16 | Ads 14 | current online css: --caption-1-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -2167,7 +2167,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 18 | SpoBi 18 | Ads 16 | current online css: --caption-1-font-size-md",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -2206,7 +2206,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 20 | SpoBi 20 | Ads 18 | current online css: --caption-1-font-size-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20px",
@@ -2247,7 +2247,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -2286,7 +2286,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -2325,7 +2325,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for medium device sizes. Current online css:",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "24px",
@@ -2364,7 +2364,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for large device sizes. Current online css:",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "24px",
@@ -2405,7 +2405,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17px",
@@ -2444,7 +2444,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17px",
@@ -2483,7 +2483,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for medium device sizes. Current online css: --body-font-size",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17px",
@@ -2522,7 +2522,7 @@
             },
             "$type": "dimension",
             "comment": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for large device sizes. Current online css: --body-font-size",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17px",
@@ -2563,7 +2563,7 @@
             },
             "$type": "dimension",
             "comment": "--footnote-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "13px",
@@ -2602,7 +2602,7 @@
             },
             "$type": "dimension",
             "comment": "--footnote-font-size-sm",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "13px",
@@ -2640,7 +2640,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "13px",
@@ -2678,7 +2678,7 @@
             },
             "$type": "dimension",
             "comment": "--footnote-font-size-lg",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "15px",
@@ -2716,7 +2716,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "10px",
@@ -2753,7 +2753,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "10px",
@@ -2790,7 +2790,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "10px",
@@ -2827,7 +2827,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "13px",
@@ -2866,7 +2866,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -2903,7 +2903,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16px",
@@ -2940,7 +2940,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -2977,7 +2977,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20px",
@@ -3016,7 +3016,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17px",
@@ -3053,7 +3053,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "15px",
@@ -3090,7 +3090,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "12px",
@@ -3127,7 +3127,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "8px",
@@ -3164,7 +3164,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "10px",
@@ -3201,7 +3201,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "10px",
@@ -3238,7 +3238,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "15px",
@@ -3275,7 +3275,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17px",
@@ -3316,7 +3316,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "40px",
@@ -3353,7 +3353,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "40px",
@@ -3390,7 +3390,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "72px",
@@ -3427,7 +3427,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "120px",
@@ -3464,7 +3464,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "36px",
@@ -3501,7 +3501,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "36px",
@@ -3538,7 +3538,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -3575,7 +3575,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "64px",
@@ -3612,7 +3612,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "40px",
@@ -3649,7 +3649,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "32px",
@@ -3686,7 +3686,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28px",
@@ -3723,7 +3723,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28px",
@@ -3762,7 +3762,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -3799,7 +3799,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -3836,7 +3836,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "69px",
@@ -3873,7 +3873,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "88px",
@@ -3910,7 +3910,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -3947,7 +3947,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "42px",
@@ -3984,7 +3984,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "50.599998474121094px",
@@ -4021,7 +4021,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "57.599998474121094px",
@@ -4058,7 +4058,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "33px",
@@ -4095,7 +4095,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "33px",
@@ -4132,7 +4132,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "34.5px",
@@ -4169,7 +4169,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "39.099998474121094px",
@@ -4206,7 +4206,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.100000381469727px",
@@ -4243,7 +4243,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.100000381469727px",
@@ -4280,7 +4280,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.600000381469727px",
@@ -4317,7 +4317,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "29.899999618530273px",
@@ -4356,7 +4356,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.399999618530273px",
@@ -4393,7 +4393,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.399999618530273px",
@@ -4430,7 +4430,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.600000381469727px",
@@ -4467,7 +4467,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "33.79999923706055px",
@@ -4506,7 +4506,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "22px",
@@ -4543,7 +4543,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "22px",
@@ -4580,7 +4580,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.600000381469727px",
@@ -4617,7 +4617,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "35.20000076293945px",
@@ -4654,7 +4654,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.600000381469727px",
@@ -4691,7 +4691,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.600000381469727px",
@@ -4728,7 +4728,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.600000381469727px",
@@ -4765,7 +4765,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.600000381469727px",
@@ -4802,7 +4802,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.600000381469727px",
@@ -4839,7 +4839,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.600000381469727px",
@@ -4876,7 +4876,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "22px",
@@ -4913,7 +4913,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "24.200000762939453px",
@@ -4950,7 +4950,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "15.399999618530273px",
@@ -4987,7 +4987,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "15.399999618530273px",
@@ -5024,7 +5024,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.600000381469727px",
@@ -5061,7 +5061,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "19.799999237060547px",
@@ -5100,7 +5100,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26.399999618530273px",
@@ -5137,7 +5137,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26.399999618530273px",
@@ -5174,7 +5174,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "30.799999237060547px",
@@ -5211,7 +5211,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "33px",
@@ -5248,7 +5248,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "16.799999237060547px",
@@ -5285,7 +5285,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20.799999237060547px",
@@ -5322,7 +5322,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.399999618530273px",
@@ -5359,7 +5359,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -5398,7 +5398,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.399999618530273px",
@@ -5435,7 +5435,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.399999618530273px",
@@ -5472,7 +5472,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "31.200000762939453px",
@@ -5509,7 +5509,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "31.200000762939453px",
@@ -5548,7 +5548,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.049999237060547px",
@@ -5585,7 +5585,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.049999237060547px",
@@ -5622,7 +5622,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "29.75px",
@@ -5659,7 +5659,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "28.049999237060547px",
@@ -5698,7 +5698,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.030000686645508px",
@@ -5735,7 +5735,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.030000686645508px",
@@ -5772,7 +5772,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.030000686645508px",
@@ -5809,7 +5809,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "19px",
@@ -5846,7 +5846,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "13px",
@@ -5883,7 +5883,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "13px",
@@ -5920,7 +5920,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "13px",
@@ -5957,7 +5957,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "17.030000686645508px",
@@ -5997,7 +5997,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 17 | SpoBi 20.4 | Ads 20.4 | The label 1 text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20.399999618530273px",
@@ -6036,7 +6036,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 10 | SpoBi 12 | Ads 10 | The label1 responsive text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "12px",
@@ -6075,7 +6075,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 10 | SpoBi 12 | Ads 10 | The label1 responsive text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "12px",
@@ -6114,7 +6114,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 15 | SpoBi 18 | Ads 15 | The label1 responsive text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "18px",
@@ -6153,7 +6153,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 17 | SpoBi 20.4 | Ads 17 | The label1 responsive text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20.399999618530273px",
@@ -6192,7 +6192,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 16 | SpoBi 19.2 | Ads 16 | The label 2 text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "19.200000762939453px",
@@ -6231,7 +6231,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 14.4 | SpoBi 14.4 | Ads 14.4 | The label 3 text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "14.399999618530273px",
@@ -6270,7 +6270,7 @@
             },
             "$type": "dimension",
             "comment": "Bild 10 | SpoBi 10 | Ads 10 | The label 4 text style uses this variable for its line height parameter.",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "10px",
@@ -6310,7 +6310,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20.799999237060547px",
@@ -6347,7 +6347,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "20.799999237060547px",
@@ -6384,7 +6384,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "23.399999618530273px",
@@ -6421,7 +6421,7 @@
               }
             },
             "$type": "dimension",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "26px",
@@ -6462,7 +6462,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 400,
@@ -6499,7 +6499,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -6538,7 +6538,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 400,
@@ -6575,7 +6575,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -6614,7 +6614,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 400,
@@ -6651,7 +6651,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -6690,7 +6690,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 800,
@@ -6729,7 +6729,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 800,
@@ -6767,7 +6767,7 @@
                 "variableId": "VariableID:18288:5806"
               }
             },
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "Bold Italic",
@@ -6803,7 +6803,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -6840,7 +6840,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -6877,7 +6877,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -6914,7 +6914,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -6950,7 +6950,7 @@
                 "variableId": "VariableID:20360:16627"
               }
             },
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "Bold Italic",
@@ -6985,7 +6985,7 @@
                 "variableId": "VariableID:20360:16628"
               }
             },
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "Bold Italic",
@@ -7020,7 +7020,7 @@
                 "variableId": "VariableID:20360:16629"
               }
             },
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "Bold Italic",
@@ -7058,7 +7058,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -7097,7 +7097,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 700,
@@ -7133,7 +7133,7 @@
                 "variableId": "VariableID:19144:63646"
               }
             },
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": "Black Italic",
@@ -7171,7 +7171,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 800,
@@ -7210,7 +7210,7 @@
               }
             },
             "$type": "fontWeight",
-            "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+            "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
             "isSource": true,
             "original": {
               "$value": 800,
@@ -7250,7 +7250,7 @@
             }
           },
           "comment": "Bild: GothamXNarrow | SpoBi: AntennaExtraCond | Ads: LucidaGrande | This variable is used in the kickers text styles font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaExtraCond",
@@ -7286,7 +7286,7 @@
             }
           },
           "comment": "Bild: Gotham | SpoBi: AntennaCond | Ads: LucidaGrande | This variable is used in the display text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaCond",
@@ -7322,7 +7322,7 @@
             }
           },
           "comment": "Bild: GothamCond | SpoBi: AntennaExtraCond | Ads: LucidaGrande | This variable is used in the headlines text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaExtraCond",
@@ -7358,7 +7358,7 @@
             }
           },
           "comment": "Bild: GothamCond | SpoBi: AntennaCond | Ads: LucidaGrande | This variable is used in the subheadlines text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaCond",
@@ -7394,7 +7394,7 @@
             }
           },
           "comment": "Bild: GothamXNarrow | SpoBi: Inter | Ads: LucidaGrande | This variable is used in the body text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "Inter",
@@ -7430,7 +7430,7 @@
             }
           },
           "comment": "Bild: GothamXNarrow | SpoBi: Inter | Ads: LucidaGrande | This variable is used in the footnotes text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "Inter",
@@ -7466,7 +7466,7 @@
             }
           },
           "comment": "Bild: GothamXNarrow | SpoBi: AntennaExtraCond | Ads: LucidaGrande | This variable is used in the labels text styles font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaExtraCond",
@@ -7502,7 +7502,7 @@
             }
           },
           "comment": "Bild: Gotham | SpoBi: AntennaCond | Ads: LucidaGrande | This variable is used in the quotes text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaCond",
@@ -7538,7 +7538,7 @@
             }
           },
           "comment": "Bild: Gotham | SpoBi: AntennaCond | Ads: LucidaGrande | This variable is used in the titles text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaCond",
@@ -7574,7 +7574,7 @@
             }
           },
           "comment": "Bild: Gotham | SpoBi: AntennaCond | Ads: LucidaGrande | This variable is used in the callouts text style font family parameter.",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "AntennaCond",
@@ -7612,7 +7612,7 @@
             "variableId": "VariableID:18209:12102"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": true,
@@ -7645,7 +7645,7 @@
             "variableId": "VariableID:18209:12103"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": false,
@@ -7678,7 +7678,7 @@
             "variableId": "VariableID:18209:12104"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": false,
@@ -7711,7 +7711,7 @@
             "variableId": "VariableID:18209:12105"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": true,
@@ -7744,7 +7744,7 @@
             "variableId": "VariableID:19196:122816"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": false,
@@ -7777,7 +7777,7 @@
             "variableId": "VariableID:19196:122817"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": true,
@@ -7817,7 +7817,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "13px",
@@ -7855,7 +7855,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-font-size-md",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "13px",
@@ -7893,7 +7893,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-font-size-lg",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "15px",
@@ -7931,7 +7931,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "13px",
@@ -7969,7 +7969,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "13px",
@@ -8007,7 +8007,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "13px",
@@ -8045,7 +8045,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "13px",
@@ -8083,7 +8083,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-font-size-lg",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "15px",
@@ -8123,7 +8123,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-line-height-sm ; Bild: 19.5 // SpoBi: 16.9 // Ad: 19.5",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "16.899999618530273px",
@@ -8161,7 +8161,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-line-height-md ; Bild: 24.75 // SpoBi: 16.9 // Ad: 19.5",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "16.899999618530273px",
@@ -8199,7 +8199,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-line-height-lg ; Bild: 24.75 // SpoBi: 19.5 // Ad: 24",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "19.5px",
@@ -8237,7 +8237,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-caption-line-height-sm ; Bild: 19.5 // SpoBi: 16.9 // Ad: 19.5",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "16.899999618530273px",
@@ -8275,7 +8275,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "17px",
@@ -8313,7 +8313,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-line-height-lg ; Bild: 23 // SpoBi: 19 // Ad: 24",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "19px",
@@ -8351,7 +8351,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "17px",
@@ -8389,7 +8389,7 @@
           },
           "$type": "dimension",
           "comment": "--article-figure-meta-line-height-sm ; Bild: 21 // SpoBi: 17 // Ad: 19",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "17px",
@@ -8431,7 +8431,7 @@
           },
           "$type": "dimension",
           "comment": "--breadcrumb-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "14px",
@@ -8469,7 +8469,7 @@
           },
           "$type": "dimension",
           "comment": "--breadcrumb-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "14px",
@@ -8507,7 +8507,7 @@
           },
           "$type": "dimension",
           "comment": "--breadcrumb-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "14px",
@@ -8545,7 +8545,7 @@
           },
           "$type": "dimension",
           "comment": "--breadcrumb-font-size-lg",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "11px",
@@ -8585,7 +8585,7 @@
           },
           "$type": "dimension",
           "comment": "not defined as variable",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "14px",
@@ -8623,7 +8623,7 @@
           },
           "$type": "dimension",
           "comment": "not defined as variable",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "14px",
@@ -8661,7 +8661,7 @@
           },
           "$type": "dimension",
           "comment": "not defined as variable",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "14px",
@@ -8699,7 +8699,7 @@
           },
           "$type": "dimension",
           "comment": "not defined as variable",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "11px",
@@ -8738,7 +8738,7 @@
             }
           },
           "comment": "--breadcrumb-font",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "Inter",
@@ -8777,7 +8777,7 @@
           },
           "$type": "fontWeight",
           "comment": "--breadcrumb-font-size-sm",
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": 400,
@@ -8818,7 +8818,7 @@
         },
         "$type": "dimension",
         "comment": "--nav-btn-font-size",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "18px",
@@ -8855,7 +8855,7 @@
         },
         "$type": "dimension",
         "comment": "--caption-1-font-size-md",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "13px",
@@ -8892,7 +8892,7 @@
         },
         "$type": "dimension",
         "comment": "--caption-1-font-size-lg",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "13px",
@@ -8929,7 +8929,7 @@
         },
         "$type": "dimension",
         "comment": "--caption-1-font-size-sm",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "12px",
@@ -8966,7 +8966,7 @@
         },
         "$type": "dimension",
         "comment": "--caption-1-font-size-sm",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "12px",
@@ -9002,7 +9002,7 @@
           }
         },
         "$type": "dimension",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "17px",
@@ -9037,7 +9037,7 @@
           }
         },
         "$type": "dimension",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "17px",
@@ -9072,7 +9072,7 @@
           }
         },
         "$type": "dimension",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "14px",
@@ -9107,7 +9107,7 @@
           }
         },
         "$type": "dimension",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "14px",
@@ -9141,7 +9141,7 @@
             "variableId": "VariableID:20321:208850"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "Black Italic",
@@ -9177,7 +9177,7 @@
           }
         },
         "comment": "--teaser-title-padding-lg",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "16px",
@@ -9212,7 +9212,7 @@
           }
         },
         "comment": "--teaser-title-padding-md",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "16px",
@@ -9247,7 +9247,7 @@
           }
         },
         "comment": "--teaser-title-padding-sm",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "12px",
@@ -9282,7 +9282,7 @@
           }
         },
         "comment": "--teaser-title-padding-xs",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "12px",
@@ -9317,7 +9317,7 @@
               "variableId": "VariableID:18205:27"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "24px",
@@ -9351,7 +9351,7 @@
               "variableId": "VariableID:18205:28"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "24px",
@@ -9385,7 +9385,7 @@
               "variableId": "VariableID:18205:29"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9419,7 +9419,7 @@
               "variableId": "VariableID:18206:30"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9455,7 +9455,7 @@
               "variableId": "VariableID:18207:31"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "16px",
@@ -9489,7 +9489,7 @@
               "variableId": "VariableID:18207:32"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "16px",
@@ -9523,7 +9523,7 @@
               "variableId": "VariableID:18209:2"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9557,7 +9557,7 @@
               "variableId": "VariableID:18209:3"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9593,7 +9593,7 @@
               "variableId": "VariableID:18207:38"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "16px",
@@ -9629,7 +9629,7 @@
               "variableId": "VariableID:18208:40"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "16px",
@@ -9665,7 +9665,7 @@
               "variableId": "VariableID:18208:41"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9699,7 +9699,7 @@
               "variableId": "VariableID:18208:42"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9733,7 +9733,7 @@
               "variableId": "VariableID:18209:4"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9767,7 +9767,7 @@
               "variableId": "VariableID:18209:5"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "12px",
@@ -9803,7 +9803,7 @@
               "variableId": "VariableID:18209:8491"
             }
           },
-          "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+          "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
           "isSource": true,
           "original": {
             "$value": "24px",
@@ -9841,7 +9841,7 @@
           }
         },
         "comment": "current css 09-2025 --article-author-font // Bild: GothamXNarrow; SpoBi: Inter; Ads: LucidaGrande",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "Inter",
@@ -9877,7 +9877,7 @@
         },
         "$type": "dimension",
         "comment": "09-2025 css using footnote var for font sizes SM & LG // Bild: 16; SpoBi: 13; Ads: 13",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "13px",
@@ -9914,7 +9914,7 @@
         },
         "$type": "dimension",
         "comment": "09-2025 css using footnote var for font sizes SM & LG // Bild: 18; SpoBi: 15; Ads: 15",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "15px",
@@ -9952,7 +9952,7 @@
           }
         },
         "$type": "dimension",
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "26px",
@@ -9988,7 +9988,7 @@
             "variableId": "VariableID:18346:15408"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "Inter",
@@ -10023,7 +10023,7 @@
             "variableId": "VariableID:18345:45912"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "Inter",
@@ -10058,7 +10058,7 @@
             "variableId": "VariableID:18379:11164"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "Inter",
@@ -10093,7 +10093,7 @@
             "variableId": "VariableID:18382:25549"
           }
         },
-        "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+        "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
         "isSource": true,
         "original": {
           "$value": "Inter",
@@ -10127,7 +10127,7 @@
           "variableId": "VariableID:20361:19933"
         }
       },
-      "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+      "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
       "isSource": true,
       "original": {
         "$value": "Bold Italic",
@@ -10160,7 +10160,7 @@
         "variableId": "VariableID:18258:8146"
       }
     },
-    "filePath": "/home/user/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
+    "filePath": "/home/runner/work/vv-token-test-v3/vv-token-test-v3/tokens/brands/sportbild/overrides/brandtokenmapping.json",
     "isSource": true,
     "original": {
       "$value": "SportBILD",
