@@ -1,6 +1,6 @@
 /**
  * density-compact.js
- * Generiert am: 2025-11-24T21:23:00.910Z
+ * Generiert am: 2025-11-24T22:02:54.299Z
  * Nicht manuell bearbeiten!
  */
 
