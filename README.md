@@ -26,23 +26,39 @@ This token pipeline processes the multi-layer, multi-brand architecture of the B
 - **Composite Tokens**: Typography, Effects
 
 ```
-Custom Figma Plugin Export (JSON)
-         ↓
-Preprocessing (scripts/preprocess-plugin-tokens.js)
-• Complete alias resolution (no {Alias.Path} syntax)
-• Context-aware resolution: Brand × Breakpoint × ColorMode
-• Mode name matching (robust against ID changes)
-• FontWeight bug fixes ("700px" → 700)
-         ↓
-Style Dictionary v4 (scripts/build-tokens-v2.js)
-• Multi-platform output (7 formats)
-• Brand-specific builds
-• Composite token support (Typography, Effects)
-         ↓
-Output Files (dist/)
-• css/, scss/, js/, json/, ios/, android/, flutter/
-• shared/ (primitives) + brands/{brand}/ (brand-specific)
-• 52/52 successful builds
+┌─────────────────────────────────────────────┐
+│ Figma Plugin Export (src/design-tokens/)   │
+│ • bild-design-system-raw-data.json          │
+│ • Contains aliases and Figma structure      │
+└─────────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────────┐
+│ Preprocessing (scripts/preprocess-*.js)    │
+│ • Complete alias resolution                 │
+│ • Context-aware: Brand × Breakpoint × Mode  │
+│ • FontWeight bug fixes ("700px" → 700)      │
+└─────────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────────┐
+│ Intermediate Format (tokens/)              │
+│ • 68 JSON files (Style Dictionary format)   │
+│ • Tracked in Git (preprocessed source)      │
+└─────────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────────┐
+│ Style Dictionary v4 (scripts/build-*.js)   │
+│ • Multi-platform output (7 formats)         │
+│ • Brand-specific builds (3 brands)          │
+│ • Composite tokens (Typography, Effects)    │
+└─────────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────────┐
+│ Build Artifacts (dist/)                    │
+│ • NOT tracked in Git                        │
+│ • Generated locally or in CI                │
+│ • Available as GitHub Actions artifacts     │
+│ • 52/52 successful builds (353 files)       │
+└─────────────────────────────────────────────┘
 ```
 
 ---
@@ -408,7 +424,7 @@ final headline1 = Typography.headline1;  // TypographyToken
 .
 ├── src/
 │   └── design-tokens/
-│       └── bild-design-system-raw-data.json    # Custom Figma Plugin export
+│       └── bild-design-system-raw-data.json    # Custom Figma Plugin export (raw data)
 │
 ├── scripts/
 │   ├── preprocess-plugin-tokens.js             # Preprocessing (965 lines)
@@ -431,19 +447,98 @@ final headline1 = Typography.headline1;  // TypographyToken
 │       • iOS Swift typography format
 │       • Android typography XML format
 │
-├── tokens/                                     # Generated (gitignored)
+├── tokens/                                     # Intermediate files (tracked in Git)
 │   ├── shared/                                 # Primitives (4 files)
-│   └── brands/                                 # Brand-specific (3 brands)
+│   └── brands/                                 # Brand-specific (64 files)
 │       ├── bild/
 │       ├── sportbild/
 │       └── advertorial/
+│   📝 Purpose: Preprocessed Style Dictionary format
+│   ✅ Aliases resolved, bugs fixed, ready for SD build
 │
-├── dist/                                       # Generated (gitignored)
+├── dist/                                       # Build artifacts (NOT in Git)
 │   ├── css/, scss/, js/, json/                 # Web platforms
 │   ├── ios/, android/, flutter/                # Native platforms
 │   └── manifest.json                           # Build metadata
+│   📝 Generated locally or in CI/CD
+│   ⬇️ Available as GitHub Actions artifacts (30 days)
 │
 └── README.md
+```
+
+### Token Processing Pipeline
+
+The token transformation happens in three stages:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ 1️⃣ Figma Export (Raw Data)                                      │
+│    src/design-tokens/bild-design-system-raw-data.json           │
+│    • Figma Variable Visualizer plugin export                    │
+│    • Contains aliases: {type: "VARIABLE_ALIAS", id: "..."}      │
+│    • FontWeight bugs: "700px" instead of 700                    │
+│    • Complex Collections & Modes structure                      │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ 2️⃣ Preprocessing (Intermediate Format)                          │
+│    tokens/                                                       │
+│    • All aliases resolved to final values                       │
+│    • FontWeight bugs fixed                                      │
+│    • Organized by Brand × Mode × Collection                     │
+│    • Style Dictionary format: {"$value": "...", "$type": "..."} │
+│    • 68 JSON files (4 shared + 64 brand-specific)               │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ 3️⃣ Style Dictionary Build (Platform Outputs)                    │
+│    dist/                                                         │
+│    • 7 platforms: CSS, SCSS, JS, JSON, iOS, Android, Flutter    │
+│    • 52 total builds (4 shared + 30 brand + 12 typo + 6 fx)     │
+│    • Ready-to-use platform-specific formats                     │
+│    • NOT tracked in Git (available as CI artifacts)             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Why the `tokens/` Intermediate Step?
+
+**Problem:** Figma export format is not directly usable by Style Dictionary:
+- ❌ Aliases like `{type: "VARIABLE_ALIAS", id: "VariableID:123"}`
+- ❌ Complex Collections & Modes structure
+- ❌ Bugs like `"700px"` for FontWeight
+
+**Solution:** Preprocessing creates clean Style Dictionary input:
+- ✅ All aliases resolved: `{"$value": "#DD0000", "$type": "color"}`
+- ✅ Bugs fixed: `700` (not `"700px"`)
+- ✅ Organized structure ready for multi-platform build
+
+**Example:**
+
+```javascript
+// BEFORE (Figma raw data - src/design-tokens/)
+{
+  "variables": [{
+    "name": "Component/Background",
+    "valuesByMode": {
+      "mode123": { "type": "VARIABLE_ALIAS", "id": "VariableID:456" }
+    }
+  }]
+}
+
+// AFTER (Preprocessed - tokens/)
+{
+  "Component": {
+    "Background": {
+      "$value": "#DD0000",
+      "$type": "color"
+    }
+  }
+}
+
+// FINAL (Build output - dist/)
+// CSS: --component-background: #DD0000;
+// SCSS: $component-background: #DD0000;
+// JS: export const ComponentBackground = "#DD0000";
 ```
 
 ### Custom Figma Plugin Export
@@ -481,30 +576,33 @@ The pipeline expects a JSON export from a custom Figma plugin with the following
 
 ### Development Workflow
 
+#### Local Development
+
 1. **Export from Figma**
-   - Use custom Figma plugin
+   - Use custom Figma plugin (Variable Visualizer)
+   - Configure target branch: `figma-tokens` (recommended)
    - Export as `bild-design-system-raw-data.json`
 
-2. **Place JSON**
-   - Save to `src/design-tokens/`
+2. **Figma Plugin Push**
+   - Plugin automatically pushes to configured branch
+   - ✅ **Recommended**: Push to `figma-tokens` branch
+   - Creates automatic Pull Request with build artifacts
 
-3. **Preprocess**
+3. **Local Build (Optional)**
    ```bash
-   npm run preprocess
+   # Full build (preprocessing + build)
+   npm run build
+
+   # Or run steps separately:
+   npm run preprocess    # Step 1: Resolve aliases, fix bugs
+   npm run build:tokens  # Step 2: Generate platform outputs
    ```
    - Resolves all aliases to final values
-   - Creates intermediate token files in `tokens/`
-   - Output: 68 JSON files (4 shared + 64 brand-specific)
-
-4. **Build**
-   ```bash
-   npm run build:tokens
-   ```
-   - Transforms to all 7 platforms
+   - Creates intermediate files in `tokens/` (68 files)
+   - Transforms to all 7 platforms in `dist/` (353 files)
    - **52/52 builds successful**
-   - ⚠️ Warnings about token collisions (LetterSpacing) are expected but non-critical
 
-5. **Verify**
+4. **Verify Locally**
    ```bash
    # Check brand-specific values
    grep "bild-red" dist/css/brands/bild/semantic/color/colormode-light.css
@@ -519,56 +617,225 @@ The pipeline expects a JSON export from a custom Figma plugin with the following
    # Expected: css/, scss/, js/, json/, ios/, android/, flutter/, manifest.json
    ```
 
+#### Figma Export Target Branches
+
+| Target Branch | Build Runs | PR Created | NPM Publish | Use Case |
+|---------------|------------|------------|-------------|----------|
+| **figma-tokens** | ✅ Yes | ✅ Automatic | ✅ After merge | **Recommended** - Full workflow with review |
+| **main** | ✅ Yes | ❌ No | ✅ **Immediate** | ⚠️ Direct publish without review |
+| **claude/*** | ✅ Yes | ❌ Manual | ❌ No | Development/Testing |
+| **other** | ❌ No | ❌ No | ❌ No | Not configured |
+
+**Best Practice:** Always export to `figma-tokens` branch for automatic PR creation and review before publishing.
+
 ---
 
 ## 🔄 CI/CD Integration
 
+### Overview
+
+The CI/CD pipeline uses **GitHub Actions Artifacts** for distributing build outputs. The `dist/` folder is **NOT tracked in Git** - instead, it's generated in CI and made available for download.
+
+**Key Benefits:**
+- ✅ No merge conflicts on generated files
+- ✅ Clean Git history (only source files)
+- ✅ PR review via downloadable artifacts
+- ✅ 30-day artifact retention
+
+---
+
 ### GitHub Actions Workflows
 
-#### 1. Build Tokens (`.github/workflows/build-tokens.yml`)
+#### 1. 🔨 Build Tokens (`.github/workflows/build-tokens.yml`)
+
+**Purpose:** Validates token builds and creates downloadable artifacts for PR review.
 
 **Triggers:**
 - Push to `main`, `develop`, `claude/**`, `figma-tokens` branches
+- Pull requests to `main` branch
 - Changes in `src/design-tokens/`, `scripts/`, `build-config/`
 - Manual workflow dispatch
 
-**Steps:**
+**Workflow Steps:**
+```
 1. Checkout repository
-2. Setup Node.js 20
-3. Install dependencies
-4. Run `npm run build`
-5. Commit dist/ folder to feature branches
-6. Upload build artifacts (30 days retention)
+   ↓
+2. Setup Node.js 20 + Install dependencies
+   ↓
+3. Run npm run build (preprocessing + build)
+   ↓
+4. Upload artifacts (dist/, tokens/, logs)
+   ↓
+5. Comment on PR with download link (if PR)
+   ↓
+6. Create build summary
+```
 
 **Outputs:**
-- Validates build success: 52/52 builds
-- Commits dist/ to branch (for PR workflows)
-- Creates artifacts: `design-tokens-{sha}.zip`
+- ✅ Validates build success: 52/52 builds
+- 📦 Creates artifact: `design-tokens-{sha}.zip` (30 days)
+- 💬 PR comment with download link (on pull requests)
+- 📊 Build summary in Actions UI
 
-#### 2. Auto PR from Figma (`.github/workflows/auto-pr-from-figma.yml`)
+**Artifact Contents:**
+```
+design-tokens-{sha}.zip
+├── dist/                    # All platform outputs (353 files)
+│   ├── css/, scss/, js/, json/
+│   ├── ios/, android/, flutter/
+│   └── manifest.json
+├── tokens/                  # Intermediate files (68 files)
+└── build-output.log         # Build logs
+```
+
+**PR Comment Example:**
+```markdown
+## 🎨 Design Tokens Build erfolgreich!
+
+**Build Statistiken:**
+- ✅ Successful Builds: 52/52
+- 📦 Commit: `abc123`
+- 🌲 Branch: `feature-branch`
+
+### 📥 Review der generierten Files:
+
+[⬇️ **Download Build Artifacts**](https://github.com/.../actions/runs/123456)
+
+**Enthalten:**
+- `dist/css/` - CSS Custom Properties
+- `dist/scss/` - SCSS Variables
+- `dist/js/` - JavaScript ES6
+- `dist/json/` - JSON Data
+- `dist/ios/` - Swift Classes
+- `dist/android/` - Android XML
+- `dist/flutter/` - Flutter Dart
+
+📊 Datei-Statistiken
+- Total Files: 353
+- CSS Files: 88
+- SCSS Files: 88
+...
+
+💡 **Tipp:** Die Artifacts sind 30 Tage verfügbar.
+```
+
+---
+
+#### 2. 🤖 Auto PR from Figma (`.github/workflows/auto-pr-from-figma.yml`)
+
+**Purpose:** Automatically creates/updates a Pull Request when Figma exports tokens.
 
 **Trigger:**
 - Push to `figma-tokens` branch (from Figma plugin)
 
-**Workflow:**
-```
-Figma Plugin Push → figma-tokens branch
-         ↓
-Build Tokens (52/52)
-         ↓
-Commit dist/ to branch
-         ↓
-Create/Update Pull Request
-         ↓
-Merge to main
-         ↓
-Publish to NPM (automatic)
+**Recommended Figma Plugin Configuration:**
+```javascript
+{
+  "targetBranch": "figma-tokens",
+  "repository": "UXWizard25/vv-token-test-v3",
+  "filePath": "src/design-tokens/bild-design-system-raw-data.json"
+}
 ```
 
-**PR Format:**
-- Title: "chore: update design tokens from Figma"
-- Body: Build statistics, changed files, diff summary
-- Auto-assigns reviewers
+**Complete Workflow:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. Figma Plugin Export                                      │
+│    • Designer clicks "Export" in Figma                      │
+│    • Plugin pushes JSON to figma-tokens branch              │
+└─────────────────────────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 2. Workflow Triggers                                        │
+│    • auto-pr-from-figma.yml starts                          │
+│    • Runs npm run build (52/52 builds)                      │
+│    • Uploads artifacts (design-tokens-{sha}.zip)            │
+└─────────────────────────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 3. Pull Request Created                                     │
+│    • Title: "🎨 Update design tokens from Figma"            │
+│    • Body: Build stats + artifact download link            │
+│    • Compares figma-tokens → main                           │
+└─────────────────────────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 4. Review Process                                           │
+│    • Team reviews source changes (JSON diff)                │
+│    • Downloads artifacts to verify outputs                  │
+│    • Checks CSS, SCSS, platform-specific files              │
+└─────────────────────────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 5. Merge to main                                            │
+│    • PR approved and merged                                 │
+│    • publish-on-merge.yml triggers                          │
+└─────────────────────────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│ 6. NPM Package Published                                    │
+│    • Fresh dist/ build                                      │
+│    • Version bump (patch)                                   │
+│    • Published to npm registry                              │
+│    • GitHub Release created                                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**PR Body Format:**
+```markdown
+## 🎨 Design Token Update
+
+This PR contains updated design tokens from Figma Variable Visualizer.
+
+### ✅ Build Results
+- **Build Status:** Success
+- **Successful Builds:** 52/52
+- **Warnings:** 0
+
+### 📥 Review Generated Files
+[⬇️ **Download Build Artifacts**](https://github.com/.../actions/runs/123)
+
+The generated `dist/` files are available as build artifacts (30 days retention).
+
+### 📝 Changed Files
+**Files Changed:** 1
+- src/design-tokens/bild-design-system-raw-data.json
+
+### 🚀 What Happens After Merge?
+1. ✅ Tokens will be rebuilt
+2. ✅ Package version will be bumped (patch)
+3. ✅ Package will be published to npm
+4. ✅ GitHub Release will be created
+```
+
+---
+
+#### 3. 📦 Publish on Merge (`.github/workflows/publish-on-merge.yml`)
+
+**Purpose:** Automatically publishes package to npm when PR is merged to main.
+
+**Trigger:**
+- Push to `main` branch
+- Changes in `src/design-tokens/`, `scripts/`, `build-config/`, `package.json`
+
+**Steps:**
+1. Rebuild tokens (fresh dist/)
+2. Bump version (patch)
+3. Publish to npm
+4. Create GitHub Release
+5. Tag with version
+
+---
+
+### Workflow Comparison
+
+| Workflow | Trigger | Builds dist/ | Commits dist/ | Creates PR | Publishes NPM |
+|----------|---------|--------------|---------------|------------|---------------|
+| **build-tokens.yml** | Push/PR to tracked branches | ✅ Yes | ❌ No (artifacts only) | ❌ No | ❌ No |
+| **auto-pr-from-figma.yml** | Push to `figma-tokens` | ✅ Yes | ❌ No (artifacts only) | ✅ Yes | ❌ No |
+| **publish-on-merge.yml** | Merge to `main` | ✅ Yes (fresh) | ❌ No | ❌ No | ✅ Yes |
+
+---
 
 ### Manual Workflow Dispatch
 
@@ -576,11 +843,66 @@ Publish to NPM (automatic)
 1. Go to **Actions** tab
 2. Select **"Build Design Tokens"**
 3. Click **"Run workflow"**
+4. Download artifacts from run details
 
 **Via GitHub CLI:**
 ```bash
+# Trigger build
 gh workflow run build-tokens.yml
+
+# List recent runs
+gh run list --workflow=build-tokens.yml
+
+# Download artifacts from specific run
+gh run download <run-id>
 ```
+
+---
+
+### Reviewing Build Artifacts
+
+**Method 1: Via PR Comment Link**
+1. Open Pull Request
+2. Find bot comment "🎨 Design Tokens Build erfolgreich!"
+3. Click "Download Build Artifacts"
+4. Extract ZIP and review files locally
+
+**Method 2: Via Actions Tab**
+1. Go to repository Actions tab
+2. Click on workflow run
+3. Scroll to "Artifacts" section
+4. Download `design-tokens-{sha}.zip`
+
+**Method 3: Via GitHub CLI**
+```bash
+# List artifacts for a run
+gh run view <run-id>
+
+# Download all artifacts
+gh run download <run-id>
+
+# Extract and review
+unzip design-tokens-*.zip
+ls dist/
+```
+
+---
+
+### Branch Protection & Artifact Workflow
+
+**Why dist/ is not in Git:**
+- Generated files cause merge conflicts (353 files × multiple developers)
+- Unnecessary repository bloat (~15 MB per commit)
+- Source of truth is `src/design-tokens/` (single JSON file)
+- Style Dictionary can regenerate dist/ deterministically
+
+**How to review changes without dist/ in Git:**
+1. Source changes visible in PR diff (JSON file)
+2. Build artifacts downloadable from Actions (30 days)
+3. Local testing: `npm run build` generates dist/
+4. CI validates all builds pass (52/52)
+
+This approach follows modern best practices used by design systems like Shopify Polaris, GitHub Primer, and Adobe Spectrum.
 
 ---
 
@@ -719,13 +1041,30 @@ npm install
 
 ### Missing dist/ Folder
 
-**Problem:** dist/ folder not visible after build
+**Problem:** dist/ folder not visible in repository or after clone
 
-**Solution:** dist/ is gitignored. It's generated locally or in CI/CD:
+**Explanation:** The `dist/` folder is **intentionally not tracked in Git** (as of v2.1.0). This prevents merge conflicts and keeps the repository clean.
+
+**Solutions:**
+
+**Option 1: Generate Locally**
 ```bash
 npm run build
 ls dist/  # Should show css/, scss/, js/, json/, ios/, android/, flutter/
 ```
+
+**Option 2: Download from CI Artifacts**
+1. Go to repository **Actions** tab
+2. Find the latest workflow run for your branch
+3. Download `design-tokens-{sha}.zip` from Artifacts section
+4. Extract the `dist/` folder
+
+**Option 3: From Pull Request**
+1. Find the PR you're interested in
+2. Look for bot comment with artifact download link
+3. Download and extract
+
+**Note:** The `dist/` folder is automatically included in npm packages. If you install via npm, the dist/ folder will be in `node_modules/@marioschmidt/design-system-tokens/dist/`.
 
 ### Wrong Platform Outputs
 
@@ -780,7 +1119,45 @@ All platforms should build successfully: 52/52
 
 ## 📝 Changelog
 
-### v2.0.0 (Current) - Custom Plugin Migration
+### v2.1.0 (Current) - CI Artifacts Workflow
+
+**✨ Features:**
+- **Modern CI/CD**: dist/ no longer tracked in Git (prevents merge conflicts)
+- **GitHub Actions Artifacts**: Build outputs available as downloadable artifacts (30 days)
+- **PR Bot Comments**: Automatic comments on PRs with artifact download links
+- **Build Statistics**: Detailed file counts and build summaries in PR comments
+- **Figma Branch Workflow**: Documented recommended workflow with `figma-tokens` branch
+
+**🔧 Changes:**
+- `dist/` folder now gitignored (removed 353 files from tracking)
+- `tokens/` folder now tracked in Git (preprocessed intermediate files)
+- Updated workflows: `build-tokens.yml`, `auto-pr-from-figma.yml`
+- Removed dist/ commit steps from CI workflows
+- Added artifact upload and PR comment features
+
+**📚 Documentation:**
+- Complete CI/CD Integration section rewrite
+- Added "Token Processing Pipeline" visualization
+- Added "Why the tokens/ Intermediate Step?" explanation
+- Added "Figma Export Target Branches" comparison table
+- Added "Reviewing Build Artifacts" guide
+- Translated all German comments in build scripts to English
+
+**🎯 Benefits:**
+- ✅ No more merge conflicts on generated files
+- ✅ Cleaner Git history (only source files tracked)
+- ✅ PR review still possible via downloadable artifacts
+- ✅ Follows modern best practices (Shopify Polaris, GitHub Primer, Adobe Spectrum)
+- ✅ Smaller repository size (~15 MB removed per commit)
+
+**⚡ Performance:**
+- Same build performance: 52/52 builds successful
+- ~11 seconds total build time
+- Artifacts upload in ~2-3 seconds
+
+---
+
+### v2.0.0 - Custom Plugin Migration
 
 **✨ Features:**
 - Custom Figma Plugin integration (replaces Variable Visualizer)
@@ -797,7 +1174,6 @@ All platforms should build successfully: 52/52
 - Mode name matching instead of ID-based (robust against Figma changes)
 - YAML syntax fix in GitHub Actions (multi-line commit messages)
 - Exit code 0 for successful builds
-- dist/ folder commits to feature branches
 
 **⚡ Performance:**
 - 52/52 builds successful (up from 30/30)
