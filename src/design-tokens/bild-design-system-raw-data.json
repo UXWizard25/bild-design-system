@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-11-25T14:04:56.487Z",
+  "lastModified": "2025-11-25T21:49:17.228Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -29047,7 +29047,7 @@
     },
     {
       "id": "S:bc27f92a62a7ee830d864083d434c9d76ef12d69,",
-      "name": "Component/Footer/footerLinkUser&OfferPages",
+      "name": "Component/Footer/footerLinkUserOfferPages",
       "description": "User data and offer pages use this text style on footer links. Font size remains constant at 18px.",
       "type": "TEXT",
       "fontName": {
@@ -29658,7 +29658,7 @@
     },
     {
       "id": "S:805ca943ba1ae90c1311766c3731c658aa723748,",
-      "name": "Component/SpecialNavi/SpeciaNaviItemLabel",
+      "name": "Component/SpecialNavi/SpecialNaviItemLabel",
       "description": "Used on menu link lane items and on mobile side menu drawer.",
       "type": "TEXT",
       "fontName": {
