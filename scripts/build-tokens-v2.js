@@ -890,6 +890,176 @@ async function buildEffectTokens() {
 }
 
 /**
+ * Builds Themed CSS Tokens with data-attributes for runtime theme switching
+ * Generates CSS files with [data-brand] and [data-theme] selectors
+ */
+async function buildThemedTokens() {
+  console.log('\n🎭 Building Themed CSS Tokens:\n');
+
+  let totalBuilds = 0;
+  let successfulBuilds = 0;
+
+  // Create themed output directory
+  const themedDir = path.join(DIST_DIR, 'css', 'themed');
+  if (!fs.existsSync(themedDir)) {
+    fs.mkdirSync(themedDir, { recursive: true });
+  }
+
+  // Strategy 1: Per-Brand Themed Files (all color modes in one file)
+  console.log('  📦 Per-Brand Themed Files:\n');
+
+  for (const brand of BRANDS) {
+    const brandSourceFiles = [];
+
+    // Collect color mode files
+    for (const colorMode of COLOR_MODES) {
+      const colorFile = path.join(TOKENS_DIR, 'brands', brand, 'color', `colormode-${colorMode}.json`);
+      if (fs.existsSync(colorFile)) {
+        brandSourceFiles.push(colorFile);
+      }
+    }
+
+    // Collect breakpoint files
+    for (const breakpoint of BREAKPOINTS) {
+      const breakpointFile = path.join(TOKENS_DIR, 'brands', brand, 'breakpoints', `breakpoint-${breakpoint}.json`);
+      if (fs.existsSync(breakpointFile)) {
+        brandSourceFiles.push(breakpointFile);
+      }
+    }
+
+    if (brandSourceFiles.length === 0) {
+      console.log(`     ⚠️  No source files found for ${brand}`);
+      continue;
+    }
+
+    try {
+      totalBuilds++;
+
+      // Build complete themed file for this brand (all modes)
+      const config = {
+        source: brandSourceFiles,
+        platforms: {
+          css: {
+            transformGroup: 'custom/css',
+            buildPath: `${themedDir}/`,
+            files: [{
+              destination: `${brand}-themed.css`,
+              format: 'custom/css/themed-variables',
+              options: {
+                brand,
+                mode: null, // Will include all modes
+                modeType: 'theme',
+                includeRoot: false
+              }
+            }]
+          }
+        }
+      };
+
+      await new StyleDictionary(config).buildAllPlatforms();
+      successfulBuilds++;
+      console.log(`     ✅ ${brand}-themed.css`);
+    } catch (error) {
+      console.error(`     ❌ ${brand}: ${error.message}`);
+    }
+  }
+
+  // Strategy 2: Per-Brand-Mode Themed Files (granular control)
+  console.log('\n  🎨 Per-Brand-Mode Themed Files:\n');
+
+  for (const brand of BRANDS) {
+    let brandModeBuilds = 0;
+
+    for (const colorMode of COLOR_MODES) {
+      const colorFile = path.join(TOKENS_DIR, 'brands', brand, 'color', `colormode-${colorMode}.json`);
+
+      if (!fs.existsSync(colorFile)) continue;
+
+      try {
+        totalBuilds++;
+
+        const config = {
+          source: [colorFile],
+          platforms: {
+            css: {
+              transformGroup: 'custom/css',
+              buildPath: `${themedDir}/`,
+              files: [{
+                destination: `${brand}-${colorMode}-themed.css`,
+                format: 'custom/css/themed-variables',
+                options: {
+                  brand,
+                  mode: colorMode,
+                  modeType: 'theme',
+                  includeRoot: false
+                }
+              }]
+            }
+          }
+        };
+
+        await new StyleDictionary(config).buildAllPlatforms();
+        successfulBuilds++;
+        brandModeBuilds++;
+      } catch (error) {
+        console.error(`     ❌ ${brand}-${colorMode}: ${error.message}`);
+      }
+    }
+
+    if (brandModeBuilds > 0) {
+      console.log(`     ✅ ${brand} (${brandModeBuilds} modes)`);
+    }
+  }
+
+  // Strategy 3: All-Brands All-Modes (mega bundle)
+  console.log('\n  🌐 All-Brands All-Modes File:\n');
+
+  try {
+    totalBuilds++;
+
+    const allSourceFiles = [];
+
+    // Collect all brand color mode files
+    for (const brand of BRANDS) {
+      for (const colorMode of COLOR_MODES) {
+        const colorFile = path.join(TOKENS_DIR, 'brands', brand, 'color', `colormode-${colorMode}.json`);
+        if (fs.existsSync(colorFile)) {
+          allSourceFiles.push(colorFile);
+        }
+      }
+    }
+
+    const config = {
+      source: allSourceFiles,
+      platforms: {
+        css: {
+          transformGroup: 'custom/css',
+          buildPath: `${themedDir}/`,
+          files: [{
+            destination: 'all-brands-themed.css',
+            format: 'custom/css/themed-variables',
+            options: {
+              brand: null, // All brands
+              mode: null,  // All modes
+              modeType: 'theme',
+              includeRoot: true // Include :root fallback
+            }
+          }]
+        }
+      }
+    };
+
+    await new StyleDictionary(config).buildAllPlatforms();
+    successfulBuilds++;
+    console.log(`     ✅ all-brands-themed.css (${allSourceFiles.length} source files)`);
+  } catch (error) {
+    console.error(`     ❌ all-brands-themed: ${error.message}`);
+  }
+
+  return { totalBuilds, successfulBuilds };
+}
+
+/**
  * Creates Manifest
  */
 function createManifest(stats) {
@@ -903,7 +1073,8 @@ function createManifest(stats) {
       brandSpecific: stats.brandSpecific || { totalBuilds: 0, successfulBuilds: 0 },
       componentTokens: stats.componentTokens || { totalBuilds: 0, successfulBuilds: 0 },
       typographyTokens: stats.typographyTokens || { totalBuilds: 0, successfulBuilds: 0 },
-      effectTokens: stats.effectTokens || { totalBuilds: 0, successfulBuilds: 0 }
+      effectTokens: stats.effectTokens || { totalBuilds: 0, successfulBuilds: 0 },
+      themedTokens: stats.themedTokens || { totalBuilds: 0, successfulBuilds: 0 }
     },
     structure: {
       brands: BRANDS,
@@ -913,7 +1084,8 @@ function createManifest(stats) {
       outputPaths: {
         css: {
           shared: 'css/shared/',
-          brands: 'css/brands/{brand}/'
+          brands: 'css/brands/{brand}/',
+          themed: 'css/themed/'
         },
         scss: {
           shared: 'scss/shared/',
@@ -992,6 +1164,9 @@ async function main() {
   // Build effect tokens
   stats.effectTokens = await buildEffectTokens();
 
+  // Build themed CSS tokens
+  stats.themedTokens = await buildThemedTokens();
+
   // Create manifest
   createManifest(stats);
 
@@ -1003,10 +1178,10 @@ async function main() {
   // Calculate total statistics for GitHub Actions
   const totalBuilds = stats.sharedPrimitives.total + stats.brandSpecific.totalBuilds +
                       stats.componentTokens.totalBuilds + stats.typographyTokens.totalBuilds +
-                      stats.effectTokens.totalBuilds;
+                      stats.effectTokens.totalBuilds + stats.themedTokens.totalBuilds;
   const successfulBuilds = stats.sharedPrimitives.successful + stats.brandSpecific.successfulBuilds +
                            stats.componentTokens.successfulBuilds + stats.typographyTokens.successfulBuilds +
-                           stats.effectTokens.successfulBuilds;
+                           stats.effectTokens.successfulBuilds + stats.themedTokens.successfulBuilds;
 
   console.log(`📊 Statistiken:`);
   console.log(`   - Shared Primitives: ${stats.sharedPrimitives.successful}/${stats.sharedPrimitives.total}`);
@@ -1014,12 +1189,14 @@ async function main() {
   console.log(`   - Component Tokens: ${stats.componentTokens.successfulBuilds}/${stats.componentTokens.totalBuilds}`);
   console.log(`   - Typography Builds: ${stats.typographyTokens.successfulBuilds}/${stats.typographyTokens.totalBuilds}`);
   console.log(`   - Effect Builds: ${stats.effectTokens.successfulBuilds}/${stats.effectTokens.totalBuilds}`);
+  console.log(`   - Themed CSS Builds: ${stats.themedTokens.successfulBuilds}/${stats.themedTokens.totalBuilds}`);
   console.log(`   - Builds erfolgreich: ${successfulBuilds}/${totalBuilds}`);
   console.log(`   - Output-Verzeichnis: dist/\n`);
 
   console.log(`📁 Struktur:`);
   console.log(`   dist/`);
   console.log(`   ├── css/        (CSS custom properties)`);
+  console.log(`   │   └── themed/ (🆕 Data-attribute based theme switching)`);
   console.log(`   ├── scss/       (SCSS variables)`);
   console.log(`   ├── js/         (JavaScript ES6)`);
   console.log(`   ├── json/       (JSON)`);
