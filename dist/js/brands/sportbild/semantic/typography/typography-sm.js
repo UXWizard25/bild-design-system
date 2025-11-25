@@ -1,6 +1,6 @@
 /**
  * Typography Tokens - Sportbild / sm
- * Generiert am: 2025-11-25T08:26:15.474Z
+ * Generiert am: 2025-11-25T08:27:20.139Z
  * Nicht manuell bearbeiten!
  */
 

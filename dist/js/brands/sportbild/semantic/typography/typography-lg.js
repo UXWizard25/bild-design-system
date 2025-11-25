@@ -1,6 +1,6 @@
 /**
  * Typography Tokens - Sportbild / lg
- * Generiert am: 2025-11-25T08:26:15.637Z
+ * Generiert am: 2025-11-25T08:27:20.306Z
  * Nicht manuell bearbeiten!
  */
 

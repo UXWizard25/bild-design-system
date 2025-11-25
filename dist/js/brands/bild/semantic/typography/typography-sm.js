@@ -1,6 +1,6 @@
 /**
  * Typography Tokens - Bild / sm
- * Generiert am: 2025-11-25T08:26:15.107Z
+ * Generiert am: 2025-11-25T08:27:19.781Z
  * Nicht manuell bearbeiten!
  */
 
