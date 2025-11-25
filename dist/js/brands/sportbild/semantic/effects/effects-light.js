@@ -1,6 +1,6 @@
 /**
  * Effect Tokens - Sportbild / light
- * Generiert am: 2025-11-25T08:26:16.177Z
+ * Generiert am: 2025-11-25T08:27:20.788Z
  * Nicht manuell bearbeiten!
  */
 
