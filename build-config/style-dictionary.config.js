@@ -1361,6 +1361,210 @@ const flutterTypographyFormat = ({ dictionary, options }) => {
   return output;
 };
 
+/**
+ * SCSS Effects Format - Outputs shadow tokens as SCSS maps
+ */
+const scssEffectsFormat = ({ dictionary, options }) => {
+  const { brand, colorMode } = options;
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
+
+  let output = `//\n`;
+  output += `// Effect Tokens - ${brand} / ${colorMode}\n`;
+  output += `// Generated on: ${new Date().toISOString()}\n`;
+  output += `// Do not edit directly!\n`;
+  output += `//\n\n`;
+
+  const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
+
+  let isFirstTopLevel = true;
+  Object.keys(hierarchicalGroups).forEach(topLevel => {
+    const subGroups = hierarchicalGroups[topLevel];
+
+    if (!isFirstTopLevel) {
+      output += `\n`;
+    }
+    output += `// ============================================\n`;
+    output += `// ${topLevel.toUpperCase()}\n`;
+    output += `// ============================================\n\n`;
+    isFirstTopLevel = false;
+
+    Object.keys(subGroups).forEach(subLevel => {
+      const tokens = subGroups[subLevel];
+
+      if (subLevel) {
+        output += `// ${topLevel} - ${subLevel}\n`;
+      }
+
+      tokens.forEach(token => {
+        if (token.$type === 'shadow' && Array.isArray(token.$value)) {
+          const uniqueName = uniqueNames.get(token.path.join('.'));
+
+          if (token.comment) {
+            output += `/** ${token.comment} */\n`;
+          }
+
+          // Convert shadow array to SCSS map array
+          const shadowsSCSS = token.$value.map((effect, idx) => {
+            if (effect.type === 'dropShadow') {
+              return `  ${idx + 1}: (\n    offsetX: ${effect.offsetX || 0}px,\n    offsetY: ${effect.offsetY || 0}px,\n    radius: ${effect.radius || 0}px,\n    spread: ${effect.spread || 0}px,\n    color: ${effect.color || 'rgba(0, 0, 0, 0)'}\n  )`;
+            }
+            return null;
+          }).filter(Boolean);
+
+          output += `$${uniqueName}: (\n${shadowsSCSS.join(',\n')}\n);\n`;
+        }
+      });
+
+      output += `\n`;
+    });
+  });
+
+  return output;
+};
+
+/**
+ * SCSS Typography Format - Outputs typography tokens as SCSS maps
+ */
+const scssTypographyFormat = ({ dictionary, options }) => {
+  const { brand, breakpoint } = options;
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
+
+  let output = `//\n`;
+  output += `// Typography Tokens - ${brand} / ${breakpoint}\n`;
+  output += `// Generated on: ${new Date().toISOString()}\n`;
+  output += `// Do not edit directly!\n`;
+  output += `//\n\n`;
+
+  const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
+
+  let isFirstTopLevel = true;
+  Object.keys(hierarchicalGroups).forEach(topLevel => {
+    const subGroups = hierarchicalGroups[topLevel];
+
+    if (!isFirstTopLevel) {
+      output += `\n`;
+    }
+    output += `// ============================================\n`;
+    output += `// ${topLevel.toUpperCase()}\n`;
+    output += `// ============================================\n\n`;
+    isFirstTopLevel = false;
+
+    Object.keys(subGroups).forEach(subLevel => {
+      const tokens = subGroups[subLevel];
+
+      if (subLevel) {
+        output += `// ${topLevel} - ${subLevel}\n`;
+      }
+
+      tokens.forEach(token => {
+        if (token.$type === 'typography' && token.$value) {
+          const uniqueName = uniqueNames.get(token.path.join('.'));
+          const style = token.$value;
+
+          if (token.comment) {
+            output += `/** ${token.comment} */\n`;
+          }
+
+          output += `$${uniqueName}: (\n`;
+          if (style.fontFamily) output += `  fontFamily: ${style.fontFamily},\n`;
+          if (style.fontWeight) output += `  fontWeight: ${style.fontWeight},\n`;
+          if (style.fontSize) output += `  fontSize: ${style.fontSize},\n`;
+          if (style.lineHeight) output += `  lineHeight: ${style.lineHeight},\n`;
+          if (style.letterSpacing) output += `  letterSpacing: ${style.letterSpacing},\n`;
+          if (style.fontStyle && style.fontStyle !== 'null') output += `  fontStyle: ${style.fontStyle.toLowerCase()},\n`;
+          if (style.textCase && style.textCase !== 'ORIGINAL') output += `  textTransform: ${style.textCase.toLowerCase()},\n`;
+          if (style.textDecoration && style.textDecoration !== 'NONE') output += `  textDecoration: ${style.textDecoration.toLowerCase()},\n`;
+          output += `);\n`;
+        }
+      });
+
+      output += `\n`;
+    });
+  });
+
+  return output;
+};
+
+/**
+ * Android XML Effects Format - Outputs shadow tokens as drawable layer-list XMLs
+ */
+const androidXmlEffectsFormat = ({ dictionary, options }) => {
+  const { brand, colorMode } = options;
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
+
+  let output = `<?xml version="1.0" encoding="utf-8"?>\n`;
+  output += `<!--\n`;
+  output += `  Effect Tokens - ${brand} / ${colorMode}\n`;
+  output += `  Generated on: ${new Date().toISOString()}\n`;
+  output += `  Do not edit directly!\n`;
+  output += `\n`;
+  output += `  NOTE: Android shadows are complex and platform-specific.\n`;
+  output += `  This file provides shadow data as XML comments for reference.\n`;
+  output += `  For actual shadow implementation, use elevation or CardView.\n`;
+  output += `-->\n`;
+  output += `<resources>\n\n`;
+
+  const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
+
+  Object.keys(hierarchicalGroups).forEach(topLevel => {
+    const subGroups = hierarchicalGroups[topLevel];
+
+    output += `  <!-- ============================================ -->\n`;
+    output += `  <!-- ${topLevel.toUpperCase()} -->\n`;
+    output += `  <!-- ============================================ -->\n\n`;
+
+    Object.keys(subGroups).forEach(subLevel => {
+      const tokens = subGroups[subLevel];
+
+      if (subLevel) {
+        output += `  <!-- ${topLevel} - ${subLevel} -->\n`;
+      }
+
+      tokens.forEach(token => {
+        if (token.$type === 'shadow' && Array.isArray(token.$value)) {
+          const uniqueName = uniqueNames.get(token.path.join('.'));
+
+          if (token.comment) {
+            output += `  <!-- ${token.comment} -->\n`;
+          }
+
+          // Output shadow data as string-array for reference
+          output += `  <string-array name="${uniqueName}">\n`;
+          token.$value.forEach((effect, idx) => {
+            if (effect.type === 'dropShadow') {
+              // Parse color to Android format
+              let colorValue = '#FF000000';
+              if (effect.color) {
+                const colorStr = effect.color.replace(/\s/g, '');
+                if (colorStr.startsWith('rgba')) {
+                  const match = colorStr.match(/rgba?\((\d+),(\d+),(\d+),?([\d.]*)\)/);
+                  if (match) {
+                    const r = parseInt(match[1]).toString(16).padStart(2, '0');
+                    const g = parseInt(match[2]).toString(16).padStart(2, '0');
+                    const b = parseInt(match[3]).toString(16).padStart(2, '0');
+                    const a = match[4] ? Math.round(parseFloat(match[4]) * 255).toString(16).padStart(2, '0') : 'FF';
+                    colorValue = `#${a}${r}${g}${b}`;
+                  }
+                } else if (colorStr.startsWith('#')) {
+                  colorValue = colorStr;
+                }
+              }
+
+              output += `    <item>offsetX:${effect.offsetX || 0}|offsetY:${effect.offsetY || 0}|radius:${effect.radius || 0}|spread:${effect.spread || 0}|color:${colorValue}</item>\n`;
+            }
+          });
+          output += `  </string-array>\n\n`;
+        }
+      });
+
+      output += `\n`;
+    });
+  });
+
+  output += `</resources>\n`;
+  return output;
+};
+
 // ============================================================================
 // TRANSFORM GROUPS
 // ============================================================================
@@ -1414,6 +1618,9 @@ module.exports = {
     'flutter/typography': flutterTypographyFormat,
     'ios-swift/effects': iosSwiftEffectsFormat,
     'ios-swift/typography': iosSwiftTypographyFormat,
+    'scss/effects': scssEffectsFormat,
+    'scss/typography': scssTypographyFormat,
+    'android/effects': androidXmlEffectsFormat,
     'android/typography-styles': androidXmlTypographyFormat
   }
 };

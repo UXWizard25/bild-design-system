@@ -240,6 +240,20 @@ function createTypographyConfig(brand, breakpoint) {
         }]
       },
 
+      // SCSS: Custom Typography format
+      scss: {
+        transforms: ['attribute/cti'],
+        buildPath: `${DIST_DIR}/scss/brands/${brand}/semantic/typography/`,
+        files: [{
+          destination: `${fileName}.scss`,
+          format: 'scss/typography',
+          options: {
+            brand: brandName,
+            breakpoint
+          }
+        }]
+      },
+
       // iOS: Nur compact (sm) und regular (lg) mit custom format
       ...(SIZE_CLASS_MAPPING[breakpoint] ? {
         ios: {
@@ -348,6 +362,34 @@ function createEffectConfig(brand, colorMode) {
         files: [{
           destination: `${fileName}.dart`,
           format: 'flutter/effects',
+          options: {
+            brand: brandName,
+            colorMode
+          }
+        }]
+      },
+
+      // SCSS: Custom Effects format
+      scss: {
+        transforms: ['attribute/cti'],
+        buildPath: `${DIST_DIR}/scss/brands/${brand}/semantic/effects/`,
+        files: [{
+          destination: `${fileName}.scss`,
+          format: 'scss/effects',
+          options: {
+            brand: brandName,
+            colorMode
+          }
+        }]
+      },
+
+      // Android: Custom Effects format
+      android: {
+        transforms: ['attribute/cti'],
+        buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/effects/`,
+        files: [{
+          destination: `${fileName}.xml`,
+          format: 'android/effects',
           options: {
             brand: brandName,
             colorMode
