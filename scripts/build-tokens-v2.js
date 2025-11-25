@@ -830,11 +830,36 @@ async function buildComponentTokens() {
           config = createComponentEffectsConfig(sourcePath, brand, componentName, fileName);
         } else {
           // Standard token config for color, density, breakpoint tokens
+          // Extract mode and modeType from filename
+          let cssOptions = { brand };
+
+          // Check for color mode (e.g., "alert-color-light" -> mode: "light", modeType: "theme")
+          const colorModeMatch = fileName.match(/color-(\w+)/);
+          if (colorModeMatch) {
+            cssOptions.mode = colorModeMatch[1];
+            cssOptions.modeType = 'theme';
+          }
+
+          // Check for density mode (e.g., "button-density-compact" -> mode: "compact", modeType: "density")
+          const densityMatch = fileName.match(/density-(\w+)/);
+          if (densityMatch) {
+            cssOptions.mode = densityMatch[1];
+            cssOptions.modeType = 'density';
+          }
+
+          // Check for breakpoint mode (e.g., "audioplayer-breakpoint-lg-1024px-regular" -> mode: "lg", modeType: "breakpoint")
+          const breakpointMatch = fileName.match(/breakpoint-(\w+)/);
+          if (breakpointMatch) {
+            cssOptions.mode = breakpointMatch[1];
+            cssOptions.modeType = 'breakpoint';
+          }
+
           config = {
             source: [sourcePath],
             platforms: createStandardPlatformConfig(
               `${DIST_DIR}/css/brands/${brand}/components/${componentName}`,
-              fileName
+              fileName,
+              cssOptions
             )
           };
         }

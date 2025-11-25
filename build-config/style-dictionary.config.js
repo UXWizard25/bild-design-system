@@ -767,6 +767,10 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
 
   const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
 
+  // Build data-attribute selector for Strategy A (full brand + breakpoint scoping)
+  const brandLowercase = brand.toLowerCase();
+  const dataSelector = `[data-brand="${brandLowercase}"][data-breakpoint="${breakpoint}"]`;
+
   let isFirstTopLevel = true;
   Object.keys(hierarchicalGroups).forEach(topLevel => {
     const subGroups = hierarchicalGroups[topLevel];
@@ -802,7 +806,8 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
             output += `/* ${token.comment} */\n`;
           }
 
-          output += `.${className} {\n`;
+          // Wrap class selector with data-attribute selector (Strategy A)
+          output += `${dataSelector} .${className} {\n`;
           if (style.fontFamily) output += `  font-family: ${style.fontFamily};\n`;
           if (style.fontWeight) output += `  font-weight: ${style.fontWeight};\n`;
           if (style.fontSize) output += `  font-size: ${style.fontSize};\n`;
@@ -840,6 +845,10 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
 
   const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
 
+  // Build data-attribute selector for Strategy A (full brand + theme scoping)
+  const brandLowercase = brand.toLowerCase();
+  const dataSelector = `[data-brand="${brandLowercase}"][data-theme="${colorMode}"]`;
+
   let isFirstTopLevel = true;
   Object.keys(hierarchicalGroups).forEach(topLevel => {
     const subGroups = hierarchicalGroups[topLevel];
@@ -874,7 +883,8 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
             output += `/* ${token.comment} */\n`;
           }
 
-          output += `.${className} {\n`;
+          // Wrap class selector with data-attribute selector (Strategy A)
+          output += `${dataSelector} .${className} {\n`;
 
           // Convert to CSS box-shadow
           const shadows = token.$value.map(effect => {
