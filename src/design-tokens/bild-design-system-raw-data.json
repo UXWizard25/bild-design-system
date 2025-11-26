@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-11-26T15:58:43.037Z",
+  "lastModified": "2025-11-26T16:19:37.068Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -20992,7 +20992,10 @@
             "18094:0": 38,
             "18094:1": 39
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21006,7 +21009,10 @@
             "18094:0": 38,
             "18094:1": 39
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21020,7 +21026,10 @@
             "18094:0": 68,
             "18094:1": 70
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21034,7 +21043,10 @@
             "18094:0": 114,
             "18094:1": 116
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21048,7 +21060,10 @@
             "18094:0": 34,
             "18094:1": 35
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21062,7 +21077,10 @@
             "18094:0": 34,
             "18094:1": 35
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21076,7 +21094,10 @@
             "18094:0": 40,
             "18094:1": 41
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21090,7 +21111,10 @@
             "18094:0": 61,
             "18094:1": 62
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21104,7 +21128,10 @@
             "18094:0": 42,
             "18094:1": 36
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21118,7 +21145,10 @@
             "18094:0": 42,
             "18094:1": 36
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21132,7 +21162,10 @@
             "18094:0": 60,
             "18094:1": 54
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21146,7 +21179,10 @@
             "18094:0": 80,
             "18094:1": 70
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21160,7 +21196,10 @@
             "18094:0": 42,
             "18094:1": 30
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21174,7 +21213,10 @@
             "18094:0": 42,
             "18094:1": 30
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21188,7 +21230,10 @@
             "18094:0": 44,
             "18094:1": 36
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21202,7 +21247,10 @@
             "18094:0": 50,
             "18094:1": 48
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21216,7 +21264,10 @@
             "18094:0": 30,
             "18094:1": 24
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21230,7 +21281,10 @@
             "18094:0": 30,
             "18094:1": 24
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21244,7 +21298,10 @@
             "18094:0": 30,
             "18094:1": 26
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21258,7 +21315,10 @@
             "18094:0": 34,
             "18094:1": 32
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21272,7 +21332,10 @@
             "18094:0": 21,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21286,7 +21349,10 @@
             "18094:0": 21,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21300,7 +21366,10 @@
             "18094:0": 26,
             "18094:1": 20
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21314,7 +21383,10 @@
             "18094:0": 26,
             "18094:1": 22
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21328,7 +21400,10 @@
             "18094:0": 20,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21342,7 +21417,10 @@
             "18094:0": 20,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21356,7 +21434,10 @@
             "18094:0": 26,
             "18094:1": 18
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21370,7 +21451,10 @@
             "18094:0": 32,
             "18094:1": 25
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21384,7 +21468,10 @@
             "18094:0": 16,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21398,7 +21485,10 @@
             "18094:0": 16,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21412,7 +21502,10 @@
             "18094:0": 26,
             "18094:1": 18
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21426,7 +21519,10 @@
             "18094:0": 26,
             "18094:1": 21
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21440,7 +21536,10 @@
             "18094:0": 16,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21454,7 +21553,10 @@
             "18094:0": 16,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21468,7 +21570,10 @@
             "18094:0": 20,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21482,7 +21587,10 @@
             "18094:0": 22,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21496,7 +21604,10 @@
             "18094:0": 14,
             "18094:1": 12
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21510,7 +21621,10 @@
             "18094:0": 14,
             "18094:1": 12
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21524,7 +21638,10 @@
             "18094:0": 16,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21538,7 +21655,10 @@
             "18094:0": 18,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21552,7 +21672,10 @@
             "18094:0": 18,
             "18094:1": 18
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21566,7 +21689,10 @@
             "18094:0": 18,
             "18094:1": 18
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21580,7 +21706,10 @@
             "18094:0": 22,
             "18094:1": 18
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21594,7 +21723,10 @@
             "18094:0": 26,
             "18094:1": 28
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21608,7 +21740,10 @@
             "18094:0": 24,
             "18094:1": 22
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21622,7 +21757,10 @@
             "18094:0": 24,
             "18094:1": 22
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21636,7 +21774,10 @@
             "18094:0": 28,
             "18094:1": 22
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21650,7 +21791,10 @@
             "18094:0": 30,
             "18094:1": 28
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21664,7 +21808,10 @@
             "18094:0": 16,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21678,7 +21825,10 @@
             "18094:0": 16,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21692,7 +21842,10 @@
             "18094:0": 18,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21706,7 +21859,10 @@
             "18094:0": 20,
             "18094:1": 18
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21720,7 +21876,10 @@
             "18094:0": 18,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21734,7 +21893,10 @@
             "18094:0": 18,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21748,7 +21910,10 @@
             "18094:0": 24,
             "18094:1": 22
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21762,7 +21927,10 @@
             "18094:0": 24,
             "18094:1": 22
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21776,7 +21944,10 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21790,7 +21961,10 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21804,7 +21978,10 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21818,7 +21995,10 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21832,7 +22012,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21846,7 +22029,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21860,7 +22046,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21874,7 +22063,10 @@
             "18094:0": 15,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21888,7 +22080,10 @@
             "18094:0": 10,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21902,7 +22097,10 @@
             "18094:0": 10,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21916,7 +22114,10 @@
             "18094:0": 10,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21930,7 +22131,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21944,7 +22148,10 @@
             "18094:0": 16,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21958,7 +22165,10 @@
             "18094:0": 16,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21972,7 +22182,10 @@
             "18094:0": 18,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -21986,7 +22199,10 @@
             "18094:0": 20,
             "18094:1": 18
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22000,7 +22216,10 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22014,7 +22233,10 @@
             "18094:0": 15,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22028,7 +22250,10 @@
             "18094:0": 12,
             "18094:1": 12
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22042,7 +22267,10 @@
             "18094:0": 8,
             "18094:1": 8
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22056,7 +22284,10 @@
             "18094:0": 10,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22070,7 +22301,10 @@
             "18094:0": 10,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22084,7 +22318,10 @@
             "18094:0": 15,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22098,7 +22335,10 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22112,7 +22352,9 @@
             "18094:0": 40,
             "18094:1": 40
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22126,7 +22368,9 @@
             "18094:0": 40,
             "18094:1": 40
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22140,7 +22384,9 @@
             "18094:0": 72,
             "18094:1": 72
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22154,7 +22400,9 @@
             "18094:0": 120,
             "18094:1": 120
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22168,7 +22416,9 @@
             "18094:0": 36,
             "18094:1": 36
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22182,7 +22432,9 @@
             "18094:0": 36,
             "18094:1": 36
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22196,7 +22448,9 @@
             "18094:0": 42,
             "18094:1": 42
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22210,7 +22464,9 @@
             "18094:0": 64,
             "18094:1": 64
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22224,7 +22480,9 @@
             "18094:0": 42,
             "18094:1": 37.79999923706055
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22238,7 +22496,9 @@
             "18094:0": 42,
             "18094:1": 37.79999923706055
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22252,7 +22512,9 @@
             "18094:0": 69,
             "18094:1": 56.70000076293945
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22266,7 +22528,9 @@
             "18094:0": 88,
             "18094:1": 77
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22280,7 +22544,9 @@
             "18094:0": 42,
             "18094:1": 33
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22294,7 +22560,9 @@
             "18094:0": 42,
             "18094:1": 33
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22308,7 +22576,9 @@
             "18094:0": 50.599998474121094,
             "18094:1": 39.599998474121094
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22322,7 +22592,9 @@
             "18094:0": 57.599998474121094,
             "18094:1": 52.79999923706055
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22336,7 +22608,9 @@
             "18094:0": 33,
             "18094:1": 26.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22350,7 +22624,9 @@
             "18094:0": 33,
             "18094:1": 26.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22364,7 +22640,9 @@
             "18094:0": 34.5,
             "18094:1": 28.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22378,7 +22656,9 @@
             "18094:0": 39.099998474121094,
             "18094:1": 35.20000076293945
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22392,7 +22672,9 @@
             "18094:0": 23.100000381469727,
             "18094:1": 18.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22406,7 +22688,9 @@
             "18094:0": 23.100000381469727,
             "18094:1": 18.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22420,7 +22704,9 @@
             "18094:0": 28.600000381469727,
             "18094:1": 19.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22434,7 +22720,9 @@
             "18094:0": 29.899999618530273,
             "18094:1": 27.5
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22448,7 +22736,9 @@
             "18094:0": 23.399999618530273,
             "18094:1": 23.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22462,7 +22752,9 @@
             "18094:0": 23.399999618530273,
             "18094:1": 23.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22476,7 +22768,9 @@
             "18094:0": 28.600000381469727,
             "18094:1": 23.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22490,7 +22784,9 @@
             "18094:0": 33.79999923706055,
             "18094:1": 36.400001525878906
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22504,7 +22800,9 @@
             "18094:0": 22,
             "18094:1": 17.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22518,7 +22816,9 @@
             "18094:0": 26.399999618530273,
             "18094:1": 26.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22532,7 +22832,9 @@
             "18094:0": 26.399999618530273,
             "18094:1": 26.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22546,7 +22848,9 @@
             "18094:0": 30.799999237060547,
             "18094:1": 26.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22560,7 +22864,9 @@
             "18094:0": 33,
             "18094:1": 33.599998474121094
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22574,7 +22880,9 @@
             "18094:0": 16.799999237060547,
             "18094:1": 16.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22588,7 +22896,9 @@
             "18094:0": 20.799999237060547,
             "18094:1": 16.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22602,7 +22912,9 @@
             "18094:0": 23.399999618530273,
             "18094:1": 19.200000762939453
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22616,7 +22928,9 @@
             "18094:0": 26,
             "18094:1": 23.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22630,7 +22944,9 @@
             "18094:0": 23.399999618530273,
             "18094:1": 20.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22644,7 +22960,9 @@
             "18094:0": 23.399999618530273,
             "18094:1": 20.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22658,7 +22976,9 @@
             "18094:0": 31.200000762939453,
             "18094:1": 28.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22672,7 +22992,9 @@
             "18094:0": 31.200000762939453,
             "18094:1": 28.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22686,7 +23008,9 @@
             "18094:0": 28.049999237060547,
             "18094:1": 29.75
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22700,7 +23024,9 @@
             "18094:0": 28.049999237060547,
             "18094:1": 29.75
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22714,7 +23040,9 @@
             "18094:0": 29.75,
             "18094:1": 29.75
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22728,7 +23056,9 @@
             "18094:0": 28.049999237060547,
             "18094:1": 29.75
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22742,7 +23072,9 @@
             "18094:0": 22,
             "18094:1": 17.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22756,7 +23088,9 @@
             "18094:0": 28.600000381469727,
             "18094:1": 19.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22770,7 +23104,9 @@
             "18094:0": 35.20000076293945,
             "18094:1": 27.5
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22784,7 +23120,9 @@
             "18094:0": 17.600000381469727,
             "18094:1": 17.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22798,7 +23136,9 @@
             "18094:0": 17.600000381469727,
             "18094:1": 17.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22812,7 +23152,9 @@
             "18094:0": 28.600000381469727,
             "18094:1": 19.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22826,7 +23168,9 @@
             "18094:0": 28.600000381469727,
             "18094:1": 23.100000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22840,7 +23184,9 @@
             "18094:0": 17.600000381469727,
             "18094:1": 15.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22854,7 +23200,9 @@
             "18094:0": 17.600000381469727,
             "18094:1": 15.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22868,7 +23216,9 @@
             "18094:0": 22,
             "18094:1": 15.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22882,7 +23232,9 @@
             "18094:0": 24.200000762939453,
             "18094:1": 17.600000381469727
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22896,7 +23248,9 @@
             "18094:0": 15.399999618530273,
             "18094:1": 13.199999809265137
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22910,7 +23264,9 @@
             "18094:0": 15.399999618530273,
             "18094:1": 13.199999809265137
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22924,7 +23280,9 @@
             "18094:0": 17.600000381469727,
             "18094:1": 15.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22938,7 +23296,9 @@
             "18094:0": 19.799999237060547,
             "18094:1": 15.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22952,7 +23312,9 @@
             "18094:0": 17.030000686645508,
             "18094:1": 16.899999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22966,7 +23328,9 @@
             "18094:0": 20.399999618530273,
             "18094:1": 20.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22980,7 +23344,9 @@
             "18094:0": 12,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -22994,7 +23360,9 @@
             "18094:0": 12,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23008,7 +23376,9 @@
             "18094:0": 18,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23022,7 +23392,9 @@
             "18094:0": 20.399999618530273,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23036,7 +23408,9 @@
             "18094:0": 19.200000762939453,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23050,7 +23424,9 @@
             "18094:0": 14.399999618530273,
             "18094:1": 14.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23064,7 +23440,9 @@
             "18094:0": 10,
             "18094:1": 10
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23078,7 +23456,9 @@
             "18094:0": 17.030000686645508,
             "18094:1": 16.899999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23092,7 +23472,9 @@
             "18094:0": 17.030000686645508,
             "18094:1": 16.899999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23106,7 +23488,9 @@
             "18094:0": 19,
             "18094:1": 19.5
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23120,7 +23504,9 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23134,7 +23520,9 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23148,7 +23536,9 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23162,7 +23552,9 @@
             "18094:0": 17.030000686645508,
             "18094:1": 16.899999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23176,7 +23568,9 @@
             "18094:0": 20.799999237060547,
             "18094:1": 20.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23190,7 +23584,9 @@
             "18094:0": 20.799999237060547,
             "18094:1": 20.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23204,7 +23600,9 @@
             "18094:0": 23.399999618530273,
             "18094:1": 20.799999237060547
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23218,7 +23616,9 @@
             "18094:0": 26,
             "18094:1": 23.399999618530273
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23407,7 +23807,10 @@
             "18094:0": 27,
             "18094:1": 27
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23421,7 +23824,10 @@
             "18094:0": 30,
             "18094:1": 31
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23435,7 +23841,10 @@
             "18094:0": 38,
             "18094:1": 39
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23449,7 +23858,10 @@
             "18094:0": 27,
             "18094:1": 27
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23463,7 +23875,9 @@
             "18094:0": 40,
             "18094:1": 40
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23477,7 +23891,9 @@
             "18094:0": 32,
             "18094:1": 32
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23491,7 +23907,9 @@
             "18094:0": 28,
             "18094:1": 28
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23505,7 +23923,9 @@
             "18094:0": 28,
             "18094:1": 28
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23544,7 +23964,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23567,7 +23989,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23590,7 +24014,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23613,7 +24039,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23636,7 +24064,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23659,7 +24089,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23682,7 +24114,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23705,7 +24139,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23728,7 +24164,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23751,7 +24189,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23765,7 +24205,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23779,7 +24222,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23793,7 +24239,10 @@
             "18094:0": 15,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23807,7 +24256,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23821,7 +24273,9 @@
             "18094:0": 16.899999618530273,
             "18094:1": 19.5
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23835,7 +24289,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23849,7 +24306,9 @@
             "18094:0": 16.899999618530273,
             "18094:1": 19.5
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23863,7 +24322,9 @@
             "18094:0": 19.5,
             "18094:1": 24
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23877,7 +24338,9 @@
             "18094:0": 16.899999618530273,
             "18094:1": 19.5
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23891,7 +24354,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23905,7 +24371,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23919,7 +24388,10 @@
             "18094:0": 15,
             "18094:1": 16
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23933,7 +24405,9 @@
             "18094:0": 17,
             "18094:1": 19
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23947,7 +24421,9 @@
             "18094:0": 19,
             "18094:1": 24
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23961,7 +24437,9 @@
             "18094:0": 17,
             "18094:1": 19
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23975,7 +24453,9 @@
             "18094:0": 17,
             "18094:1": 19
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -23989,7 +24469,10 @@
             "18094:0": 14,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24003,7 +24486,10 @@
             "18094:0": 14,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24017,7 +24503,10 @@
             "18094:0": 14,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24031,7 +24520,10 @@
             "18094:0": 11,
             "18094:1": 12
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24045,7 +24537,9 @@
             "18094:0": 14,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24059,7 +24553,9 @@
             "18094:0": 14,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24073,7 +24569,9 @@
             "18094:0": 14,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24087,7 +24585,9 @@
             "18094:0": 11,
             "18094:1": 12
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24135,7 +24635,9 @@
               "id": "VariableID:588:1987"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_WEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24158,7 +24660,10 @@
               "id": "VariableID:18038:10704"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24181,7 +24686,9 @@
               "id": "VariableID:2726:12082"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24204,7 +24711,9 @@
               "id": "VariableID:2726:12082"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24227,7 +24736,9 @@
               "id": "VariableID:2726:12078"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24250,7 +24761,9 @@
               "id": "VariableID:2726:12078"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24273,7 +24786,9 @@
               "id": "VariableID:2726:12082"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24296,7 +24811,9 @@
               "id": "VariableID:2726:12081"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24319,7 +24836,9 @@
               "id": "VariableID:18163:40995"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24342,7 +24861,9 @@
               "id": "VariableID:18163:40996"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24365,7 +24886,9 @@
               "id": "VariableID:2726:12082"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24388,7 +24911,9 @@
               "id": "VariableID:2726:12082"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24411,7 +24936,9 @@
               "id": "VariableID:2726:12078"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24434,7 +24961,9 @@
               "id": "VariableID:2726:12078"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24457,7 +24986,9 @@
               "id": "VariableID:2726:12078"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24480,7 +25011,9 @@
               "id": "VariableID:2726:12078"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24503,7 +25036,9 @@
               "id": "VariableID:18163:40996"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24526,7 +25061,9 @@
               "id": "VariableID:18163:40995"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24549,7 +25086,9 @@
               "id": "VariableID:18163:40995"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24572,7 +25111,9 @@
               "id": "VariableID:18163:40996"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24595,7 +25136,9 @@
               "id": "VariableID:2726:12081"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "GAP"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24948,7 +25491,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24962,7 +25507,10 @@
             "18094:0": 26,
             "18094:1": 21
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -24985,7 +25533,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25008,7 +25558,9 @@
               "id": "VariableID:585:1969"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25031,7 +25583,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25054,7 +25608,9 @@
               "id": "VariableID:17036:23304"
             }
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_FAMILY"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25068,7 +25624,10 @@
             "18094:0": 13,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25082,7 +25641,10 @@
             "18094:0": 13,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25096,7 +25658,10 @@
             "18094:0": 12,
             "18094:1": 12
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25110,7 +25675,10 @@
             "18094:0": 12,
             "18094:1": 12
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25124,7 +25692,9 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25138,7 +25708,9 @@
             "18094:0": 17,
             "18094:1": 17
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25152,7 +25724,9 @@
             "18094:0": 14,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25166,7 +25740,9 @@
             "18094:0": 14,
             "18094:1": 14
           },
-          "scopes": [],
+          "scopes": [
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25180,7 +25756,10 @@
             "18094:0": 13,
             "18094:1": 13
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
@@ -25194,7 +25773,10 @@
             "18094:0": 15,
             "18094:1": 15
           },
-          "scopes": [],
+          "scopes": [
+            "FONT_SIZE",
+            "LINE_HEIGHT"
+          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:18038:10593"
         },
