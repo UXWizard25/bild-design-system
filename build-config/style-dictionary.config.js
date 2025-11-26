@@ -798,7 +798,10 @@ const iosSwiftClassFormat = ({ dictionary, options, file }) => {
         const type = token.$type || token.type;
 
         if (type === 'color') {
-          if (value.startsWith('#')) {
+          // Value from custom/color/UIColor transform is already formatted as UIColor constructor
+          if (value.startsWith('UIColor(')) {
+            valueOutput = value;  // Use directly without quotes
+          } else if (value.startsWith('#')) {
             const hex = value.replace('#', '');
             const r = (parseInt(hex.substring(0, 2), 16) / 255).toFixed(3);
             const g = (parseInt(hex.substring(2, 4), 16) / 255).toFixed(3);
