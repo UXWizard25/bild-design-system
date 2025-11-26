@@ -367,11 +367,17 @@ async function buildQuickStartBundles() {
     }
 
     try {
+      // Find shared primitives first
+      const sharedDir = path.join(DIST_DIR, 'css', 'shared');
+      const sharedFiles = fs.existsSync(sharedDir)
+        ? await glob(`${sharedDir}/*.css`)
+        : [];
+
       // Find all CSS files for this brand
-      let files = await glob(`${brandCssDir}/**/*.css`);
+      let brandFiles = await glob(`${brandCssDir}/**/*.css`);
 
       // Exclude individual breakpoint files (we use responsive versions instead)
-      files = files.filter(f => {
+      brandFiles = brandFiles.filter(f => {
         const basename = path.basename(f);
         // Exclude typography-xs/sm/md/lg.css but keep typography-responsive.css
         // Exclude breakpoint-*.css but keep breakpoint-responsive.css
@@ -380,6 +386,9 @@ async function buildQuickStartBundles() {
           basename.match(/^breakpoint-(xs|sm|md|lg)/)
         );
       });
+
+      // Combine shared primitives + brand files
+      const files = [...sharedFiles, ...brandFiles];
 
       if (files.length === 0) {
         console.log(`  ⚠️  ${brand}: No CSS files to bundle`);
@@ -428,11 +437,17 @@ async function buildSemanticBundles() {
     }
 
     try {
+      // Find shared primitives first
+      const sharedDir = path.join(DIST_DIR, 'css', 'shared');
+      const sharedFiles = fs.existsSync(sharedDir)
+        ? await glob(`${sharedDir}/*.css`)
+        : [];
+
       // Find all semantic CSS files
-      let files = await glob(`${brandSemanticDir}/**/*.css`);
+      let semanticFiles = await glob(`${brandSemanticDir}/**/*.css`);
 
       // Exclude individual breakpoint files (we use responsive versions instead)
-      files = files.filter(f => {
+      semanticFiles = semanticFiles.filter(f => {
         const basename = path.basename(f);
         // Exclude typography-xs/sm/md/lg.css but keep typography-responsive.css
         // Exclude breakpoint-*.css but keep breakpoint-responsive.css
@@ -441,6 +456,9 @@ async function buildSemanticBundles() {
           basename.match(/^breakpoint-(xs|sm|md|lg)/)
         );
       });
+
+      // Combine shared primitives + semantic files
+      const files = [...sharedFiles, ...semanticFiles];
 
       if (files.length === 0) {
         console.log(`  ⚠️  ${brand}: No semantic CSS files to bundle`);
