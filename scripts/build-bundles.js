@@ -1,12 +1,17 @@
 /**
- * Build CSS Bundles
+ * Build CSS Bundles with Optimization
  *
- * Creates optimized CSS bundles from individual token files
+ * Creates optimized CSS bundles from individual token files:
  * - Quick Start: All tokens (semantic + components)
  * - Semantic: Only semantic tokens
  * - Components: Individual component bundles
  *
- * All bundles use "clean" format: no comments, but formatted/readable
+ * Optimization Features:
+ * - CSS Nesting for better organization
+ * - Metadata headers with brand, version, usage info
+ * - Section comments for navigation
+ * - Removed unnecessary whitespace
+ * - Grouped selectors for readability
  */
 
 const fs = require('fs');
@@ -16,45 +21,320 @@ const { glob } = require('glob');
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const BUNDLES_DIR = path.join(DIST_DIR, 'bundles');
 const BRANDS = ['bild', 'sportbild', 'advertorial'];
+const PACKAGE_VERSION = require('../package.json').version;
 
 /**
- * Removes all CSS comments while preserving formatting
- * Clean format: no comments, but indentation and newlines remain
+ * Generates bundle header with metadata
  */
-function removeComments(css) {
-  // Remove block comments /* ... */
-  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+function generateBundleHeader(brand, bundleType) {
+  const brandName = brand.charAt(0).toUpperCase() + brand.slice(1);
+  const date = new Date().toISOString().split('T')[0];
 
-  // Remove line comments (if any)
-  css = css.replace(/\/\/.*$/gm, '');
+  const typeDescriptions = {
+    'quick-start': 'Complete Bundle - All semantic tokens + all component tokens',
+    'semantic': 'Semantic Bundle - Foundation tokens only (colors, spacing, typography, effects)',
+    'component': 'Component Bundle - Component-specific tokens'
+  };
 
-  // Remove empty lines (more than 2 consecutive newlines)
-  css = css.replace(/\n{3,}/g, '\n\n');
+  return `/**
+ * ============================================================================
+ * ${brandName} Design System - ${typeDescriptions[bundleType] || 'CSS Bundle'}
+ * ============================================================================
+ *
+ * Brand: ${brandName}
+ * Version: ${PACKAGE_VERSION}
+ * Generated: ${date}
+ *
+ * Theme Switching: Use data-brand, data-theme, data-breakpoint, data-density
+ *
+ * Usage:
+ *   <html data-brand="${brand}" data-theme="light" data-breakpoint="lg">
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ * Proprietary and confidential. All rights reserved.
+ * ============================================================================
+ */
 
-  // Trim leading/trailing whitespace
-  css = css.trim();
-
-  return css;
+`;
 }
 
 /**
- * Combines multiple CSS files into one bundle
+ * Parses CSS and groups rules by selector for nesting
  */
-async function combineFiles(files) {
-  let combined = '';
+function parseCSS(css) {
+  const rules = [];
 
-  for (const file of files) {
+  // Match CSS rules: selector { properties }
+  const ruleRegex = /([^{]+)\{([^}]+)\}/g;
+  let match;
+
+  while ((match = ruleRegex.exec(css)) !== null) {
+    const selector = match[1].trim();
+    const properties = match[2].trim();
+
+    if (selector && properties) {
+      rules.push({ selector, properties });
+    }
+  }
+
+  return rules;
+}
+
+/**
+ * Groups rules by base selector for CSS nesting
+ */
+function groupRulesForNesting(rules) {
+  const grouped = new Map();
+
+  for (const rule of rules) {
+    const { selector, properties } = rule;
+
+    // Check if selector is a data-attribute selector with a class
+    const match = selector.match(/^(\[data-[^\]]+\](?:\[data-[^\]]+\])*)\s+\.([a-zA-Z0-9_-]+)$/);
+
+    if (match) {
+      // This is a nested rule: [data-brand="x"][data-theme="y"] .classname
+      const baseSelector = match[1];
+      const className = match[2];
+
+      if (!grouped.has(baseSelector)) {
+        grouped.set(baseSelector, { properties: [], classes: [] });
+      }
+
+      grouped.get(baseSelector).classes.push({ className, properties });
+    } else {
+      // This is a regular rule (custom properties block or simple selector)
+      if (!grouped.has(selector)) {
+        grouped.set(selector, { properties: [], classes: [] });
+      }
+
+      // Split properties into individual lines
+      const propLines = properties.split(';')
+        .map(p => p.trim())
+        .filter(p => p.length > 0);
+
+      grouped.get(selector).properties.push(...propLines);
+    }
+  }
+
+  return grouped;
+}
+
+/**
+ * Generates optimized CSS with nesting
+ */
+function generateNestedCSS(grouped) {
+  let output = '';
+
+  for (const [selector, data] of grouped.entries()) {
+    const { properties, classes } = data;
+
+    // Skip empty blocks
+    if (properties.length === 0 && classes.length === 0) {
+      continue;
+    }
+
+    output += `${selector} {\n`;
+
+    // Add custom properties first
+    if (properties.length > 0) {
+      for (const prop of properties) {
+        output += `  ${prop};\n`;
+      }
+    }
+
+    // Add nested classes with CSS nesting
+    if (classes.length > 0) {
+      if (properties.length > 0) {
+        output += `\n`; // Separator between properties and classes
+      }
+
+      for (const cls of classes) {
+        output += `  .${cls.className} {\n`;
+
+        const propLines = cls.properties.split(';')
+          .map(p => p.trim())
+          .filter(p => p.length > 0);
+
+        for (const prop of propLines) {
+          output += `    ${prop};\n`;
+        }
+
+        output += `  }\n`;
+
+        if (cls !== classes[classes.length - 1]) {
+          output += `\n`; // Space between classes
+        }
+      }
+    }
+
+    output += `}\n\n`;
+  }
+
+  return output.trim();
+}
+
+/**
+ * Detects the type of CSS content for section comments
+ */
+function detectContentType(selector) {
+  if (selector === ':root') return 'primitives';
+  if (selector.includes('data-theme')) return 'color-tokens';
+  if (selector.includes('data-breakpoint')) return 'breakpoint-tokens';
+  if (selector.includes('data-density')) return 'density-tokens';
+  return 'other';
+}
+
+/**
+ * Organizes CSS with section comments
+ */
+function organizeWithSections(grouped) {
+  const sections = {
+    primitives: [],
+    colorLight: [],
+    colorDark: [],
+    breakpoints: [],
+    density: [],
+    other: []
+  };
+
+  for (const [selector, data] of grouped.entries()) {
+    if (selector === ':root') {
+      sections.primitives.push([selector, data]);
+    } else if (selector.includes('data-theme="light"')) {
+      sections.colorLight.push([selector, data]);
+    } else if (selector.includes('data-theme="dark"')) {
+      sections.colorDark.push([selector, data]);
+    } else if (selector.includes('data-breakpoint')) {
+      sections.breakpoints.push([selector, data]);
+    } else if (selector.includes('data-density')) {
+      sections.density.push([selector, data]);
+    } else {
+      sections.other.push([selector, data]);
+    }
+  }
+
+  let output = '';
+
+  // Shared Primitives
+  if (sections.primitives.length > 0) {
+    output += `/* === SHARED PRIMITIVES === */\n\n`;
+    output += generateNestedCSS(new Map(sections.primitives)) + '\n\n';
+  }
+
+  // Color Tokens - Light
+  if (sections.colorLight.length > 0) {
+    output += `/* === COLOR TOKENS (LIGHT MODE) === */\n\n`;
+    output += generateNestedCSS(new Map(sections.colorLight)) + '\n\n';
+  }
+
+  // Color Tokens - Dark
+  if (sections.colorDark.length > 0) {
+    output += `/* === COLOR TOKENS (DARK MODE) === */\n\n`;
+    output += generateNestedCSS(new Map(sections.colorDark)) + '\n\n';
+  }
+
+  // Breakpoint Tokens - Now handled by responsive files
+  // Skip breakpoint tokens here as they're included via typography-responsive.css
+  if (sections.breakpoints.length > 0) {
+    // Breakpoint tokens are now in responsive files, skip parsing them here
+  }
+
+  // Density Tokens
+  if (sections.density.length > 0) {
+    output += `/* === DENSITY TOKENS === */\n\n`;
+    output += generateNestedCSS(new Map(sections.density)) + '\n\n';
+  }
+
+  // Other (Components, Effects, etc.)
+  if (sections.other.length > 0) {
+    output += `/* === COMPONENT TOKENS & EFFECTS === */\n\n`;
+    output += generateNestedCSS(new Map(sections.other)) + '\n\n';
+  }
+
+  return output.trim();
+}
+
+/**
+ * Optimizes CSS bundle with nesting and structure
+ */
+function optimizeBundleCSS(css, brand, bundleType) {
+  // Remove existing comments
+  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  // Remove excessive whitespace
+  css = css.replace(/\n{3,}/g, '\n\n');
+  css = css.trim();
+
+  // Parse CSS into rules
+  const rules = parseCSS(css);
+
+  // Group rules for nesting
+  const grouped = groupRulesForNesting(rules);
+
+  // Organize with section comments
+  const organized = organizeWithSections(grouped);
+
+  // Add header
+  const header = generateBundleHeader(brand, bundleType);
+
+  return header + organized;
+}
+
+/**
+ * Combines and optimizes multiple CSS files
+ */
+async function combineAndOptimize(files, brand, bundleType) {
+  let combinedStandard = '';
+  let combinedResponsive = '';
+
+  // Separate responsive files from standard files
+  const responsiveFiles = files.filter(f => path.basename(f).includes('-responsive.css'));
+  const standardFiles = files.filter(f => !path.basename(f).includes('-responsive.css'));
+
+  // Process standard files (these get parsed and optimized)
+  for (const file of standardFiles) {
     if (fs.existsSync(file)) {
       const content = fs.readFileSync(file, 'utf8');
-      const cleaned = removeComments(content);
-
-      if (cleaned.trim()) {
-        combined += cleaned + '\n\n';
+      if (content.trim()) {
+        combinedStandard += content + '\n\n';
       }
     }
   }
 
-  return combined.trim();
+  // Process responsive files (keep as-is, just remove their headers)
+  for (const file of responsiveFiles) {
+    if (fs.existsSync(file)) {
+      let content = fs.readFileSync(file, 'utf8');
+      // Remove the file header but keep the CSS structure
+      content = content.replace(/^\/\*\*[\s\S]*?\*\/\s*/, '');
+      if (content.trim()) {
+        combinedResponsive += content + '\n\n';
+      }
+    }
+  }
+
+  if (!combinedStandard.trim() && !combinedResponsive.trim()) {
+    return '';
+  }
+
+  // Optimize standard files
+  let result = '';
+  if (combinedStandard.trim()) {
+    result = optimizeBundleCSS(combinedStandard, brand, bundleType);
+  } else {
+    // If only responsive files, still add header
+    result = generateBundleHeader(brand, bundleType);
+  }
+
+  // Append responsive files (already correctly structured with media queries)
+  if (combinedResponsive.trim()) {
+    // Add section comment before responsive content
+    result += '\n/* === RESPONSIVE TOKENS & TYPOGRAPHY === */\n\n';
+    result += combinedResponsive.trim();
+  }
+
+  return result;
 }
 
 /**
@@ -88,15 +368,22 @@ async function buildQuickStartBundles() {
 
     try {
       // Find all CSS files for this brand
-      const files = await glob(`${brandCssDir}/**/*.css`);
+      let files = await glob(`${brandCssDir}/**/*.css`);
+
+      // Exclude individual breakpoint typography files (we use responsive version instead)
+      files = files.filter(f => {
+        const basename = path.basename(f);
+        // Exclude typography-xs/sm/md/lg.css but keep typography-responsive.css
+        return !(basename.match(/^typography-(xs|sm|md|lg)\.css$/));
+      });
 
       if (files.length === 0) {
         console.log(`  ⚠️  ${brand}: No CSS files to bundle`);
         continue;
       }
 
-      // Combine all files
-      const bundleContent = await combineFiles(files);
+      // Combine and optimize files
+      const bundleContent = await combineAndOptimize(files, brand, 'quick-start');
 
       // Write bundle
       const bundlePath = path.join(quickStartDir, `${brand}-all.css`);
@@ -138,15 +425,22 @@ async function buildSemanticBundles() {
 
     try {
       // Find all semantic CSS files
-      const files = await glob(`${brandSemanticDir}/**/*.css`);
+      let files = await glob(`${brandSemanticDir}/**/*.css`);
+
+      // Exclude individual breakpoint typography files (we use responsive version instead)
+      files = files.filter(f => {
+        const basename = path.basename(f);
+        // Exclude typography-xs/sm/md/lg.css but keep typography-responsive.css
+        return !(basename.match(/^typography-(xs|sm|md|lg)\.css$/));
+      });
 
       if (files.length === 0) {
         console.log(`  ⚠️  ${brand}: No semantic CSS files to bundle`);
         continue;
       }
 
-      // Combine all files
-      const bundleContent = await combineFiles(files);
+      // Combine and optimize files
+      const bundleContent = await combineAndOptimize(files, brand, 'semantic');
 
       // Write bundle
       const bundlePath = path.join(semanticDir, `${brand}-semantic.css`);
@@ -203,8 +497,8 @@ async function buildComponentBundles() {
 
         if (files.length === 0) continue;
 
-        // Combine all files
-        const bundleContent = await combineFiles(files);
+        // Combine and optimize files
+        const bundleContent = await combineAndOptimize(files, brand, 'component');
 
         // Write bundle
         const bundlePath = path.join(componentsDir, `${brand}-${componentName.toLowerCase()}.css`);
@@ -229,7 +523,7 @@ async function buildComponentBundles() {
  */
 async function main() {
   console.log('\n🎨 ============================================');
-  console.log('   CSS Bundle Builder');
+  console.log('   CSS Bundle Builder (with CSS Nesting)');
   console.log('   ============================================\n');
 
   const startTime = Date.now();
@@ -253,7 +547,8 @@ async function main() {
   console.log(`   Semantic: ${stats.semantic.successfulBundles}/${stats.semantic.totalBundles} bundles`);
   console.log(`   Components: ${stats.components.successfulBundles}/${stats.components.totalBundles} bundles`);
   console.log(`   Duration: ${duration}s\n`);
-  console.log(`📁 Output: ${BUNDLES_DIR}\n`);
+  console.log(`📁 Output: ${BUNDLES_DIR}`);
+  console.log(`✨ Features: CSS Nesting, Metadata Headers, Section Comments\n`);
 }
 
 // Run if called directly
