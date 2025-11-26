@@ -140,9 +140,30 @@ function fixFontWeightValue(value, tokenPath, resolvedType) {
 /**
  * Converts Figma RGBA color object to Hex/RGBA string
  */
+/**
+ * Rounds a numeric value to 2 decimal places, removing floating-point precision errors
+ */
+function roundNumericValue(value) {
+  if (typeof value === 'number') {
+    // If it's a whole number, return as-is
+    if (Number.isInteger(value)) {
+      return value;
+    }
+    // Round to 2 decimal places
+    return Math.round(value * 100) / 100;
+  }
+  return value;
+}
+
 function colorToHex(color) {
   if (typeof color === 'string') {
-    // Already a string (Hex or RGB)
+    // Already a string (Hex or RGBA) - round any decimal values in rgba()
+    if (color.startsWith('rgba(')) {
+      return color.replace(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/, (match, r, g, b, a) => {
+        const roundedAlpha = roundNumericValue(parseFloat(a));
+        return `rgba(${r}, ${g}, ${b}, ${roundedAlpha})`;
+      });
+    }
     return color;
   }
 
@@ -152,7 +173,9 @@ function colorToHex(color) {
   const a = color.a !== undefined ? color.a : 1;
 
   if (a < 1) {
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
+    // Round alpha to 2 decimal places to remove precision errors
+    const roundedAlpha = roundNumericValue(a);
+    return `rgba(${r}, ${g}, ${b}, ${roundedAlpha})`;
   }
 
   const toHex = (n) => n.toString(16).padStart(2, '0');
@@ -164,12 +187,35 @@ function colorToHex(color) {
  */
 function processDirectValue(value, resolvedType, tokenPath = '') {
   // Fix FontWeight-px bug
-  const fixedValue = fixFontWeightValue(value, tokenPath, resolvedType);
+  let fixedValue = fixFontWeightValue(value, tokenPath, resolvedType);
 
   switch (resolvedType) {
     case 'COLOR':
       return colorToHex(fixedValue);
     case 'FLOAT':
+      // Round FLOAT values to remove floating-point precision errors
+      // If it's a string with px/rem/em, round the numeric part
+      if (typeof fixedValue === 'string') {
+        // Round px values
+        if (fixedValue.endsWith('px')) {
+          const num = parseFloat(fixedValue);
+          const rounded = roundNumericValue(num);
+          return `${rounded}px`;
+        }
+        // Round rem values
+        if (fixedValue.endsWith('rem')) {
+          const num = parseFloat(fixedValue);
+          const rounded = roundNumericValue(num);
+          return `${rounded}rem`;
+        }
+        // Round em values
+        if (fixedValue.endsWith('em')) {
+          const num = parseFloat(fixedValue);
+          const rounded = roundNumericValue(num);
+          return `${rounded}em`;
+        }
+      }
+      return roundNumericValue(fixedValue);
     case 'STRING':
     case 'BOOLEAN':
       return fixedValue;
