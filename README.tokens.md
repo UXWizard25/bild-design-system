@@ -1,12 +1,33 @@
-# BILD Design System - Token Pipeline
+# 🎨 BILD Design System - Token Pipeline
 
-> **Part of the [BILD Design Ops Pipeline](./README.md)**
+> **Part of the [BILD Design Ops Pipeline](./README.md)** | [Icon Documentation](./README.icons.md)
 
 Multi-platform design token transformation pipeline powered by **Style Dictionary v4** with **Figma-scoped semantic type detection**.
 
 [![npm version](https://img.shields.io/npm/v/@marioschmidt/design-system-tokens.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-tokens)
+[![Build Status](https://github.com/UXWizard25/vv-token-test-v3/workflows/Build%20Design%20Tokens/badge.svg)](https://github.com/UXWizard25/vv-token-test-v3/actions)
 
-## Overview
+---
+
+## 📋 Table of Contents
+
+- [🎯 Overview](#-overview)
+- [🏗️ Pipeline Flow](#️-pipeline-flow)
+- [📦 Installation](#-installation)
+- [🚀 Quick Start](#-quick-start)
+- [🎨 Platform Usage](#-platform-usage)
+- [📊 Token Transform Reference](#-token-transform-reference)
+- [📁 Output Structure](#-output-structure)
+- [🔗 Figma Integration & Dependencies](#-figma-integration--dependencies)
+- [🔄 CI/CD Workflows](#-cicd-workflows)
+- [🆘 Troubleshooting](#-troubleshooting)
+- [🔗 Related](#-related)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+---
+
+## 🎯 Overview
 
 This pipeline processes the multi-layer, multi-brand BILD Design System architecture:
 
@@ -191,7 +212,7 @@ Container(
 
 **Note:** Figma exports opacity as percentage (5, 10, 70). Transform converts to decimal: `5` → `0.05`
 
-## Output Structure
+## 📁 Output Structure
 
 ```
 dist/
@@ -215,7 +236,7 @@ dist/
 └── bundles/                         # Convenience bundles
 ```
 
-## Figma Integration
+## 🔗 Figma Integration & Dependencies
 
 ### Supported Figma Scopes
 
@@ -244,7 +265,7 @@ dist/
 | Rename collection | Tokens skipped | Code update |
 | Circular alias | Token unresolved | Fix in Figma |
 
-## CI/CD Workflows
+## 🔄 CI/CD Workflows
 
 ### build-tokens.yml
 - **Trigger**: Push to main, develop, claude/**
@@ -258,7 +279,7 @@ dist/
 - **Trigger**: Merge to main
 - **Actions**: Version bump, npm publish, GitHub Release
 
-## Troubleshooting
+## 🆘 Troubleshooting
 
 ### Missing dist/ Folder
 
@@ -285,12 +306,46 @@ grep "Space2x" dist/ios/shared/Spaceprimitive.swift
 # Expected: public static let Space2x = 16 (not "16px")
 ```
 
-## Related
+## 🔗 Related
 
-- [Main README](./README.md) - Project overview
-- [Icon Documentation](./README.icons.md) - Icon pipeline
-- [Style Dictionary](https://styledictionary.com/) - Build tool
+| Document | Description |
+|----------|-------------|
+| [📖 README.md](./README.md) | Main project overview |
+| [📖 README.icons.md](./README.icons.md) | Icon pipeline documentation |
+| [Style Dictionary](https://styledictionary.com/) | Build tool documentation |
 
 ---
 
-**Part of the BILD Design Ops Pipeline**
+## 🤝 Contributing
+
+> **⚠️ WICHTIG: Figma ist die Single Source of Truth**
+>
+> Design Tokens dürfen **NICHT** direkt im Repository geändert werden.
+> Alle Token-Änderungen müssen in Figma gemacht und über das **TokenSync Plugin** exportiert werden.
+
+**Workflow:**
+1. Token in Figma bearbeiten/erstellen
+2. Mit TokenSync Plugin exportieren
+3. PR reviewen und mergen
+
+**NICHT erlaubt:**
+- ❌ Direkte Änderungen an `src/design-tokens/*.json`
+- ❌ Manuelle Commits zum `figma-tokens` Branch
+- ❌ Änderungen an generierten Dateien in `dist/`
+
+---
+
+## 📄 License
+
+MIT License - See [LICENSE](./LICENSE) file.
+
+---
+
+**Built with ❤️ for the BILD Design System**
+
+| Feature | Status |
+|---------|--------|
+| 7 Platforms | ✅ |
+| 3 Brands | ✅ |
+| ~970 Files | ✅ |
+| Figma Scopes | ✅ |

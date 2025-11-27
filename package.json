@@ -52,7 +52,7 @@
     "tokens"
   ],
   "author": "UXWizard25",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },

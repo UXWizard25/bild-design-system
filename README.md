@@ -1,47 +1,134 @@
-# BILD Design Ops Pipeline
+# 🎨 BILD Design Ops Pipeline
 
-> **Important:** This pipeline is under active development. Generated packages are for testing purposes only.
+> **⚠️ IMPORTANT NOTICE**
+>
+> This pipeline is under active development. Generated packages are for **testing purposes only**.
 
-A comprehensive design operations pipeline for the BILD Design System. Transforms Figma exports into production-ready assets across multiple platforms.
+A comprehensive design operations pipeline for the BILD Design System. Transforms Figma exports into production-ready assets across multiple platforms using the **TokenSync Plugin**.
 
 [![Build Tokens](https://github.com/UXWizard25/vv-token-test-v3/workflows/Build%20Design%20Tokens/badge.svg)](https://github.com/UXWizard25/vv-token-test-v3/actions)
 [![Build Icons](https://github.com/UXWizard25/vv-token-test-v3/workflows/Build%20Icons/badge.svg)](https://github.com/UXWizard25/vv-token-test-v3/actions)
+[![npm tokens](https://img.shields.io/npm/v/@marioschmidt/design-system-tokens.svg?label=tokens)](https://www.npmjs.com/package/@marioschmidt/design-system-tokens)
+[![npm icons](https://img.shields.io/npm/v/@marioschmidt/design-system-icons.svg?label=icons)](https://www.npmjs.com/package/@marioschmidt/design-system-icons)
 
-## Packages
+---
 
-| Package | Description | npm |
-|---------|-------------|-----|
-| **[@marioschmidt/design-system-tokens](./README.tokens.md)** | Design tokens for 7 platforms | [![npm](https://img.shields.io/npm/v/@marioschmidt/design-system-tokens.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-tokens) |
-| **[@marioschmidt/design-system-icons](./README.icons.md)** | Multi-platform icon assets | [![npm](https://img.shields.io/npm/v/@marioschmidt/design-system-icons.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-icons) |
+## 📋 Table of Contents
 
-## Architecture
+- [🎯 Overview](#-overview)
+- [📦 Packages](#-packages)
+- [🏗️ Architecture](#️-architecture)
+- [🚀 Quick Start](#-quick-start)
+- [🔗 Figma Integration](#-figma-integration)
+- [📁 Project Structure](#-project-structure)
+- [⚙️ Build Commands](#️-build-commands)
+- [🔄 CI/CD Workflows](#-cicd-workflows)
+- [📊 Platform Support](#-platform-support)
+- [📚 Documentation](#-documentation)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+---
+
+## 🎯 Overview
+
+The BILD Design Ops Pipeline transforms design assets from Figma into production-ready code for multiple platforms. It consists of two independent sub-pipelines:
+
+| Pipeline | Input | Output | Platforms |
+|----------|-------|--------|-----------|
+| **🎨 Token Pipeline** | Figma Variables | Design Tokens | 7 platforms |
+| **🖼️ Icon Pipeline** | Figma Icons (SVG) | Multi-format Icons | 5 platforms |
+
+Both pipelines use the **TokenSync Figma Plugin** for automated exports.
+
+---
+
+## 📦 Packages
+
+| Package | Description | Version | Documentation |
+|---------|-------------|---------|---------------|
+| **@marioschmidt/design-system-tokens** | Multi-platform design tokens | [![npm](https://img.shields.io/npm/v/@marioschmidt/design-system-tokens.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-tokens) | [📖 README.tokens.md](./README.tokens.md) |
+| **@marioschmidt/design-system-icons** | Multi-platform icon assets | [![npm](https://img.shields.io/npm/v/@marioschmidt/design-system-icons.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-icons) | [📖 README.icons.md](./README.icons.md) |
+
+---
+
+## 🏗️ Architecture
+
+### High-Level Overview
 
 ```
-                    BILD Design Ops Pipeline
-                             |
-          ┌──────────────────┴──────────────────┐
-          |                                      |
-    Token Pipeline                        Icon Pipeline
-          |                                      |
-    ┌─────┴─────┐                        ┌──────┴──────┐
-    |           |                        |             |
-  Figma     Style                      Figma        SVGO
-Variables   Dictionary                 Icons          |
-    |           |                        |       ┌────┴────┐
-    ▼           ▼                        ▼       |    |    |
-┌─────────────────────┐            ┌─────────────────────────┐
-|  7 Platforms        |            |  5 Platforms            |
-|  CSS, SCSS, JS,     |            |  SVG, React, Android,   |
-|  iOS, Android,      |            |  Flutter, iOS           |
-|  Flutter, JSON      |            |                         |
-└─────────────────────┘            └─────────────────────────┘
-          |                                      |
-          ▼                                      ▼
-@marioschmidt/                        @marioschmidt/
-design-system-tokens                  design-system-icons
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              FIGMA                                          │
+│  ┌─────────────────────┐              ┌─────────────────────┐              │
+│  │  📊 Variables       │              │  🖼️ Icons           │              │
+│  │  (Design Tokens)    │              │  (SVG Assets)       │              │
+│  └──────────┬──────────┘              └──────────┬──────────┘              │
+└─────────────┼───────────────────────────────────┼──────────────────────────┘
+              │                                   │
+              │  TokenSync Plugin                 │  TokenSync Plugin
+              │                                   │
+              ▼                                   ▼
+┌─────────────────────────────┐    ┌─────────────────────────────┐
+│  📁 figma-tokens branch     │    │  📁 figma-icons branch      │
+│  src/design-tokens/*.json   │    │  src/icons/*.svg            │
+└──────────────┬──────────────┘    └──────────────┬──────────────┘
+               │                                  │
+               │  GitHub Actions                  │  GitHub Actions
+               │                                  │
+               ▼                                  ▼
+┌─────────────────────────────┐    ┌─────────────────────────────┐
+│  🔧 TOKEN PIPELINE          │    │  🔧 ICON PIPELINE           │
+│                             │    │                             │
+│  ┌───────────────────────┐  │    │  ┌───────────────────────┐  │
+│  │ 1. Preprocessing      │  │    │  │ 1. SVG Validation     │  │
+│  │    • Scope detection  │  │    │  │    • Security checks  │  │
+│  │    • Alias resolution │  │    │  │    • Structure check  │  │
+│  │    • Type mapping     │  │    │  └───────────┬───────────┘  │
+│  └───────────┬───────────┘  │    │              │              │
+│              │              │    │              ▼              │
+│              ▼              │    │  ┌───────────────────────┐  │
+│  ┌───────────────────────┐  │    │  │ 2. SVGO Optimization  │  │
+│  │ 2. Style Dictionary   │  │    │  │    • currentColor     │  │
+│  │    • Transforms       │  │    │  │    • Remove metadata  │  │
+│  │    • Formats          │  │    │  └───────────┬───────────┘  │
+│  │    • Platform builds  │  │    │              │              │
+│  └───────────┬───────────┘  │    │              ▼              │
+│              │              │    │  ┌───────────────────────┐  │
+│              ▼              │    │  │ 3. Platform Generation│  │
+│  ┌───────────────────────┐  │    │  │    • React (TSX→JS)   │  │
+│  │ 3. Bundle Generation  │  │    │  │    • Android XML      │  │
+│  │    • Quick Start      │  │    │  │    • Flutter TTF      │  │
+│  │    • Per-component    │  │    │  │    • iOS Assets       │  │
+│  └───────────────────────┘  │    │  └───────────────────────┘  │
+└──────────────┬──────────────┘    └──────────────┬──────────────┘
+               │                                  │
+               ▼                                  ▼
+┌─────────────────────────────┐    ┌─────────────────────────────┐
+│  📤 OUTPUT                  │    │  📤 OUTPUT                  │
+│                             │    │                             │
+│  dist/                      │    │  dist/icons/                │
+│  ├── css/     (CSS Vars)    │    │  ├── svg/      (Optimized)  │
+│  ├── scss/    (SCSS Vars)   │    │  ├── react/    (ESM + d.ts) │
+│  ├── js/      (ES Modules)  │    │  ├── android/  (XML)        │
+│  ├── json/    (Raw Data)    │    │  ├── flutter/  (TTF + Dart) │
+│  ├── ios/     (Swift)       │    │  └── ios/      (xcassets)   │
+│  ├── android/ (XML)         │    │                             │
+│  ├── flutter/ (Dart)        │    │                             │
+│  └── bundles/ (Quick Start) │    │                             │
+└──────────────┬──────────────┘    └──────────────┬──────────────┘
+               │                                  │
+               │  npm publish                     │  npm publish
+               │                                  │
+               ▼                                  ▼
+┌─────────────────────────────┐    ┌─────────────────────────────┐
+│  📦 @marioschmidt/          │    │  📦 @marioschmidt/          │
+│     design-system-tokens    │    │     design-system-icons     │
+└─────────────────────────────┘    └─────────────────────────────┘
 ```
 
-## Quick Start
+---
+
+## 🚀 Quick Start
 
 ### Installation
 
@@ -53,9 +140,7 @@ npm install @marioschmidt/design-system-tokens
 npm install @marioschmidt/design-system-icons
 ```
 
-### Usage Examples
-
-#### Tokens
+### Token Usage
 
 ```css
 /* CSS */
@@ -69,10 +154,16 @@ npm install @marioschmidt/design-system-icons
 
 ```javascript
 // JavaScript
-import { textColorPrimary } from '@marioschmidt/design-system-tokens/js/brands/bild/semantic/color/colormode-light';
+import { textColorPrimary, space2x } from '@marioschmidt/design-system-tokens/js/brands/bild/semantic/color/colormode-light';
 ```
 
-#### Icons
+```swift
+// iOS Swift
+view.backgroundColor = StyleDictionary.TextColorPrimary
+let padding: CGFloat = StyleDictionary.Space2x
+```
+
+### Icon Usage
 
 ```tsx
 // React
@@ -91,160 +182,241 @@ import { Add, Menu, Search } from '@marioschmidt/design-system-icons';
 Icon(BildIcons.add, size: 24)
 ```
 
-## Project Structure
+```swift
+// iOS SwiftUI
+BildIcon.add.image.foregroundColor(.primary)
+```
+
+➡️ See [README.tokens.md](./README.tokens.md) and [README.icons.md](./README.icons.md) for complete usage examples.
+
+---
+
+## 🔗 Figma Integration
+
+Both pipelines integrate with Figma via the **TokenSync Plugin**:
+
+| Branch | Content | Trigger |
+|--------|---------|---------|
+| `figma-tokens` | Design Variables (JSON) | Token export from Figma |
+| `figma-icons` | Icon SVGs | Icon export from Figma |
+
+### Workflow
+
+```
+1. Designer exports from Figma using TokenSync Plugin
+2. Plugin pushes to dedicated branch (figma-tokens / figma-icons)
+3. GitHub Actions automatically builds and creates PR
+4. Team reviews PR with build artifacts
+5. Merge to main triggers npm publish
+```
+
+➡️ See [Figma Integration Guide](./README.tokens.md#-figma-integration--dependencies) for details.
+
+---
+
+## 📁 Project Structure
 
 ```
 vv-token-test-v3/
-├── src/
-│   ├── design-tokens/           # Figma token export
+│
+├── 📁 src/
+│   ├── design-tokens/                  # 🎨 Figma token export
 │   │   └── bild-design-system-raw-data.json
-│   └── icons/                   # Figma icon export
+│   └── icons/                          # 🖼️ Figma icon export
 │       ├── icon-*.svg
-│       └── .codepoints.json     # Flutter codepoint registry
+│       └── .codepoints.json            # Flutter codepoint registry
 │
-├── scripts/
-│   ├── preprocess-*.js          # Token preprocessing
-│   ├── build-*.js               # Token build scripts
-│   └── icons/                   # Icon build scripts
-│       ├── build-icons.js
-│       ├── optimize-svg.js
-│       ├── generate-react.js
-│       ├── compile-react.js     # TypeScript compilation
-│       ├── generate-android.js
-│       ├── generate-flutter.js
-│       └── generate-ios.js
+├── 📁 scripts/
+│   ├── preprocess-plugin-tokens.js     # Token preprocessing
+│   ├── build-tokens-v2.js              # Token build orchestrator
+│   ├── build-bundles.js                # Bundle generation
+│   └── icons/                          # Icon scripts
+│       ├── build-icons.js              # Main orchestrator
+│       ├── optimize-svg.js             # SVGO + validation
+│       ├── generate-react.js           # React TSX generation
+│       ├── compile-react.js            # TypeScript compilation
+│       ├── generate-android.js         # Android XML
+│       ├── generate-flutter.js         # Flutter TTF + Dart
+│       └── generate-ios.js             # iOS xcassets
 │
-├── build-config/
-│   ├── style-dictionary.config.js
+├── 📁 build-config/
+│   ├── style-dictionary.config.js      # Token transforms
 │   └── icons/
-│       └── svgo.config.js
+│       └── svgo.config.js              # SVG optimization
 │
-├── tokens/                      # Preprocessed tokens (Git tracked)
-├── dist/                        # Build output (Git ignored)
+├── 📁 tokens/                          # Preprocessed (Git tracked)
+├── 📁 dist/                            # Build output (Git ignored)
 │
-├── package.json                 # Token package config
-├── package.icons.json           # Icon package config
+├── 📄 package.json                     # Token package config
+├── 📄 package.icons.json               # Icon package config
+├── 📄 tsconfig.icons.json              # React TypeScript config
 │
-├── README.md                    # This file
-├── README.tokens.md             # Token documentation
-└── README.icons.md              # Icon documentation
+├── 📄 README.md                        # 👈 This file
+├── 📄 README.tokens.md                 # Token documentation
+└── 📄 README.icons.md                  # Icon documentation
 ```
 
-## Build Commands
+---
 
-### Tokens
+## ⚙️ Build Commands
+
+### 🎨 Tokens
 
 ```bash
-npm run build              # Full token build
-npm run preprocess         # Figma JSON → Style Dictionary
+npm run build              # Full build (preprocess + tokens + bundles)
+npm run preprocess         # Figma JSON → Style Dictionary format
 npm run build:tokens       # Style Dictionary → 7 platforms
-npm run build:bundles      # Generate CSS bundles
+npm run build:bundles      # Generate convenience bundles
+npm run clean              # Remove dist/ and tokens/
 ```
 
-### Icons
+### 🖼️ Icons
 
 ```bash
-npm run build:icons        # Full icon build (all platforms)
+npm run build:icons        # Full build (all platforms)
 npm run build:icons:svg    # SVG optimization only
 npm run build:icons:react  # React components only
 npm run build:icons:android
 npm run build:icons:flutter
 npm run build:icons:ios
+npm run clean:icons        # Remove dist/icons/
 ```
-
-## CI/CD Workflows
-
-### Token Workflows
-
-| Workflow | Trigger | Action |
-|----------|---------|--------|
-| `build-tokens.yml` | Push to main/develop/claude/** | Build + artifacts |
-| `auto-pr-from-figma.yml` | Push to `figma-tokens` | Create PR |
-| `publish-on-merge.yml` | Merge to main | npm publish |
-
-### Icon Workflows
-
-| Workflow | Trigger | Action |
-|----------|---------|--------|
-| `build-icons.yml` | Push to main/develop/claude/** | Build + artifacts |
-| `auto-pr-from-figma-icons.yml` | Push to `figma-icons` | Create PR |
-| `publish-icons-on-merge.yml` | Merge to main | npm publish |
-
-## Figma Integration
-
-Both pipelines integrate with Figma via custom plugins:
-
-| Branch | Source | Plugin |
-|--------|--------|--------|
-| `figma-tokens` | Figma Variables | TokenSync Plugin |
-| `figma-icons` | Figma Icons | BILD Icons Plugin |
-
-**Workflow:**
-1. Designer exports from Figma
-2. Plugin pushes to dedicated branch
-3. CI builds and creates PR
-4. Review and merge
-5. Automatic npm publish
-
-## Documentation
-
-- **[Token Documentation](./README.tokens.md)** - Detailed token pipeline documentation
-  - Platform outputs (CSS, SCSS, JS, iOS, Android, Flutter, JSON)
-  - Transform reference tables
-  - Figma integration guide
-  - Troubleshooting
-
-- **[Icon Documentation](./README.icons.md)** - Detailed icon pipeline documentation
-  - Platform outputs (SVG, React, Android, Flutter, iOS)
-  - Naming conventions
-  - Accessibility guidelines
-  - Codepoint stability (Flutter)
-
-## Platform Support
-
-### Tokens
-
-| Platform | Format | Status |
-|----------|--------|--------|
-| CSS | Custom Properties | Production |
-| SCSS | Variables | Production |
-| JavaScript | ES6 Modules | Production |
-| JSON | Structured Data | Production |
-| iOS Swift | UIColor, CGFloat | Production |
-| Android | XML Resources | Production |
-| Flutter | Dart Classes | Production |
-
-### Icons
-
-| Platform | Format | Status |
-|----------|--------|--------|
-| SVG | Optimized | Production |
-| React | ESM + TypeScript | Production |
-| Android | Vector Drawable | Production |
-| Flutter | TTF + Dart | Production |
-| iOS | Asset Catalog + Swift | Production |
-
-## Build Statistics
-
-| Metric | Tokens | Icons |
-|--------|--------|-------|
-| Platforms | 7 | 5 |
-| Brands | 3 | 1 |
-| Files Generated | ~970 | Variable |
-| Build Time | ~5s | ~4s |
-
-## Contributing
-
-1. Create feature branch from `main`
-2. Make changes
-3. Run build: `npm run build && npm run build:icons`
-4. Create PR
-5. Wait for CI checks
-
-## License
-
-UNLICENSED - Internal use only.
 
 ---
 
-**Built for the BILD Design System**
+## 🔄 CI/CD Workflows
+
+### 🎨 Token Workflows
+
+| Workflow | Trigger | Action |
+|----------|---------|--------|
+| `build-tokens.yml` | Push to main/develop/claude/** | Build + upload artifacts |
+| `auto-pr-from-figma.yml` | Push to `figma-tokens` | Create/update PR |
+| `publish-on-merge.yml` | Merge to main | npm publish + GitHub Release |
+
+### 🖼️ Icon Workflows
+
+| Workflow | Trigger | Action |
+|----------|---------|--------|
+| `build-icons.yml` | Push to main/develop/claude/** | Build + upload artifacts |
+| `auto-pr-from-figma-icons.yml` | Push to `figma-icons` | Create/update PR |
+| `publish-icons-on-merge.yml` | Merge to main | npm publish + GitHub Release |
+
+### Why dist/ is NOT in Git
+
+- ✅ No merge conflicts (~970 generated files)
+- ✅ Clean Git history (only source files)
+- ✅ PR review via CI artifacts (30 days retention)
+- ✅ Deterministic builds
+- ✅ Smaller repo size
+
+---
+
+## 📊 Platform Support
+
+### 🎨 Token Platforms
+
+| Platform | Format | Files | Status |
+|----------|--------|-------|--------|
+| CSS | Custom Properties | `dist/css/**/*.css` | ✅ Production |
+| SCSS | Variables | `dist/scss/**/*.scss` | ✅ Production |
+| JavaScript | ES6 Modules | `dist/js/**/*.js` | ✅ Production |
+| JSON | Raw Data | `dist/json/**/*.json` | ✅ Production |
+| iOS Swift | UIColor, CGFloat | `dist/ios/**/*.swift` | ✅ Production |
+| Android | XML Resources | `dist/android/**/*.xml` | ✅ Production |
+| Flutter | Dart Classes | `dist/flutter/**/*.dart` | ✅ Production |
+
+### 🖼️ Icon Platforms
+
+| Platform | Format | Files | Status |
+|----------|--------|-------|--------|
+| SVG | Optimized | `dist/icons/svg/*.svg` | ✅ Production |
+| React | ESM + TypeScript | `dist/icons/react/*.js` + `.d.ts` | ✅ Production |
+| Android | Vector Drawable | `dist/icons/android/drawable/*.xml` | ✅ Production |
+| Flutter | TTF + Dart | `dist/icons/flutter/` | ✅ Production |
+| iOS | Asset Catalog | `dist/icons/ios/*.xcassets` | ✅ Production |
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [📖 README.tokens.md](./README.tokens.md) | Complete token pipeline documentation |
+| [📖 README.icons.md](./README.icons.md) | Complete icon pipeline documentation |
+
+### Quick Links
+
+**Tokens:**
+- [Platform Usage Examples](./README.tokens.md#-platform-usage)
+- [Transform Reference](./README.tokens.md#-token-transform-reference)
+- [Figma Integration](./README.tokens.md#-figma-integration--dependencies)
+- [Troubleshooting](./README.tokens.md#-troubleshooting)
+
+**Icons:**
+- [Platform Usage Examples](./README.icons.md#usage)
+- [Naming Conventions](./README.icons.md#naming-conventions)
+- [Accessibility](./README.icons.md#accessibility)
+- [SVG Requirements](./README.icons.md#svg-requirements)
+
+---
+
+## 🤝 Contributing
+
+> **⚠️ WICHTIG: Figma ist die Single Source of Truth**
+>
+> Design-Assets (Tokens und Icons) dürfen **NICHT** direkt im Repository geändert werden.
+> Alle Änderungen müssen in Figma gemacht und über das **TokenSync Plugin** exportiert werden.
+
+### Erlaubter Workflow
+
+```
+1. Änderungen in Figma machen
+2. Mit TokenSync Plugin exportieren
+3. Automatischer PR wird erstellt
+4. PR reviewen und mergen
+```
+
+### NICHT erlaubt
+
+- ❌ Direkte Änderungen an `src/design-tokens/*.json`
+- ❌ Direkte Änderungen an `src/icons/*.svg`
+- ❌ Manuelle Commits zu `figma-tokens` oder `figma-icons` Branch
+- ❌ Änderungen an generierten Dateien in `dist/`
+
+### Erlaubt (Pipeline-Entwicklung)
+
+- ✅ Änderungen an Build-Scripts (`scripts/`)
+- ✅ Änderungen an Konfiguration (`build-config/`)
+- ✅ Workflow-Anpassungen (`.github/workflows/`)
+- ✅ Dokumentation
+
+Für Pipeline-Änderungen:
+```bash
+npm run build && npm run build:icons
+```
+
+---
+
+## 📄 License
+
+MIT License - See [LICENSE](./LICENSE) file.
+
+---
+
+## 🔗 Resources
+
+- [Style Dictionary Documentation](https://styledictionary.com/)
+- [SVGO Documentation](https://svgo.dev/)
+- [Figma Variables API](https://www.figma.com/plugin-docs/api/properties/figma-variables/)
+- [Repository Issues](https://github.com/UXWizard25/vv-token-test-v3/issues)
+
+---
+
+**Built with ❤️ for the BILD Design System**
+
+| Tokens | Icons |
+|--------|-------|
+| ~970 files | 5 platforms |
+| 7 platforms | TypeScript support |
+| 3 brands | Accessibility ready |

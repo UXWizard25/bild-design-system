@@ -1,85 +1,138 @@
-# BILD Design System Icons
+# 🖼️ BILD Design System Icons
 
-> **Part of the [BILD Design Ops Pipeline](./README.md)**
+> **Part of the [BILD Design Ops Pipeline](./README.md)** | [Token Documentation](./README.tokens.md)
 
 Multi-platform icon transformation pipeline for the BILD Design System.
 
 [![npm version](https://img.shields.io/npm/v/@marioschmidt/design-system-icons.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-icons)
+[![Build Status](https://github.com/UXWizard25/vv-token-test-v3/workflows/Build%20Icons/badge.svg)](https://github.com/UXWizard25/vv-token-test-v3/actions)
 
-## Overview
+---
+
+## 📋 Table of Contents
+
+- [🎯 Overview](#-overview)
+- [🏗️ Architecture](#️-architecture)
+- [📦 Installation](#-installation)
+- [🚀 Usage](#-usage)
+- [📁 File Structure](#-file-structure)
+- [⚙️ Build Commands](#️-build-commands)
+- [➕ Adding New Icons](#-adding-new-icons)
+- [📝 Naming Conventions](#-naming-conventions)
+- [✅ SVG Requirements](#-svg-requirements)
+- [♿ Accessibility](#-accessibility)
+- [🎨 Theming](#-theming)
+- [🔄 CI/CD Workflows](#-cicd-workflows)
+- [🔢 Codepoint Stability (Flutter)](#-codepoint-stability-flutter)
+- [🆘 Troubleshooting](#-troubleshooting)
+- [📚 Dependencies](#-dependencies)
+- [🔗 Related](#-related)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+---
+
+## 🎯 Overview
 
 This pipeline transforms SVG icons from Figma into optimized, production-ready assets for 5 platforms:
 
-| Platform | Output | Format |
-|----------|--------|--------|
-| **Web** | `dist/icons/svg/` | Optimized SVG |
-| **React** | `dist/icons/react/` | ESM JavaScript + TypeScript Declarations |
-| **Android** | `dist/icons/android/` | Vector Drawable XML |
-| **Flutter** | `dist/icons/flutter/` | TTF Font + Dart Class |
-| **iOS** | `dist/icons/ios/` | Asset Catalog + Swift |
+| Platform | Output | Format | Status |
+|----------|--------|--------|--------|
+| **🌐 Web** | `dist/icons/svg/` | Optimized SVG | ✅ Production |
+| **⚛️ React** | `dist/icons/react/` | ESM JavaScript + TypeScript Declarations | ✅ Production |
+| **🤖 Android** | `dist/icons/android/` | Vector Drawable XML | ✅ Production |
+| **💙 Flutter** | `dist/icons/flutter/` | TTF Font + Dart Class | ✅ Production |
+| **🍎 iOS** | `dist/icons/ios/` | Asset Catalog + Swift | ✅ Production |
 
-## Architecture
+---
+
+## 🏗️ Architecture
 
 ```
-Figma Plugin
-     │
-     ▼
-┌─────────────────┐
-│  figma-icons    │  ← Branch: Figma pushes SVGs here
-│  Branch         │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  GitHub Action  │  ← auto-pr-from-figma-icons.yml
-│  Build + PR     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  src/icons/     │  ← Source SVGs (icon-{name}.svg)
-│  *.svg          │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────┐
-│              Build Pipeline                      │
-│  ┌─────────┐                                    │
-│  │  SVGO   │ ← Optimization (currentColor)      │
-│  └────┬────┘                                    │
-│       │                                         │
-│       ▼                                         │
-│  ┌─────────────────────────────────────────┐   │
-│  │  Platform Generators                      │   │
-│  │  ┌───────────────────┐                   │   │
-│  │  │ React (TSX → JS)  │ ← TypeScript      │   │
-│  │  └───────────────────┘   Compilation     │   │
-│  │  ┌─────────┐ ┌───────┐ ┌─────┐          │   │
-│  │  │ Android │ │Flutter│ │ iOS │          │   │
-│  │  └─────────┘ └───────┘ └─────┘          │   │
-│  └─────────────────────────────────────────┘   │
-└────────┬────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│  dist/icons/    │  ← Multi-platform output
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  npm publish    │  ← @marioschmidt/design-system-icons
-└─────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                          FIGMA                                  │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  🖼️ Icon Components                                      │   │
+│  │  • 24x24 viewBox                                         │   │
+│  │  • Single color (converted to currentColor)              │   │
+│  └────────────────────────────┬────────────────────────────┘   │
+└───────────────────────────────┼─────────────────────────────────┘
+                                │
+                                │  TokenSync Plugin Export
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  📁 figma-icons Branch                                          │
+│  src/icons/icon-*.svg                                           │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+                                │  GitHub Actions Trigger
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  🔧 BUILD PIPELINE                                              │
+│                                                                 │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │ 1️⃣ SVG Validation                                          │ │
+│  │    • Security checks (no scripts, no external refs)       │ │
+│  │    • Structure validation (viewBox, valid SVG)            │ │
+│  └───────────────────────────┬───────────────────────────────┘ │
+│                              │                                  │
+│                              ▼                                  │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │ 2️⃣ SVGO Optimization                                       │ │
+│  │    • Convert colors to currentColor                       │ │
+│  │    • Remove metadata & editor data                        │ │
+│  │    • Optimize paths                                       │ │
+│  └───────────────────────────┬───────────────────────────────┘ │
+│                              │                                  │
+│                              ▼                                  │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │ 3️⃣ Platform Generation                                     │ │
+│  │                                                           │ │
+│  │  ┌─────────────────────────────────────────────────────┐ │ │
+│  │  │ React: TSX → TypeScript Compilation → ESM + d.ts    │ │ │
+│  │  └─────────────────────────────────────────────────────┘ │ │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               │ │
+│  │  │ Android  │  │ Flutter  │  │   iOS    │               │ │
+│  │  │   XML    │  │ TTF+Dart │  │ xcassets │               │ │
+│  │  └──────────┘  └──────────┘  └──────────┘               │ │
+│  └───────────────────────────────────────────────────────────┘ │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  📤 OUTPUT: dist/icons/                                         │
+│                                                                 │
+│  ├── svg/           ← Optimized SVGs                           │
+│  ├── react-src/     ← TSX Source (intermediate)                │
+│  ├── react/         ← Compiled ESM + .d.ts + .js.map           │
+│  ├── android/       ← Vector Drawables + attrs                 │
+│  ├── flutter/       ← TTF font + Dart class                    │
+│  └── ios/           ← Asset Catalog + Swift extension          │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+                                │  npm publish
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  📦 @marioschmidt/design-system-icons                           │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Installation
+---
+
+## 📦 Installation
 
 ```bash
 npm install @marioschmidt/design-system-icons
 ```
 
-## Usage
+---
 
-### React
+## 🚀 Usage
+
+### ⚛️ React
 
 ```tsx
 import { Add, Menu, Search } from '@marioschmidt/design-system-icons';
@@ -100,7 +153,7 @@ import { Add, Menu, Search } from '@marioschmidt/design-system-icons';
 <Add className="text-primary" style={{ color: 'red' }} />
 ```
 
-### Android
+### 🤖 Android
 
 ```xml
 <ImageView
@@ -110,9 +163,9 @@ import { Add, Menu, Search } from '@marioschmidt/design-system-icons';
     app:tint="?attr/colorOnSurface" />
 ```
 
-Icons automatically use `?attr/colorOnSurface` for theming.
+Icons automatically use `?attr/colorOnSurface` for Material theming.
 
-### Flutter
+### 💙 Flutter
 
 ```dart
 import 'package:bild_design_system_icons/icons.dart';
@@ -121,14 +174,14 @@ import 'package:bild_design_system_icons/icons.dart';
 Icon(BildIcons.add)
 Icon(BildIcons.menu, size: 32)
 
-// Dynamic access
+// Dynamic access by name
 Icon(BildIcons.byName('add'))
 
-// List all icons
+// List all available icons
 BildIcons.names.forEach((name) => print(name));
 ```
 
-### iOS (SwiftUI)
+### 🍎 iOS (SwiftUI)
 
 ```swift
 import BildDesignSystemIcons
@@ -141,13 +194,21 @@ BildIcon.add.image
 BildIcon.menu.image
     .font(.system(size: 32))
 
-// All icons
+// Iterate all icons
 ForEach(BildIcon.allCases, id: \.self) { icon in
     icon.image
 }
 ```
 
-## File Structure
+### 🌐 SVG (Direct)
+
+```html
+<img src="node_modules/@marioschmidt/design-system-icons/dist/icons/svg/add.svg" alt="Add">
+```
+
+---
+
+## 📁 File Structure
 
 ```
 src/icons/
@@ -168,8 +229,7 @@ scripts/icons/
 └── generate-icon-release-notes.js
 
 build-config/icons/
-├── svgo.config.js         ← SVG optimization config
-└── svgr.config.js         ← React component config
+└── svgo.config.js         ← SVG optimization config
 
 dist/icons/                 ← Generated output (gitignored)
 ├── svg/                   ← Optimized SVGs
@@ -190,7 +250,9 @@ dist/icons/                 ← Generated output (gitignored)
     └── Sources/           ← BildIcons.swift
 ```
 
-## Build Commands
+---
+
+## ⚙️ Build Commands
 
 ```bash
 # Build all platforms
@@ -207,11 +269,13 @@ npm run build:icons:ios      # Only iOS assets
 npm run clean:icons
 ```
 
-## Adding New Icons
+---
+
+## ➕ Adding New Icons
 
 ### Via Figma (Recommended)
 
-1. Export SVGs from Figma using the BILD Icons plugin
+1. Export SVGs from Figma using the **TokenSync Plugin**
 2. Plugin pushes to `figma-icons` branch
 3. CI automatically builds and creates PR
 4. Review and merge PR
@@ -235,7 +299,9 @@ npm run clean:icons
 
 3. Commit and push
 
-## Naming Conventions
+---
+
+## 📝 Naming Conventions
 
 ### Source Files
 
@@ -254,23 +320,25 @@ npm run clean:icons
 | Platform | Input | Output |
 |----------|-------|--------|
 | SVG | `icon-add.svg` | `add.svg` |
-| React | `icon-add.svg` | `Add.tsx` |
+| React | `icon-add.svg` | `Add.js` + `Add.d.ts` |
 | Android | `icon-add.svg` | `ic_add.xml` |
 | Flutter | `icon-add.svg` | `BildIcons.add` |
 | iOS | `icon-add.svg` | `BildIcon.add` |
 
-## SVG Requirements
+---
+
+## ✅ SVG Requirements
 
 ### Must Have
-- `viewBox` attribute (e.g., `viewBox="0 0 24 24"`)
-- Single color (will be converted to `currentColor`)
-- Vector paths only (no raster images)
+- ✅ `viewBox` attribute (e.g., `viewBox="0 0 24 24"`)
+- ✅ Single color (will be converted to `currentColor`)
+- ✅ Vector paths only (no raster images)
 
 ### Recommended
-- 24x24 viewBox (standard icon size)
-- Centered content with 2px padding
-- Stroke-based or fill-based (not mixed)
-- Stroke width: 2px for outline icons
+- 📐 24x24 viewBox (standard icon size)
+- 📏 Centered content with 2px padding
+- 🖌️ Stroke-based or fill-based (not mixed)
+- 📏 Stroke width: 2px for outline icons
 
 ### Will Be Removed
 - `width` and `height` attributes
@@ -279,22 +347,24 @@ npm run clean:icons
 - Unused definitions
 - Hardcoded colors (replaced with `currentColor`)
 
-### Security Validation
+### 🔒 Security Validation
 
 The build pipeline validates all SVGs before processing:
 
 | Check | Action |
 |-------|--------|
-| Missing `<svg>` element | Build fails |
-| Missing `</svg>` tag | Build fails |
-| `<script>` elements | Blocked (XSS risk) |
-| `<foreignObject>`, `<iframe>`, `<embed>` | Blocked |
-| Event handlers (`onclick`, etc.) | Blocked |
-| `javascript:` URLs | Blocked |
-| External `xlink:href` | Blocked |
-| Missing `viewBox` | Warning (continues with default)
+| Missing `<svg>` element | ❌ Build fails |
+| Missing `</svg>` tag | ❌ Build fails |
+| `<script>` elements | ❌ Blocked (XSS risk) |
+| `<foreignObject>`, `<iframe>`, `<embed>` | ❌ Blocked |
+| Event handlers (`onclick`, etc.) | ❌ Blocked |
+| `javascript:` URLs | ❌ Blocked |
+| External `xlink:href` | ❌ Blocked |
+| Missing `viewBox` | ⚠️ Warning (continues with default) |
 
-## Accessibility
+---
+
+## ♿ Accessibility
 
 ### React Components
 
@@ -302,12 +372,12 @@ The build pipeline validates all SVGs before processing:
 // Decorative icon (default)
 // Hidden from screen readers
 <Add />
-// Renders: <svg aria-hidden="true" ...>
+// Renders: <svg aria-hidden="true" role="img" ...>
 
 // Meaningful icon
 // Visible to screen readers with label
 <Add aria-label="Add new item" />
-// Renders: <svg aria-label="Add new item" ...>
+// Renders: <svg aria-label="Add new item" role="img" ...>
 
 // With tooltip
 <Add title="Add new item" aria-label="Add" />
@@ -316,13 +386,15 @@ The build pipeline validates all SVGs before processing:
 
 ### Guidelines
 
-| Use Case | Props |
-|----------|-------|
-| Decorative (next to text) | None (default) |
-| Standalone button | `aria-label="Action"` |
-| With tooltip | `title="..." aria-label="..."` |
+| Use Case | Props | Screen Reader |
+|----------|-------|---------------|
+| Decorative (next to text) | None (default) | Hidden |
+| Standalone button | `aria-label="Action"` | Reads label |
+| With tooltip | `title="..." aria-label="..."` | Reads label |
 
-## Theming
+---
+
+## 🎨 Theming
 
 All icons use `currentColor` and inherit the parent's text color:
 
@@ -331,8 +403,10 @@ All icons use `currentColor` and inherit the parent's text color:
 .icon-container {
   color: var(--color-icon-primary);
 }
+```
 
-/* Tailwind */
+```tsx
+/* React / Tailwind */
 <Add className="text-blue-500" />
 
 /* Inline */
@@ -343,39 +417,38 @@ All icons use `currentColor` and inherit the parent's text color:
 
 | Platform | Mechanism |
 |----------|-----------|
-| Web/React | CSS `color` property |
-| Android | `?attr/colorOnSurface` or `app:tint` |
-| Flutter | `IconTheme` or `color` parameter |
-| iOS | `.foregroundColor()` modifier |
+| 🌐 Web/React | CSS `color` property |
+| 🤖 Android | `?attr/colorOnSurface` or `app:tint` |
+| 💙 Flutter | `IconTheme` or `color` parameter |
+| 🍎 iOS | `.foregroundColor()` modifier |
 
-## CI/CD Workflows
+---
+
+## 🔄 CI/CD Workflows
 
 ### build-icons.yml
-Triggers on push to `main`, `develop`, `figma-icons`, `claude/**`
-- Builds all platforms
-- Uploads artifacts (30-day retention)
-- Comments on PRs with build summary
+- **Trigger**: Push to `main`, `develop`, `figma-icons`, `claude/**`
+- **Action**: Builds all platforms, uploads artifacts (30-day retention)
+- **PR Comment**: Build summary with download link
 
 ### auto-pr-from-figma-icons.yml
-Triggers on push to `figma-icons` branch
-- Builds icons
-- Compares with main branch
-- Generates release notes
-- Creates/updates PR automatically
+- **Trigger**: Push to `figma-icons` branch
+- **Action**: Builds icons, compares with main, generates release notes
+- **Output**: Creates/updates PR automatically
 
 ### publish-icons-on-merge.yml
-Triggers on merge to `main` with icon changes
-- Bumps version (patch)
-- Publishes to npm
-- Creates GitHub release
+- **Trigger**: Merge to `main` with icon changes
+- **Action**: Bumps version (patch), publishes to npm, creates GitHub release
 
-## Codepoint Stability (Flutter)
+---
+
+## 🔢 Codepoint Stability (Flutter)
 
 Flutter icons use a TTF font with stable codepoints. The `.codepoints.json` registry ensures:
 
-- Existing icons keep their codepoint forever
-- New icons get the next available codepoint
-- No breaking changes between versions
+- ✅ Existing icons keep their codepoint forever
+- ✅ New icons get the next available codepoint
+- ✅ No breaking changes between versions
 
 ```json
 {
@@ -388,11 +461,13 @@ Flutter icons use a TTF font with stable codepoints. The `.codepoints.json` regi
 }
 ```
 
-## Troubleshooting
+---
+
+## 🆘 Troubleshooting
 
 ### Build fails with "No SVG files found"
-- Check that SVGs are in `src/icons/`
-- Verify naming convention: `icon-{name}.svg`
+- ✅ Check that SVGs are in `src/icons/`
+- ✅ Verify naming convention: `icon-{name}.svg`
 
 ### React components have wrong attribute names
 - Attributes are auto-converted to camelCase
@@ -410,7 +485,9 @@ Flutter icons use a TTF font with stable codepoints. The `.codepoints.json` regi
 - Verify `Assets.xcassets` structure
 - Check `Contents.json` has correct filenames
 
-## Dependencies
+---
+
+## 📚 Dependencies
 
 Build-time only (not shipped with package):
 
@@ -423,7 +500,9 @@ Build-time only (not shipped with package):
 | typescript | ^5.3.0 | React TypeScript compilation |
 | @types/react | ^18.2.0 | React type definitions |
 
-## Package Exports
+---
+
+## 📦 Package Exports
 
 ```javascript
 // Main entry (React)
@@ -432,20 +511,54 @@ import { Add } from '@marioschmidt/design-system-icons';
 // Platform-specific
 import { Add } from '@marioschmidt/design-system-icons/react';
 
+// Individual icon
+import Add from '@marioschmidt/design-system-icons/react/Add';
+
 // Raw SVG path
 import addSvg from '@marioschmidt/design-system-icons/svg/add.svg';
 ```
 
-## License
+---
 
-UNLICENSED - Internal use only.
+## 🔗 Related
 
-## Related
-
-- [Main README](./README.md) - Project overview
-- [Token Documentation](./README.tokens.md) - Design tokens package
-- [Figma BILD Icons Plugin](#) - Figma export plugin
+| Document | Description |
+|----------|-------------|
+| [📖 README.md](./README.md) | Main project overview |
+| [📖 README.tokens.md](./README.tokens.md) | Token pipeline documentation |
 
 ---
 
-**Part of the BILD Design Ops Pipeline**
+## 🤝 Contributing
+
+> **⚠️ IMPORTANT: Figma ist die Single Source of Truth**
+>
+> Icons dürfen **NICHT** direkt im Repository geändert werden. Alle Icon-Änderungen müssen in Figma gemacht und über das TokenSync Plugin exportiert werden.
+
+**Workflow:**
+1. Icons in Figma bearbeiten/erstellen
+2. Mit TokenSync Plugin exportieren
+3. PR reviewen und mergen
+
+**NICHT erlaubt:**
+- ❌ Direkte SVG-Änderungen in `src/icons/`
+- ❌ Manuelle Commits zum `figma-icons` Branch
+- ❌ Änderungen an generierten Dateien
+
+---
+
+## 📄 License
+
+MIT License - See [LICENSE](./LICENSE) file.
+
+---
+
+**Built with ❤️ for the BILD Design System**
+
+| Feature | Status |
+|---------|--------|
+| 5 Platforms | ✅ |
+| TypeScript Support | ✅ |
+| Accessibility | ✅ |
+| Security Validation | ✅ |
+| Stable Codepoints | ✅ |
