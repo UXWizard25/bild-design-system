@@ -21,7 +21,6 @@ on:
       - main
     paths:
       - 'src/icons/**'
-      - 'dist/icons/**'
 
 # Prevent concurrent publishes
 concurrency:
