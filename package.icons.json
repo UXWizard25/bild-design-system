@@ -1,6 +1,6 @@
 {
   "name": "@marioschmidt/design-system-icons",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "BILD Design System Icons - Multi-platform icon transformation pipeline",
   "main": "dist/icons/react/index.js",
   "module": "dist/icons/react/index.mjs",
