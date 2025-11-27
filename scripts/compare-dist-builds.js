@@ -22,14 +22,31 @@ const platformParsers = {
     extensions: ['.css'],
     icon: '🌐',
     name: 'CSS',
-    parseTokens: (content) => {
+    parseTokens: (content, filePath) => {
       const tokens = new Map();
+
       // Match CSS custom properties: --token-name: value;
-      const regex = /--([\w-]+):\s*([^;]+);/g;
+      const varRegex = /--([\w-]+):\s*([^;]+);/g;
       let match;
-      while ((match = regex.exec(content)) !== null) {
-        tokens.set(match[1], match[2].trim());
+      while ((match = varRegex.exec(content)) !== null) {
+        tokens.set(`--${match[1]}`, match[2].trim());
       }
+
+      // Match CSS classes (for typography/effects): .className { ... }
+      // Also match data-attribute selectors with classes
+      const classRegex = /(?:\[data-[^\]]+\]\s*)?\.(\w+)\s*\{([^}]+)\}/g;
+      while ((match = classRegex.exec(content)) !== null) {
+        const className = match[1];
+        const properties = match[2].trim();
+        // Create a normalized value from the properties
+        const normalizedProps = properties
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line && !line.startsWith('/*'))
+          .join(' ');
+        tokens.set(`.${className}`, normalizedProps);
+      }
+
       return tokens;
     }
   },
@@ -44,8 +61,17 @@ const platformParsers = {
       const regex = /\$([\w-]+):\s*([^;]+);/g;
       let match;
       while ((match = regex.exec(content)) !== null) {
-        tokens.set(match[1], match[2].trim());
+        tokens.set(`$${match[1]}`, match[2].trim());
       }
+
+      // Match SCSS maps (for typography/effects): $name: ( ... );
+      const mapRegex = /\$([\w-]+):\s*\(([^)]+)\);/gs;
+      while ((match = mapRegex.exec(content)) !== null) {
+        const mapName = match[1];
+        const mapContent = match[2].trim().replace(/\s+/g, ' ');
+        tokens.set(`$${mapName}`, mapContent);
+      }
+
       return tokens;
     }
   },
@@ -56,19 +82,40 @@ const platformParsers = {
     name: 'JavaScript',
     parseTokens: (content) => {
       const tokens = new Map();
-      // Match ES6 exports: export const tokenName = "value";
-      const regex = /export const (\w+) = "([^"]+)";/g;
+
+      // Match simple ES6 exports: export const tokenName = "value";
+      const stringRegex = /export const (\w+) = "([^"]+)";/g;
       let match;
-      while ((match = regex.exec(content)) !== null) {
+      while ((match = stringRegex.exec(content)) !== null) {
         tokens.set(match[1], match[2]);
       }
-      // Also match non-string values: export const tokenName = value;
-      const regexNum = /export const (\w+) = ([^;]+);/g;
-      while ((match = regexNum.exec(content)) !== null) {
+
+      // Match object exports (typography): export const name = { ... };
+      const objectRegex = /export const (\w+) = \{([^}]+)\};/gs;
+      while ((match = objectRegex.exec(content)) !== null) {
+        if (!tokens.has(match[1])) {
+          const objContent = match[2].trim().replace(/\s+/g, ' ');
+          tokens.set(match[1], `{${objContent}}`);
+        }
+      }
+
+      // Match array exports (effects): export const name = [ ... ];
+      const arrayRegex = /export const (\w+) = \[([^\]]+)\];/gs;
+      while ((match = arrayRegex.exec(content)) !== null) {
+        if (!tokens.has(match[1])) {
+          const arrContent = match[2].trim().replace(/\s+/g, ' ');
+          tokens.set(match[1], `[${arrContent}]`);
+        }
+      }
+
+      // Match numeric/other simple values
+      const simpleRegex = /export const (\w+) = ([^;{[\n]+);/g;
+      while ((match = simpleRegex.exec(content)) !== null) {
         if (!tokens.has(match[1])) {
           tokens.set(match[1], match[2].trim());
         }
       }
+
       return tokens;
     }
   },
@@ -79,12 +126,23 @@ const platformParsers = {
     name: 'iOS (Swift)',
     parseTokens: (content) => {
       const tokens = new Map();
+
+      // Match Swift static lets with array values: public static let Name: [Type] = [...]
+      const arrayRegex = /public static let (\w+):\s*\[[^\]]+\]\s*=\s*\[([^\]]+)\]/gs;
+      let match;
+      while ((match = arrayRegex.exec(content)) !== null) {
+        const arrContent = match[2].trim().replace(/\s+/g, ' ');
+        tokens.set(match[1], `[${arrContent}]`);
+      }
+
       // Match Swift static lets: public static let TokenName = value
       const regex = /public static let (\w+) = (.+)$/gm;
-      let match;
       while ((match = regex.exec(content)) !== null) {
-        tokens.set(match[1], match[2].trim());
+        if (!tokens.has(match[1])) {
+          tokens.set(match[1], match[2].trim());
+        }
       }
+
       // Also match static lets without public
       const regex2 = /static let (\w+) = (.+)$/gm;
       while ((match = regex2.exec(content)) !== null) {
@@ -92,6 +150,7 @@ const platformParsers = {
           tokens.set(match[1], match[2].trim());
         }
       }
+
       return tokens;
     }
   },
@@ -118,12 +177,32 @@ const platformParsers = {
     name: 'Flutter (Dart)',
     parseTokens: (content) => {
       const tokens = new Map();
-      // Match Dart static consts: static const tokenName = value;
-      const regex = /static const (\w+) = (.+);/g;
+
+      // Match Dart static const with array values: static const name = [ ... ];
+      const arrayRegex = /static const (\w+) = \[([^\]]+)\];/gs;
       let match;
-      while ((match = regex.exec(content)) !== null) {
-        tokens.set(match[1], match[2].trim());
+      while ((match = arrayRegex.exec(content)) !== null) {
+        const arrContent = match[2].trim().replace(/\s+/g, ' ');
+        tokens.set(match[1], `[${arrContent}]`);
       }
+
+      // Match Dart static const with map values: static const name = { ... };
+      const mapRegex = /static const (\w+) = \{([^}]+)\};/gs;
+      while ((match = mapRegex.exec(content)) !== null) {
+        if (!tokens.has(match[1])) {
+          const mapContent = match[2].trim().replace(/\s+/g, ' ');
+          tokens.set(match[1], `{${mapContent}}`);
+        }
+      }
+
+      // Match simple Dart static consts: static const tokenName = value;
+      const regex = /static const (\w+) = ([^;{[\n]+);/g;
+      while ((match = regex.exec(content)) !== null) {
+        if (!tokens.has(match[1])) {
+          tokens.set(match[1], match[2].trim());
+        }
+      }
+
       return tokens;
     }
   },
