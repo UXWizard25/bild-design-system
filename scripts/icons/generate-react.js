@@ -177,8 +177,8 @@ const ${componentName} = React.forwardRef<SVGSVGElement, ${componentName}Props>(
         height={size}
         fill="currentColor"
         role="img"
-        aria-hidden={isDecorative}
-        aria-label={ariaLabel}
+        aria-hidden={isDecorative ? true : undefined}
+        aria-label={ariaLabel || undefined}
         {...props}
       >
         {title && <title>{title}</title>}
