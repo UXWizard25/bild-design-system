@@ -1,0 +1,252 @@
+# ============================================================================
+# Publish Icons on Merge
+# ============================================================================
+#
+# Publishes the icon package to npm when icon changes are merged to main.
+#
+# Workflow:
+#   1. Detect icon changes in merge commit
+#   2. Bump version in package.icons.json
+#   3. Build fresh icon assets
+#   4. Publish to npm
+#   5. Create GitHub release
+#
+# ============================================================================
+
+name: Publish Icons
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/icons/**'
+      - 'dist/icons/**'
+
+# Prevent concurrent publishes
+concurrency:
+  group: icons-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  publish:
+    name: Publish Icon Package
+    runs-on: ubuntu-latest
+
+    steps:
+      # ========================================
+      # Setup
+      # ========================================
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install svgo@^3.2.0 @svgr/core@^8.1.0 svg2vectordrawable@^2.9.1 fantasticon@^3.0.0
+
+      # ========================================
+      # Version Bump
+      # ========================================
+
+      - name: Bump version
+        id: version
+        run: |
+          # Read current version
+          CURRENT_VERSION=$(cat package.icons.json | grep '"version"' | head -1 | sed 's/.*"version": "\(.*\)".*/\1/')
+          echo "Current version: $CURRENT_VERSION"
+
+          # Bump patch version
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=${VERSION_PARTS[2]}
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+
+          echo "New version: $NEW_VERSION"
+
+          # Update package.icons.json
+          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.icons.json
+
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "previous_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      # ========================================
+      # Build
+      # ========================================
+
+      - name: Build icons
+        run: |
+          echo "::group::Building icon assets"
+          node scripts/icons/build-icons.js
+          echo "::endgroup::"
+
+      - name: Count icons
+        id: count
+        run: |
+          SVG_COUNT=$(find dist/icons/svg -name "*.svg" 2>/dev/null | wc -l || echo 0)
+          echo "count=$SVG_COUNT" >> $GITHUB_OUTPUT
+
+      # ========================================
+      # Validate
+      # ========================================
+
+      - name: Validate package
+        run: |
+          echo "::group::Validating package contents"
+
+          # Check required directories exist
+          [ -d "dist/icons/svg" ] || (echo "Missing dist/icons/svg" && exit 1)
+          [ -d "dist/icons/react" ] || (echo "Missing dist/icons/react" && exit 1)
+
+          # Check for at least one icon
+          SVG_COUNT=$(find dist/icons/svg -name "*.svg" | wc -l)
+          if [ "$SVG_COUNT" -eq 0 ]; then
+            echo "No SVG icons found - skipping publish"
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Found $SVG_COUNT icons"
+          echo "skip=false" >> $GITHUB_OUTPUT
+          echo "::endgroup::"
+
+      # ========================================
+      # Publish
+      # ========================================
+
+      - name: Prepare package for publish
+        if: steps.count.outputs.count != '0'
+        run: |
+          # Create a temporary package.json for publishing
+          cp package.icons.json package.json.backup
+
+          # The icons package uses package.icons.json
+          # We need to publish from that
+
+      - name: Publish to npm
+        if: steps.count.outputs.count != '0'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # Publish using package.icons.json as the manifest
+          # npm publish reads from package.json by default
+
+          # Temporarily swap package files
+          mv package.json package.tokens.json
+          mv package.icons.json package.json
+
+          # Publish
+          npm publish --access public || echo "Publish failed or package already exists"
+
+          # Restore
+          mv package.json package.icons.json
+          mv package.tokens.json package.json
+
+      # ========================================
+      # Commit & Tag
+      # ========================================
+
+      - name: Commit version bump
+        if: steps.count.outputs.count != '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add package.icons.json
+          git commit -m "chore(icons): bump version to ${{ steps.version.outputs.version }}" || true
+          git push || true
+
+      - name: Create release tag
+        if: steps.count.outputs.count != '0'
+        run: |
+          TAG="icons-v${{ steps.version.outputs.version }}"
+          git tag -a "$TAG" -m "Icon release ${{ steps.version.outputs.version }}"
+          git push origin "$TAG" || true
+
+      # ========================================
+      # GitHub Release
+      # ========================================
+
+      - name: Create GitHub Release
+        if: steps.count.outputs.count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.version.outputs.version }}';
+            const iconCount = '${{ steps.count.outputs.count }}';
+
+            const body = `## Icon Package v${version}
+
+            ### Package
+            \`\`\`bash
+            npm install @marioschmidt/design-system-icons@${version}
+            \`\`\`
+
+            ### Contents
+            - ${iconCount} icons
+            - React TSX components
+            - Android Vector Drawables
+            - Flutter Icon Font + Dart class
+            - iOS Asset Catalog
+
+            ### Usage
+
+            **React:**
+            \`\`\`tsx
+            import { Add, Menu } from '@marioschmidt/design-system-icons';
+
+            <Add size={24} />
+            <Menu aria-label="Open menu" />
+            \`\`\`
+
+            **Android:**
+            \`\`\`xml
+            <ImageView
+                android:src="@drawable/ic_add"
+                app:tint="?attr/colorOnSurface" />
+            \`\`\`
+
+            **Flutter:**
+            \`\`\`dart
+            Icon(BildIcons.add)
+            \`\`\`
+            `;
+
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `icons-v${version}`,
+              name: `Icons v${version}`,
+              body: body,
+              draft: false,
+              prerelease: false,
+            });
+
+      # ========================================
+      # Upload Artifacts
+      # ========================================
+
+      - name: Upload release artifacts
+        if: steps.count.outputs.count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: icon-release-${{ steps.version.outputs.version }}
+          path: dist/icons/
+          retention-days: 90

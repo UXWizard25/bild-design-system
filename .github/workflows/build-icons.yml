@@ -1,0 +1,186 @@
+# ============================================================================
+# Icon Build Workflow
+# ============================================================================
+#
+# Builds icon assets for all platforms when icons change.
+# Triggers on push to main, develop, figma-icons, and claude/** branches.
+#
+# Outputs:
+#   - Optimized SVGs
+#   - React TSX components
+#   - Android Vector Drawables
+#   - Flutter Icon Font + Dart
+#   - iOS Asset Catalog
+#
+# ============================================================================
+
+name: Build Icons
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - figma-icons
+      - 'claude/**'
+    paths:
+      - 'src/icons/**'
+      - 'scripts/icons/**'
+      - 'build-config/icons/**'
+      - 'package.icons.json'
+      - '.github/workflows/build-icons.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/icons/**'
+      - 'scripts/icons/**'
+      - 'build-config/icons/**'
+      - 'package.icons.json'
+  workflow_dispatch:
+    inputs:
+      clean_build:
+        description: 'Force clean build (delete dist/icons first)'
+        required: false
+        default: 'false'
+        type: boolean
+
+# Ensure only one build runs at a time per branch
+concurrency:
+  group: icons-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Icon Assets
+    runs-on: ubuntu-latest
+
+    steps:
+      # ========================================
+      # Setup
+      # ========================================
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          # Install icon-specific dependencies
+          npm install svgo@^3.2.0 @svgr/core@^8.1.0 svg2vectordrawable@^2.9.1 fantasticon@^3.0.0
+
+      # ========================================
+      # Clean (optional)
+      # ========================================
+
+      - name: Clean previous build
+        if: ${{ github.event.inputs.clean_build == 'true' }}
+        run: rm -rf dist/icons
+
+      # ========================================
+      # Build
+      # ========================================
+
+      - name: Build icons
+        id: build
+        run: |
+          echo "::group::Building icon assets"
+          node scripts/icons/build-icons.js
+          echo "::endgroup::"
+
+          # Count generated files
+          SVG_COUNT=$(find dist/icons/svg -name "*.svg" 2>/dev/null | wc -l || echo 0)
+          REACT_COUNT=$(find dist/icons/react -name "*.tsx" 2>/dev/null | wc -l || echo 0)
+          ANDROID_COUNT=$(find dist/icons/android -name "*.xml" 2>/dev/null | wc -l || echo 0)
+
+          echo "svg_count=$SVG_COUNT" >> $GITHUB_OUTPUT
+          echo "react_count=$REACT_COUNT" >> $GITHUB_OUTPUT
+          echo "android_count=$ANDROID_COUNT" >> $GITHUB_OUTPUT
+
+      # ========================================
+      # Artifacts
+      # ========================================
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: icon-assets
+          path: dist/icons/
+          retention-days: 30
+          if-no-files-found: warn
+
+      # ========================================
+      # Summary
+      # ========================================
+
+      - name: Create build summary
+        run: |
+          echo "## Icon Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Files Generated |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-----------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| SVG | ${{ steps.build.outputs.svg_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| React | ${{ steps.build.outputs.react_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Android | ${{ steps.build.outputs.android_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+
+      # ========================================
+      # PR Comment (if applicable)
+      # ========================================
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const svgCount = '${{ steps.build.outputs.svg_count }}';
+            const reactCount = '${{ steps.build.outputs.react_count }}';
+            const androidCount = '${{ steps.build.outputs.android_count }}';
+
+            const body = `## 🎨 Icon Build Complete
+
+            | Platform | Files |
+            |----------|-------|
+            | 🌐 SVG | ${svgCount} |
+            | ⚛️ React | ${reactCount} |
+            | 🤖 Android | ${androidCount} |
+
+            **Artifacts:** [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Icon Build Complete')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            }

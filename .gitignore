@@ -8,6 +8,11 @@ pnpm-lock.yaml
 dist/
 tokens/
 
+# Icon build comparison
+dist-icons-old/
+icons-diff.json
+icons-release-notes.md
+
 # Logs
 *.log
 npm-debug.log*
