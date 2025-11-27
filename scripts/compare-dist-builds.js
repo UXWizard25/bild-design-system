@@ -230,6 +230,8 @@ const platformParsers = {
 
 /**
  * Recursively flatten JSON tokens
+ * Uses token 'name' field (from Style Dictionary) or key as token name
+ * to ensure consistency with other platforms (CSS, JS, etc.)
  */
 function flattenJsonTokens(obj, prefix, tokens) {
   if (!obj || typeof obj !== 'object') return;
@@ -245,7 +247,10 @@ function flattenJsonTokens(obj, prefix, tokens) {
     // If this looks like a token (has $value or value)
     if (value && typeof value === 'object' && ('$value' in value || 'value' in value)) {
       const tokenValue = value.$value !== undefined ? value.$value : value.value;
-      tokens.set(path, typeof tokenValue === 'object' ? JSON.stringify(tokenValue) : String(tokenValue));
+      // Use 'name' field from Style Dictionary output, fallback to key (not full path)
+      // This ensures consistency with other platforms that use flat token names
+      const tokenName = value.name || key;
+      tokens.set(tokenName, typeof tokenValue === 'object' ? JSON.stringify(tokenValue) : String(tokenValue));
     } else if (value && typeof value === 'object') {
       flattenJsonTokens(value, path, tokens);
     }
@@ -380,6 +385,21 @@ function extractFileMetadata(filePath) {
 // =============================================================================
 
 /**
+ * Normalize token value for comparison
+ * Handles hex color case differences (#B0D1F3 vs #b0d1f3)
+ */
+function normalizeTokenValue(value) {
+  if (typeof value !== 'string') return value;
+
+  // Normalize hex colors to lowercase (3, 4, 6, or 8 digit hex)
+  if (/^#[0-9a-fA-F]{3,8}$/.test(value)) {
+    return value.toLowerCase();
+  }
+
+  return value;
+}
+
+/**
  * Compare two token maps and return differences
  */
 function compareTokenMaps(oldTokens, newTokens) {
@@ -394,7 +414,8 @@ function compareTokenMaps(oldTokens, newTokens) {
     const oldValue = oldTokens.get(name);
     if (oldValue === undefined) {
       changes.added.push({ name, value: newValue });
-    } else if (oldValue !== newValue) {
+    } else if (normalizeTokenValue(oldValue) !== normalizeTokenValue(newValue)) {
+      // Compare normalized values to ignore case differences in hex colors
       changes.modified.push({ name, oldValue, newValue });
     }
   }
