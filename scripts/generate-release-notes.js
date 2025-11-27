@@ -124,6 +124,38 @@ function tableRow(...cells) {
   return `| ${cells.join(' | ')} |`;
 }
 
+/**
+ * Get unique platform names for tokens (deduplicated by token + platform)
+ * Returns one entry per token per platform, filtering tokens that only have one platform
+ */
+function getUniquePlatformNames(tokens) {
+  const results = [];
+  const seen = new Set();
+
+  for (const token of tokens) {
+    // Get unique platforms for this token
+    const uniquePlatforms = [...new Map(token.platforms.map(p => [p.key, p])).values()];
+
+    // Only include if token has multiple platforms (otherwise no need to show platform-specific names)
+    if (uniquePlatforms.length <= 1) continue;
+
+    for (const p of uniquePlatforms) {
+      const key = `${token.normalizedName}|${p.key}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      results.push({
+        displayName: token.displayName,
+        icon: p.icon,
+        platformName: p.name,
+        tokenName: p.tokenName
+      });
+    }
+  }
+
+  return results;
+}
+
 // =============================================================================
 // LAYER 1: EXECUTIVE SUMMARY
 // =============================================================================
@@ -245,15 +277,14 @@ function generateUnifiedTokenChanges(diff, options = {}) {
       md += `| ... | *${removed.length - maxTokensPerSection} more* | |\n`;
     }
 
-    // Platform-specific names (collapsible)
-    if (removed.some(t => t.platforms.length > 1)) {
+    // Platform-specific names (collapsible) - deduplicated by platform
+    const uniquePlatformTokens = getUniquePlatformNames(displayTokens);
+    if (uniquePlatformTokens.length > 0) {
       md += '\n<details>\n<summary>Platform-specific names</summary>\n\n';
       md += '| Token | Platform | Name |\n';
       md += '|-------|----------|------|\n';
-      for (const token of displayTokens.filter(t => t.platforms.length > 1)) {
-        for (const p of token.platforms) {
-          md += `| \`${truncate(token.displayName, 20)}\` | ${p.icon} ${p.name} | \`${truncate(p.tokenName, 30)}\` |\n`;
-        }
+      for (const entry of uniquePlatformTokens) {
+        md += `| \`${truncate(entry.displayName, 20)}\` | ${entry.icon} ${entry.platformName} | \`${truncate(entry.tokenName, 30)}\` |\n`;
       }
       md += '</details>\n';
     }
@@ -264,6 +295,7 @@ function generateUnifiedTokenChanges(diff, options = {}) {
   // Modified tokens
   if (modified.length > 0) {
     md += `### 🟡 Modified (${modified.length})\n\n`;
+    md += '> ℹ️ Values shown are representative. Actual values may vary by brand/mode.\n\n';
     md += '| Token | Change | Platforms |\n';
     md += '|-------|--------|:---------:|\n';
 
@@ -277,15 +309,14 @@ function generateUnifiedTokenChanges(diff, options = {}) {
       md += `| ... | *${modified.length - maxTokensPerSection} more* | |\n`;
     }
 
-    // Platform-specific names (collapsible)
-    if (modified.some(t => t.platforms.length > 1)) {
+    // Platform-specific names (collapsible) - deduplicated by platform
+    const uniquePlatformTokens = getUniquePlatformNames(displayTokens);
+    if (uniquePlatformTokens.length > 0) {
       md += '\n<details>\n<summary>Platform-specific names</summary>\n\n';
       md += '| Token | Platform | Name |\n';
       md += '|-------|----------|------|\n';
-      for (const token of displayTokens.filter(t => t.platforms.length > 1)) {
-        for (const p of token.platforms) {
-          md += `| \`${truncate(token.displayName, 20)}\` | ${p.icon} ${p.name} | \`${truncate(p.tokenName, 30)}\` |\n`;
-        }
+      for (const entry of uniquePlatformTokens) {
+        md += `| \`${truncate(entry.displayName, 20)}\` | ${entry.icon} ${entry.platformName} | \`${truncate(entry.tokenName, 30)}\` |\n`;
       }
       md += '</details>\n';
     }
@@ -296,6 +327,7 @@ function generateUnifiedTokenChanges(diff, options = {}) {
   // Added tokens
   if (added.length > 0) {
     md += `### 🟢 Added (${added.length})\n\n`;
+    md += '> ℹ️ Values shown are representative. Actual values may vary by brand/mode.\n\n';
     md += '| Token | Value | Platforms |\n';
     md += '|-------|-------|:---------:|\n';
 
@@ -308,15 +340,14 @@ function generateUnifiedTokenChanges(diff, options = {}) {
       md += `| ... | *${added.length - maxTokensPerSection} more* | |\n`;
     }
 
-    // Platform-specific names (collapsible)
-    if (added.some(t => t.platforms.length > 1)) {
+    // Platform-specific names (collapsible) - deduplicated by platform
+    const uniquePlatformTokens = getUniquePlatformNames(displayTokens);
+    if (uniquePlatformTokens.length > 0) {
       md += '\n<details>\n<summary>Platform-specific names</summary>\n\n';
       md += '| Token | Platform | Name |\n';
       md += '|-------|----------|------|\n';
-      for (const token of displayTokens.filter(t => t.platforms.length > 1)) {
-        for (const p of token.platforms) {
-          md += `| \`${truncate(token.displayName, 20)}\` | ${p.icon} ${p.name} | \`${truncate(p.tokenName, 30)}\` |\n`;
-        }
+      for (const entry of uniquePlatformTokens) {
+        md += `| \`${truncate(entry.displayName, 20)}\` | ${entry.icon} ${entry.platformName} | \`${truncate(entry.tokenName, 30)}\` |\n`;
       }
       md += '</details>\n';
     }
