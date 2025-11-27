@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Flutter Icon Font Codepoint Registry - DO NOT EDIT MANUALLY",
+  "description": "Stable codepoint assignments for Flutter icon font. New icons get the next available codepoint.",
+  "nextCodepoint": "e007",
+  "icons": {
+    "add": "e001",
+    "arrow-left": "e002",
+    "arrow-right": "e003",
+    "close": "e004",
+    "menu": "e005",
+    "search": "e006"
+  }
+}

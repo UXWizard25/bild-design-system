@@ -4,6 +4,11 @@ scripts/
 build-config/
 tokens/
 
+# Icon build comparison
+dist-icons-old/
+icons-diff.json
+icons-release-notes.md
+
 # Baseline comparison folders (should never be in package)
 dist-old/
 dist-new/
