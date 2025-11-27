@@ -38,11 +38,11 @@ jobs:
           echo "📦 Installing dependencies..."
           npm ci
 
-      # 4. Token Build durchführen
-      - name: Build Design Tokens
+      # 4. Build neue Tokens (PR Branch)
+      - name: Build New Tokens
         id: build
         run: |
-          echo "🎨 Building design tokens..."
+          echo "🎨 Building design tokens (new version)..."
           npm run build 2>&1 | tee build-output.log
 
           # Extrahiere Build-Statistiken
@@ -59,7 +59,75 @@ jobs:
 
           echo "✅ Build successful: $SUCCESSFUL_BUILDS/$TOTAL_BUILDS"
 
-      # 5. Upload Build Artifacts
+      # 5. Build Baseline Tokens (Main Branch) für Vergleich
+      - name: Build Baseline Tokens
+        id: baseline
+        run: |
+          echo "📦 Building baseline tokens from main branch..."
+
+          # Sichere neue Token-Dateien
+          mv tokens/ tokens-new/
+          mv dist/ dist-new/
+
+          # Sichere neue Source-Datei
+          cp src/design-tokens/bild-design-system-raw-data.json /tmp/new-source.json
+
+          # Hole Source von main Branch
+          git fetch origin main
+          if git show origin/main:src/design-tokens/bild-design-system-raw-data.json > src/design-tokens/bild-design-system-raw-data.json 2>/dev/null; then
+            echo "✅ Main branch source loaded"
+
+            # Build mit main Source
+            npm run build 2>&1 || echo "Baseline build completed"
+
+            # Verschiebe zu tokens-old
+            if [ -d "tokens" ]; then
+              mv tokens/ tokens-old/
+              echo "baseline_available=true" >> $GITHUB_OUTPUT
+            else
+              mkdir -p tokens-old
+              echo "baseline_available=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ No main branch source found (first PR?)"
+            mkdir -p tokens-old
+            echo "baseline_available=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Stelle neue Source und Builds wieder her
+          mv /tmp/new-source.json src/design-tokens/bild-design-system-raw-data.json
+          mv tokens-new/ tokens/
+          mv dist-new/ dist/
+
+          echo "✅ Baseline comparison ready"
+
+      # 6. Vergleiche Token Builds
+      - name: Compare Token Builds
+        id: diff
+        run: |
+          echo "🔍 Comparing token builds..."
+
+          node scripts/compare-token-builds.js \
+            --old tokens-old/ \
+            --new tokens/ \
+            --output token-diff.json
+
+          # Extrahiere Summary für Output
+          if [ -f "token-diff.json" ]; then
+            ADDED=$(cat token-diff.json | jq -r '.summary.counts.added // 0')
+            MODIFIED=$(cat token-diff.json | jq -r '.summary.counts.modified // 0')
+            DELETED=$(cat token-diff.json | jq -r '.summary.counts.deleted // 0')
+            IMPACT=$(cat token-diff.json | jq -r '.summary.impact.level // "unknown"')
+
+            echo "added=$ADDED" >> $GITHUB_OUTPUT
+            echo "modified=$MODIFIED" >> $GITHUB_OUTPUT
+            echo "deleted=$DELETED" >> $GITHUB_OUTPUT
+            echo "impact=$IMPACT" >> $GITHUB_OUTPUT
+
+            echo "📊 Diff Summary: +$ADDED | ~$MODIFIED | -$DELETED (Impact: $IMPACT)"
+          fi
+
+      # 7. Upload Build Artifacts
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -67,27 +135,11 @@ jobs:
           path: |
             dist/
             tokens/
+            token-diff.json
             build-output.log
           retention-days: 30
 
-      # 6. Extrahiere geänderte Token-Dateien
-      - name: Get Changed Token Files
-        id: changes
-        run: |
-          # Vergleiche mit main Branch
-          git fetch origin main
-          CHANGED_FILES=$(git diff --name-only origin/main...HEAD -- src/design-tokens/ | head -10)
-
-          # Formatiere für PR Body
-          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-          # Zähle Änderungen
-          CHANGE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
-          echo "change_count=$CHANGE_COUNT" >> $GITHUB_OUTPUT
-
-      # 7. Prüfe ob PR bereits existiert
+      # 8. Prüfe ob PR bereits existiert
       - name: Check for Existing PR
         id: check_pr
         run: |
@@ -104,43 +156,54 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 8. Generate Release Notes
+      # 9. Generate Release Notes
       - name: Generate Release Notes
         id: release_notes
         run: |
           echo "📝 Generating comprehensive release notes..."
 
-          # Generate release notes using script
-          RELEASE_NOTES=$(node scripts/generate-release-notes.js \
+          # Generate release notes mit Diff-Datei
+          node scripts/generate-release-notes.js \
+            --diff-file "token-diff.json" \
             --commit-sha "${{ github.sha }}" \
             --build-success true \
             --successful-builds "${{ steps.build.outputs.successful_builds }}" \
             --total-builds "${{ steps.build.outputs.total_builds }}" \
-            --run-id "${{ github.run_id }}")
+            --run-id "${{ github.run_id }}" > release-notes.md
 
-          # Save to file for PR
-          echo "$RELEASE_NOTES" > release-notes.md
+          echo "✅ Release notes generated successfully"
 
-          echo "Release notes generated successfully"
-
-      # 9. Erstelle oder Update Pull Request
+      # 10. Erstelle oder Update Pull Request
       - name: Create or Update Pull Request
         run: |
           if [ "${{ steps.check_pr.outputs.exists }}" == "true" ]; then
             echo "📝 Updating existing PR #${{ steps.check_pr.outputs.pr_number }}..."
 
-            # Add comment with update
-            gh pr comment ${{ steps.check_pr.outputs.pr_number }} --body "$(cat <<'EOF'
-          ## 🔄 Tokens Updated
+            # Update PR body with new release notes
+            gh pr edit ${{ steps.check_pr.outputs.pr_number }} --body-file release-notes.md
 
-          **Build Status:** ✅ Success
-          **Successful Builds:** ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }}
-          **Commit:** \`${{ github.sha }}\`
-          **Updated:** $(date -u +"%Y-%m-%d %H:%M UTC")
+            # Add comment with update summary
+            IMPACT="${{ steps.diff.outputs.impact }}"
+            ADDED="${{ steps.diff.outputs.added }}"
+            MODIFIED="${{ steps.diff.outputs.modified }}"
+            DELETED="${{ steps.diff.outputs.deleted }}"
 
-          See PR description for full release notes.
-          EOF
-          )"
+            if [ "$IMPACT" == "breaking" ]; then
+              EMOJI="🔴"
+            elif [ "$IMPACT" == "moderate" ]; then
+              EMOJI="🟡"
+            else
+              EMOJI="🟢"
+            fi
+
+            gh pr comment ${{ steps.check_pr.outputs.pr_number }} --body "## ${EMOJI} Token Update
+
+**Changes:** +${ADDED} | ~${MODIFIED} | -${DELETED}
+**Build:** ✅ ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }}
+**Commit:** \`${{ github.sha }}\`
+
+PR description updated with full release notes."
+
           else
             echo "📝 Creating new Pull Request..."
 
@@ -154,18 +217,32 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 10. Build Summary erstellen
+      # 11. Build Summary erstellen
       - name: Create Build Summary
         run: |
           echo "## 🎨 Design Token Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ✅ Build Successful" >> $GITHUB_STEP_SUMMARY
-          echo "**Successful Builds:** ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Files Changed:** ${{ steps.changes.outputs.change_count }}" >> $GITHUB_STEP_SUMMARY
+
+          IMPACT="${{ steps.diff.outputs.impact }}"
+          if [ "$IMPACT" == "breaking" ]; then
+            echo "### 🔴 Breaking Changes Detected!" >> $GITHUB_STEP_SUMMARY
+          elif [ "$IMPACT" == "moderate" ]; then
+            echo "### 🟡 Moderate Update" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### 🟢 Minor Update" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Token Changes:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Added: ${{ steps.diff.outputs.added }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Modified: ${{ steps.diff.outputs.modified }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Deleted: ${{ steps.diff.outputs.deleted }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Status:** ✅ ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ steps.check_pr.outputs.exists }}" == "true" ]; then
-            echo "**Pull Request:** Updated existing PR #${{ steps.check_pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Pull Request:** Updated PR #${{ steps.check_pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
           else
             echo "**Pull Request:** New PR created" >> $GITHUB_STEP_SUMMARY
           fi
@@ -176,7 +253,7 @@ jobs:
           echo "2. Check the token changes" >> $GITHUB_STEP_SUMMARY
           echo "3. Merge the PR to publish package" >> $GITHUB_STEP_SUMMARY
 
-      # 11. Bei Fehler benachrichtigen
+      # 12. Bei Fehler benachrichtigen
       - name: Notify on Failure
         if: failure()
         run: |
