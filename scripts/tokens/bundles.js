@@ -19,7 +19,7 @@ const path = require('path');
 const { glob } = require('glob');
 
 const DIST_DIR = path.join(__dirname, '../..', 'dist');
-const BUNDLES_DIR = path.join(DIST_DIR, 'bundles');
+const BUNDLES_DIR = path.join(DIST_DIR, 'css', 'bundles');
 const BRANDS = ['bild', 'sportbild', 'advertorial'];
 const PACKAGE_VERSION = require('../../package.json').version;
 
