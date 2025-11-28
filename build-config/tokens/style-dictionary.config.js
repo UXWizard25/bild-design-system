@@ -125,7 +125,7 @@ function groupTokensHierarchically(tokens) {
  * Name transformation functions for different platforms
  */
 const nameTransformers = {
-  // Kebab-case für CSS, SCSS, Android
+  // Kebab-case für CSS, SCSS
   kebab: (str) => {
     return str
       .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
@@ -135,7 +135,17 @@ const nameTransformers = {
       .replace(/^-|-$/g, '');
   },
 
-  // camelCase für JavaScript, Flutter
+  // snake_case für Android (hyphens sind in Android XML nicht erlaubt)
+  snake: (str) => {
+    return str
+      .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '');
+  },
+
+  // camelCase für JavaScript, Flutter, iOS Swift
   camel: (str) => {
     const kebab = nameTransformers.kebab(str);
     let camelCase = kebab.replace(/-([a-z0-9])/g, (_, letter) => letter.toUpperCase());
@@ -148,7 +158,7 @@ const nameTransformers = {
     return camelCase;
   },
 
-  // PascalCase für iOS Swift
+  // PascalCase (kept for potential future use)
   pascal: (str) => {
     const camel = nameTransformers.camel(str);
     if (camel.length === 0) return camel;
@@ -421,7 +431,22 @@ const nameIosSwiftTransform = {
   type: 'name',
   transform: (token) => {
     const lastSegment = token.path[token.path.length - 1];
-    return nameTransformers.pascal(lastSegment);
+    // Changed from PascalCase to camelCase - more consistent with Swift property naming
+    return nameTransformers.camel(lastSegment);
+  }
+};
+
+/**
+ * Transform: Name für Android XML (snake_case)
+ * Hyphens sind in Android Resource Namen nicht erlaubt!
+ * Verwendet nur das letzte Pfad-Segment für den Token-Namen
+ */
+const nameAndroidTransform = {
+  name: 'name/custom/android',
+  type: 'name',
+  transform: (token) => {
+    const lastSegment = token.path[token.path.length - 1];
+    return nameTransformers.snake(lastSegment);
   }
 };
 
@@ -754,7 +779,7 @@ const jsonNestedFormat = ({ dictionary }) => {
 const iosSwiftClassFormat = ({ dictionary, options, file }) => {
   const className = options.className || file.className || 'StyleDictionary';
   const context = getContextString(options);
-  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'pascal');
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'camel');
 
   let output = generateFileHeader({
     fileName: file.destination,
@@ -983,8 +1008,8 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
       tokens.forEach(token => {
         if (token.$type === 'typography' && token.$value) {
           const style = token.$value;
-          // Use only the last path segment as class name
-          let className = token.path[token.path.length - 1];
+          // Use only the last path segment as class name, convert to kebab-case for CSS
+          let className = nameTransformers.kebab(token.path[token.path.length - 1]);
           // Remove leading dot if present (token names may already include it)
           if (className.startsWith('.')) {
             className = className.substring(1);
@@ -1060,8 +1085,8 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
 
       tokens.forEach(token => {
         if (token.$type === 'shadow' && Array.isArray(token.$value)) {
-          // Use only the last path segment as class name
-          let className = token.path[token.path.length - 1];
+          // Use only the last path segment as class name, convert to kebab-case for CSS
+          let className = nameTransformers.kebab(token.path[token.path.length - 1]);
           // Remove leading dot if present (token names may already include it)
           if (className.startsWith('.')) {
             className = className.substring(1);
@@ -1139,8 +1164,9 @@ const iosSwiftTypographyFormat = ({ dictionary, options }) => {
       tokens.forEach(token => {
         if (token.$type === 'typography' && token.$value) {
           const style = token.$value;
-          // Use only the last path segment as property name
-          const propName = token.path[token.path.length - 1];
+          // Use only the last path segment as property name, transformed to camelCase
+          const rawName = token.path[token.path.length - 1];
+          const propName = nameTransformers.camel(rawName);
 
           if (token.comment) {
             output += `        /** ${token.comment} */\n`;
@@ -1178,7 +1204,7 @@ const iosSwiftTypographyFormat = ({ dictionary, options }) => {
  */
 const androidResourcesFormat = ({ dictionary, options, file }) => {
   const context = getContextString(options);
-  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'snake');
 
   let output = `<?xml version="1.0" encoding="UTF-8"?>\n\n`;
   output += generateFileHeader({
@@ -1239,7 +1265,36 @@ const androidResourcesFormat = ({ dictionary, options, file }) => {
 };
 
 /**
+ * Helper: Convert token name to Android TextAppearance style name
+ * Transforms: "ateaser-ateaserkicker" → "ATeaser.Kicker"
+ *             "buttonlabel" → "ButtonLabel"
+ */
+const toAndroidTypographyStyleName = (tokenName, brand) => {
+  // Remove common prefixes and clean up the name
+  let cleanName = tokenName;
+
+  // Split by hyphens and process each part
+  const parts = cleanName.split('-').map(part => {
+    // Convert camelCase or lowercase to PascalCase
+    return part
+      .replace(/([a-z])([A-Z])/g, '$1.$2')  // Split camelCase with dots
+      .split('.')
+      .map(segment => segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase())
+      .join('');
+  });
+
+  // Join with dots for Android style hierarchy
+  const stylePart = parts.join('.');
+
+  // Format brand name (capitalize first letter)
+  const brandName = brand.charAt(0).toUpperCase() + brand.slice(1);
+
+  return `TextAppearance.${brandName}.${stylePart}`;
+};
+
+/**
  * Format: Android XML Typography Styles
+ * Uses Material Design naming convention: TextAppearance.Brand.Component.Style
  */
 const androidXmlTypographyFormat = ({ dictionary, options }) => {
   const { brand, breakpoint } = options;
@@ -1279,8 +1334,9 @@ const androidXmlTypographyFormat = ({ dictionary, options }) => {
       tokens.forEach(token => {
         if (token.$type === 'typography' && token.$value) {
           const style = token.$value;
-          // Use only the last path segment as style name
-          const styleName = token.path[token.path.length - 1];
+          // Convert to Android TextAppearance naming convention
+          const rawName = token.path[token.path.length - 1];
+          const styleName = toAndroidTypographyStyleName(rawName, brand);
 
           output += `    <style name="${styleName}">\n`;
           if (style.fontFamily) output += `        <item name="android:fontFamily">${style.fontFamily}</item>\n`;
@@ -1317,7 +1373,7 @@ const androidXmlTypographyFormat = ({ dictionary, options }) => {
 const iosSwiftEffectsFormat = ({ dictionary, options }) => {
   const { brand, colorMode } = options;
   const className = `Effects${brand}${colorMode.charAt(0).toUpperCase() + colorMode.slice(1)}`;
-  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'pascal');
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'camel');
 
   let output = generateFileHeader({
     fileName: `effects-${colorMode}.swift`,
@@ -1619,6 +1675,27 @@ const javascriptTypographyFormat = ({ dictionary, options }) => {
  * Format: Flutter Dart Typography
  * Exports typography tokens as properly formatted Dart objects
  */
+/**
+ * Helper: Map font weight number to Flutter FontWeight
+ */
+function mapFontWeight(weight) {
+  if (!weight) return 'FontWeight.w400';
+  const w = parseInt(weight);
+  if (w >= 900) return 'FontWeight.w900';
+  if (w >= 800) return 'FontWeight.w800';
+  if (w >= 700) return 'FontWeight.w700';
+  if (w >= 600) return 'FontWeight.w600';
+  if (w >= 500) return 'FontWeight.w500';
+  if (w >= 400) return 'FontWeight.w400';
+  if (w >= 300) return 'FontWeight.w300';
+  if (w >= 200) return 'FontWeight.w200';
+  return 'FontWeight.w100';
+}
+
+/**
+ * Format: Flutter Dart Typography using TextStyle class
+ * Exports typography tokens as properly typed TextStyle objects
+ */
 const flutterTypographyFormat = ({ dictionary, options }) => {
   const { brand, breakpoint, sizeClass } = options;
   const className = `Typography${brand.charAt(0).toUpperCase() + brand.slice(1)}${(sizeClass || breakpoint).charAt(0).toUpperCase() + (sizeClass || breakpoint).slice(1)}`;
@@ -1631,7 +1708,9 @@ const flutterTypographyFormat = ({ dictionary, options }) => {
     context: `SizeClass: ${sizeClass || breakpoint}`
   });
 
-  output += `import 'dart:ui';\n\n`;
+  output += `import 'package:flutter/material.dart';\n\n`;
+  output += `/// Typography tokens for ${brand} at ${sizeClass || breakpoint} size class\n`;
+  output += `/// Usage: Text('Hello', style: ${className}.display1)\n`;
   output += `class ${className} {\n`;
   output += `    ${className}._();\n\n`;
 
@@ -1657,23 +1736,34 @@ const flutterTypographyFormat = ({ dictionary, options }) => {
           const style = token.$value;
 
           if (token.comment) {
-            output += `    /** ${token.comment} */\n`;
+            output += `    /// ${token.comment}\n`;
           }
 
-          output += `    static const ${uniqueName} = {\n`;
-          if (style.fontFamily) output += `      'fontFamily': '${style.fontFamily}',\n`;
-          if (style.fontWeight) output += `      'fontWeight': ${style.fontWeight},\n`;
-          if (style.fontSize) output += `      'fontSize': '${typeof style.fontSize === 'number' ? style.fontSize + 'px' : style.fontSize}',\n`;
-          if (style.lineHeight) output += `      'lineHeight': '${typeof style.lineHeight === 'number' ? style.lineHeight + 'px' : style.lineHeight}',\n`;
-          if (style.letterSpacing) output += `      'letterSpacing': '${typeof style.letterSpacing === 'number' ? style.letterSpacing + 'px' : style.letterSpacing}',\n`;
-          if (style.fontStyle && style.fontStyle !== 'null') output += `      'fontStyle': '${style.fontStyle.toLowerCase()}',\n`;
-          if (style.textCase && style.textCase !== 'ORIGINAL') output += `      'textTransform': '${style.textCase.toLowerCase()}',\n`;
-          if (style.textDecoration && style.textDecoration !== 'NONE') output += `      'textDecoration': '${style.textDecoration.toLowerCase()}',\n`;
-          output += `    };\n`;
+          // Build TextStyle with proper Flutter types
+          const fontSize = typeof style.fontSize === 'number' ? style.fontSize : parseFloat(style.fontSize) || 16;
+          const lineHeight = typeof style.lineHeight === 'number' ? style.lineHeight : parseFloat(style.lineHeight);
+          const letterSpacing = typeof style.letterSpacing === 'number' ? style.letterSpacing : parseFloat(style.letterSpacing);
+
+          // Calculate height ratio (Flutter uses height as multiplier, not absolute value)
+          const heightRatio = lineHeight && fontSize ? (lineHeight / fontSize).toFixed(2) : null;
+
+          output += `    static const TextStyle ${uniqueName} = TextStyle(\n`;
+          if (style.fontFamily) output += `      fontFamily: '${style.fontFamily}',\n`;
+          output += `      fontSize: ${fontSize},\n`;
+          if (style.fontWeight) output += `      fontWeight: ${mapFontWeight(style.fontWeight)},\n`;
+          if (heightRatio && heightRatio !== '1.00') output += `      height: ${heightRatio},\n`;
+          if (letterSpacing) output += `      letterSpacing: ${letterSpacing},\n`;
+          if (style.fontStyle && style.fontStyle !== 'null' && style.fontStyle.toLowerCase() === 'italic') {
+            output += `      fontStyle: FontStyle.italic,\n`;
+          }
+          if (style.textDecoration && style.textDecoration !== 'NONE') {
+            const decoration = style.textDecoration.toLowerCase();
+            if (decoration === 'underline') output += `      decoration: TextDecoration.underline,\n`;
+            else if (decoration === 'line-through' || decoration === 'strikethrough') output += `      decoration: TextDecoration.lineThrough,\n`;
+          }
+          output += `    );\n\n`;
         }
       });
-
-      output += `\n`;
     });
   });
 
@@ -1724,10 +1814,10 @@ const scssEffectsFormat = ({ dictionary, options }) => {
             output += `/** ${token.comment} */\n`;
           }
 
-          // Convert shadow array to SCSS map array
+          // Convert shadow array to SCSS map array with kebab-case keys
           const shadowsSCSS = token.$value.map((effect, idx) => {
             if (effect.type === 'dropShadow') {
-              return `  ${idx + 1}: (\n    offsetX: ${effect.offsetX || 0}px,\n    offsetY: ${effect.offsetY || 0}px,\n    radius: ${effect.radius || 0}px,\n    spread: ${effect.spread || 0}px,\n    color: ${effect.color || 'rgba(0, 0, 0, 0)'}\n  )`;
+              return `  ${idx + 1}: (\n    offset-x: ${effect.offsetX || 0}px,\n    offset-y: ${effect.offsetY || 0}px,\n    blur-radius: ${effect.radius || 0}px,\n    spread-radius: ${effect.spread || 0}px,\n    color: ${effect.color || 'rgba(0, 0, 0, 0)'}\n  )`;
             }
             return null;
           }).filter(Boolean);
@@ -1788,14 +1878,15 @@ const scssTypographyFormat = ({ dictionary, options }) => {
           }
 
           output += `$${uniqueName}: (\n`;
-          if (style.fontFamily) output += `  fontFamily: ${style.fontFamily},\n`;
-          if (style.fontWeight) output += `  fontWeight: ${style.fontWeight},\n`;
-          if (style.fontSize) output += `  fontSize: ${typeof style.fontSize === 'number' ? style.fontSize + 'px' : style.fontSize},\n`;
-          if (style.lineHeight) output += `  lineHeight: ${typeof style.lineHeight === 'number' ? style.lineHeight + 'px' : style.lineHeight},\n`;
-          if (style.letterSpacing) output += `  letterSpacing: ${typeof style.letterSpacing === 'number' ? style.letterSpacing + 'px' : style.letterSpacing},\n`;
-          if (style.fontStyle && style.fontStyle !== 'null') output += `  fontStyle: ${style.fontStyle.toLowerCase()},\n`;
-          if (style.textCase && style.textCase !== 'ORIGINAL') output += `  textTransform: ${style.textCase.toLowerCase()},\n`;
-          if (style.textDecoration && style.textDecoration !== 'NONE') output += `  textDecoration: ${style.textDecoration.toLowerCase()},\n`;
+          // Use kebab-case for SCSS map keys (CSS property naming convention)
+          if (style.fontFamily) output += `  font-family: ${style.fontFamily},\n`;
+          if (style.fontWeight) output += `  font-weight: ${style.fontWeight},\n`;
+          if (style.fontSize) output += `  font-size: ${typeof style.fontSize === 'number' ? style.fontSize + 'px' : style.fontSize},\n`;
+          if (style.lineHeight) output += `  line-height: ${typeof style.lineHeight === 'number' ? style.lineHeight + 'px' : style.lineHeight},\n`;
+          if (style.letterSpacing) output += `  letter-spacing: ${typeof style.letterSpacing === 'number' ? style.letterSpacing + 'px' : style.letterSpacing},\n`;
+          if (style.fontStyle && style.fontStyle !== 'null') output += `  font-style: ${style.fontStyle.toLowerCase()},\n`;
+          if (style.textCase && style.textCase !== 'ORIGINAL') output += `  text-transform: ${style.textCase.toLowerCase()},\n`;
+          if (style.textDecoration && style.textDecoration !== 'NONE') output += `  text-decoration: ${style.textDecoration.toLowerCase()},\n`;
           output += `);\n`;
         }
       });
@@ -1808,11 +1899,36 @@ const scssTypographyFormat = ({ dictionary, options }) => {
 };
 
 /**
- * Android XML Effects Format - Outputs shadow tokens as drawable layer-list XMLs
+ * Helper: Calculate Material Design elevation from shadow blur radius
+ * Based on Material Design shadow specs where blur roughly maps to elevation
+ */
+function calculateElevationFromShadow(effects) {
+  if (!effects || effects.length === 0) return 0;
+
+  // Get the maximum blur radius from all shadow layers
+  const maxBlur = Math.max(...effects.map(e => e.radius || 0));
+  const maxOffset = Math.max(...effects.map(e => Math.abs(e.offsetY || 0)));
+
+  // Material Design elevation mapping (approximate)
+  // Elevation 1dp ≈ blur 1-2px, 4dp ≈ blur 4-6px, 8dp ≈ blur 12-16px, etc.
+  const combined = maxBlur + maxOffset;
+
+  if (combined <= 3) return 1;
+  if (combined <= 6) return 2;
+  if (combined <= 10) return 4;
+  if (combined <= 16) return 6;
+  if (combined <= 24) return 8;
+  if (combined <= 32) return 12;
+  if (combined <= 48) return 16;
+  return 24;
+}
+
+/**
+ * Android XML Effects Format - Outputs shadow tokens with Material Design elevation + raw data
  */
 const androidXmlEffectsFormat = ({ dictionary, options }) => {
   const { brand, colorMode } = options;
-  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
+  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'snake');
 
   let output = `<?xml version="1.0" encoding="utf-8"?>\n`;
 
@@ -1825,17 +1941,42 @@ const androidXmlEffectsFormat = ({ dictionary, options }) => {
   });
 
   // Insert Android-specific note before closing comment
-  output += header.replace('-->\n', `\n  NOTE: Android shadows are complex and platform-specific.\n  This file provides shadow data as XML comments for reference.\n  For actual shadow implementation, use elevation or CardView.\n-->\n`);
+  output += header.replace('-->\n', `\n  NOTE: This file provides both Material Design elevation values and raw shadow data.\n  - Use elevation dimens with CardView, MaterialCardView, or android:elevation\n  - Use string-arrays for custom shadow implementations if needed\n-->\n`);
 
-  output += `<resources>\n\n`;
+  output += `<resources>\n`;
 
   const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
+
+  // First pass: Output elevation dimens
+  output += `\n  <!-- ============================================ -->\n`;
+  output += `  <!-- MATERIAL DESIGN ELEVATION VALUES -->\n`;
+  output += `  <!-- Use with android:elevation or CardView.cardElevation -->\n`;
+  output += `  <!-- ============================================ -->\n\n`;
 
   Object.keys(hierarchicalGroups).forEach(topLevel => {
     const subGroups = hierarchicalGroups[topLevel];
 
-    output += `  <!-- ============================================ -->\n`;
-    output += `  <!-- ${topLevel.toUpperCase()} -->\n`;
+    Object.keys(subGroups).forEach(subLevel => {
+      const tokens = subGroups[subLevel];
+
+      tokens.forEach(token => {
+        if (token.$type === 'shadow' && Array.isArray(token.$value)) {
+          const uniqueName = uniqueNames.get(token.path.join('.'));
+          const elevation = calculateElevationFromShadow(token.$value);
+
+          output += `  <dimen name="${uniqueName}_elevation">${elevation}dp</dimen>\n`;
+        }
+      });
+    });
+  });
+
+  // Second pass: Output raw shadow data as string-arrays
+  Object.keys(hierarchicalGroups).forEach(topLevel => {
+    const subGroups = hierarchicalGroups[topLevel];
+
+    output += `\n  <!-- ============================================ -->\n`;
+    output += `  <!-- ${topLevel.toUpperCase()} - RAW SHADOW DATA -->\n`;
+    output += `  <!-- For custom shadow implementations -->\n`;
     output += `  <!-- ============================================ -->\n\n`;
 
     Object.keys(subGroups).forEach(subLevel => {
@@ -1853,8 +1994,8 @@ const androidXmlEffectsFormat = ({ dictionary, options }) => {
             output += `  <!-- ${token.comment} -->\n`;
           }
 
-          // Output shadow data as string-array for reference
-          output += `  <string-array name="${uniqueName}">\n`;
+          // Output shadow data as string-array for custom implementations
+          output += `  <string-array name="${uniqueName}_data">\n`;
           token.$value.forEach((effect, idx) => {
             if (effect.type === 'dropShadow') {
               // Parse color to Android format
@@ -1881,8 +2022,6 @@ const androidXmlEffectsFormat = ({ dictionary, options }) => {
           output += `  </string-array>\n\n`;
         }
       });
-
-      output += `\n`;
     });
   });
 
@@ -1907,7 +2046,7 @@ const customTransformGroups = {
   'custom/scss': ['name/custom/kebab', 'color/css', 'custom/size/px', 'custom/opacity', 'custom/fontWeight', 'custom/number', 'value/round'],
   'custom/js': ['name/custom/js', 'color/css', 'custom/size/px', 'custom/opacity', 'custom/fontWeight', 'custom/number', 'value/round'],
   'custom/ios-swift': ['name/custom/ios-swift', 'custom/color/UIColor', 'custom/size/ios-points', 'custom/opacity', 'custom/fontWeight', 'custom/number', 'value/round'],
-  'custom/android': ['name/custom/kebab', 'color/hex', 'custom/size/px', 'custom/opacity', 'custom/fontWeight', 'custom/number', 'value/round'],
+  'custom/android': ['name/custom/android', 'color/hex', 'custom/size/px', 'custom/opacity', 'custom/fontWeight', 'custom/number', 'value/round'],
   'custom/flutter': ['name/custom/flutter-dart', 'color/hex', 'custom/size/px', 'custom/opacity', 'custom/fontWeight', 'custom/number', 'value/round']
 };
 
@@ -2038,6 +2177,7 @@ module.exports = {
     'name/custom/kebab': nameKebabTransform,
     'name/custom/js': nameJsTransform,
     'name/custom/ios-swift': nameIosSwiftTransform,
+    'name/custom/android': nameAndroidTransform,
     'name/custom/flutter-dart': nameFlutterDartTransform,
     'value/round': valueRoundTransform
   },
