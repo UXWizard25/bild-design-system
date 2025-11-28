@@ -7,7 +7,7 @@
  * Supports multiple output formats: PR comment, CHANGELOG, console.
  *
  * Usage:
- *   node generate-release-notes.js --diff-file diff.json --format pr-comment
+ *   node scripts/tokens/release-notes.js --diff-file diff.json --format pr-comment
  */
 
 const fs = require('fs');
@@ -34,7 +34,7 @@ const IMPACT_LABELS = {
 
 const PLATFORM_ORDER = ['css', 'scss', 'js', 'swift', 'xml', 'dart', 'json'];
 
-const DIST_DIR = path.join(__dirname, '../dist');
+const DIST_DIR = path.join(__dirname, '../../dist');
 
 // =============================================================================
 // UTILITIES
