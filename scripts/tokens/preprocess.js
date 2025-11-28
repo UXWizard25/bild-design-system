@@ -767,80 +767,13 @@ function processComponentTokens(collections, aliasLookup) {
         return;
       }
 
-      // For brand-override collections, find the brand-specific mode
+      // SKIP brand-override collections (BrandTokenMapping, BrandColorMapping) for component tokens!
+      // These are mapping layers, not consumption layers.
+      // - BrandColorMapping tokens are already resolved through ColorMode aliases
+      // - BrandTokenMapping tokens are already exported in overrides/brandtokenmapping.json
+      // Component tokens should only come from: ColorMode, Density, Breakpoint
       if (collectionType === 'brand-override') {
-        // SKIP BrandColorMapping for component tokens!
-        // BrandColorMapping tokens are already resolved through ColorMode aliases.
-        // Adding them separately causes duplicate tokens with the same CSS name.
-        // BrandColorMapping is exported separately in overrides/brandcolormapping.json for reference.
-        if (collection.id === COLLECTION_IDS.BRAND_COLOR_MAPPING) {
-          return; // Skip - these are intermediate tokens, not meant to be consumed directly
-        }
-
-        const mode = collection.modes.find(m => m.name === brandName);
-        if (!mode) return; // Brand doesn't exist in this collection
-
-        // Process variables for this brand mode (only BrandTokenMapping)
-        collection.variables.forEach(variable => {
-          if (!isComponentToken(variable.name)) return;
-
-          const componentName = getComponentName(variable.name);
-          if (!componentName) return;
-
-          const modeValue = variable.valuesByMode[mode.modeId];
-          if (modeValue === undefined || modeValue === null) return;
-
-          // Initialize component structure
-          if (!componentOutputs[brandKey][componentName]) {
-            componentOutputs[brandKey][componentName] = {};
-          }
-
-          // BRAND_TOKEN_MAPPING - can override any type
-          const targetKey = 'overrides';
-          if (!componentOutputs[brandKey][componentName][targetKey]) {
-            componentOutputs[brandKey][componentName][targetKey] = {};
-          }
-
-          // Process the token value
-          let processedValue;
-          if (modeValue.type === 'VARIABLE_ALIAS') {
-            const context = { brandName, brandModeId };
-            processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set(), collections);
-          } else {
-            processedValue = processDirectValue(modeValue, variable.resolvedType, variable.name);
-          }
-
-          if (processedValue !== null) {
-            const pathArray = variable.name.split('/').filter(part => part);
-            const tokenObject = {
-              $value: processedValue,
-              value: processedValue,
-              type: variable.resolvedType.toLowerCase(),
-              $extensions: {
-                'com.figma': {
-                  collectionId: collection.id,
-                  collectionName: collection.name,
-                  variableId: variable.id
-                }
-              }
-            };
-
-            if (variable.resolvedType === 'COLOR') {
-              tokenObject.$type = 'color';
-            } else {
-              const typeInfo = determineTokenType(variable.name, collection.name, processedValue, variable);
-              if (typeInfo.$type) {
-                tokenObject.$type = typeInfo.$type;
-              }
-            }
-
-            if (variable.description) {
-              tokenObject.comment = variable.description;
-            }
-
-            setNestedPath(componentOutputs[brandKey][componentName][targetKey], pathArray, tokenObject);
-          }
-        });
+        return; // Skip - mapping layers are exported separately in overrides/ folder
       } else {
         // For mode-based collections (ColorMode, Density, Breakpoint)
         collection.modes.forEach(mode => {

@@ -370,14 +370,18 @@ async function buildQuickStartBundles() {
       // Find all CSS files for this brand
       let brandFiles = await glob(`${brandCssDir}/**/*.css`);
 
-      // Exclude individual breakpoint files (we use responsive versions instead)
+      // Exclude files that shouldn't be in the consumption bundle
       brandFiles = brandFiles.filter(f => {
         const basename = path.basename(f);
+        const relativePath = path.relative(brandCssDir, f);
+
         // Exclude typography-xs/sm/md/lg.css but keep typography-responsive.css
         // Exclude breakpoint-*.css but keep breakpoint-responsive.css
+        // Exclude overrides/ folder (mapping layers, not consumption layers)
         return !(
           basename.match(/^typography-(xs|sm|md|lg)\.css$/) ||
-          basename.match(/^breakpoint-(xs|sm|md|lg)/)
+          basename.match(/^breakpoint-(xs|sm|md|lg)/) ||
+          relativePath.startsWith('overrides/')
         );
       });
 
