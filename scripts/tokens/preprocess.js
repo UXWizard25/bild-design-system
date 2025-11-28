@@ -769,10 +769,18 @@ function processComponentTokens(collections, aliasLookup) {
 
       // For brand-override collections, find the brand-specific mode
       if (collectionType === 'brand-override') {
+        // SKIP BrandColorMapping for component tokens!
+        // BrandColorMapping tokens are already resolved through ColorMode aliases.
+        // Adding them separately causes duplicate tokens with the same CSS name.
+        // BrandColorMapping is exported separately in overrides/brandcolormapping.json for reference.
+        if (collection.id === COLLECTION_IDS.BRAND_COLOR_MAPPING) {
+          return; // Skip - these are intermediate tokens, not meant to be consumed directly
+        }
+
         const mode = collection.modes.find(m => m.name === brandName);
         if (!mode) return; // Brand doesn't exist in this collection
 
-        // Process variables for this brand mode
+        // Process variables for this brand mode (only BrandTokenMapping)
         collection.variables.forEach(variable => {
           if (!isComponentToken(variable.name)) return;
 
@@ -787,25 +795,10 @@ function processComponentTokens(collections, aliasLookup) {
             componentOutputs[brandKey][componentName] = {};
           }
 
-          // Determine target key based on the source collection
-          let targetKey;
-          if (collection.id === COLLECTION_IDS.BRAND_COLOR_MAPPING) {
-            // These override color tokens
-            COLOR_MODES.light && (targetKey = 'color-light');
-            COLOR_MODES.dark && (targetKey = 'color-dark');
-            // We'll merge these into both light and dark
-            ['color-light', 'color-dark'].forEach(key => {
-              if (!componentOutputs[brandKey][componentName][key]) {
-                componentOutputs[brandKey][componentName][key] = {};
-              }
-            });
-          } else {
-            // BRAND_TOKEN_MAPPING - can override any type
-            // For now, we'll add these to a general override structure
-            targetKey = 'overrides';
-            if (!componentOutputs[brandKey][componentName][targetKey]) {
-              componentOutputs[brandKey][componentName][targetKey] = {};
-            }
+          // BRAND_TOKEN_MAPPING - can override any type
+          const targetKey = 'overrides';
+          if (!componentOutputs[brandKey][componentName][targetKey]) {
+            componentOutputs[brandKey][componentName][targetKey] = {};
           }
 
           // Process the token value
@@ -845,14 +838,7 @@ function processComponentTokens(collections, aliasLookup) {
               tokenObject.comment = variable.description;
             }
 
-            if (collection.id === COLLECTION_IDS.BRAND_COLOR_MAPPING) {
-              // Add to both light and dark
-              ['color-light', 'color-dark'].forEach(key => {
-                setNestedPath(componentOutputs[brandKey][componentName][key], pathArray, tokenObject);
-              });
-            } else {
-              setNestedPath(componentOutputs[brandKey][componentName][targetKey], pathArray, tokenObject);
-            }
+            setNestedPath(componentOutputs[brandKey][componentName][targetKey], pathArray, tokenObject);
           }
         });
       } else {
