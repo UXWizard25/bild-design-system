@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-11-28T09:08:13.355Z",
+  "lastModified": "2025-11-28T10:23:12.006Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -2161,9 +2161,9 @@
         "VariableID:19709:71141",
         "VariableID:19881:148841",
         "VariableID:20988:206",
-        "VariableID:20993:836",
         "VariableID:21003:45",
-        "VariableID:21003:260"
+        "VariableID:21003:260",
+        "VariableID:21005:195"
       ],
       "variables": [
         {
@@ -6606,22 +6606,7 @@
         },
         {
           "id": "VariableID:20988:206",
-          "name": "Semantic/Core/newTestPipev3",
-          "description": "this is a test for the token pipeline",
-          "resolvedType": "COLOR",
-          "valuesByMode": {
-            "588:0": "#3083D6",
-            "592:1": "#B0D1F3"
-          },
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "hiddenFromPublishing": false,
-          "variableCollectionId": "VariableCollectionId:588:1979"
-        },
-        {
-          "id": "VariableID:20993:836",
-          "name": "Semantic/Core/newTestPipettoken6",
+          "name": "Semantic/Core/newTest",
           "description": "this is a test for the token pipeline",
           "resolvedType": "COLOR",
           "valuesByMode": {
@@ -6657,6 +6642,21 @@
           "valuesByMode": {
             "588:0": "#1B00E6",
             "592:1": "#FFEB12"
+          },
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:21005:195",
+          "name": "Semantic/Core/fabianColor",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": "#D31818",
+            "592:1": "#00FF59"
           },
           "scopes": [
             "ALL_SCOPES"
