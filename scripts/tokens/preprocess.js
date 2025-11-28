@@ -1017,7 +1017,8 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
         }
 
         // Token structure: category/styleName
-        const pathArray = [category.toLowerCase(), styleName.toLowerCase()];
+        // Keep styleName case for proper platform-specific transformations (camelCase, kebab-case, etc.)
+        const pathArray = [category.toLowerCase(), styleName];
 
         setNestedPath(tokens, pathArray, {
           $value: resolvedStyle,
@@ -1105,7 +1106,8 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
           }
 
           // Add to component typography output
-          componentTypographyOutputs[brandKey][componentName][`typography-${breakpointName}`][styleName.toLowerCase().replace(/\//g, '-')] = {
+          // Keep styleName case for proper platform-specific transformations
+          componentTypographyOutputs[brandKey][componentName][`typography-${breakpointName}`][styleName.replace(/\//g, '-')] = {
             $value: resolvedStyle,
             value: resolvedStyle,
             type: 'typography',
@@ -1202,7 +1204,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
           });
         }
 
-        const pathArray = [category.toLowerCase(), styleName.toLowerCase()];
+        // Keep styleName case for proper platform-specific transformations
+        const pathArray = [category.toLowerCase(), styleName];
 
         setNestedPath(tokens, pathArray, {
           $value: resolvedEffects,
@@ -1298,7 +1301,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
           }
 
           // Add to component effects output
-          componentEffectOutputs[brandKey][componentName][`effects-${modeName}`][styleName.toLowerCase().replace(/\//g, '-')] = {
+          // Keep styleName case for proper platform-specific transformations
+          componentEffectOutputs[brandKey][componentName][`effects-${modeName}`][styleName.replace(/\//g, '-')] = {
             $value: resolvedEffects,
             value: resolvedEffects,
             type: 'shadow',
