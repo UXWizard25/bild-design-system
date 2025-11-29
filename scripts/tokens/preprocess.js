@@ -340,6 +340,16 @@ function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}) {
         }
       }
 
+      // For ColorMode collections, use theme mode from context (Light/Dark)
+      if (variable.collectionId === COLLECTION_IDS.COLOR_MODE && context.modeName) {
+        const themeMode = collection.modes.find(m =>
+          m.name.toLowerCase() === context.modeName.toLowerCase()
+        );
+        if (themeMode) {
+          targetModeId = themeMode.modeId;
+        }
+      }
+
       // Fallback to first mode
       if (!targetModeId && collection.modes && collection.modes.length > 0) {
         targetModeId = collection.modes[0].modeId;
@@ -765,7 +775,9 @@ function processBrandSpecificTokens(collections, aliasLookup) {
                 brandName,
                 brandModeId,
                 breakpointModeId: collection.id === COLLECTION_IDS.BREAKPOINT_MODE ? mode.modeId : undefined,
-                colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined
+                colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined,
+                // Add modeName for ColorMode deep alias resolution (Light/Dark)
+                modeName: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.name : undefined
               };
 
               if (collection.id === COLLECTION_IDS.DENSITY) {
@@ -1009,7 +1021,9 @@ function processComponentTokens(collections, aliasLookup) {
                   brandName,
                   brandModeId,
                   breakpointModeId: collection.id === COLLECTION_IDS.BREAKPOINT_MODE ? mode.modeId : undefined,
-                  colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined
+                  colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined,
+                  // Add modeName for ColorMode deep alias resolution (Light/Dark)
+                  modeName: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.name : undefined
                 };
 
                 if (collection.id === COLLECTION_IDS.DENSITY) {
@@ -1374,7 +1388,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
       const context = {
         brandName,
         brandModeId,
-        colorModeModeId
+        colorModeModeId,
+        modeName  // Add modeName for ColorMode deep alias resolution (Light/Dark)
       };
 
       const tokens = {};
@@ -1481,7 +1496,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
         const context = {
           brandName,
           brandModeId,
-          colorModeModeId
+          colorModeModeId,
+          modeName  // Add modeName for ColorMode deep alias resolution (Light/Dark)
         };
 
         componentEffectStyles.forEach(effectStyle => {
