@@ -1406,6 +1406,38 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
             }
           };
 
+          // Auto-link fontSize/lineHeight to corresponding Breakpoint tokens
+          // Pattern: "buttonLabel" → "buttonLabelFontSize", "buttonLabelLineHeight"
+          if (!aliases.fontSize || !aliases.lineHeight) {
+            const baseStyleName = styleName.replace(/\//g, '');
+            const fontSizeVarName = `Component/${componentName}/${baseStyleName}FontSize`;
+            const lineHeightVarName = `Component/${componentName}/${baseStyleName}LineHeight`;
+
+            // Search for matching variables in BreakpointMode collection
+            for (const [varId, variable] of aliasLookup) {
+              if (variable.collectionId === COLLECTION_IDS.BREAKPOINT_MODE) {
+                // Match fontSize variable
+                if (!aliases.fontSize && variable.name === fontSizeVarName) {
+                  aliases.fontSize = {
+                    token: baseStyleName + 'FontSize',
+                    collection: 'breakpointmode',
+                    collectionType: 'component-breakpoint',
+                    variableId: varId
+                  };
+                }
+                // Match lineHeight variable
+                if (!aliases.lineHeight && variable.name === lineHeightVarName) {
+                  aliases.lineHeight = {
+                    token: baseStyleName + 'LineHeight',
+                    collection: 'breakpointmode',
+                    collectionType: 'component-breakpoint',
+                    variableId: varId
+                  };
+                }
+              }
+            }
+          }
+
           // Add aliases info for CSS var() references (only if aliases exist)
           if (Object.keys(aliases).length > 0) {
             tokenObject.$aliases = aliases;

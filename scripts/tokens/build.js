@@ -1131,6 +1131,14 @@ async function convertToResponsiveCSS() {
           fs.writeFileSync(outputPath, responsiveContent, 'utf-8');
           successfulConversions++;
           console.log(`     ✅ semantic/${baseName}-responsive.css`);
+
+          // Cleanup: Remove individual breakpoint files (redundant for CSS)
+          for (const bp of BREAKPOINTS) {
+            const bpFile = path.join(semanticTypographyDir, `${baseName}-${bp}.css`);
+            if (fs.existsSync(bpFile)) {
+              fs.unlinkSync(bpFile);
+            }
+          }
         } catch (error) {
           console.error(`     ❌ Error: semantic/${baseName} - ${error.message}`);
         }
@@ -1195,8 +1203,49 @@ async function convertToResponsiveCSS() {
             fs.writeFileSync(outputPath, responsiveContent, 'utf-8');
             successfulConversions++;
             console.log(`     ✅ ${component}/${baseName}-responsive.css`);
+
+            // Cleanup: Remove individual breakpoint files (redundant for CSS)
+            for (const bp of BREAKPOINTS) {
+              const bpFile = path.join(componentDir, `${baseName}-${bp}.css`);
+              if (fs.existsSync(bpFile)) {
+                fs.unlinkSync(bpFile);
+              }
+            }
           } catch (error) {
             console.error(`     ❌ Error: ${component}/${baseName} - ${error.message}`);
+          }
+        }
+
+        // Process component breakpoint tokens (non-typography, non-effects)
+        // Convert data-breakpoint selectors to @media queries
+        const breakpointFiles = fs.readdirSync(componentDir)
+          .filter(f => f.endsWith('.css') && f.includes('-breakpoint-') && !f.includes('responsive'));
+
+        if (breakpointFiles.length > 0) {
+          totalConversions++;
+
+          try {
+            const responsiveContent = await generateComponentBreakpointResponsive(
+              componentDir,
+              component.toLowerCase(),
+              brand,
+              breakpointConfig
+            );
+
+            const outputPath = path.join(componentDir, `${component.toLowerCase()}-breakpoint-responsive.css`);
+            fs.writeFileSync(outputPath, responsiveContent, 'utf-8');
+            successfulConversions++;
+            console.log(`     ✅ ${component}/${component.toLowerCase()}-breakpoint-responsive.css`);
+
+            // Cleanup: Remove individual breakpoint files (redundant for CSS)
+            for (const bpFile of breakpointFiles) {
+              const filePath = path.join(componentDir, bpFile);
+              if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+              }
+            }
+          } catch (error) {
+            console.error(`     ❌ Error: ${component}/breakpoints - ${error.message}`);
           }
         }
       }
@@ -1326,6 +1375,84 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
     if (breakpointVars[bp] && breakpointVars[bp].length > 0 && breakpointConfig[bp]) {
       output += `@media (min-width: ${breakpointConfig[bp]}) {\n`;
       output += `  :root {\n`;
+      for (const varDecl of breakpointVars[bp]) {
+        output += `    ${varDecl}\n`;
+      }
+      output += `  }\n`;
+      output += `}\n\n`;
+    }
+  }
+
+  return output;
+}
+
+/**
+ * Generates a responsive CSS file with media queries for component breakpoint tokens
+ * Converts [data-brand][data-breakpoint] selectors to @media queries with [data-brand] only
+ */
+async function generateComponentBreakpointResponsive(dir, componentName, brand, breakpointConfig) {
+  const breakpointFiles = {};
+  const fileMapping = {
+    xs: null,
+    sm: null,
+    md: null,
+    lg: null
+  };
+
+  // Find breakpoint files by pattern
+  const files = fs.readdirSync(dir).filter(f => f.includes('-breakpoint-') && f.endsWith('.css'));
+
+  for (const file of files) {
+    if (file.includes('-xs-')) fileMapping.xs = file;
+    else if (file.includes('-sm-')) fileMapping.sm = file;
+    else if (file.includes('-md-')) fileMapping.md = file;
+    else if (file.includes('-lg-')) fileMapping.lg = file;
+  }
+
+  // Read all breakpoint files
+  for (const [bp, fileName] of Object.entries(fileMapping)) {
+    if (fileName) {
+      const filePath = path.join(dir, fileName);
+      if (fs.existsSync(filePath)) {
+        breakpointFiles[bp] = fs.readFileSync(filePath, 'utf-8');
+      }
+    }
+  }
+
+  if (Object.keys(breakpointFiles).length === 0) {
+    throw new Error('No breakpoint files found');
+  }
+
+  // Extract header from first file
+  const firstFile = breakpointFiles.xs || breakpointFiles.sm || breakpointFiles.md || breakpointFiles.lg;
+  const headerMatch = firstFile.match(/^\/\*\*[\s\S]*?\*\//);
+  let header = headerMatch ? headerMatch[0] : '';
+  header = header.replace(/breakpoint: \w+/i, 'Responsive (Media Queries)');
+  header = header.replace(/Context: breakpoint: \w+/i, 'Context: Responsive (Media Queries)');
+
+  let output = header + '\n\n';
+
+  // Extract CSS variables from each breakpoint
+  const breakpointVars = {};
+  for (const [bp, content] of Object.entries(breakpointFiles)) {
+    breakpointVars[bp] = extractRootVariables(content);
+  }
+
+  // Generate responsive CSS with media queries
+  // Base styles (XS) - use [data-brand] selector instead of :root for component tokens
+  output += `[data-brand="${brand}"] {\n`;
+  if (breakpointVars.xs && breakpointVars.xs.length > 0) {
+    for (const varDecl of breakpointVars.xs) {
+      output += `  ${varDecl}\n`;
+    }
+  }
+  output += `}\n\n`;
+
+  // Media queries for SM, MD, LG
+  for (const bp of ['sm', 'md', 'lg']) {
+    if (breakpointVars[bp] && breakpointVars[bp].length > 0 && breakpointConfig[bp]) {
+      output += `@media (min-width: ${breakpointConfig[bp]}) {\n`;
+      output += `  [data-brand="${brand}"] {\n`;
       for (const varDecl of breakpointVars[bp]) {
         output += `    ${varDecl}\n`;
       }
