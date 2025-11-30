@@ -1008,6 +1008,19 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
       tokens.forEach(token => {
         if (token.$type === 'typography' && token.$value) {
           const style = token.$value;
+          const aliases = token.$aliases || {};
+
+          // Helper to get value with var() reference if alias exists
+          const getValueWithAlias = (property, value, unit = '') => {
+            const alias = aliases[property];
+            if (alias?.token) {
+              const varName = nameTransformers.kebab(alias.token);
+              const formattedValue = unit && typeof value === 'number' ? `${value}${unit}` : value;
+              return `var(--${varName}, ${formattedValue})`;
+            }
+            return unit && typeof value === 'number' ? `${value}${unit}` : value;
+          };
+
           // Use only the last path segment as class name, convert to kebab-case for CSS
           let className = nameTransformers.kebab(token.path[token.path.length - 1]);
           // Remove leading dot if present (token names may already include it)
@@ -1021,11 +1034,11 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
 
           // Wrap class selector with data-attribute selector (Strategy A)
           output += `${dataSelector} .${className} {\n`;
-          if (style.fontFamily) output += `  font-family: ${style.fontFamily};\n`;
-          if (style.fontWeight) output += `  font-weight: ${style.fontWeight};\n`;
-          if (style.fontSize) output += `  font-size: ${typeof style.fontSize === 'number' ? style.fontSize + 'px' : style.fontSize};\n`;
-          if (style.lineHeight) output += `  line-height: ${typeof style.lineHeight === 'number' ? style.lineHeight + 'px' : style.lineHeight};\n`;
-          if (style.letterSpacing) output += `  letter-spacing: ${typeof style.letterSpacing === 'number' ? style.letterSpacing + 'px' : style.letterSpacing};\n`;
+          if (style.fontFamily) output += `  font-family: ${getValueWithAlias('fontFamily', style.fontFamily)};\n`;
+          if (style.fontWeight) output += `  font-weight: ${getValueWithAlias('fontWeight', style.fontWeight)};\n`;
+          if (style.fontSize) output += `  font-size: ${getValueWithAlias('fontSize', style.fontSize, 'px')};\n`;
+          if (style.lineHeight) output += `  line-height: ${getValueWithAlias('lineHeight', style.lineHeight, 'px')};\n`;
+          if (style.letterSpacing) output += `  letter-spacing: ${getValueWithAlias('letterSpacing', style.letterSpacing, 'px')};\n`;
           if (style.fontStyle && style.fontStyle !== 'null') output += `  font-style: ${style.fontStyle.toLowerCase()};\n`;
           if (style.textCase && style.textCase !== 'ORIGINAL') {
             output += `  text-transform: ${mapTextCase(style.textCase)};\n`;
@@ -1085,6 +1098,8 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
 
       tokens.forEach(token => {
         if (token.$type === 'shadow' && Array.isArray(token.$value)) {
+          const aliases = token.$aliases || [];
+
           // Use only the last path segment as class name, convert to kebab-case for CSS
           let className = nameTransformers.kebab(token.path[token.path.length - 1]);
           // Remove leading dot if present (token names may already include it)
@@ -1099,10 +1114,19 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
           // Wrap class selector with data-attribute selector (Strategy A)
           output += `${dataSelector} .${className} {\n`;
 
-          // Convert to CSS box-shadow
-          const shadows = token.$value.map(effect => {
+          // Convert to CSS box-shadow with var() references for colors
+          const shadows = token.$value.map((effect, index) => {
             if (effect.type === 'dropShadow') {
-              return `${effect.offsetX}px ${effect.offsetY}px ${effect.radius}px ${effect.spread}px ${effect.color}`;
+              // Check if there's an alias for this effect's color
+              const aliasEntry = aliases.find(a => a.index === index);
+              let colorValue = effect.color;
+
+              if (aliasEntry?.color?.token) {
+                const varName = nameTransformers.kebab(aliasEntry.color.token);
+                colorValue = `var(--${varName}, ${effect.color})`;
+              }
+
+              return `${effect.offsetX}px ${effect.offsetY}px ${effect.radius}px ${effect.spread}px ${colorValue}`;
             }
             return null;
           }).filter(Boolean);
