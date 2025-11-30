@@ -294,7 +294,8 @@ function isPrimitiveCollection(collectionId) {
  * @param {object} context - { brandName } for brand-specific mode resolution
  * @returns {Object|null} - { token, collection, collectionType: 'primitive' } or null
  */
-function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}) {
+function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, options = {}) {
+  const { acceptSemanticEndpoint = false } = options;
   const visited = new Set();
   let currentId = variableId;
 
@@ -318,6 +319,20 @@ function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}) {
         token: tokenName,
         collection: collection ? collection.name.toLowerCase() : 'primitive',
         collectionType: 'primitive',
+        variableId: currentId
+      };
+    }
+
+    // For Typography: accept BreakpointMode (Semantic) as valid endpoint
+    if (acceptSemanticEndpoint && variable.collectionId === COLLECTION_IDS.BREAKPOINT_MODE) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      // Convert name like "Semantic/Typography/FontSize/Display/Display1FontSize" to kebab-case token name
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'breakpointmode',
+        collectionType: 'semantic',
         variableId: currentId
       };
     }
@@ -1162,8 +1177,12 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
         if (textStyle.boundVariables) {
           Object.entries(textStyle.boundVariables).forEach(([property, alias]) => {
             if (alias.type === 'VARIABLE_ALIAS') {
-              // Extract DEEP alias info - follows chain to primitive (for CSS var() references)
-              const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context);
+              // For fontSize and lineHeight: accept Semantic-level (BreakpointMode) as endpoint
+              // These are responsive values that change per breakpoint
+              const acceptSemanticEndpoint = (property === 'fontSize' || property === 'lineHeight');
+
+              // Extract DEEP alias info - follows chain to primitive (or semantic for typography)
+              const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint });
               if (aliasInfo) {
                 aliases[property] = aliasInfo;
               }
@@ -1279,8 +1298,12 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
           if (textStyle.boundVariables) {
             Object.entries(textStyle.boundVariables).forEach(([property, alias]) => {
               if (alias.type === 'VARIABLE_ALIAS') {
-                // Extract DEEP alias info - follows chain to primitive (for CSS var() references)
-                const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context);
+                // For fontSize and lineHeight: accept Semantic-level (BreakpointMode) as endpoint
+                // These are responsive values that change per breakpoint
+                const acceptSemanticEndpoint = (property === 'fontSize' || property === 'lineHeight');
+
+                // Extract DEEP alias info - follows chain to primitive (or semantic for typography)
+                const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint });
                 if (aliasInfo) {
                   aliases[property] = aliasInfo;
                 }
