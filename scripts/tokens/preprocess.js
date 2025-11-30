@@ -283,19 +283,28 @@ function isPrimitiveCollection(collectionId) {
 
 /**
  * Extracts DEEP alias information for CSS var() references
- * Follows the alias chain recursively until a PRIMITIVE is found
+ * Follows the alias chain recursively until a valid endpoint is found
  *
- * This ensures CSS references point to actual primitive tokens (e.g., --bild015)
- * instead of intermediate layers (e.g., --text-color-primary → self-reference)
+ * Endpoint hierarchy (configurable via options):
+ * - Primitive: Always endpoint (default)
+ * - BreakpointMode Semantic tokens: Endpoint if acceptSemanticEndpoint = true
+ * - ColorMode Semantic tokens: Endpoint if acceptColorModeEndpoint = true
+ * - Density tokens: Endpoint if acceptDensityEndpoint = true
+ * - BrandMapping: Always pass-through (never endpoint)
  *
  * @param {string} variableId - The Figma Variable ID of the alias target
  * @param {Map} aliasLookup - Lookup Map for all variables
  * @param {Array} collections - Array of all collections
  * @param {object} context - { brandName } for brand-specific mode resolution
- * @returns {Object|null} - { token, collection, collectionType: 'primitive' } or null
+ * @param {object} options - { acceptSemanticEndpoint, acceptColorModeEndpoint, acceptDensityEndpoint }
+ * @returns {Object|null} - { token, collection, collectionType } or null
  */
 function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, options = {}) {
-  const { acceptSemanticEndpoint = false } = options;
+  const {
+    acceptSemanticEndpoint = false,    // BreakpointMode semantic tokens
+    acceptColorModeEndpoint = false,   // ColorMode semantic tokens
+    acceptDensityEndpoint = false      // Density tokens
+  } = options;
   const visited = new Set();
   let currentId = variableId;
 
@@ -310,7 +319,10 @@ function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, op
     const variable = aliasLookup.get(currentId);
     if (!variable) return null;
 
-    // Check if we've reached a primitive
+    const tokenPath = variable.name || '';
+    const isSemanticToken = tokenPath.startsWith('Semantic/');
+
+    // Check if we've reached a primitive - ALWAYS endpoint
     if (isPrimitiveCollection(variable.collectionId)) {
       const collection = collections.find(c => c.id === variable.collectionId);
       const tokenName = variable.name.split('/').pop();
@@ -323,16 +335,41 @@ function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, op
       };
     }
 
-    // For Typography: accept BreakpointMode (Semantic) as valid endpoint
-    if (acceptSemanticEndpoint && variable.collectionId === COLLECTION_IDS.BREAKPOINT_MODE) {
+    // BreakpointMode Semantic tokens - endpoint if flag set
+    if (acceptSemanticEndpoint && variable.collectionId === COLLECTION_IDS.BREAKPOINT_MODE && isSemanticToken) {
       const collection = collections.find(c => c.id === variable.collectionId);
-      // Convert name like "Semantic/Typography/FontSize/Display/Display1FontSize" to kebab-case token name
       const tokenName = variable.name.split('/').pop();
 
       return {
         token: tokenName,
         collection: collection ? collection.name.toLowerCase() : 'breakpointmode',
         collectionType: 'semantic',
+        variableId: currentId
+      };
+    }
+
+    // ColorMode Semantic tokens - endpoint if flag set
+    if (acceptColorModeEndpoint && variable.collectionId === COLLECTION_IDS.COLOR_MODE && isSemanticToken) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'colormode',
+        collectionType: 'semantic',
+        variableId: currentId
+      };
+    }
+
+    // Density tokens - endpoint if flag set
+    if (acceptDensityEndpoint && variable.collectionId === COLLECTION_IDS.DENSITY) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'density',
+        collectionType: 'density',
         variableId: currentId
       };
     }
@@ -1045,8 +1082,13 @@ function processComponentTokens(collections, aliasLookup) {
                   context.breakpointModeId = mode.modeId;
                 }
 
-                // Extract DEEP alias info - follows chain to primitive (for CSS var() references)
-                aliasInfo = getDeepAliasInfo(modeValue.id, aliasLookup, collections, context);
+                // Extract DEEP alias info for Component tokens
+                // Component tokens stop at Semantic (ColorMode/BreakpointMode) or Density endpoints
+                aliasInfo = getDeepAliasInfo(modeValue.id, aliasLookup, collections, context, {
+                  acceptColorModeEndpoint: true,
+                  acceptSemanticEndpoint: true,
+                  acceptDensityEndpoint: true
+                });
 
                 processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set(), collections);
               } else {
@@ -1554,8 +1596,11 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
                 // Resolve boundVariables if present
                 if (effect.boundVariables && effect.boundVariables.color) {
                   if (effect.boundVariables.color.type === 'VARIABLE_ALIAS') {
-                    // Extract alias info for CSS var() references - use getDeepAliasInfo with context
-                    const aliasInfo = getDeepAliasInfo(effect.boundVariables.color.id, aliasLookup, collections, context);
+                    // Extract alias info for CSS var() references
+                    // Component effects stop at ColorMode semantic tokens
+                    const aliasInfo = getDeepAliasInfo(effect.boundVariables.color.id, aliasLookup, collections, context, {
+                      acceptColorModeEndpoint: true
+                    });
                     if (aliasInfo) {
                       layerAliases = { color: aliasInfo };
                     }
