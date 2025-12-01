@@ -251,7 +251,8 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
     }),
     // Compose: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
     // For density mode, output all three density variants
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !COMPOSE_ENABLED ? {} : {
+    // Skip compose for overrides (brand mapping layer) - these are intermediate tokens not needed in final output
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !COMPOSE_ENABLED || cssOptions.skipCompose ? {} : {
       compose: {
         transformGroup: 'custom/compose',
         buildPath: (() => {
@@ -804,7 +805,8 @@ async function buildBrandSpecificTokens() {
       console.log(`     ✅ color (${files.length} modes)`);
     }
 
-    // Overrides
+    // Overrides (Brand Mapping Layer)
+    // Note: skipCompose=true because these intermediate tokens are already resolved in semantic/component tokens
     const overridesDir = path.join(brandDir, 'overrides');
     if (fs.existsSync(overridesDir)) {
       const files = fs.readdirSync(overridesDir).filter(f => f.endsWith('.json'));
@@ -812,7 +814,7 @@ async function buildBrandSpecificTokens() {
         const fileName = path.basename(file, '.json');
         const config = {
           source: [path.join(overridesDir, file)],
-          platforms: createStandardPlatformConfig(`${DIST_DIR}/css/brands/${brand}/overrides`, fileName)
+          platforms: createStandardPlatformConfig(`${DIST_DIR}/css/brands/${brand}/overrides`, fileName, { skipCompose: true })
         };
 
         try {
