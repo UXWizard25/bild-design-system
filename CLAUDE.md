@@ -22,14 +22,14 @@ npm run clean           # dist/ und tokens/ löschen
 
 Design Token Pipeline für das BILD Design System. Transformiert Figma Variables in plattformspezifische Formate.
 
-| Plattform | Format | Output |
-|-----------|--------|--------|
-| Web | CSS Custom Properties | `dist/css/` |
-| Web | SCSS Variables | `dist/scss/` |
-| Web | JavaScript ES6 | `dist/js/` |
-| iOS | Swift Extensions | `dist/ios/` |
-| Android | XML Resources | `dist/android/` |
-| Flutter | Dart Classes | `dist/flutter/` |
+| Plattform | Format | Output | Status |
+|-----------|--------|--------|--------|
+| Web | CSS Custom Properties | `dist/css/` | ✅ |
+| Web | SCSS Variables | `dist/scss/` | ✅ |
+| Web | JavaScript ES6 | `dist/js/` | ✅ |
+| iOS | Swift Extensions | `dist/ios/` | ✅ |
+| Android | XML Resources | `dist/android/` | ✅ |
+| Flutter | Dart Classes | `dist/flutter/` | ⏸️ Disabled |
 
 ---
 
@@ -49,10 +49,11 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 │  Modes: color (light/dark), breakpoint                          │
 │  Referenziert → Brand Mapping                                   │
 ├─────────────────────────────────────────────────────────────────┤
-│  LAYER 2: Brand Mapping                                         │
+│  LAYER 2: Brand Mapping + Density                               │
 │  ─────────────────────────────────────────────────────────────  │
 │  BrandColorMapping: Farb-Primitives → Brands                    │
 │  BrandTokenMapping: Andere Primitives → Brands                  │
+│  Density: compact, default, spacious                            │
 │  Modes: BILD, SportBILD, Advertorial                            │
 ├─────────────────────────────────────────────────────────────────┤
 │  LAYER 1: Primitives (Global)                                   │
@@ -195,7 +196,8 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 ┌─────────────────────────────────────────────────────────────────┐
 │  dist/                                                          │
 │  ├── css/, scss/, js/, json/                                    │
-│  ├── ios/, android/, flutter/                                   │
+│  ├── ios/, android/                                             │
+│  ├── (flutter/ disabled via FLUTTER_ENABLED toggle)             │
 │  └── manifest.json                                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -260,7 +262,7 @@ dist/
 ├── json/
 ├── ios/
 ├── android/
-├── flutter/
+├── flutter/                    # Disabled by default (FLUTTER_ENABLED)
 └── manifest.json
 ```
 
@@ -315,6 +317,21 @@ const BREAKPOINT_VALUES = {
   lg: '1024px'
 };
 ```
+
+### Output Toggles (build.js)
+
+```javascript
+// Platform output toggles - set to false to disable output generation
+const FLUTTER_ENABLED = false;      // Disables dist/flutter/ output
+
+// Token type toggles - set to false to exclude from all platform outputs
+const BOOLEAN_TOKENS_ENABLED = false;  // Excludes visibility tokens (hideOnMobile, etc.)
+```
+
+| Toggle | Default | Beschreibung |
+|--------|---------|--------------|
+| `FLUTTER_ENABLED` | `false` | Flutter Dart output in `dist/flutter/` |
+| `BOOLEAN_TOKENS_ENABLED` | `false` | Boolean/Visibility tokens (13 Tokens) |
 
 ---
 
@@ -535,5 +552,5 @@ ls -la dist/css/bundles/
 | Format Functions | 22+ |
 | Transforms | 15+ |
 | Components | ~55 pro Brand |
-| Output Plattformen | 7 |
+| Output Plattformen | 6 (Flutter disabled) |
 | Bundle Size (BILD) | ~130 KB |
