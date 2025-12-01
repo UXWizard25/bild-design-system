@@ -28,7 +28,8 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 | Web | SCSS Variables | `dist/scss/` | ✅ |
 | Web | JavaScript ES6 | `dist/js/` | ✅ |
 | iOS | Swift Extensions | `dist/ios/` | ✅ |
-| Android | XML Resources | `dist/android/` | ✅ |
+| Android | Jetpack Compose (Kotlin) | `dist/android/compose/` | ✅ |
+| Android | XML Resources | `dist/android/` | ⏸️ Disabled |
 | Flutter | Dart Classes | `dist/flutter/` | ⏸️ Disabled |
 
 ---
@@ -53,7 +54,7 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 │  ─────────────────────────────────────────────────────────────  │
 │  BrandColorMapping: Farb-Primitives → Brands                    │
 │  BrandTokenMapping: Andere Primitives → Brands                  │
-│  Density: compact, default, spacious                            │
+│  Density: default, dense, spacious                              │
 │  Modes: BILD, SportBILD, Advertorial                            │
 ├─────────────────────────────────────────────────────────────────┤
 │  LAYER 1: Primitives (Global)                                   │
@@ -92,7 +93,7 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 |-----------|-------|---------------|
 | **Color** | `light`, `dark` | `[data-theme="light/dark"]` |
 | **Breakpoint** | `xs` (320px), `sm` (390px), `md` (600px), `lg` (1024px) | `@media (min-width: ...)` |
-| **Density** | `compact`, `default`, `spacious` | `[data-density="..."]` |
+| **Density** | `default`, `dense`, `spacious` | `[data-density="..."]` |
 | **Typography** | `xs`, `sm`, `md`, `lg` | `var()` Referenzen auf Breakpoint-Tokens |
 
 ### CSS Data-Attribute Pattern
@@ -125,7 +126,7 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 }
 
 /* Density: Brand + Density scoped */
-[data-brand="bild"][data-density="compact"] {
+[data-brand="bild"][data-density="dense"] {
   --button-inline-space: 16px;
 }
 
@@ -162,7 +163,7 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 │  tokens/                                                        │
 │  ├── shared/ (primitives)                                       │
 │  └── brands/{brand}/                                            │
-│      ├── color/, density/, breakpoints/, overrides/             │
+│      ├── color/, density/, breakpoints/                         │
 │      ├── semantic/ (effects, typography)                        │
 │      └── components/{Component}/ (per-component JSONs)          │
 └───────────────────────────┬─────────────────────────────────────┘
@@ -196,8 +197,9 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 ┌─────────────────────────────────────────────────────────────────┐
 │  dist/                                                          │
 │  ├── css/, scss/, js/, json/                                    │
-│  ├── ios/, android/                                             │
-│  ├── (flutter/ disabled via FLUTTER_ENABLED toggle)             │
+│  ├── ios/, android/compose/ (Jetpack Compose)                   │
+│  ├── (android XML disabled via ANDROID_XML_ENABLED)             │
+│  ├── (flutter/ disabled via FLUTTER_ENABLED)                    │
 │  └── manifest.json                                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -228,10 +230,10 @@ tokens/
     ├── color/
     │   └── colormode-{light|dark}.json
     ├── density/
-    │   └── density-{compact|default|spacious}.json
-    ├── overrides/
-    │   ├── brandcolormapping.json
-    │   └── brandtokenmapping.json
+    │   └── density-{default|dense|spacious}.json
+    ├── overrides/                        # Brand Mapping (used during preprocessing,
+    │   ├── brandcolormapping.json       # NOT output to dist/ - values already
+    │   └── brandtokenmapping.json       # resolved in semantic/component tokens)
     ├── semantic/
     │   ├── effects/
     │   └── typography/
@@ -262,6 +264,17 @@ dist/
 ├── json/
 ├── ios/
 ├── android/
+│   └── compose/                # Jetpack Compose (Kotlin) - enabled
+│       ├── shared/
+│       │   └── DesignTokenPrimitives.kt   # Consolidated primitives
+│       └── brands/{brand}/
+│           ├── components/{Component}/
+│           │   └── {Component}Tokens.kt   # Aggregated tokens
+│           ├── semantic/
+│           │   └── {Brand}SemanticTokens.kt
+│           └── theme/
+│               └── {Brand}Theme.kt        # Theme Provider
+│   (XML disabled via ANDROID_XML_ENABLED)
 ├── flutter/                    # Disabled by default (FLUTTER_ENABLED)
 └── manifest.json
 ```
@@ -322,7 +335,9 @@ const BREAKPOINT_VALUES = {
 
 ```javascript
 // Platform output toggles - set to false to disable output generation
-const FLUTTER_ENABLED = false;      // Disables dist/flutter/ output
+const FLUTTER_ENABLED = false;       // Disables dist/flutter/ output
+const COMPOSE_ENABLED = true;        // Enables dist/android/compose/ output (Jetpack Compose)
+const ANDROID_XML_ENABLED = false;   // Disables Android XML output (Compose is preferred)
 
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;  // Excludes visibility tokens (hideOnMobile, etc.)
@@ -330,6 +345,8 @@ const BOOLEAN_TOKENS_ENABLED = false;  // Excludes visibility tokens (hideOnMobi
 
 | Toggle | Default | Beschreibung |
 |--------|---------|--------------|
+| `COMPOSE_ENABLED` | `true` | Jetpack Compose Kotlin output in `dist/android/compose/` |
+| `ANDROID_XML_ENABLED` | `false` | Android XML resources (disabled, Compose is preferred) |
 | `FLUTTER_ENABLED` | `false` | Flutter Dart output in `dist/flutter/` |
 | `BOOLEAN_TOKENS_ENABLED` | `false` | Boolean/Visibility tokens (13 Tokens) |
 
@@ -365,7 +382,7 @@ const BOOLEAN_TOKENS_ENABLED = false;  // Excludes visibility tokens (hideOnMobi
 Beispiele:
 button-color-light.css
 button-color-dark.css
-button-density-compact.css
+button-density-dense.css
 button-breakpoint-responsive.css
 button-typography-responsive.css
 ```

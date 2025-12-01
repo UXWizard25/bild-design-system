@@ -23,12 +23,15 @@ const DIST_DIR = path.join(__dirname, '../../dist');
 const BRANDS = ['bild', 'sportbild', 'advertorial'];
 const BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 const COLOR_MODES = ['light', 'dark'];
+const DENSITY_MODES = ['default', 'dense', 'spacious'];
 
 // Native platforms only use compact (sm) and regular (lg) size classes
 const NATIVE_BREAKPOINTS = ['sm', 'lg'];
 
 // Platform output toggles - set to false to disable output generation
 const FLUTTER_ENABLED = false;
+const COMPOSE_ENABLED = true;
+const ANDROID_XML_ENABLED = false;  // Disabled - Compose is the preferred Android format
 
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;
@@ -166,8 +169,9 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         }]
       }
     }),
-    // Android: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) ? {} : {
+    // Android XML: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
+    // Disabled by default - Compose is the preferred Android format
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !ANDROID_XML_ENABLED ? {} : {
       android: {
         transformGroup: 'custom/android',
         buildPath: (() => {
@@ -242,6 +246,121 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
                 return `Sizeclass${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}`;
               }
               return fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+            })()
+          }
+        }]
+      }
+    }),
+    // Compose: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
+    // For density mode, output all three density variants
+    // Skip compose for overrides (brand mapping layer) - these are intermediate tokens not needed in final output
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !COMPOSE_ENABLED || cssOptions.skipCompose ? {} : {
+      compose: {
+        transformGroup: 'custom/compose',
+        buildPath: (() => {
+          let composePath = buildPath.replace(DIST_DIR + '/css/', '');
+          // For semantic breakpoint tokens, change folder from 'breakpoints' to 'sizeclass'
+          if (cssOptions.modeType === 'breakpoint' && composePath.includes('/breakpoints')) {
+            composePath = composePath.replace('/breakpoints', '/sizeclass');
+          }
+          return `${DIST_DIR}/android/compose/${composePath}/`;
+        })(),
+        files: [{
+          destination: (() => {
+            // For breakpoint tokens, use sizeclass naming
+            if (cssOptions.modeType === 'breakpoint' && cssOptions.mode) {
+              const sizeClass = getSizeClassName(cssOptions.mode);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.kt`;
+              }
+              return `Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.kt`;
+            }
+            // For color mode tokens
+            if (cssOptions.modeType === 'theme' && cssOptions.mode) {
+              const modeName = cssOptions.mode.charAt(0).toUpperCase() + cssOptions.mode.slice(1);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Colors${modeName}.kt`;
+              }
+              return `Colors${modeName}.kt`;
+            }
+            // For density tokens
+            if (cssOptions.modeType === 'density' && cssOptions.mode) {
+              const modeName = cssOptions.mode.charAt(0).toUpperCase() + cssOptions.mode.slice(1);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Density${modeName}.kt`;
+              }
+              return `Density${modeName}.kt`;
+            }
+            // Default: PascalCase filename
+            return `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.kt`;
+          })(),
+          format: (() => {
+            // Choose format based on token type
+            if (buildPath.includes('/shared/')) {
+              return 'compose/primitives';
+            }
+            // For components, use component-tokens format for all mode types
+            if (buildPath.includes('/components/')) {
+              return 'compose/component-tokens';
+            }
+            if (cssOptions.modeType === 'theme') {
+              return 'compose/semantic-colors';
+            }
+            if (cssOptions.modeType === 'breakpoint' || cssOptions.modeType === 'density') {
+              return 'compose/spacing';
+            }
+            return 'compose/primitives';
+          })(),
+          filter: tokenFilter,
+          options: {
+            outputReferences: false,
+            packageName: (() => {
+              const basePkg = 'com.bild.designsystem';
+              if (buildPath.includes('/shared/')) {
+                return `${basePkg}.shared`;
+              }
+              if (cssOptions.brand) {
+                if (buildPath.includes('/components/')) {
+                  return `${basePkg}.${cssOptions.brand}.components`;
+                }
+                return `${basePkg}.${cssOptions.brand}.semantic`;
+              }
+              return basePkg;
+            })(),
+            className: (() => {
+              if (cssOptions.modeType === 'breakpoint' && cssOptions.mode) {
+                const sizeClass = getSizeClassName(cssOptions.mode);
+                return `Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}`;
+              }
+              return fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+            })(),
+            brand: cssOptions.brand || '',
+            mode: cssOptions.mode || '',
+            modeType: (() => {
+              if (cssOptions.modeType === 'breakpoint') return 'sizeclass';
+              return cssOptions.modeType || '';
+            })(),
+            componentName: (() => {
+              if (buildPath.includes('/components/')) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                return componentMatch ? componentMatch[1] : '';
+              }
+              return '';
+            })(),
+            tokenType: (() => {
+              if (cssOptions.modeType === 'theme') return 'color';
+              if (cssOptions.modeType === 'breakpoint') return 'sizing';
+              if (cssOptions.modeType === 'density') return 'density';
+              return '';
             })()
           }
         }]
@@ -402,9 +521,10 @@ function createTypographyConfig(brand, breakpoint) {
         }
       } : {}),
 
-      // Android: Only compact (sm) and regular (lg) with custom format
+      // Android XML: Only compact (sm) and regular (lg) with custom format
       // Output to semantic/typography/ with sizeclass in filename
-      ...(SIZE_CLASS_MAPPING[breakpoint] ? {
+      // Disabled by default - Compose is the preferred Android format
+      ...(SIZE_CLASS_MAPPING[breakpoint] && ANDROID_XML_ENABLED ? {
         android: {
           transforms: ['attribute/cti'],
           buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/typography/`,
@@ -517,19 +637,22 @@ function createEffectConfig(brand, colorMode) {
         }]
       },
 
-      // Android: Custom Effects format
-      android: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/effects/`,
-        files: [{
-          destination: `${fileName}.xml`,
-          format: 'android/effects',
-          options: {
-            brand: brandName,
-            colorMode
-          }
-        }]
-      }
+      // Android XML: Custom Effects format
+      // Disabled by default - Compose is the preferred Android format
+      ...(ANDROID_XML_ENABLED ? {
+        android: {
+          transforms: ['attribute/cti'],
+          buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/effects/`,
+          files: [{
+            destination: `${fileName}.xml`,
+            format: 'android/effects',
+            options: {
+              brand: brandName,
+              colorMode
+            }
+          }]
+        }
+      } : {})
     }
   };
 }
@@ -592,7 +715,7 @@ async function buildBrandSpecificTokens() {
       const files = fs.readdirSync(densityDir).filter(f => f.endsWith('.json'));
       for (const file of files) {
         const fileName = path.basename(file, '.json');
-        // Extract density mode from filename (e.g., "density-compact" -> "compact")
+        // Extract density mode from filename (e.g., "density-dense" -> "dense")
         const densityMatch = fileName.match(/density-(\w+)/);
         const densityMode = densityMatch ? densityMatch[1] : null;
 
@@ -688,7 +811,15 @@ async function buildBrandSpecificTokens() {
       console.log(`     ✅ color (${files.length} modes)`);
     }
 
-    // Overrides
+    // Overrides (Brand Mapping Layer) - DISABLED
+    // These intermediate tokens are NOT needed in the output because:
+    // 1. Semantic/Component tokens already contain resolved brand-specific values
+    // 2. CSS references primitives directly (var(--bildred)), not brand mapping (--core-color-primary)
+    // 3. No other tokens reference the brand mapping layer for alias resolution
+    // 4. The values are redundant copies of what's already in primitives + semantic tokens
+    //
+    // If you need to re-enable for debugging/documentation purposes, uncomment below:
+    /*
     const overridesDir = path.join(brandDir, 'overrides');
     if (fs.existsSync(overridesDir)) {
       const files = fs.readdirSync(overridesDir).filter(f => f.endsWith('.json'));
@@ -709,6 +840,7 @@ async function buildBrandSpecificTokens() {
       }
       console.log(`     ✅ overrides (${files.length} collections)`);
     }
+    */
   }
 
   return { totalBuilds, successfulBuilds };
@@ -804,8 +936,9 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
           }]
         }
       } : {}),
-      // Android: Only compact (sm) and regular (lg) with sizeclass naming
-      ...(breakpoint && isNativeBreakpoint(breakpoint) ? {
+      // Android XML: Only compact (sm) and regular (lg) with sizeclass naming
+      // Disabled by default - Compose is the preferred Android format
+      ...(breakpoint && isNativeBreakpoint(breakpoint) && ANDROID_XML_ENABLED ? {
         android: {
           transforms: ['attribute/cti'],
           buildPath: `${DIST_DIR}/android/brands/${brand}/components/${componentName}/`,
@@ -815,6 +948,23 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
             options: {
               brand: brandName,
               breakpoint,
+              componentName
+            }
+          }]
+        }
+      } : {}),
+      // Compose: Only compact (sm) and regular (lg) with sizeclass naming
+      ...(COMPOSE_ENABLED && breakpoint && isNativeBreakpoint(breakpoint) ? {
+        compose: {
+          transforms: ['attribute/cti'],
+          buildPath: `${DIST_DIR}/android/compose/brands/${brand}/components/${componentName}/`,
+          files: [{
+            destination: `${componentName}Typography${getSizeClassName(breakpoint).charAt(0).toUpperCase() + getSizeClassName(breakpoint).slice(1)}.kt`,
+            format: 'compose/typography',
+            options: {
+              packageName: `com.bild.designsystem.${brand}.components`,
+              brand: brand,
+              mode: getSizeClassName(breakpoint),
               componentName
             }
           }]
@@ -908,19 +1058,22 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
           }]
         }
       } : {}),
-      android: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/android/brands/${brand}/components/${componentName}/`,
-        files: [{
-          destination: `${fileName}.xml`,
-          format: 'android/effects',
-          options: {
-            brand: brandName,
-            colorMode,
-            componentName
-          }
-        }]
-      }
+      // Android XML: Disabled by default - Compose is the preferred Android format
+      ...(ANDROID_XML_ENABLED ? {
+        android: {
+          transforms: ['attribute/cti'],
+          buildPath: `${DIST_DIR}/android/brands/${brand}/components/${componentName}/`,
+          files: [{
+            destination: `${fileName}.xml`,
+            format: 'android/effects',
+            options: {
+              brand: brandName,
+              colorMode,
+              componentName
+            }
+          }]
+        }
+      } : {})
     }
   };
 }
@@ -977,7 +1130,7 @@ async function buildComponentTokens() {
             cssOptions.modeType = 'theme';
           }
 
-          // Check for density mode (e.g., "button-density-compact" -> mode: "compact", modeType: "density")
+          // Check for density mode (e.g., "button-density-dense" -> mode: "dense", modeType: "density")
           const densityMatch = fileName.match(/density-(\w+)/);
           if (densityMatch) {
             cssOptions.mode = densityMatch[1];
@@ -1669,11 +1822,20 @@ function createManifest(stats) {
           brands: 'ios/brands/{brand}/',
           sizeClasses: 'ios/brands/{brand}/sizeclass-{compact|regular}/'
         },
-        android: {
-          shared: 'android/res/values/shared/',
-          brands: 'android/res/values/brands/{brand}/',
-          sizeClasses: 'android/brands/{brand}/sizeclass-{compact|regular}/'
-        },
+        ...(ANDROID_XML_ENABLED ? {
+          android: {
+            shared: 'android/res/values/shared/',
+            brands: 'android/res/values/brands/{brand}/',
+            sizeClasses: 'android/brands/{brand}/sizeclass-{compact|regular}/'
+          }
+        } : {}),
+        ...(COMPOSE_ENABLED ? {
+          compose: {
+            shared: 'android/compose/shared/',
+            brands: 'android/compose/brands/{brand}/',
+            sizeClasses: 'android/compose/brands/{brand}/semantic/sizeclass/'
+          }
+        } : {}),
         ...(FLUTTER_ENABLED ? {
           flutter: {
             shared: 'flutter/shared/',
@@ -1691,6 +1853,1063 @@ function createManifest(stats) {
   );
 
   console.log('  ✅ Manifest created: dist/manifest.json');
+}
+
+/**
+ * Aggregates individual Compose component files into single files per component
+ * Creates: dist/compose/brands/{brand}/components/{Component}/{Component}Tokens.kt
+ */
+async function aggregateComposeComponents() {
+  if (!COMPOSE_ENABLED) {
+    return { totalComponents: 0, successfulComponents: 0 };
+  }
+
+  console.log('📦 Aggregating Compose component files...');
+
+  let totalComponents = 0;
+  let successfulComponents = 0;
+
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
+
+  if (!fs.existsSync(composeDir)) {
+    console.log('  ⚠️  No Compose output found, skipping aggregation');
+    return { totalComponents: 0, successfulComponents: 0 };
+  }
+
+  for (const brand of BRANDS) {
+    const brandComponentsDir = path.join(composeDir, brand, 'components');
+
+    if (!fs.existsSync(brandComponentsDir)) {
+      continue;
+    }
+
+    const componentDirs = fs.readdirSync(brandComponentsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+
+    for (const componentName of componentDirs) {
+      totalComponents++;
+      const componentDir = path.join(brandComponentsDir, componentName);
+      const ktFiles = fs.readdirSync(componentDir)
+        .filter(f => f.endsWith('.kt'))
+        .sort();
+
+      if (ktFiles.length === 0) continue;
+
+      try {
+        // Parse all individual files and collect tokens
+        const tokenGroups = {
+          colors: { light: [], dark: [] },
+          sizing: { compact: [], regular: [] },
+          density: { default: [], dense: [], spacious: [] },
+          typography: { compact: [], regular: [] }
+        };
+
+        for (const ktFile of ktFiles) {
+          const content = fs.readFileSync(path.join(componentDir, ktFile), 'utf8');
+          const tokens = parseKotlinTokens(content);
+
+          // Categorize based on filename
+          const lowerFile = ktFile.toLowerCase();
+          if (lowerFile.includes('colorslight')) {
+            tokenGroups.colors.light = tokens;
+          } else if (lowerFile.includes('colorsdark')) {
+            tokenGroups.colors.dark = tokens;
+          } else if (lowerFile.includes('sizingcompact')) {
+            tokenGroups.sizing.compact = tokens;
+          } else if (lowerFile.includes('sizingregular')) {
+            tokenGroups.sizing.regular = tokens;
+          } else if (lowerFile.includes('densitydense')) {
+            tokenGroups.density.dense = tokens;
+          } else if (lowerFile.includes('densitydefault')) {
+            tokenGroups.density.default = tokens;
+          } else if (lowerFile.includes('densityspacious')) {
+            tokenGroups.density.spacious = tokens;
+          } else if (lowerFile.includes('typographycompact')) {
+            tokenGroups.typography.compact = tokens;
+          } else if (lowerFile.includes('typographyregular')) {
+            tokenGroups.typography.regular = tokens;
+          }
+        }
+
+        // Generate aggregated file
+        const aggregatedContent = generateAggregatedComponentFile(
+          brand,
+          componentName,
+          tokenGroups
+        );
+
+        // Write aggregated file
+        const outputPath = path.join(componentDir, `${componentName}Tokens.kt`);
+        fs.writeFileSync(outputPath, aggregatedContent, 'utf8');
+
+        console.log(`     ✅ ${brand}/${componentName}Tokens.kt`);
+        successfulComponents++;
+
+      } catch (error) {
+        console.error(`     ❌ ${brand}/${componentName}: ${error.message}`);
+      }
+    }
+  }
+
+  console.log(`  📊 Aggregated: ${successfulComponents}/${totalComponents} components\n`);
+  return { totalComponents, successfulComponents };
+}
+
+/**
+ * Parses Kotlin token file and extracts val declarations
+ */
+function parseKotlinTokens(content) {
+  const tokens = [];
+  const valRegex = /val\s+(\w+)\s*=\s*(.+)/g;
+  let match;
+
+  while ((match = valRegex.exec(content)) !== null) {
+    tokens.push({
+      name: match[1],
+      value: match[2].trim()
+    });
+  }
+
+  return tokens;
+}
+
+/**
+ * Generates aggregated Kotlin file with nested objects
+ */
+function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
+  const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Determine required imports based on token values
+  const allTokens = [
+    ...tokenGroups.colors.light,
+    ...tokenGroups.colors.dark,
+    ...tokenGroups.sizing.compact,
+    ...tokenGroups.sizing.regular,
+    ...tokenGroups.density.dense,
+    ...tokenGroups.density.default,
+    ...tokenGroups.density.spacious,
+    ...tokenGroups.typography.compact,
+    ...tokenGroups.typography.regular
+  ];
+
+  const hasColor = allTokens.some(t => t.value.includes('Color('));
+  const hasDp = allTokens.some(t => t.value.includes('.dp'));
+  const hasSp = allTokens.some(t => t.value.includes('.sp'));
+  const hasDensityTokens = tokenGroups.density.dense.length > 0 ||
+      tokenGroups.density.default.length > 0 ||
+      tokenGroups.density.spacious.length > 0;
+
+  const imports = ['import androidx.compose.runtime.Immutable'];
+  if (hasDensityTokens) {
+    imports.push('import androidx.compose.runtime.Composable');
+    imports.push(`import com.bild.designsystem.${brand}.theme.${brandPascal}Theme`);
+    imports.push('import com.bild.designsystem.shared.Density');
+  }
+  if (hasColor) imports.push('import androidx.compose.ui.graphics.Color');
+  if (hasDp || hasSp) imports.push('import androidx.compose.ui.unit.Dp');
+  if (hasDp) imports.push('import androidx.compose.ui.unit.dp');
+  if (hasSp) imports.push('import androidx.compose.ui.unit.sp');
+  if (hasSp && hasDensityTokens) imports.push('import androidx.compose.ui.unit.TextUnit');
+
+  let output = `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Component: ${componentName} | Brand: ${brandPascal}
+ * Aggregated component tokens with all modes
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.${brand}.components
+
+${imports.join('\n')}
+
+/**
+ * ${componentName} Design Tokens
+ *
+ * Usage:
+ *   ${componentName}Tokens.Colors.Light.primaryBgIdle
+ *   ${componentName}Tokens.Sizing.Compact.height
+ *   ${componentName}Tokens.Density.Default.contentGap
+ */
+object ${componentName}Tokens {
+`;
+
+  // Colors section
+  if (tokenGroups.colors.light.length > 0 || tokenGroups.colors.dark.length > 0) {
+    output += `
+    // ══════════════════════════════════════════════════════════════
+    // COLORS
+    // ══════════════════════════════════════════════════════════════
+    object Colors {
+`;
+    if (tokenGroups.colors.light.length > 0) {
+      output += `        object Light {\n`;
+      tokenGroups.colors.light.forEach(t => {
+        output += `            val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.colors.dark.length > 0) {
+      output += `        object Dark {\n`;
+      tokenGroups.colors.dark.forEach(t => {
+        output += `            val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Sizing section
+  if (tokenGroups.sizing.compact.length > 0 || tokenGroups.sizing.regular.length > 0) {
+    output += `
+    // ══════════════════════════════════════════════════════════════
+    // SIZING (WindowSizeClass)
+    // ══════════════════════════════════════════════════════════════
+    object Sizing {
+`;
+    if (tokenGroups.sizing.compact.length > 0) {
+      output += `        object Compact {\n`;
+      tokenGroups.sizing.compact.forEach(t => {
+        output += `            val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.sizing.regular.length > 0) {
+      output += `        object Regular {\n`;
+      tokenGroups.sizing.regular.forEach(t => {
+        output += `            val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Density section with interface and current() helper
+  const hasDensity = tokenGroups.density.dense.length > 0 ||
+      tokenGroups.density.default.length > 0 ||
+      tokenGroups.density.spacious.length > 0;
+
+  if (hasDensity) {
+    // Collect all unique token names across density modes for interface
+    const densityTokenNames = new Map();
+    [...tokenGroups.density.dense, ...tokenGroups.density.default, ...tokenGroups.density.spacious].forEach(t => {
+      if (!densityTokenNames.has(t.name)) {
+        densityTokenNames.set(t.name, t.value);
+      }
+    });
+
+    output += `
+    // ══════════════════════════════════════════════════════════════
+    // DENSITY
+    // ══════════════════════════════════════════════════════════════
+    object Density {
+        /**
+         * Returns density tokens for the current theme density.
+         * Automatically resolves to Dense, Default, or Spacious based on ${brandPascal}Theme.density
+         *
+         * Usage:
+         *   val gap = ${componentName}Tokens.Density.current().contentGap
+         */
+        @Composable
+        fun current(): DensityTokens = when (${brandPascal}Theme.density) {
+            com.bild.designsystem.shared.Density.Dense -> Dense
+            com.bild.designsystem.shared.Density.Default -> Default
+            com.bild.designsystem.shared.Density.Spacious -> Spacious
+        }
+
+        /**
+         * Interface for density-dependent tokens
+         */
+        interface DensityTokens {
+`;
+    // Generate interface properties
+    densityTokenNames.forEach((value, name) => {
+      // Determine type based on value
+      let propType = 'Dp';
+      if (value.includes('.sp')) propType = 'TextUnit';
+      else if (value.includes('Color(')) propType = 'Color';
+      else if (!value.includes('.dp') && !value.includes('.sp') && /^\d+$/.test(value.replace(/[^\d]/g, ''))) {
+        // Check if it's a pure number (Int)
+        if (!value.includes('.')) propType = 'Int';
+      }
+      output += `            val ${name}: ${propType}\n`;
+    });
+    output += `        }
+
+`;
+    if (tokenGroups.density.dense.length > 0) {
+      output += `        object Dense : DensityTokens {\n`;
+      tokenGroups.density.dense.forEach(t => {
+        output += `            override val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.density.default.length > 0) {
+      output += `        object Default : DensityTokens {\n`;
+      tokenGroups.density.default.forEach(t => {
+        output += `            override val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.density.spacious.length > 0) {
+      output += `        object Spacious : DensityTokens {\n`;
+      tokenGroups.density.spacious.forEach(t => {
+        output += `            override val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Typography section
+  if (tokenGroups.typography.compact.length > 0 || tokenGroups.typography.regular.length > 0) {
+    output += `
+    // ══════════════════════════════════════════════════════════════
+    // TYPOGRAPHY
+    // ══════════════════════════════════════════════════════════════
+    object Typography {
+`;
+    if (tokenGroups.typography.compact.length > 0) {
+      output += `        object Compact {\n`;
+      tokenGroups.typography.compact.forEach(t => {
+        output += `            val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.typography.regular.length > 0) {
+      output += `        object Regular {\n`;
+      tokenGroups.typography.regular.forEach(t => {
+        output += `            val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  output += `}
+`;
+
+  return output;
+}
+
+/**
+ * Generates Theme Provider files for each brand
+ * Creates: dist/compose/brands/{brand}/theme/{Brand}Theme.kt
+ */
+async function generateComposeThemeProviders() {
+  if (!COMPOSE_ENABLED) {
+    return { totalThemes: 0, successfulThemes: 0 };
+  }
+
+  console.log('🎨 Generating Compose Theme Providers...');
+
+  let totalThemes = 0;
+  let successfulThemes = 0;
+
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
+  const sharedDir = path.join(DIST_DIR, 'android', 'compose', 'shared');
+
+  if (!fs.existsSync(composeDir)) {
+    console.log('  ⚠️  No Compose output found, skipping theme generation');
+    return { totalThemes: 0, successfulThemes: 0 };
+  }
+
+  // Generate shared Density.kt file
+  if (fs.existsSync(sharedDir)) {
+    const densityContent = generateSharedDensityFile();
+    const densityFile = path.join(sharedDir, 'Density.kt');
+    fs.writeFileSync(densityFile, densityContent, 'utf8');
+    console.log('     ✅ shared/Density.kt (brand-independent)');
+  }
+
+  for (const brand of BRANDS) {
+    totalThemes++;
+    const brandDir = path.join(composeDir, brand);
+
+    if (!fs.existsSync(brandDir)) {
+      continue;
+    }
+
+    try {
+      // Create theme directory
+      const themeDir = path.join(brandDir, 'theme');
+      if (!fs.existsSync(themeDir)) {
+        fs.mkdirSync(themeDir, { recursive: true });
+      }
+
+      // Check if brand has color tokens
+      const colorDir = path.join(brandDir, 'semantic', 'color');
+      const hasColors = fs.existsSync(colorDir) && fs.readdirSync(colorDir).some(f => f.endsWith('.kt'));
+
+      // Generate Theme Provider
+      const themeContent = generateThemeProviderFile(brand, hasColors);
+      const themeFile = path.join(themeDir, `${brand.charAt(0).toUpperCase() + brand.slice(1)}Theme.kt`);
+      fs.writeFileSync(themeFile, themeContent, 'utf8');
+
+      console.log(`     ✅ ${brand}/theme/${brand.charAt(0).toUpperCase() + brand.slice(1)}Theme.kt ${hasColors ? '' : '(no colors, uses external)'}`);
+      successfulThemes++;
+
+    } catch (error) {
+      console.error(`     ❌ ${brand}: ${error.message}`);
+    }
+  }
+
+  console.log(`  📊 Generated: ${successfulThemes}/${totalThemes} theme providers\n`);
+  return { totalThemes, successfulThemes };
+}
+
+/**
+ * Generates the Theme Provider Kotlin file content
+ * @param brand - Brand name (e.g., 'bild', 'sportbild', 'advertorial')
+ * @param hasColors - Whether the brand has its own color tokens
+ */
+function generateThemeProviderFile(brand, hasColors = true) {
+  const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // For brands without colors, we need to use a shared color scheme (BildColorScheme)
+  const colorImports = hasColors
+    ? `import com.bild.designsystem.${brand}.semantic.${brandPascal}ColorScheme
+import com.bild.designsystem.${brand}.semantic.${brandPascal}LightColors
+import com.bild.designsystem.${brand}.semantic.${brandPascal}DarkColors`
+    : `// ${brandPascal} uses shared color schemes from other brands (e.g., Bild, Sportbild)
+// Import the color scheme you want to use:
+import com.bild.designsystem.bild.semantic.BildColorScheme
+import com.bild.designsystem.bild.semantic.BildLightColors
+import com.bild.designsystem.bild.semantic.BildDarkColors`;
+
+  const colorSchemeType = hasColors ? `${brandPascal}ColorScheme` : 'BildColorScheme';
+  const defaultLightColors = hasColors ? `${brandPascal}LightColors` : 'BildLightColors';
+  const defaultDarkColors = hasColors ? `${brandPascal}DarkColors` : 'BildDarkColors';
+
+  const colorInjectionNote = hasColors ? '' : `
+ * Note: ${brandPascal} does not have its own color tokens.
+ * Colors can be injected from other brands (Bild or Sportbild).
+ * Default: Uses BildLightColors/BildDarkColors
+ *`;
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Theme Provider for ${brandPascal}
+ * Provides CompositionLocal-based theming for Jetpack Compose
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.${brand}.theme
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+${colorImports}
+import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingCompact
+import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingRegular
+import com.bild.designsystem.shared.Density
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SIZE CLASS
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Window size class for responsive layouts
+ */
+enum class WindowSizeClass {
+    Compact,  // Phones in portrait
+    Regular   // Tablets, phones in landscape
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// COMPOSITION LOCALS
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * CompositionLocal for current color scheme (Light/Dark)
+ * Uses ${colorSchemeType} interface for type-safe access
+ */
+internal val Local${brandPascal}Colors = staticCompositionLocalOf<${colorSchemeType}> { ${defaultLightColors} }
+
+/**
+ * CompositionLocal for current size class (Compact/Regular)
+ */
+internal val Local${brandPascal}SizeClass = staticCompositionLocalOf { WindowSizeClass.Compact }
+
+/**
+ * CompositionLocal for current density (Dense/Default/Spacious)
+ */
+internal val Local${brandPascal}Density = staticCompositionLocalOf { Density.Default }
+
+/**
+ * CompositionLocal for dark theme state
+ */
+internal val LocalIsDarkTheme = staticCompositionLocalOf { false }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// THEME PROVIDER
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * ${brandPascal} Design System Theme Provider
+ *
+ * Wraps content with CompositionLocals for theming.
+ * All child composables can access theme values via [${brandPascal}Theme].
+ *${colorInjectionNote}
+ * @param darkTheme Whether to use dark color scheme
+ * @param lightColors Light color scheme to use (allows color scheme injection)
+ * @param darkColors Dark color scheme to use (allows color scheme injection)
+ * @param sizeClass Current window size class for responsive sizing
+ * @param density UI density for spacing adjustments
+ * @param content Composable content to wrap
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * ${brandPascal}Theme(
+ *     darkTheme = isSystemInDarkTheme(),
+ *     sizeClass = calculateWindowSizeClass(),
+ *     density = Density.Default
+ * ) {
+ *     // Your app content
+ *     Text(
+ *         color = ${brandPascal}Theme.colors.textColorPrimary,
+ *         fontSize = ${brandPascal}Theme.sizing.headline1FontSize
+ *     )
+ * }
+ * \`\`\`
+ */
+@Composable
+fun ${brandPascal}Theme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    lightColors: ${colorSchemeType} = ${defaultLightColors},
+    darkColors: ${colorSchemeType} = ${defaultDarkColors},
+    sizeClass: WindowSizeClass = WindowSizeClass.Compact,
+    density: Density = Density.Default,
+    content: @Composable () -> Unit
+) {
+    val colors = if (darkTheme) darkColors else lightColors
+
+    CompositionLocalProvider(
+        Local${brandPascal}Colors provides colors,
+        Local${brandPascal}SizeClass provides sizeClass,
+        Local${brandPascal}Density provides density,
+        LocalIsDarkTheme provides darkTheme,
+        content = content
+    )
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// THEME ACCESSOR OBJECT
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Accessor object for ${brandPascal} theme values
+ *
+ * Provides convenient access to current theme values from any composable.
+ * Values are read from CompositionLocals set by [${brandPascal}Theme].
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * @Composable
+ * fun MyButton() {
+ *     Button(
+ *         colors = ButtonDefaults.buttonColors(
+ *             containerColor = ${brandPascal}Theme.colors.coreColorPrimary
+ *         )
+ *     ) {
+ *         Text(
+ *             text = "Click me",
+ *             fontSize = ${brandPascal}Theme.sizing.headline1FontSize
+ *         )
+ *     }
+ * }
+ * \`\`\`
+ */
+object ${brandPascal}Theme {
+
+    /**
+     * Current color scheme (Light or Dark based on theme)
+     * Type-safe access via ${colorSchemeType} interface
+     */
+    val colors: ${colorSchemeType}
+        @Composable
+        @ReadOnlyComposable
+        get() = Local${brandPascal}Colors.current
+
+    /**
+     * Current sizing values based on WindowSizeClass
+     */
+    val sizing: ${brandPascal}SizingScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = when (Local${brandPascal}SizeClass.current) {
+            WindowSizeClass.Compact -> ${brandPascal}SizingCompact
+            WindowSizeClass.Regular -> ${brandPascal}SizingRegular
+        }
+
+    /**
+     * Current window size class
+     */
+    val sizeClass: WindowSizeClass
+        @Composable
+        @ReadOnlyComposable
+        get() = Local${brandPascal}SizeClass.current
+
+    /**
+     * Current UI density
+     */
+    val density: Density
+        @Composable
+        @ReadOnlyComposable
+        get() = Local${brandPascal}Density.current
+
+    /**
+     * Whether dark theme is currently active
+     */
+    val isDarkTheme: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalIsDarkTheme.current
+}
+`;
+}
+
+/**
+ * Generates the shared Density enum file
+ * Creates: dist/android/compose/shared/Density.kt
+ */
+function generateSharedDensityFile() {
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Shared Density Enum
+ * Brand-independent density settings for UI spacing adjustments
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.shared
+
+/**
+ * UI density for spacing adjustments
+ *
+ * Density is brand-independent and can be used across all brands.
+ * Controls spacing, padding, and other density-related design tokens.
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * BildTheme(
+ *     density = Density.Default
+ * ) {
+ *     // Content with default density
+ * }
+ * \`\`\`
+ */
+enum class Density {
+    /** Dense UI with reduced padding and spacing */
+    Dense,
+    /** Standard/default spacing */
+    Default,
+    /** Spacious UI with increased padding and spacing */
+    Spacious
+}
+`;
+}
+
+/**
+ * Consolidates all primitive files into a single DesignTokenPrimitives.kt file
+ * Creates: dist/android/compose/shared/DesignTokenPrimitives.kt
+ */
+async function consolidateComposePrimitives() {
+  if (!COMPOSE_ENABLED) {
+    return { total: 0, successful: 0 };
+  }
+
+  console.log('📦 Consolidating Compose Primitives...');
+
+  const sharedDir = path.join(DIST_DIR, 'android', 'compose', 'shared');
+
+  if (!fs.existsSync(sharedDir)) {
+    console.log('  ⚠️  No Compose shared directory found');
+    return { total: 0, successful: 0 };
+  }
+
+  const primitiveFiles = ['Colorprimitive.kt', 'Fontprimitive.kt', 'Sizeprimitive.kt', 'Spaceprimitive.kt'];
+  const primitiveData = {
+    Colors: [],
+    Font: [],
+    Size: [],
+    Space: []
+  };
+
+  // Parse each primitive file
+  for (const fileName of primitiveFiles) {
+    const filePath = path.join(sharedDir, fileName);
+    if (!fs.existsSync(filePath)) continue;
+
+    const content = fs.readFileSync(filePath, 'utf8');
+    const category = fileName.replace('primitive.kt', '').replace('Color', 'Colors');
+
+    // Extract val declarations
+    const valRegex = /^\s*(internal\s+)?val\s+(\w+)\s*=\s*(.+)$/gm;
+    let match;
+    while ((match = valRegex.exec(content)) !== null) {
+      const name = match[2];
+      const value = match[3].trim();
+      if (primitiveData[category]) {
+        primitiveData[category].push({ name, value });
+      }
+    }
+  }
+
+  // Generate consolidated file
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  let output = `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Consolidated Design Token Primitives
+ * All primitive values in a single file for easy imports
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/**
+ * Design Token Primitives
+ *
+ * Usage:
+ *   DesignTokenPrimitives.Colors.bildred
+ *   DesignTokenPrimitives.Space.space2x
+ *   DesignTokenPrimitives.Size.size4x
+ *   DesignTokenPrimitives.Font.fontWeightBold
+ */
+object DesignTokenPrimitives {
+
+`;
+
+  // Add Colors
+  if (primitiveData.Colors.length > 0) {
+    output += `    // ══════════════════════════════════════════════════════════════
+    // COLORS
+    // ══════════════════════════════════════════════════════════════
+    object Colors {
+`;
+    primitiveData.Colors.forEach(t => {
+      output += `        val ${t.name} = ${t.value}\n`;
+    });
+    output += `    }\n\n`;
+  }
+
+  // Add Font
+  if (primitiveData.Font.length > 0) {
+    output += `    // ══════════════════════════════════════════════════════════════
+    // FONT
+    // ══════════════════════════════════════════════════════════════
+    object Font {
+`;
+    primitiveData.Font.forEach(t => {
+      output += `        val ${t.name} = ${t.value}\n`;
+    });
+    output += `    }\n\n`;
+  }
+
+  // Add Size
+  if (primitiveData.Size.length > 0) {
+    output += `    // ══════════════════════════════════════════════════════════════
+    // SIZE
+    // ══════════════════════════════════════════════════════════════
+    object Size {
+`;
+    primitiveData.Size.forEach(t => {
+      output += `        val ${t.name} = ${t.value}\n`;
+    });
+    output += `    }\n\n`;
+  }
+
+  // Add Space
+  if (primitiveData.Space.length > 0) {
+    output += `    // ══════════════════════════════════════════════════════════════
+    // SPACE
+    // ══════════════════════════════════════════════════════════════
+    object Space {
+`;
+    primitiveData.Space.forEach(t => {
+      output += `        val ${t.name} = ${t.value}\n`;
+    });
+    output += `    }\n`;
+  }
+
+  output += `}
+`;
+
+  // Write consolidated file
+  const consolidatedFile = path.join(sharedDir, 'DesignTokenPrimitives.kt');
+  fs.writeFileSync(consolidatedFile, output, 'utf8');
+
+  console.log(`     ✅ shared/DesignTokenPrimitives.kt (${primitiveData.Colors.length + primitiveData.Font.length + primitiveData.Size.length + primitiveData.Space.length} tokens)`);
+  console.log(`  📊 Consolidated 4 primitive files into 1\n`);
+
+  return { total: 1, successful: 1 };
+}
+
+/**
+ * Aggregates semantic token files into consolidated files per brand
+ * Creates: dist/android/compose/brands/{brand}/semantic/{Brand}SemanticTokens.kt
+ */
+async function aggregateComposeSemantics() {
+  if (!COMPOSE_ENABLED) {
+    return { totalBrands: 0, successfulBrands: 0 };
+  }
+
+  console.log('📦 Aggregating Compose Semantic Tokens...');
+
+  let totalBrands = 0;
+  let successfulBrands = 0;
+
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
+
+  if (!fs.existsSync(composeDir)) {
+    console.log('  ⚠️  No Compose brands directory found');
+    return { totalBrands: 0, successfulBrands: 0 };
+  }
+
+  for (const brand of BRANDS) {
+    totalBrands++;
+    const brandDir = path.join(composeDir, brand);
+    const semanticDir = path.join(brandDir, 'semantic');
+
+    if (!fs.existsSync(semanticDir)) continue;
+
+    try {
+      const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+      const packageJson = require('../../package.json');
+      const version = packageJson.version;
+
+      // Collect semantic tokens
+      const semanticData = {
+        colors: { light: [], dark: [] },
+        sizing: { compact: [], regular: [] }
+      };
+
+      // Read color files
+      const colorDir = path.join(semanticDir, 'color');
+      if (fs.existsSync(colorDir)) {
+        const colorFiles = fs.readdirSync(colorDir).filter(f => f.endsWith('.kt'));
+        for (const fileName of colorFiles) {
+          const content = fs.readFileSync(path.join(colorDir, fileName), 'utf8');
+          const mode = fileName.toLowerCase().includes('dark') ? 'dark' : 'light';
+
+          const valRegex = /^\s*val\s+(\w+)\s*=\s*(.+)$/gm;
+          let match;
+          while ((match = valRegex.exec(content)) !== null) {
+            semanticData.colors[mode].push({ name: match[1], value: match[2].trim() });
+          }
+        }
+      }
+
+      // Read sizing files
+      const sizingDir = path.join(semanticDir, 'sizeclass');
+      if (fs.existsSync(sizingDir)) {
+        const sizingFiles = fs.readdirSync(sizingDir).filter(f => f.endsWith('.kt'));
+        for (const fileName of sizingFiles) {
+          const content = fs.readFileSync(path.join(sizingDir, fileName), 'utf8');
+          const mode = fileName.toLowerCase().includes('regular') ? 'regular' : 'compact';
+
+          const valRegex = /^\s*val\s+(\w+)\s*=\s*(.+)$/gm;
+          let match;
+          while ((match = valRegex.exec(content)) !== null) {
+            semanticData.sizing[mode].push({ name: match[1], value: match[2].trim() });
+          }
+        }
+      }
+
+      // Generate aggregated semantic file
+      let output = `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Brand: ${brandPascal} | Aggregated Semantic Tokens
+ * All semantic tokens in a single file with mode variants
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.${brand}.semantic
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/**
+ * ${brandPascal} Semantic Tokens
+ *
+ * Usage:
+ *   ${brandPascal}SemanticTokens.Colors.Light.textColorPrimary
+ *   ${brandPascal}SemanticTokens.Colors.Dark.textColorPrimary
+ *   ${brandPascal}SemanticTokens.Sizing.Compact.headline1FontSize
+ *   ${brandPascal}SemanticTokens.Sizing.Regular.headline1FontSize
+ */
+object ${brandPascal}SemanticTokens {
+
+`;
+
+      // Add Colors section
+      if (semanticData.colors.light.length > 0 || semanticData.colors.dark.length > 0) {
+        output += `    // ══════════════════════════════════════════════════════════════
+    // COLORS
+    // ══════════════════════════════════════════════════════════════
+    object Colors {
+`;
+        if (semanticData.colors.light.length > 0) {
+          output += `        object Light {\n`;
+          semanticData.colors.light.forEach(t => {
+            output += `            val ${t.name} = ${t.value}\n`;
+          });
+          output += `        }\n`;
+        }
+        if (semanticData.colors.dark.length > 0) {
+          output += `        object Dark {\n`;
+          semanticData.colors.dark.forEach(t => {
+            output += `            val ${t.name} = ${t.value}\n`;
+          });
+          output += `        }\n`;
+        }
+        output += `    }\n\n`;
+      }
+
+      // Add Sizing section
+      if (semanticData.sizing.compact.length > 0 || semanticData.sizing.regular.length > 0) {
+        output += `    // ══════════════════════════════════════════════════════════════
+    // SIZING (WindowSizeClass)
+    // ══════════════════════════════════════════════════════════════
+    object Sizing {
+`;
+        if (semanticData.sizing.compact.length > 0) {
+          output += `        object Compact {\n`;
+          semanticData.sizing.compact.forEach(t => {
+            output += `            val ${t.name} = ${t.value}\n`;
+          });
+          output += `        }\n`;
+        }
+        if (semanticData.sizing.regular.length > 0) {
+          output += `        object Regular {\n`;
+          semanticData.sizing.regular.forEach(t => {
+            output += `            val ${t.name} = ${t.value}\n`;
+          });
+          output += `        }\n`;
+        }
+        output += `    }\n`;
+      }
+
+      output += `}
+`;
+
+      // Write aggregated file
+      const aggregatedFile = path.join(semanticDir, `${brandPascal}SemanticTokens.kt`);
+      fs.writeFileSync(aggregatedFile, output, 'utf8');
+
+      const totalTokens = semanticData.colors.light.length + semanticData.colors.dark.length +
+                          semanticData.sizing.compact.length + semanticData.sizing.regular.length;
+      console.log(`     ✅ ${brand}/semantic/${brandPascal}SemanticTokens.kt (${totalTokens} tokens)`);
+      successfulBrands++;
+
+    } catch (error) {
+      console.error(`     ❌ ${brand}: ${error.message}`);
+    }
+  }
+
+  console.log(`  📊 Aggregated: ${successfulBrands}/${totalBrands} brand semantics\n`);
+  return { totalBrands, successfulBrands };
+}
+
+/**
+ * Removes individual Compose files, keeping only aggregated versions
+ * This reduces file count and simplifies imports
+ */
+async function cleanupComposeIndividualFiles() {
+  if (!COMPOSE_ENABLED) {
+    return { removed: 0 };
+  }
+
+  console.log('🧹 Cleaning up individual Compose files...');
+
+  let removedCount = 0;
+
+  // Clean up primitive files (keep only DesignTokenPrimitives.kt)
+  const sharedDir = path.join(DIST_DIR, 'android', 'compose', 'shared');
+  if (fs.existsSync(sharedDir)) {
+    const primitiveFiles = ['Colorprimitive.kt', 'Fontprimitive.kt', 'Sizeprimitive.kt', 'Spaceprimitive.kt'];
+    for (const fileName of primitiveFiles) {
+      const filePath = path.join(sharedDir, fileName);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        removedCount++;
+      }
+    }
+  }
+
+  // Clean up component individual files (keep only {Component}Tokens.kt)
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
+  if (fs.existsSync(composeDir)) {
+    for (const brand of BRANDS) {
+      const componentsDir = path.join(composeDir, brand, 'components');
+      if (!fs.existsSync(componentsDir)) continue;
+
+      const componentDirs = fs.readdirSync(componentsDir, { withFileTypes: true })
+        .filter(d => d.isDirectory())
+        .map(d => d.name);
+
+      for (const componentName of componentDirs) {
+        const componentDir = path.join(componentsDir, componentName);
+        const files = fs.readdirSync(componentDir).filter(f => f.endsWith('.kt'));
+
+        // Keep only {Component}Tokens.kt, remove individual files
+        const aggregatedFile = `${componentName}Tokens.kt`;
+        for (const fileName of files) {
+          if (fileName !== aggregatedFile) {
+            fs.unlinkSync(path.join(componentDir, fileName));
+            removedCount++;
+          }
+        }
+      }
+
+      // Clean up semantic individual files (keep only {Brand}SemanticTokens.kt and individual mode files for backward compat)
+      // Actually, let's keep the individual semantic files for backward compatibility
+      // as they're referenced by the Theme Provider
+    }
+  }
+
+  console.log(`  📊 Removed ${removedCount} individual files\n`);
+  return { removed: removedCount };
 }
 
 /**
@@ -1734,6 +2953,21 @@ async function main() {
   // Convert to responsive CSS
   stats.responsiveCSS = await convertToResponsiveCSS();
 
+  // Aggregate Compose component files
+  stats.composeAggregated = await aggregateComposeComponents();
+
+  // Generate Compose Theme Providers
+  stats.composeThemes = await generateComposeThemeProviders();
+
+  // Consolidate Compose Primitives
+  stats.composePrimitives = await consolidateComposePrimitives();
+
+  // Aggregate Compose Semantics
+  stats.composeSemantics = await aggregateComposeSemantics();
+
+  // Cleanup individual Compose files
+  stats.composeCleanup = await cleanupComposeIndividualFiles();
+
   // Create manifest
   createManifest(stats);
 
@@ -1757,6 +2991,21 @@ async function main() {
   console.log(`   - Typography Builds: ${stats.typographyTokens.successfulBuilds}/${stats.typographyTokens.totalBuilds}`);
   console.log(`   - Effect Builds: ${stats.effectTokens.successfulBuilds}/${stats.effectTokens.totalBuilds}`);
   console.log(`   - Responsive CSS Files: ${stats.responsiveCSS.successfulConversions}/${stats.responsiveCSS.totalConversions}`);
+  if (COMPOSE_ENABLED && stats.composeAggregated) {
+    console.log(`   - Compose Aggregated: ${stats.composeAggregated.successfulComponents}/${stats.composeAggregated.totalComponents}`);
+  }
+  if (COMPOSE_ENABLED && stats.composeThemes) {
+    console.log(`   - Compose Themes: ${stats.composeThemes.successfulThemes}/${stats.composeThemes.totalThemes}`);
+  }
+  if (COMPOSE_ENABLED && stats.composePrimitives) {
+    console.log(`   - Compose Primitives Consolidated: ${stats.composePrimitives.successful}/${stats.composePrimitives.total}`);
+  }
+  if (COMPOSE_ENABLED && stats.composeSemantics) {
+    console.log(`   - Compose Semantics Aggregated: ${stats.composeSemantics.successfulBrands}/${stats.composeSemantics.totalBrands}`);
+  }
+  if (COMPOSE_ENABLED && stats.composeCleanup) {
+    console.log(`   - Compose Files Cleaned: ${stats.composeCleanup.removed} individual files removed`);
+  }
   console.log(`   - Builds erfolgreich: ${successfulBuilds}/${totalBuilds}`);
   console.log(`   - Output-Verzeichnis: dist/\n`);
 
@@ -1767,14 +3016,14 @@ async function main() {
   console.log(`   ├── js/         (JavaScript ES6)`);
   console.log(`   ├── json/       (JSON)`);
   console.log(`   ├── ios/        (Swift)`);
-  console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Android XML resources)`);
+  if (COMPOSE_ENABLED) console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Jetpack Compose - Kotlin)`);
+  if (ANDROID_XML_ENABLED) console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Android XML resources)`);
   if (FLUTTER_ENABLED) console.log(`   └── flutter/    (Dart classes)`);
   console.log(``);
   console.log(`   Each platform contains:`);
   console.log(`   - shared/              (primitives)`);
   console.log(`   - brands/{brand}/`);
   console.log(`       ├── density/       (3 modes)`);
-  console.log(`       ├── overrides/     (brand mappings)`);
   console.log(`       ├── components/    (component-specific tokens)`);
   console.log(`       │   └── {Component}/  (color, density, breakpoint modes)`);
   console.log(`       └── semantic/`);
