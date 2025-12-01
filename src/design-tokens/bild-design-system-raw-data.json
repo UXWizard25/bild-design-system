@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-12-01T12:59:46.762Z",
+  "lastModified": "2025-12-01T16:42:58.583Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -62,7 +62,7 @@
       "variables": [
         {
           "id": "VariableID:585:1969",
-          "name": "FontFamily/BILD/FontFamilyGothamXNarrow",
+          "name": "FontFamily/BILD/fontFamilyGothamXNarrow",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -74,7 +74,7 @@
         },
         {
           "id": "VariableID:588:1985",
-          "name": "FontFamily/BILD/FontFamilyGothamCond",
+          "name": "FontFamily/BILD/fontFamilyGothamCond",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -86,7 +86,7 @@
         },
         {
           "id": "VariableID:588:1986",
-          "name": "FontFamily/BILD/FontFamilyGotham",
+          "name": "FontFamily/BILD/fontFamilyGotham",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -98,7 +98,7 @@
         },
         {
           "id": "VariableID:588:1987",
-          "name": "FontWeight/FontWeightBold",
+          "name": "FontWeight/fontWeightBold",
           "description": "700 is considered black weight because Gotham Condensed is the primary font family (most used in headlines). In other font families 700 is not black weight but bold.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -112,7 +112,7 @@
         },
         {
           "id": "VariableID:588:1988",
-          "name": "FontWeight/FontWeightExtraBlack",
+          "name": "FontWeight/fontWeightExtraBlack",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -126,7 +126,7 @@
         },
         {
           "id": "VariableID:634:877",
-          "name": "FontWeight/FontWeightBook",
+          "name": "FontWeight/fontWeightBook",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -140,7 +140,7 @@
         },
         {
           "id": "VariableID:982:2356",
-          "name": "FontWeight/FontWeightUltra",
+          "name": "FontWeight/fontWeightUltra",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -154,7 +154,7 @@
         },
         {
           "id": "VariableID:1045:2748",
-          "name": "FontWeight/FontWeightBlack",
+          "name": "FontWeight/fontWeightBlack",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -168,7 +168,7 @@
         },
         {
           "id": "VariableID:1259:9",
-          "name": "FontWeight/FontWeightBook350",
+          "name": "FontWeight/fontWeightBook350",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -182,7 +182,7 @@
         },
         {
           "id": "VariableID:4197:5113",
-          "name": "FontWeight/FontWeightSemiBold",
+          "name": "FontWeight/fontWeightSemiBold",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -196,7 +196,7 @@
         },
         {
           "id": "VariableID:4914:3023",
-          "name": "FontWeight/FontWeightThin",
+          "name": "FontWeight/fontWeightThin",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -210,7 +210,7 @@
         },
         {
           "id": "VariableID:4914:3024",
-          "name": "FontWeight/FontWeightLight",
+          "name": "FontWeight/fontWeightLight",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -224,7 +224,7 @@
         },
         {
           "id": "VariableID:4914:3025",
-          "name": "FontWeight/FontWeightExtraLight",
+          "name": "FontWeight/fontWeightExtraLight",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -238,7 +238,7 @@
         },
         {
           "id": "VariableID:4914:3026",
-          "name": "FontWeight/FontWeightMedium",
+          "name": "FontWeight/fontWeightMedium",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -406,7 +406,7 @@
         },
         {
           "id": "VariableID:17036:23304",
-          "name": "FontFamily/Advertorial/FontFamilyLucidaGrande",
+          "name": "FontFamily/Advertorial/fontFamilyLucidaGrande",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -418,7 +418,7 @@
         },
         {
           "id": "VariableID:18038:10602",
-          "name": "FontFamily/SportBILD/FontFamilyAntennaExtraCond",
+          "name": "FontFamily/SportBILD/fontFamilyAntennaExtraCond",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -430,7 +430,7 @@
         },
         {
           "id": "VariableID:18038:10603",
-          "name": "FontFamily/SportBILD/FontFamilyAntennaCond",
+          "name": "FontFamily/SportBILD/fontFamilyAntennaCond",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -442,7 +442,7 @@
         },
         {
           "id": "VariableID:18056:4790",
-          "name": "FontFamily/SportBILD/FontFamilyInter",
+          "name": "FontFamily/SportBILD/fontFamilyInter",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -454,7 +454,7 @@
         },
         {
           "id": "VariableID:18275:5779",
-          "name": "FontWeightString/StFontWeightUltra",
+          "name": "FontWeightString/stFontWeightUltra",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -466,7 +466,7 @@
         },
         {
           "id": "VariableID:18275:5780",
-          "name": "FontWeightString/StFontWeightExtraBlack",
+          "name": "FontWeightString/stFontWeightExtraBlack",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -478,7 +478,7 @@
         },
         {
           "id": "VariableID:18275:5781",
-          "name": "FontWeightString/StFontWeightBlack",
+          "name": "FontWeightString/stFontWeightBlack",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -490,7 +490,7 @@
         },
         {
           "id": "VariableID:18275:5782",
-          "name": "FontWeightString/StFontWeightBold",
+          "name": "FontWeightString/stFontWeightBold",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -502,7 +502,7 @@
         },
         {
           "id": "VariableID:18275:5783",
-          "name": "FontWeightString/StFontWeightSemiBold",
+          "name": "FontWeightString/stFontWeightSemiBold",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -514,7 +514,7 @@
         },
         {
           "id": "VariableID:18275:5784",
-          "name": "FontWeightString/StFontWeightMedium",
+          "name": "FontWeightString/stFontWeightMedium",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -526,7 +526,7 @@
         },
         {
           "id": "VariableID:18275:5785",
-          "name": "FontWeightString/StFontWeightStBook",
+          "name": "FontWeightString/stFontWeightStBook",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -538,7 +538,7 @@
         },
         {
           "id": "VariableID:18275:5786",
-          "name": "FontWeightString/StFontWeightBook350",
+          "name": "FontWeightString/stFontWeightBook350",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -550,7 +550,7 @@
         },
         {
           "id": "VariableID:18275:5787",
-          "name": "FontWeightString/StFontWeightExtraLight",
+          "name": "FontWeightString/stFontWeightExtraLight",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -562,7 +562,7 @@
         },
         {
           "id": "VariableID:18275:5788",
-          "name": "FontWeightString/StFontWeightThin",
+          "name": "FontWeightString/stFontWeightThin",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -574,7 +574,7 @@
         },
         {
           "id": "VariableID:18275:5789",
-          "name": "FontWeightString/StFontWeightBoldItalic",
+          "name": "FontWeightString/stFontWeightBoldItalic",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -586,7 +586,7 @@
         },
         {
           "id": "VariableID:19144:63647",
-          "name": "FontWeightString/StFontWeightBlackItalic",
+          "name": "FontWeightString/stFontWeightBlackItalic",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -7923,15 +7923,15 @@
       "id": "VariableCollectionId:5695:5841",
       "name": "Density",
       "hiddenFromPublishing": false,
-      "defaultModeId": "5695:1",
+      "defaultModeId": "5695:2",
       "modes": [
-        {
-          "name": "compact",
-          "modeId": "5695:1"
-        },
         {
           "name": "default",
           "modeId": "5695:2"
+        },
+        {
+          "name": "dense",
+          "modeId": "5695:1"
         },
         {
           "name": "spacious",
