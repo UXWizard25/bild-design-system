@@ -31,6 +31,7 @@ const NATIVE_BREAKPOINTS = ['sm', 'lg'];
 // Platform output toggles - set to false to disable output generation
 const FLUTTER_ENABLED = false;
 const COMPOSE_ENABLED = true;
+const ANDROID_XML_ENABLED = false;  // Disabled - Compose is the preferred Android format
 
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;
@@ -168,8 +169,9 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         }]
       }
     }),
-    // Android: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) ? {} : {
+    // Android XML: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
+    // Disabled by default - Compose is the preferred Android format
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !ANDROID_XML_ENABLED ? {} : {
       android: {
         transformGroup: 'custom/android',
         buildPath: (() => {
@@ -261,7 +263,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
           if (cssOptions.modeType === 'breakpoint' && composePath.includes('/breakpoints')) {
             composePath = composePath.replace('/breakpoints', '/sizeclass');
           }
-          return `${DIST_DIR}/compose/${composePath}/`;
+          return `${DIST_DIR}/android/compose/${composePath}/`;
         })(),
         files: [{
           destination: (() => {
@@ -519,9 +521,10 @@ function createTypographyConfig(brand, breakpoint) {
         }
       } : {}),
 
-      // Android: Only compact (sm) and regular (lg) with custom format
+      // Android XML: Only compact (sm) and regular (lg) with custom format
       // Output to semantic/typography/ with sizeclass in filename
-      ...(SIZE_CLASS_MAPPING[breakpoint] ? {
+      // Disabled by default - Compose is the preferred Android format
+      ...(SIZE_CLASS_MAPPING[breakpoint] && ANDROID_XML_ENABLED ? {
         android: {
           transforms: ['attribute/cti'],
           buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/typography/`,
@@ -634,19 +637,22 @@ function createEffectConfig(brand, colorMode) {
         }]
       },
 
-      // Android: Custom Effects format
-      android: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/effects/`,
-        files: [{
-          destination: `${fileName}.xml`,
-          format: 'android/effects',
-          options: {
-            brand: brandName,
-            colorMode
-          }
-        }]
-      }
+      // Android XML: Custom Effects format
+      // Disabled by default - Compose is the preferred Android format
+      ...(ANDROID_XML_ENABLED ? {
+        android: {
+          transforms: ['attribute/cti'],
+          buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/effects/`,
+          files: [{
+            destination: `${fileName}.xml`,
+            format: 'android/effects',
+            options: {
+              brand: brandName,
+              colorMode
+            }
+          }]
+        }
+      } : {})
     }
   };
 }
@@ -930,8 +936,9 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
           }]
         }
       } : {}),
-      // Android: Only compact (sm) and regular (lg) with sizeclass naming
-      ...(breakpoint && isNativeBreakpoint(breakpoint) ? {
+      // Android XML: Only compact (sm) and regular (lg) with sizeclass naming
+      // Disabled by default - Compose is the preferred Android format
+      ...(breakpoint && isNativeBreakpoint(breakpoint) && ANDROID_XML_ENABLED ? {
         android: {
           transforms: ['attribute/cti'],
           buildPath: `${DIST_DIR}/android/brands/${brand}/components/${componentName}/`,
@@ -950,7 +957,7 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
       ...(COMPOSE_ENABLED && breakpoint && isNativeBreakpoint(breakpoint) ? {
         compose: {
           transforms: ['attribute/cti'],
-          buildPath: `${DIST_DIR}/compose/brands/${brand}/components/${componentName}/`,
+          buildPath: `${DIST_DIR}/android/compose/brands/${brand}/components/${componentName}/`,
           files: [{
             destination: `${componentName}Typography${getSizeClassName(breakpoint).charAt(0).toUpperCase() + getSizeClassName(breakpoint).slice(1)}.kt`,
             format: 'compose/typography',
@@ -1051,19 +1058,22 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
           }]
         }
       } : {}),
-      android: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/android/brands/${brand}/components/${componentName}/`,
-        files: [{
-          destination: `${fileName}.xml`,
-          format: 'android/effects',
-          options: {
-            brand: brandName,
-            colorMode,
-            componentName
-          }
-        }]
-      }
+      // Android XML: Disabled by default - Compose is the preferred Android format
+      ...(ANDROID_XML_ENABLED ? {
+        android: {
+          transforms: ['attribute/cti'],
+          buildPath: `${DIST_DIR}/android/brands/${brand}/components/${componentName}/`,
+          files: [{
+            destination: `${fileName}.xml`,
+            format: 'android/effects',
+            options: {
+              brand: brandName,
+              colorMode,
+              componentName
+            }
+          }]
+        }
+      } : {})
     }
   };
 }
@@ -1812,11 +1822,20 @@ function createManifest(stats) {
           brands: 'ios/brands/{brand}/',
           sizeClasses: 'ios/brands/{brand}/sizeclass-{compact|regular}/'
         },
-        android: {
-          shared: 'android/res/values/shared/',
-          brands: 'android/res/values/brands/{brand}/',
-          sizeClasses: 'android/brands/{brand}/sizeclass-{compact|regular}/'
-        },
+        ...(ANDROID_XML_ENABLED ? {
+          android: {
+            shared: 'android/res/values/shared/',
+            brands: 'android/res/values/brands/{brand}/',
+            sizeClasses: 'android/brands/{brand}/sizeclass-{compact|regular}/'
+          }
+        } : {}),
+        ...(COMPOSE_ENABLED ? {
+          compose: {
+            shared: 'android/compose/shared/',
+            brands: 'android/compose/brands/{brand}/',
+            sizeClasses: 'android/compose/brands/{brand}/semantic/sizeclass/'
+          }
+        } : {}),
         ...(FLUTTER_ENABLED ? {
           flutter: {
             shared: 'flutter/shared/',
@@ -1850,7 +1869,7 @@ async function aggregateComposeComponents() {
   let totalComponents = 0;
   let successfulComponents = 0;
 
-  const composeDir = path.join(DIST_DIR, 'compose', 'brands');
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
 
   if (!fs.existsSync(composeDir)) {
     console.log('  ⚠️  No Compose output found, skipping aggregation');
@@ -2142,7 +2161,7 @@ async function generateComposeThemeProviders() {
   let totalThemes = 0;
   let successfulThemes = 0;
 
-  const composeDir = path.join(DIST_DIR, 'compose', 'brands');
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
 
   if (!fs.existsSync(composeDir)) {
     console.log('  ⚠️  No Compose output found, skipping theme generation');
@@ -2388,7 +2407,7 @@ object ${brandPascal}Theme {
 
 /**
  * Consolidates all primitive files into a single DesignTokenPrimitives.kt file
- * Creates: dist/compose/shared/DesignTokenPrimitives.kt
+ * Creates: dist/android/compose/shared/DesignTokenPrimitives.kt
  */
 async function consolidateComposePrimitives() {
   if (!COMPOSE_ENABLED) {
@@ -2397,7 +2416,7 @@ async function consolidateComposePrimitives() {
 
   console.log('📦 Consolidating Compose Primitives...');
 
-  const sharedDir = path.join(DIST_DIR, 'compose', 'shared');
+  const sharedDir = path.join(DIST_DIR, 'android', 'compose', 'shared');
 
   if (!fs.existsSync(sharedDir)) {
     console.log('  ⚠️  No Compose shared directory found');
@@ -2534,7 +2553,7 @@ object DesignTokenPrimitives {
 
 /**
  * Aggregates semantic token files into consolidated files per brand
- * Creates: dist/compose/brands/{brand}/semantic/{Brand}SemanticTokens.kt
+ * Creates: dist/android/compose/brands/{brand}/semantic/{Brand}SemanticTokens.kt
  */
 async function aggregateComposeSemantics() {
   if (!COMPOSE_ENABLED) {
@@ -2546,7 +2565,7 @@ async function aggregateComposeSemantics() {
   let totalBrands = 0;
   let successfulBrands = 0;
 
-  const composeDir = path.join(DIST_DIR, 'compose', 'brands');
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
 
   if (!fs.existsSync(composeDir)) {
     console.log('  ⚠️  No Compose brands directory found');
@@ -2718,7 +2737,7 @@ async function cleanupComposeIndividualFiles() {
   let removedCount = 0;
 
   // Clean up primitive files (keep only DesignTokenPrimitives.kt)
-  const sharedDir = path.join(DIST_DIR, 'compose', 'shared');
+  const sharedDir = path.join(DIST_DIR, 'android', 'compose', 'shared');
   if (fs.existsSync(sharedDir)) {
     const primitiveFiles = ['Colorprimitive.kt', 'Fontprimitive.kt', 'Sizeprimitive.kt', 'Spaceprimitive.kt'];
     for (const fileName of primitiveFiles) {
@@ -2731,7 +2750,7 @@ async function cleanupComposeIndividualFiles() {
   }
 
   // Clean up component individual files (keep only {Component}Tokens.kt)
-  const composeDir = path.join(DIST_DIR, 'compose', 'brands');
+  const composeDir = path.join(DIST_DIR, 'android', 'compose', 'brands');
   if (fs.existsSync(composeDir)) {
     for (const brand of BRANDS) {
       const componentsDir = path.join(composeDir, brand, 'components');
@@ -2869,7 +2888,8 @@ async function main() {
   console.log(`   ├── js/         (JavaScript ES6)`);
   console.log(`   ├── json/       (JSON)`);
   console.log(`   ├── ios/        (Swift)`);
-  console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Android XML resources)`);
+  if (COMPOSE_ENABLED) console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Jetpack Compose - Kotlin)`);
+  if (ANDROID_XML_ENABLED) console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Android XML resources)`);
   if (FLUTTER_ENABLED) console.log(`   └── flutter/    (Dart classes)`);
   console.log(``);
   console.log(`   Each platform contains:`);

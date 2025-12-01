@@ -28,7 +28,8 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 | Web | SCSS Variables | `dist/scss/` | ✅ |
 | Web | JavaScript ES6 | `dist/js/` | ✅ |
 | iOS | Swift Extensions | `dist/ios/` | ✅ |
-| Android | XML Resources | `dist/android/` | ✅ |
+| Android | Jetpack Compose (Kotlin) | `dist/android/compose/` | ✅ |
+| Android | XML Resources | `dist/android/` | ⏸️ Disabled |
 | Flutter | Dart Classes | `dist/flutter/` | ⏸️ Disabled |
 
 ---
@@ -322,7 +323,9 @@ const BREAKPOINT_VALUES = {
 
 ```javascript
 // Platform output toggles - set to false to disable output generation
-const FLUTTER_ENABLED = false;      // Disables dist/flutter/ output
+const FLUTTER_ENABLED = false;       // Disables dist/flutter/ output
+const COMPOSE_ENABLED = true;        // Enables dist/android/compose/ output (Jetpack Compose)
+const ANDROID_XML_ENABLED = false;   // Disables Android XML output (Compose is preferred)
 
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;  // Excludes visibility tokens (hideOnMobile, etc.)
@@ -330,6 +333,8 @@ const BOOLEAN_TOKENS_ENABLED = false;  // Excludes visibility tokens (hideOnMobi
 
 | Toggle | Default | Beschreibung |
 |--------|---------|--------------|
+| `COMPOSE_ENABLED` | `true` | Jetpack Compose Kotlin output in `dist/android/compose/` |
+| `ANDROID_XML_ENABLED` | `false` | Android XML resources (disabled, Compose is preferred) |
 | `FLUTTER_ENABLED` | `false` | Flutter Dart output in `dist/flutter/` |
 | `BOOLEAN_TOKENS_ENABLED` | `false` | Boolean/Visibility tokens (13 Tokens) |
 
