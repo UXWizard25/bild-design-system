@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-11-28T15:14:17.947Z",
+  "lastModified": "2025-12-01T09:38:30.136Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -46,8 +46,6 @@
         "VariableID:18038:10602",
         "VariableID:18038:10603",
         "VariableID:18056:4790",
-        "VariableID:18164:13480",
-        "VariableID:18164:13485",
         "VariableID:18275:5779",
         "VariableID:18275:5780",
         "VariableID:18275:5781",
@@ -451,34 +449,6 @@
             "470:0": "Inter"
           },
           "scopes": [],
-          "hiddenFromPublishing": true,
-          "variableCollectionId": "VariableCollectionId:470:1450"
-        },
-        {
-          "id": "VariableID:18164:13480",
-          "name": "FontWeight/BoldItalicFontWeightST",
-          "description": "",
-          "resolvedType": "STRING",
-          "valuesByMode": {
-            "470:0": "Bold Italic"
-          },
-          "scopes": [
-            "FONT_STYLE"
-          ],
-          "hiddenFromPublishing": true,
-          "variableCollectionId": "VariableCollectionId:470:1450"
-        },
-        {
-          "id": "VariableID:18164:13485",
-          "name": "FontWeight/BlackFontWeightST",
-          "description": "",
-          "resolvedType": "STRING",
-          "valuesByMode": {
-            "470:0": "Black"
-          },
-          "scopes": [
-            "FONT_STYLE"
-          ],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:470:1450"
         },
