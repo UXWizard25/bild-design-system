@@ -2814,9 +2814,15 @@ object ${className} {
     const isFontSize = lowerName.includes('fontsize') || lowerName.includes('font-size');
     const isLineHeight = lowerName.includes('lineheight') || lowerName.includes('line-height');
     const isFontFamily = lowerName.includes('fontfamily') || lowerName.includes('font-family');
+    const isFontWeight = lowerName.includes('fontweight') || lowerName.includes('font-weight');
 
     if (isFontSize || isLineHeight) {
       value = toComposeSp(value);
+    } else if (isFontWeight) {
+      // FontWeight should always be an integer (e.g., 700, not "700")
+      if (typeof value === 'string' && /^\d+$/.test(value)) {
+        value = parseInt(value, 10);
+      }
     } else if (type === 'dimension' || type === 'float' || type === 'sizing' || type === 'spacing') {
       value = toComposeDp(value);
     } else if (type === 'fontFamily' || type === 'string' || isFontFamily) {
@@ -2920,11 +2926,17 @@ object ${className} {
     const isFontSize = lowerName.includes('fontsize') || lowerName.includes('font-size');
     const isLineHeight = lowerName.includes('lineheight') || lowerName.includes('line-height');
     const isFontFamily = lowerName.includes('fontfamily') || lowerName.includes('font-family');
+    const isFontWeight = lowerName.includes('fontweight') || lowerName.includes('font-weight');
 
     if (type === 'color') {
       value = toComposeColor(value);
     } else if (isFontSize || isLineHeight) {
       value = toComposeSp(value);
+    } else if (isFontWeight) {
+      // FontWeight should always be an integer (e.g., 700, not "700")
+      if (typeof value === 'string' && /^\d+$/.test(value)) {
+        value = parseInt(value, 10);
+      }
     } else if (type === 'dimension' || type === 'float' || type === 'sizing' || type === 'spacing') {
       value = toComposeDp(value);
     } else if (type === 'fontFamily' || type === 'string' || isFontFamily) {
@@ -2983,7 +2995,11 @@ object ${className} {
     if (typeof value === 'object' && value !== null) {
       output += `    // ${token.name}\n`;
       if (value.fontFamily) output += `    val ${token.name}FontFamily = "${value.fontFamily}"\n`;
-      if (value.fontWeight) output += `    val ${token.name}FontWeight = ${value.fontWeight}\n`;
+      if (value.fontWeight) {
+        // Ensure fontWeight is an integer, not a string
+        const fontWeight = typeof value.fontWeight === 'string' ? parseInt(value.fontWeight, 10) : value.fontWeight;
+        output += `    val ${token.name}FontWeight = ${fontWeight}\n`;
+      }
       if (value.fontSize) output += `    val ${token.name}FontSize = ${value.fontSize}.sp\n`;
       if (value.lineHeight) output += `    val ${token.name}LineHeight = ${value.lineHeight}.sp\n`;
       if (value.letterSpacing !== null && value.letterSpacing !== undefined) {
