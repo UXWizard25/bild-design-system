@@ -270,6 +270,170 @@ function resolveAliasWithContext(variableId, aliasLookup, context = {}, visited 
 }
 
 /**
+ * Checks if a collection ID belongs to a primitive collection
+ * @param {string} collectionId - The collection ID to check
+ * @returns {boolean} - True if primitive collection
+ */
+function isPrimitiveCollection(collectionId) {
+  return collectionId === COLLECTION_IDS.FONT_PRIMITIVE ||
+         collectionId === COLLECTION_IDS.COLOR_PRIMITIVE ||
+         collectionId === COLLECTION_IDS.SIZE_PRIMITIVE ||
+         collectionId === COLLECTION_IDS.SPACE_PRIMITIVE;
+}
+
+/**
+ * Extracts DEEP alias information for CSS var() references
+ * Follows the alias chain recursively until a valid endpoint is found
+ *
+ * Endpoint hierarchy (configurable via options):
+ * - Primitive: Always endpoint (default)
+ * - BreakpointMode Semantic tokens: Endpoint if acceptSemanticEndpoint = true
+ * - ColorMode Semantic tokens: Endpoint if acceptColorModeEndpoint = true
+ * - Density tokens: Endpoint if acceptDensityEndpoint = true
+ * - BrandMapping: Always pass-through (never endpoint)
+ *
+ * @param {string} variableId - The Figma Variable ID of the alias target
+ * @param {Map} aliasLookup - Lookup Map for all variables
+ * @param {Array} collections - Array of all collections
+ * @param {object} context - { brandName } for brand-specific mode resolution
+ * @param {object} options - { acceptSemanticEndpoint, acceptColorModeEndpoint, acceptDensityEndpoint }
+ * @returns {Object|null} - { token, collection, collectionType } or null
+ */
+function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, options = {}) {
+  const {
+    acceptSemanticEndpoint = false,    // BreakpointMode semantic tokens
+    acceptColorModeEndpoint = false,   // ColorMode semantic tokens
+    acceptDensityEndpoint = false      // Density tokens
+  } = options;
+  const visited = new Set();
+  let currentId = variableId;
+
+  while (currentId) {
+    // Prevent infinite loops
+    if (visited.has(currentId)) {
+      console.warn(`⚠️  Circular alias reference detected: ${currentId}`);
+      return null;
+    }
+    visited.add(currentId);
+
+    const variable = aliasLookup.get(currentId);
+    if (!variable) return null;
+
+    const tokenPath = variable.name || '';
+    // Component tokens are identified by path prefix - they should NOT be treated as semantic endpoints
+    // Everything else in ColorMode/BreakpointMode collections IS the semantic level
+    const isComponentToken = tokenPath.startsWith('Component/');
+
+    // Check if we've reached a primitive - ALWAYS endpoint
+    if (isPrimitiveCollection(variable.collectionId)) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'primitive',
+        collectionType: 'primitive',
+        variableId: currentId
+      };
+    }
+
+    // BreakpointMode collection = Semantic level (except Component/ tokens)
+    if (acceptSemanticEndpoint && variable.collectionId === COLLECTION_IDS.BREAKPOINT_MODE && !isComponentToken) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'breakpointmode',
+        collectionType: 'semantic',
+        variableId: currentId
+      };
+    }
+
+    // ColorMode collection = Semantic level (except Component/ tokens)
+    if (acceptColorModeEndpoint && variable.collectionId === COLLECTION_IDS.COLOR_MODE && !isComponentToken) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'colormode',
+        collectionType: 'semantic',
+        variableId: currentId
+      };
+    }
+
+    // Density tokens - endpoint if flag set
+    if (acceptDensityEndpoint && variable.collectionId === COLLECTION_IDS.DENSITY) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'density',
+        collectionType: 'density',
+        variableId: currentId
+      };
+    }
+
+    // Find the correct mode for this variable's collection
+    let targetModeId = null;
+    const collection = collections.find(c => c.id === variable.collectionId);
+
+    if (collection) {
+      // For Brand collections, use brand name to find mode
+      if (variable.collectionId === COLLECTION_IDS.BRAND_TOKEN_MAPPING ||
+          variable.collectionId === COLLECTION_IDS.BRAND_COLOR_MAPPING) {
+        if (context.brandName) {
+          const brandMode = collection.modes.find(m =>
+            m.name.toUpperCase() === context.brandName.toUpperCase()
+          );
+          if (brandMode) {
+            targetModeId = brandMode.modeId;
+          }
+        }
+      }
+
+      // For ColorMode collections, use theme mode from context (Light/Dark)
+      if (variable.collectionId === COLLECTION_IDS.COLOR_MODE && context.modeName) {
+        const themeMode = collection.modes.find(m =>
+          m.name.toLowerCase() === context.modeName.toLowerCase()
+        );
+        if (themeMode) {
+          targetModeId = themeMode.modeId;
+        }
+      }
+
+      // Fallback to first mode
+      if (!targetModeId && collection.modes && collection.modes.length > 0) {
+        targetModeId = collection.modes[0].modeId;
+      }
+    }
+
+    // Get value for this mode
+    const value = variable.valuesByMode[targetModeId];
+
+    // If value is another alias, continue following the chain
+    if (value && value.type === 'VARIABLE_ALIAS') {
+      currentId = value.id;
+    } else {
+      // Direct value reached, no primitive in chain
+      return null;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Legacy wrapper for backwards compatibility
+ * @deprecated Use getDeepAliasInfo instead
+ */
+function getAliasInfo(variableId, aliasLookup, collections, context = {}) {
+  return getDeepAliasInfo(variableId, aliasLookup, collections, context);
+}
+
+/**
  * Determines the token type for Style Dictionary based on Figma scopes and fallback heuristics
  * @param {string} tokenName - Token name
  * @param {string} collectionName - Collection name
@@ -657,19 +821,25 @@ function processBrandSpecificTokens(collections, aliasLookup) {
 
           if (modeValue !== undefined && modeValue !== null) {
             let processedValue;
+            let aliasInfo = null;
 
             if (modeValue.type === 'VARIABLE_ALIAS') {
-              // Context with Brand + Mode
+              // Context with Brand + Mode (needed for both alias resolution and deep alias info)
               const context = {
                 brandName,
                 brandModeId,
                 breakpointModeId: collection.id === COLLECTION_IDS.BREAKPOINT_MODE ? mode.modeId : undefined,
-                colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined
+                colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined,
+                // Add modeName for ColorMode deep alias resolution (Light/Dark)
+                modeName: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.name : undefined
               };
 
               if (collection.id === COLLECTION_IDS.DENSITY) {
                 context.breakpointModeId = mode.modeId;
               }
+
+              // Extract DEEP alias info - follows chain to primitive (for CSS var() references)
+              aliasInfo = getDeepAliasInfo(modeValue.id, aliasLookup, collections, context);
 
               processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set(), collections);
             } else {
@@ -689,6 +859,11 @@ function processBrandSpecificTokens(collections, aliasLookup) {
                   }
                 }
               };
+
+              // Add alias info for CSS var() references (only if alias exists)
+              if (aliasInfo) {
+                tokenObject.$alias = aliasInfo;
+              }
 
               if (variable.resolvedType === 'COLOR') {
                 tokenObject.$type = 'color';
@@ -892,18 +1067,30 @@ function processComponentTokens(collections, aliasLookup) {
 
             if (modeValue !== undefined && modeValue !== null) {
               let processedValue;
+              let aliasInfo = null;
 
               if (modeValue.type === 'VARIABLE_ALIAS') {
+                // Context with Brand + Mode (needed for both alias resolution and deep alias info)
                 const context = {
                   brandName,
                   brandModeId,
                   breakpointModeId: collection.id === COLLECTION_IDS.BREAKPOINT_MODE ? mode.modeId : undefined,
-                  colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined
+                  colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined,
+                  // Add modeName for ColorMode deep alias resolution (Light/Dark)
+                  modeName: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.name : undefined
                 };
 
                 if (collection.id === COLLECTION_IDS.DENSITY) {
                   context.breakpointModeId = mode.modeId;
                 }
+
+                // Extract DEEP alias info for Component tokens
+                // Component tokens stop at Semantic (ColorMode/BreakpointMode) or Density endpoints
+                aliasInfo = getDeepAliasInfo(modeValue.id, aliasLookup, collections, context, {
+                  acceptColorModeEndpoint: true,
+                  acceptSemanticEndpoint: true,
+                  acceptDensityEndpoint: true
+                });
 
                 processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set(), collections);
               } else {
@@ -923,6 +1110,11 @@ function processComponentTokens(collections, aliasLookup) {
                     }
                   }
                 };
+
+                // Add alias info for CSS var() references (only if alias exists)
+                if (aliasInfo) {
+                  tokenObject.$alias = aliasInfo;
+                }
 
                 if (variable.resolvedType === 'COLOR') {
                   tokenObject.$type = 'color';
@@ -1022,10 +1214,23 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
           textDecoration: textStyle.textDecoration || 'NONE'
         };
 
+        // Track aliases for each bound property (for CSS var() references)
+        const aliases = {};
+
         // Resolve boundVariables
         if (textStyle.boundVariables) {
           Object.entries(textStyle.boundVariables).forEach(([property, alias]) => {
             if (alias.type === 'VARIABLE_ALIAS') {
+              // For fontSize and lineHeight: accept Semantic-level (BreakpointMode) as endpoint
+              // These are responsive values that change per breakpoint
+              const acceptSemanticEndpoint = (property === 'fontSize' || property === 'lineHeight');
+
+              // Extract DEEP alias info - follows chain to primitive (or semantic for typography)
+              const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint });
+              if (aliasInfo) {
+                aliases[property] = aliasInfo;
+              }
+
               const resolved = resolveAliasWithContext(alias.id, aliasLookup, context, new Set(), collections);
               resolvedStyle[property] = resolved;
             }
@@ -1061,7 +1266,7 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
         // Keep styleName case for proper platform-specific transformations (camelCase, kebab-case, etc.)
         const pathArray = [category.toLowerCase(), styleName];
 
-        setNestedPath(tokens, pathArray, {
+        const tokenObject = {
           $value: resolvedStyle,
           value: resolvedStyle,
           type: 'typography',
@@ -1073,7 +1278,14 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
               styleName: textStyle.name
             }
           }
-        });
+        };
+
+        // Add aliases info for CSS var() references (only if aliases exist)
+        if (Object.keys(aliases).length > 0) {
+          tokenObject.$aliases = aliases;
+        }
+
+        setNestedPath(tokens, pathArray, tokenObject);
       });
 
       const key = `${brandName.toLowerCase()}-${breakpointName}`;
@@ -1123,10 +1335,23 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
             textDecoration: textStyle.textDecoration || 'NONE'
           };
 
+          // Track aliases for each bound property (for CSS var() references)
+          const aliases = {};
+
           // Resolve boundVariables
           if (textStyle.boundVariables) {
             Object.entries(textStyle.boundVariables).forEach(([property, alias]) => {
               if (alias.type === 'VARIABLE_ALIAS') {
+                // For fontSize and lineHeight: accept Semantic-level (BreakpointMode) as endpoint
+                // These are responsive values that change per breakpoint
+                const acceptSemanticEndpoint = (property === 'fontSize' || property === 'lineHeight');
+
+                // Extract DEEP alias info - follows chain to primitive (or semantic for typography)
+                const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint });
+                if (aliasInfo) {
+                  aliases[property] = aliasInfo;
+                }
+
                 const resolved = resolveAliasWithContext(alias.id, aliasLookup, context, new Set(), collections);
                 resolvedStyle[property] = resolved;
               }
@@ -1166,9 +1391,8 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
             componentTypographyOutputs[brandKey][componentName][`typography-${breakpointName}`] = {};
           }
 
-          // Add to component typography output
-          // Keep styleName case for proper platform-specific transformations
-          componentTypographyOutputs[brandKey][componentName][`typography-${breakpointName}`][styleName.replace(/\//g, '-')] = {
+          // Build token object
+          const tokenObject = {
             $value: resolvedStyle,
             value: resolvedStyle,
             type: 'typography',
@@ -1181,6 +1405,47 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
               }
             }
           };
+
+          // Auto-link fontSize/lineHeight to corresponding Breakpoint tokens
+          // Pattern: "buttonLabel" → "buttonLabelFontSize", "buttonLabelLineHeight"
+          if (!aliases.fontSize || !aliases.lineHeight) {
+            const baseStyleName = styleName.replace(/\//g, '');
+            const fontSizeVarName = `Component/${componentName}/${baseStyleName}FontSize`;
+            const lineHeightVarName = `Component/${componentName}/${baseStyleName}LineHeight`;
+
+            // Search for matching variables in BreakpointMode collection
+            for (const [varId, variable] of aliasLookup) {
+              if (variable.collectionId === COLLECTION_IDS.BREAKPOINT_MODE) {
+                // Match fontSize variable
+                if (!aliases.fontSize && variable.name === fontSizeVarName) {
+                  aliases.fontSize = {
+                    token: baseStyleName + 'FontSize',
+                    collection: 'breakpointmode',
+                    collectionType: 'component-breakpoint',
+                    variableId: varId
+                  };
+                }
+                // Match lineHeight variable
+                if (!aliases.lineHeight && variable.name === lineHeightVarName) {
+                  aliases.lineHeight = {
+                    token: baseStyleName + 'LineHeight',
+                    collection: 'breakpointmode',
+                    collectionType: 'component-breakpoint',
+                    variableId: varId
+                  };
+                }
+              }
+            }
+          }
+
+          // Add aliases info for CSS var() references (only if aliases exist)
+          if (Object.keys(aliases).length > 0) {
+            tokenObject.$aliases = aliases;
+          }
+
+          // Add to component typography output
+          // Keep styleName case for proper platform-specific transformations
+          componentTypographyOutputs[brandKey][componentName][`typography-${breakpointName}`][styleName.replace(/\//g, '-')] = tokenObject;
         });
       });
 
@@ -1222,7 +1487,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
       const context = {
         brandName,
         brandModeId,
-        colorModeModeId
+        colorModeModeId,
+        modeName  // Add modeName for ColorMode deep alias resolution (Light/Dark)
       };
 
       const tokens = {};
@@ -1232,9 +1498,11 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
         const category = effectStyle.name.split('/').slice(-2, -1)[0];
 
         const resolvedEffects = [];
+        // Track aliases for each effect layer (for CSS var() references)
+        const aliases = [];
 
         if (effectStyle.effects && Array.isArray(effectStyle.effects)) {
-          effectStyle.effects.forEach(effect => {
+          effectStyle.effects.forEach((effect, index) => {
             if (effect.type === 'DROP_SHADOW' && effect.visible) {
               const shadowEffect = {
                 type: 'dropShadow',
@@ -1246,9 +1514,18 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
                 blendMode: effect.blendMode || 'NORMAL'
               };
 
+              // Track alias info for this effect layer
+              let layerAliases = null;
+
               // Resolve boundVariables if present
               if (effect.boundVariables && effect.boundVariables.color) {
                 if (effect.boundVariables.color.type === 'VARIABLE_ALIAS') {
+                  // Extract alias info for CSS var() references - use getDeepAliasInfo with context
+                  const aliasInfo = getDeepAliasInfo(effect.boundVariables.color.id, aliasLookup, collections, context);
+                  if (aliasInfo) {
+                    layerAliases = { color: aliasInfo };
+                  }
+
                   const resolved = resolveAliasWithContext(
                     effect.boundVariables.color.id,
                     aliasLookup,
@@ -1261,6 +1538,9 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
               }
 
               resolvedEffects.push(shadowEffect);
+              if (layerAliases) {
+                aliases.push({ index, ...layerAliases });
+              }
             }
           });
         }
@@ -1268,7 +1548,7 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
         // Keep styleName case for proper platform-specific transformations
         const pathArray = [category.toLowerCase(), styleName];
 
-        setNestedPath(tokens, pathArray, {
+        const tokenObject = {
           $value: resolvedEffects,
           value: resolvedEffects,
           type: 'shadow',
@@ -1280,7 +1560,14 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
               styleName: effectStyle.name
             }
           }
-        });
+        };
+
+        // Add aliases info for CSS var() references (only if aliases exist)
+        if (aliases.length > 0) {
+          tokenObject.$aliases = aliases;
+        }
+
+        setNestedPath(tokens, pathArray, tokenObject);
       });
 
       const key = `${brandName.toLowerCase()}-${modeName}`;
@@ -1308,7 +1595,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
         const context = {
           brandName,
           brandModeId,
-          colorModeModeId
+          colorModeModeId,
+          modeName  // Add modeName for ColorMode deep alias resolution (Light/Dark)
         };
 
         componentEffectStyles.forEach(effectStyle => {
@@ -1320,9 +1608,11 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
           const styleName = pathParts.slice(2).join('/');
 
           const resolvedEffects = [];
+          // Track aliases for each effect layer (for CSS var() references)
+          const aliases = [];
 
           if (effectStyle.effects && Array.isArray(effectStyle.effects)) {
-            effectStyle.effects.forEach(effect => {
+            effectStyle.effects.forEach((effect, index) => {
               if (effect.type === 'DROP_SHADOW' && effect.visible) {
                 const shadowEffect = {
                   type: 'dropShadow',
@@ -1334,9 +1624,21 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
                   blendMode: effect.blendMode || 'NORMAL'
                 };
 
+                // Track alias info for this effect layer
+                let layerAliases = null;
+
                 // Resolve boundVariables if present
                 if (effect.boundVariables && effect.boundVariables.color) {
                   if (effect.boundVariables.color.type === 'VARIABLE_ALIAS') {
+                    // Extract alias info for CSS var() references
+                    // Component effects stop at ColorMode semantic tokens
+                    const aliasInfo = getDeepAliasInfo(effect.boundVariables.color.id, aliasLookup, collections, context, {
+                      acceptColorModeEndpoint: true
+                    });
+                    if (aliasInfo) {
+                      layerAliases = { color: aliasInfo };
+                    }
+
                     const resolved = resolveAliasWithContext(
                       effect.boundVariables.color.id,
                       aliasLookup,
@@ -1349,6 +1651,9 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
                 }
 
                 resolvedEffects.push(shadowEffect);
+                if (layerAliases) {
+                  aliases.push({ index, ...layerAliases });
+                }
               }
             });
           }
@@ -1361,9 +1666,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
             componentEffectOutputs[brandKey][componentName][`effects-${modeName}`] = {};
           }
 
-          // Add to component effects output
-          // Keep styleName case for proper platform-specific transformations
-          componentEffectOutputs[brandKey][componentName][`effects-${modeName}`][styleName.replace(/\//g, '-')] = {
+          // Build token object
+          const tokenObject = {
             $value: resolvedEffects,
             value: resolvedEffects,
             type: 'shadow',
@@ -1376,6 +1680,15 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
               }
             }
           };
+
+          // Add aliases info for CSS var() references (only if aliases exist)
+          if (aliases.length > 0) {
+            tokenObject.$aliases = aliases;
+          }
+
+          // Add to component effects output
+          // Keep styleName case for proper platform-specific transformations
+          componentEffectOutputs[brandKey][componentName][`effects-${modeName}`][styleName.replace(/\//g, '-')] = tokenObject;
         });
       });
 
