@@ -32,7 +32,7 @@ Multi-platform design token transformation pipeline powered by **Style Dictionar
 This pipeline processes the multi-layer, multi-brand BILD Design System architecture:
 
 - **3 Brands**: BILD, SportBILD, Advertorial
-- **6 Platforms**: CSS, SCSS, JavaScript, JSON, iOS (Swift), Android (XML) *(Flutter disabled)*
+- **6 Platforms**: CSS, SCSS, JavaScript, JSON, iOS (Swift), Android (Jetpack Compose) *(Flutter/XML disabled)*
 - **Multiple Modes**: Density (3), Breakpoints (4), Color Modes (2)
 - **Token Types**: Primitives, Semantic Tokens, Component Tokens (~970 files)
 
@@ -201,7 +201,33 @@ Container(
 )
 ```
 
-### Android XML
+### Android Jetpack Compose
+
+```kotlin
+import com.bild.designsystem.bild.theme.BildTheme
+import com.bild.designsystem.bild.semantic.BildSemanticTokens
+import com.bild.designsystem.bild.components.ButtonTokens
+import com.bild.designsystem.DesignTokenPrimitives
+
+// Theme Provider (with automatic Light/Dark, WindowSizeClass support)
+BildTheme(
+    darkTheme = isSystemInDarkTheme(),
+    sizeClass = WindowSizeClass.Compact
+) {
+    // Access via BildTheme object
+    Text(color = BildTheme.colors.textColorPrimary)
+}
+
+// Direct token access (camelCase naming)
+val primaryColor = BildSemanticTokens.Colors.Light.textColorPrimary
+val buttonBg = ButtonTokens.Colors.Light.buttonPrimaryBrandBgColorIdle
+val red = DesignTokenPrimitives.Colors.bildred
+```
+
+### Android XML (Disabled)
+
+> **Note:** Android XML output is disabled by default. Jetpack Compose is the preferred format.
+> Set `ANDROID_XML_ENABLED = true` in build.js to re-enable.
 
 ```xml
 <TextView
@@ -286,7 +312,8 @@ lg (1024px) ────┘
 | SCSS | `kebab-case` with `$` | `$text-color-primary` |
 | JavaScript | `camelCase` | `textColorPrimary` |
 | iOS Swift | `camelCase` | `textColorPrimary` |
-| Android | `snake_case` | `text_color_primary` |
+| Android Compose | `camelCase` | `textColorPrimary` |
+| Android XML | `snake_case` | `text_color_primary` |
 | Flutter | `camelCase` | `textColorPrimary` |
 
 ### Token Types
@@ -297,8 +324,9 @@ lg (1024px) ────┘
 |----------|--------|---------|
 | CSS | `#HEX` / `rgba()` | `#DD0000` |
 | iOS Swift | `UIColor()` object | `UIColor(red: 0.867, ...)` |
+| Android Compose | `Color(0xFF...)` | `Color(0xFFDD0000)` |
+| Android XML | `#hex` resource | `#dd0000` |
 | Flutter | `Color(0xFF...)` | `Color(0xFFDD0000)` |
-| Android | `#hex` resource | `#dd0000` |
 
 #### Dimensions
 
@@ -306,7 +334,8 @@ lg (1024px) ────┘
 |----------|--------|---------|
 | CSS | `Xpx` | `16px` |
 | iOS Swift | `CGFloat` number | `16` |
-| Android | `Xpx` dimen | `16px` |
+| Android Compose | `X.dp` / `X.sp` | `16.dp`, `15.sp` |
+| Android XML | `Xpx` dimen | `16px` |
 | Flutter | `"Xpx"` string | `"16px"` |
 
 #### Opacity
@@ -328,6 +357,8 @@ The build pipeline supports toggles to enable/disable specific outputs:
 
 // Platform output toggles
 const FLUTTER_ENABLED = false;        // Disables dist/flutter/ output
+const COMPOSE_ENABLED = true;         // Enables dist/android/compose/ output
+const ANDROID_XML_ENABLED = false;    // Disables Android XML output
 
 // Token type toggles
 const BOOLEAN_TOKENS_ENABLED = false; // Excludes visibility tokens
@@ -335,6 +366,8 @@ const BOOLEAN_TOKENS_ENABLED = false; // Excludes visibility tokens
 
 | Toggle | Default | Description |
 |--------|---------|-------------|
+| `COMPOSE_ENABLED` | `true` | Jetpack Compose Kotlin output in `dist/android/compose/` |
+| `ANDROID_XML_ENABLED` | `false` | Android XML resources (disabled, Compose preferred) |
 | `FLUTTER_ENABLED` | `false` | Flutter Dart output in `dist/flutter/` |
 | `BOOLEAN_TOKENS_ENABLED` | `false` | Boolean/visibility tokens (13 tokens like `hideOnMobile`) |
 
@@ -360,9 +393,30 @@ dist/
 ├── js/                              # Same structure
 ├── json/                            # Same structure
 ├── ios/                             # Swift Classes
-├── android/                         # XML Resources
+├── android/
+│   └── compose/                     # Jetpack Compose (Kotlin)
+│       ├── shared/
+│       │   └── DesignTokenPrimitives.kt   # All primitives consolidated
+│       └── brands/{brand}/
+│           ├── components/{Component}/
+│           │   └── {Component}Tokens.kt   # Aggregated Colors/Sizing/Density/Typography
+│           ├── semantic/
+│           │   └── {Brand}SemanticTokens.kt   # Aggregated Light/Dark + Compact/Regular
+│           └── theme/
+│               └── {Brand}Theme.kt        # CompositionLocal Theme Provider
 └── flutter/                         # Dart Classes (disabled by default)
 ```
+
+### Compose File Organization
+
+Compose output is optimized for Android development:
+
+| File | Content | Access Pattern |
+|------|---------|----------------|
+| `DesignTokenPrimitives.kt` | All primitives (Colors, Space, Size, Font) | `DesignTokenPrimitives.Colors.bildred` |
+| `{Brand}SemanticTokens.kt` | Colors (Light/Dark), Sizing (Compact/Regular) | `BildSemanticTokens.Colors.Light.textColorPrimary` |
+| `{Component}Tokens.kt` | All component modes aggregated | `ButtonTokens.Colors.Light.buttonPrimaryBrandBgColorIdle` |
+| `{Brand}Theme.kt` | CompositionLocal-based Theme Provider | `BildTheme { /* content */ }` |
 
 ## 🔗 Figma Integration & Dependencies
 
@@ -479,9 +533,11 @@ MIT License - See [LICENSE](./LICENSE) file.
 
 | Feature | Status |
 |---------|--------|
-| 6 Platforms | ✅ (Flutter disabled) |
+| 6 Platforms | ✅ (Flutter/XML disabled) |
 | 3 Brands | ✅ |
 | ~970 Files | ✅ |
 | Figma Scopes | ✅ |
 | var() Aliases | ✅ |
 | Responsive CSS | ✅ |
+| Jetpack Compose | ✅ |
+| Theme Provider | ✅ |

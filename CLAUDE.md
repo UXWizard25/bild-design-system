@@ -163,7 +163,7 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 │  tokens/                                                        │
 │  ├── shared/ (primitives)                                       │
 │  └── brands/{brand}/                                            │
-│      ├── color/, density/, breakpoints/, overrides/             │
+│      ├── color/, density/, breakpoints/                         │
 │      ├── semantic/ (effects, typography)                        │
 │      └── components/{Component}/ (per-component JSONs)          │
 └───────────────────────────┬─────────────────────────────────────┘
@@ -197,8 +197,9 @@ Design Token Pipeline für das BILD Design System. Transformiert Figma Variables
 ┌─────────────────────────────────────────────────────────────────┐
 │  dist/                                                          │
 │  ├── css/, scss/, js/, json/                                    │
-│  ├── ios/, android/                                             │
-│  ├── (flutter/ disabled via FLUTTER_ENABLED toggle)             │
+│  ├── ios/, android/compose/ (Jetpack Compose)                   │
+│  ├── (android XML disabled via ANDROID_XML_ENABLED)             │
+│  ├── (flutter/ disabled via FLUTTER_ENABLED)                    │
 │  └── manifest.json                                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -230,9 +231,9 @@ tokens/
     │   └── colormode-{light|dark}.json
     ├── density/
     │   └── density-{compact|default|spacious}.json
-    ├── overrides/
-    │   ├── brandcolormapping.json
-    │   └── brandtokenmapping.json
+    ├── overrides/                        # Brand Mapping (used during preprocessing,
+    │   ├── brandcolormapping.json       # NOT output to dist/ - values already
+    │   └── brandtokenmapping.json       # resolved in semantic/component tokens)
     ├── semantic/
     │   ├── effects/
     │   └── typography/
@@ -263,6 +264,17 @@ dist/
 ├── json/
 ├── ios/
 ├── android/
+│   └── compose/                # Jetpack Compose (Kotlin) - enabled
+│       ├── shared/
+│       │   └── DesignTokenPrimitives.kt   # Consolidated primitives
+│       └── brands/{brand}/
+│           ├── components/{Component}/
+│           │   └── {Component}Tokens.kt   # Aggregated tokens
+│           ├── semantic/
+│           │   └── {Brand}SemanticTokens.kt
+│           └── theme/
+│               └── {Brand}Theme.kt        # Theme Provider
+│   (XML disabled via ANDROID_XML_ENABLED)
 ├── flutter/                    # Disabled by default (FLUTTER_ENABLED)
 └── manifest.json
 ```

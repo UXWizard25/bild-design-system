@@ -36,7 +36,7 @@ The BILD Design Ops Pipeline transforms design assets from Figma into production
 
 | Pipeline | Input | Output | Platforms |
 |----------|-------|--------|-----------|
-| **🎨 Token Pipeline** | Figma Variables | Design Tokens | 6 platforms (Flutter disabled) |
+| **🎨 Token Pipeline** | Figma Variables | Design Tokens | 6 platforms (Flutter/Android XML disabled) |
 | **🖼️ Icon Pipeline** | Figma Icons (SVG) | Multi-format Icons | 5 platforms |
 
 Both pipelines use the **TokenSync Figma Plugin** for automated exports.
@@ -113,8 +113,8 @@ Both pipelines use the **TokenSync Figma Plugin** for automated exports.
 │  ├── js/      (ES Modules)  │    │  ├── flutter/  (TTF + Dart) │
 │  ├── json/    (Raw Data)    │    │  └── ios/      (xcassets)   │
 │  ├── ios/     (Swift)       │    │                             │
-│  └── android/ (XML)         │    │                             │
-│  (flutter/ disabled)        │    │                             │
+│  └── android/ (Compose/Kt)  │    │                             │
+│  (flutter/XML disabled)     │    │                             │
 └──────────────┬──────────────┘    └──────────────┬──────────────┘
                │                                  │
                │  npm publish                     │  npm publish
@@ -161,6 +161,22 @@ import { textColorPrimary, space2x } from '@marioschmidt/design-system-tokens/js
 // iOS Swift
 view.backgroundColor = StyleDictionary.textColorPrimary
 let padding: CGFloat = StyleDictionary.space2x
+```
+
+```kotlin
+// Android Jetpack Compose
+import com.bild.designsystem.bild.theme.BildTheme
+import com.bild.designsystem.bild.components.ButtonTokens
+
+BildTheme {
+    Button(
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ButtonTokens.Colors.Light.buttonPrimaryBrandBgColorIdle
+        )
+    ) {
+        Text(color = BildTheme.colors.textColorPrimary)
+    }
+}
 ```
 
 ### Icon Usage
@@ -327,7 +343,8 @@ npm run clean:icons        # Remove dist/icons/
 | JavaScript | ES6 Modules | `dist/js/**/*.js` | ✅ Production |
 | JSON | Raw Data | `dist/json/**/*.json` | ✅ Production |
 | iOS Swift | UIColor, CGFloat | `dist/ios/**/*.swift` | ✅ Production |
-| Android | XML Resources | `dist/android/**/*.xml` | ✅ Production |
+| Android | Jetpack Compose (Kotlin) | `dist/android/compose/**/*.kt` | ✅ Production |
+| Android | XML Resources | `dist/android/**/*.xml` | ⏸️ Disabled |
 | Flutter | Dart Classes | `dist/flutter/**/*.dart` | ⏸️ Disabled |
 
 ### 🖼️ Icon Platforms
@@ -422,5 +439,5 @@ MIT License - See [LICENSE](./LICENSE) file.
 | Tokens | Icons |
 |--------|-------|
 | ~970 files | 5 platforms |
-| 6 platforms | TypeScript support |
+| 6 platforms (incl. Compose) | TypeScript support |
 | 3 brands | Accessibility ready |
