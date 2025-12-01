@@ -2665,11 +2665,25 @@ object ${className} {
       const type = token.$type || token.type;
       let value = token.value;
 
+      // Detect token type by name pattern for proper formatting
+      const lowerName = name.toLowerCase();
+      const isFontFamily = lowerName.includes('fontfamily') || lowerName.includes('font-family');
+      const isFontSize = lowerName.includes('fontsize') || lowerName.includes('font-size');
+      const isLineHeight = lowerName.includes('lineheight') || lowerName.includes('line-height');
+      const isLetterSpacing = lowerName.includes('letterspacing') || lowerName.includes('letter-spacing') ||
+                              lowerName.includes('letterspace');
+
       // Apply Compose-specific formatting
       if (type === 'color') {
         value = toComposeColor(value);
+      } else if (isFontSize || isLineHeight || isLetterSpacing) {
+        // Font sizes, line heights, and letter spacing use sp units
+        value = toComposeSp(value);
       } else if (type === 'dimension' || type === 'float' || type === 'sizing' || type === 'spacing') {
         value = toComposeDp(value);
+      } else if (type === 'string' || type === 'fontFamily' || isFontFamily) {
+        // Quote string values (font family names, etc.)
+        value = `"${value}"`;
       }
 
       output += `    internal val ${name} = ${value}\n`;
@@ -2799,11 +2813,12 @@ const composeSpacingFormat = ({ dictionary, options, file }) => {
     className = `${brandPascal}Spacing`;
   }
 
-  // Check if any tokens need sp import (font sizes, line heights)
+  // Check if any tokens need sp import (font sizes, line heights, letter spacing)
   const needsSpImport = dictionary.allTokens.some(token => {
     const lowerName = token.name.toLowerCase();
     return lowerName.includes('fontsize') || lowerName.includes('font-size') ||
-           lowerName.includes('lineheight') || lowerName.includes('line-height');
+           lowerName.includes('lineheight') || lowerName.includes('line-height') ||
+           lowerName.includes('letterspacing') || lowerName.includes('letter-spacing');
   });
 
   const imports = ['import androidx.compose.runtime.Stable', 'import androidx.compose.ui.unit.Dp', 'import androidx.compose.ui.unit.dp'];
@@ -2828,6 +2843,23 @@ ${imports.join('\n')}
 
 `;
 
+  // Helper function to determine if a token should be filtered out
+  // Filter out generic string tokens (type=string but not fontFamily/textCase patterns)
+  const shouldFilterStringToken = (token) => {
+    const type = token.$type || token.type;
+    if (type !== 'string') return false;
+
+    const lowerName = token.name.toLowerCase();
+    const isFontFamily = lowerName.includes('fontfamily') || lowerName.includes('font-family');
+    const isTextCase = lowerName.includes('textcase') || lowerName.includes('text-case');
+
+    // Keep fontFamily and textCase strings, filter out all other string types
+    return !isFontFamily && !isTextCase;
+  };
+
+  // Filter tokens to exclude generic string tokens
+  const filteredTokens = dictionary.allTokens.filter(token => !shouldFilterStringToken(token));
+
   // Generate interface for sizeclass (only for Compact mode)
   if (generateInterface && modeType === 'sizeclass') {
     output += `/**
@@ -2837,7 +2869,7 @@ ${imports.join('\n')}
 @Stable
 interface ${interfaceName} {
 `;
-    dictionary.allTokens.forEach(token => {
+    filteredTokens.forEach(token => {
       const lowerName = token.name.toLowerCase();
       const isFontSize = lowerName.includes('fontsize') || lowerName.includes('font-size');
       const isLineHeight = lowerName.includes('lineheight') || lowerName.includes('line-height');
@@ -2873,7 +2905,7 @@ interface ${interfaceName} {
 object ${className}${implementsClause} {
 `;
 
-  dictionary.allTokens.forEach(token => {
+  filteredTokens.forEach(token => {
     const name = token.name;
     const type = token.$type || token.type;
     let value = token.value;
@@ -2884,8 +2916,10 @@ object ${className}${implementsClause} {
     const isLineHeight = lowerName.includes('lineheight') || lowerName.includes('line-height');
     const isFontFamily = lowerName.includes('fontfamily') || lowerName.includes('font-family');
     const isFontWeight = lowerName.includes('fontweight') || lowerName.includes('font-weight');
+    const isLetterSpacing = lowerName.includes('letterspacing') || lowerName.includes('letter-spacing');
 
-    if (isFontSize || isLineHeight) {
+    if (isFontSize || isLineHeight || isLetterSpacing) {
+      // Font sizes, line heights, and letter spacing use sp units
       value = toComposeSp(value);
     } else if (isFontWeight) {
       // FontWeight should always be an integer (e.g., 700, not "700")
@@ -2930,11 +2964,12 @@ const composeComponentTokensFormat = ({ dictionary, options, file }) => {
     }
   }
 
-  // Check if any tokens need sp import (font sizes, line heights)
+  // Check if any tokens need sp import (font sizes, line heights, letter spacing)
   const needsSpImport = dictionary.allTokens.some(token => {
     const lowerName = token.name.toLowerCase();
     return lowerName.includes('fontsize') || lowerName.includes('font-size') ||
-           lowerName.includes('lineheight') || lowerName.includes('line-height');
+           lowerName.includes('lineheight') || lowerName.includes('line-height') ||
+           lowerName.includes('letterspacing') || lowerName.includes('letter-spacing');
   });
 
   // Determine output class name
@@ -2996,10 +3031,12 @@ object ${className} {
     const isLineHeight = lowerName.includes('lineheight') || lowerName.includes('line-height');
     const isFontFamily = lowerName.includes('fontfamily') || lowerName.includes('font-family');
     const isFontWeight = lowerName.includes('fontweight') || lowerName.includes('font-weight');
+    const isLetterSpacing = lowerName.includes('letterspacing') || lowerName.includes('letter-spacing');
 
     if (type === 'color') {
       value = toComposeColor(value);
-    } else if (isFontSize || isLineHeight) {
+    } else if (isFontSize || isLineHeight || isLetterSpacing) {
+      // Font sizes, line heights, and letter spacing use sp units
       value = toComposeSp(value);
     } else if (isFontWeight) {
       // FontWeight should always be an integer (e.g., 700, not "700")

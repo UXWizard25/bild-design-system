@@ -2726,7 +2726,8 @@ async function aggregateComposeSemantics() {
           const content = fs.readFileSync(path.join(colorDir, fileName), 'utf8');
           const mode = fileName.toLowerCase().includes('dark') ? 'dark' : 'light';
 
-          const valRegex = /^\s*val\s+(\w+)\s*=\s*(.+)$/gm;
+          // Match both 'val' and 'override val' declarations
+          const valRegex = /^\s*(?:override\s+)?val\s+(\w+)\s*=\s*(.+)$/gm;
           let match;
           while ((match = valRegex.exec(content)) !== null) {
             semanticData.colors[mode].push({ name: match[1], value: match[2].trim() });
@@ -2742,7 +2743,8 @@ async function aggregateComposeSemantics() {
           const content = fs.readFileSync(path.join(sizingDir, fileName), 'utf8');
           const mode = fileName.toLowerCase().includes('regular') ? 'regular' : 'compact';
 
-          const valRegex = /^\s*val\s+(\w+)\s*=\s*(.+)$/gm;
+          // Match both 'val' and 'override val' declarations
+          const valRegex = /^\s*(?:override\s+)?val\s+(\w+)\s*=\s*(.+)$/gm;
           let match;
           while ((match = valRegex.exec(content)) !== null) {
             semanticData.sizing[mode].push({ name: match[1], value: match[2].trim() });
