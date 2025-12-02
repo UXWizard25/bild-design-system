@@ -1,397 +1,503 @@
 # CLAUDE.md - BILD Design System Token Pipeline
 
-> Context-Dokument für AI-Assistenten. Beschreibt Architektur, Entscheidungen und Strukturen.
+> Context document for AI assistants. Describes architecture, decisions, and structures.
 
 ---
 
 ## Quick Reference
 
 ```bash
-npm run build:tokens    # Vollständiger Build (preprocess + style-dictionary)
-npm run build:bundles   # Nur CSS-Bundles neu generieren
-npm run build           # Alles (tokens + bundles)
-npm run clean           # dist/ und tokens/ löschen
+npm run build:tokens    # Full build (preprocess + style-dictionary)
+npm run build:bundles   # Regenerate CSS bundles only
+npm run build           # Everything (tokens + bundles)
+npm run clean           # Delete dist/ and tokens/
 ```
 
 **Source of Truth:** `src/design-tokens/bild-design-system-raw-data.json` (Figma Export via TokenSync Plugin)
 
-**Dokumentation:** Detaillierte Platform-Dokumentation in `README.tokens.md`, `README.android.md`, `README.ios.md`
+**Platform Documentation:** `README.tokens.md`, `README.android.md`, `README.ios.md`
 
 ---
 
-## Design System Architektur
+## Design System Architecture Overview
 
-### 4-Layer Token Hierarchie
+### The 4-Layer Token Hierarchy
 
-Das Design System verwendet eine 4-schichtige Token-Architektur mit klarer Referenzierung von oben nach unten:
+The BILD Design System uses a **4-layer token architecture** where each layer references the layer below it. This creates a clear chain of abstraction from raw values to component-specific tokens.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  LAYER 4: Component Tokens                                      │
-│  Button, Card, Teaser, Alert, InputField, etc.                  │
-│  → Referenziert Semantic Tokens                                 │
-│  → Hat eigene Modes: color, density, breakpoint, typography     │
-├─────────────────────────────────────────────────────────────────┤
-│  LAYER 3: Semantic Tokens                                       │
-│  text-color-primary, surface-color-secondary, border-color-*    │
-│  → Referenziert Brand Mapping                                   │
-│  → Hat Modes: color (light/dark), breakpoint                    │
-├─────────────────────────────────────────────────────────────────┤
-│  LAYER 2: Brand Mapping + Density                               │
-│  Mappt Primitives auf Brand-spezifische Werte                   │
-│  → Modes: BILD, SportBILD, Advertorial                          │
-│  → Density: default, dense, spacious                            │
-├─────────────────────────────────────────────────────────────────┤
-│  LAYER 1: Primitives (Global)                                   │
-│  colorprimitive, spaceprimitive, sizeprimitive, fontprimitive   │
-│  → Absolute Werte ohne Modes: #DD0000, 16px, etc.               │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  LAYER 4: COMPONENT TOKENS                                                  │
+│  ═══════════════════════════════════════════════════════════════════════   │
+│                                                                             │
+│  Purpose: Component-specific design decisions                               │
+│  Examples: Button, Card, Teaser, Alert, InputField, Navigation, etc.        │
+│                                                                             │
+│  Collections (per component):                                               │
+│  ┌─────────────────┬─────────────────┬─────────────────┬─────────────────┐  │
+│  │ {Component}     │ {Component}     │ {Component}     │ {Component}     │  │
+│  │ ColorMode       │ Density         │ Breakpoint      │ Typography      │  │
+│  │ (light/dark)    │ (3 modes)       │ (4 modes)       │ (4 modes)       │  │
+│  └────────┬────────┴────────┬────────┴────────┬────────┴────────┬────────┘  │
+│           │                 │                 │                 │           │
+│           └─────────────────┴────────┬────────┴─────────────────┘           │
+│                                      │                                      │
+│                          References LAYER 3                                 │
+│                                      ▼                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  LAYER 3: SEMANTIC TOKENS                                                   │
+│  ═══════════════════════════════════════════════════════════════════════   │
+│                                                                             │
+│  Purpose: Meaningful design intent tokens (context-independent)             │
+│  Examples: text-color-primary, surface-color-secondary, border-color-*      │
+│                                                                             │
+│  Collections:                                                               │
+│  ┌─────────────────────────────┬─────────────────────────────┐              │
+│  │ SemanticColorMode           │ SemanticBreakpoint          │              │
+│  │ Modes: light, dark          │ Modes: xs, sm, md, lg       │              │
+│  │                             │                             │              │
+│  │ + Effects (shadows)         │ + Typography (font sizes)   │              │
+│  └─────────────┬───────────────┴─────────────┬───────────────┘              │
+│                │                             │                              │
+│                └──────────────┬──────────────┘                              │
+│                               │                                             │
+│                   References LAYER 2                                        │
+│                               ▼                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  LAYER 2: BRAND MAPPING + DENSITY                                           │
+│  ═══════════════════════════════════════════════════════════════════════   │
+│                                                                             │
+│  Purpose: Map primitives to brand-specific values                           │
+│                                                                             │
+│  Collections:                                                               │
+│  ┌─────────────────────────────┬─────────────────────────────┐              │
+│  │ BrandColorMapping           │ Density                     │              │
+│  │ Modes: BILD, SportBILD      │ Modes: default, dense,      │              │
+│  │        (NOT Advertorial!)   │        spacious             │              │
+│  │                             │                             │              │
+│  │ Maps color primitives to    │ UI spacing/sizing variants  │              │
+│  │ brand-specific palette      │                             │              │
+│  ├─────────────────────────────┤                             │              │
+│  │ BrandTokenMapping           │                             │              │
+│  │ Modes: BILD, SportBILD,     │                             │              │
+│  │        Advertorial          │                             │              │
+│  │                             │                             │              │
+│  │ Maps non-color primitives   │                             │              │
+│  │ (spacing, sizing, fonts)    │                             │              │
+│  └─────────────┬───────────────┴─────────────┬───────────────┘              │
+│                │                             │                              │
+│                └──────────────┬──────────────┘                              │
+│                               │                                             │
+│                   References LAYER 1                                        │
+│                               ▼                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  LAYER 1: PRIMITIVES (Global, Brand-Independent)                            │
+│  ═══════════════════════════════════════════════════════════════════════   │
+│                                                                             │
+│  Purpose: Raw, absolute design values - the foundation                      │
+│                                                                             │
+│  Collections:                                                               │
+│  ┌───────────────┬───────────────┬───────────────┬───────────────┐          │
+│  │ ColorPrimitive│ SpacePrimitive│ SizePrimitive │ FontPrimitive │          │
+│  │               │               │               │               │          │
+│  │ bildred       │ space1x (8px) │ size1x (8px)  │ font-family-  │          │
+│  │ bild015       │ space2x (16px)│ size2x (16px) │   gotham      │          │
+│  │ bild050       │ space3x (24px)│ size4x (32px) │ font-weight-  │          │
+│  │ alpha-*       │ space4x (32px)│ ...           │   bold        │          │
+│  │ ...           │ ...           │               │ ...           │          │
+│  └───────────────┴───────────────┴───────────────┴───────────────┘          │
+│                                                                             │
+│  NO MODES - These are absolute values shared across all brands              │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### Alias-Ketten
-
-Tokens referenzieren sich gegenseitig via Aliase. Im CSS wird dies mit `var()` und Fallback abgebildet:
-
-```css
-/* Component → Semantic → Primitive */
---button-primary-bg-color: var(--core-color-primary, #DD0000);
---core-color-primary: var(--bildred, #DD0000);
---bildred: #DD0000;
-```
-
-**Entscheidung:** Immer Fallback-Werte verwenden für Robustheit bei fehlenden Variablen.
 
 ---
 
-## Multi-Brand & Multi-Mode System
+## Figma Collections & Modes
 
-### Brands
+### Collection Overview
 
-| Brand | Beschreibung | Besonderheit |
-|-------|--------------|--------------|
-| **BILD** | Hauptmarke | Vollständiges Token-Set |
-| **SportBILD** | Sport-Marke | Eigene Farben, eigenes Sizing |
-| **Advertorial** | Werbung | Eigenes Sizing, KEINE eigenen Farben |
+| Collection | Layer | Modes | Purpose |
+|------------|-------|-------|---------|
+| **ColorPrimitive** | 1 | None | Raw color values (#DD0000, #232629, etc.) |
+| **SpacePrimitive** | 1 | None | Spacing scale (8px, 16px, 24px, etc.) |
+| **SizePrimitive** | 1 | None | Size scale for dimensions |
+| **FontPrimitive** | 1 | None | Font families, weights, styles |
+| **BrandColorMapping** | 2 | BILD, SportBILD | Maps colors to brand palette |
+| **BrandTokenMapping** | 2 | BILD, SportBILD, Advertorial | Maps non-color tokens to brands |
+| **Density** | 2 | default, dense, spacious | UI density variants |
+| **ColorMode** | 3 | light, dark | Light/dark theme colors |
+| **BreakpointMode** | 3 | xs, sm, md, lg | Responsive sizing |
+| **{Component}*** | 4 | varies | Component-specific tokens |
 
-**Wichtig:** Advertorial hat keine eigenen Farben und verwendet die Farben von BILD oder SportBILD (siehe Dual-Axis Architektur).
+### Mode Dependencies
 
-### Token Modes
-
-| Mode-Typ | Werte | Verwendung |
-|----------|-------|------------|
-| **Color** | `light`, `dark` | Farbschema |
-| **Breakpoint** | `xs`, `sm`, `md`, `lg` | Responsive Sizing/Typography |
-| **Density** | `default`, `dense`, `spacious` | UI-Dichte |
-| **Typography** | `xs`, `sm`, `md`, `lg` | Schriftgrößen (referenziert Breakpoints) |
-
-### Breakpoint-Werte
-
-| Breakpoint | Min-Width | Geräteklasse |
-|------------|-----------|--------------|
-| `xs` | 320px | Mobile (Standard) |
-| `sm` | 390px | Großes Mobile |
-| `md` | 600px | Tablet |
-| `lg` | 1024px | Desktop |
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          MODE DEPENDENCY MATRIX                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Token Type        Depends On          Output Scope                         │
+│  ──────────────────────────────────────────────────────────────────────────│
+│  Primitives        (none)              Global (:root)                       │
+│                                                                             │
+│  Semantic Colors   Brand + ColorMode   [data-brand][data-theme]             │
+│                                                                             │
+│  Semantic Sizing   Brand + Breakpoint  [data-brand] + @media                │
+│                                                                             │
+│  Density           Brand + Density     [data-brand][data-density]           │
+│                                                                             │
+│  Component Colors  Brand + ColorMode   [data-brand][data-theme]             │
+│                                                                             │
+│  Component Sizing  Brand + Breakpoint  [data-brand] + @media                │
+│                                                                             │
+│  Typography        Brand + Breakpoint  [data-brand] .className              │
+│                                                                             │
+│  Effects           Brand + ColorMode   [data-brand][data-theme] .className  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## Dual-Axis Architektur (Native Platforms)
+## Brands Deep Dive
 
-### Problem
-
-Advertorial hat eigene Sizing/Typography-Tokens, aber KEINE eigenen Farben. Es soll die Farben von BILD oder SportBILD verwenden können.
-
-### Lösung: Zwei unabhängige Achsen
+### Brand Characteristics
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  DUAL-AXIS THEME ARCHITECTURE                                   │
-│                                                                 │
-│  Achse 1: ColorBrand (Farbpalette + Effekte)                    │
-│  ┌──────────────┬──────────────┐                                │
-│  │    BILD      │  SportBILD   │  ← Nur Brands MIT Farben       │
-│  └──────────────┴──────────────┘                                │
-│                                                                 │
-│  Achse 2: ContentBrand (Sizing/Typography)                      │
-│  ┌──────────────┬──────────────┬──────────────┐                 │
-│  │    BILD      │  SportBILD   │  Advertorial │  ← Alle Brands  │
-│  └──────────────┴──────────────┴──────────────┘                 │
-│                                                                 │
-│  Kombination: Advertorial Content + SportBILD Farben            │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              BRAND MATRIX                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│                    BILD          SportBILD       Advertorial                │
+│  ────────────────────────────────────────────────────────────────────────  │
+│                                                                             │
+│  Own Colors?       ✅ Yes         ✅ Yes          ❌ NO                      │
+│                    (bildred,      (sport colors)  (uses BILD or             │
+│                     bild palette)                  SportBILD colors)        │
+│                                                                             │
+│  Own Sizing?       ✅ Yes         ✅ Yes          ✅ Yes                     │
+│                                                                             │
+│  Own Typography?   ✅ Yes         ✅ Yes          ✅ Yes                     │
+│                                                                             │
+│  Own Effects?      ✅ Yes         ✅ Yes          ❌ NO                      │
+│                    (shadows)      (shadows)       (uses BILD or             │
+│                                                    SportBILD effects)       │
+│                                                                             │
+│  Components?       ✅ Full set    ✅ Full set     ⚠️ Partial set            │
+│                    (~55)          (~55)           (subset)                  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Implementierung
+### The Advertorial Problem → Dual-Axis Solution
 
-**iOS (SwiftUI):**
-```swift
-.designSystemTheme(
-    colorBrand: .sportbild,      // Farben von SportBILD
-    contentBrand: .advertorial   // Sizing von Advertorial
-)
+**Problem:** Advertorial content needs its own sizing/typography but should use BILD or SportBILD colors depending on context.
+
+**Solution:** Separate brand selection into two independent axes:
+
 ```
-
-**Android (Compose):**
-```kotlin
-DesignSystemTheme(
-    colorBrand = ColorBrand.Sportbild,
-    contentBrand = ContentBrand.Advertorial
-)
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       DUAL-AXIS ARCHITECTURE                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  AXIS 1: ColorBrand (determines colors + effects)                           │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │                                                                     │    │
+│  │    ┌─────────────┐          ┌─────────────┐                         │    │
+│  │    │    BILD     │          │  SportBILD  │     (only 2 options)    │    │
+│  │    │             │          │             │                         │    │
+│  │    │  bildred    │          │  sport-red  │                         │    │
+│  │    │  bild015    │          │  sport-015  │                         │    │
+│  │    │  shadows    │          │  shadows    │                         │    │
+│  │    └─────────────┘          └─────────────┘                         │    │
+│  │                                                                     │    │
+│  └─────────────────────────────────────────────────────────────────────┘    │
+│                                                                             │
+│  AXIS 2: ContentBrand (determines sizing + typography)                      │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │                                                                     │    │
+│  │    ┌─────────────┐   ┌─────────────┐   ┌─────────────┐              │    │
+│  │    │    BILD     │   │  SportBILD  │   │ Advertorial │  (3 options) │    │
+│  │    │             │   │             │   │             │              │    │
+│  │    │  spacing    │   │  spacing    │   │  spacing    │              │    │
+│  │    │  font-sizes │   │  font-sizes │   │  font-sizes │              │    │
+│  │    │  typography │   │  typography │   │  typography │              │    │
+│  │    └─────────────┘   └─────────────┘   └─────────────┘              │    │
+│  │                                                                     │    │
+│  └─────────────────────────────────────────────────────────────────────┘    │
+│                                                                             │
+│  COMBINATION EXAMPLES:                                                      │
+│  ──────────────────────────────────────────────────────────────────────    │
+│                                                                             │
+│  ColorBrand: BILD      + ContentBrand: BILD        = Standard BILD app      │
+│  ColorBrand: SportBILD + ContentBrand: SportBILD   = Standard SportBILD app │
+│  ColorBrand: BILD      + ContentBrand: Advertorial = Advertorial in BILD    │
+│  ColorBrand: SportBILD + ContentBrand: Advertorial = Advertorial in Sport   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### Unified Interfaces
-
-Für polymorphen Zugriff implementieren alle Brand-spezifischen Schemes ein gemeinsames Interface:
-
-| Interface | Inhalt | Implementierungen |
-|-----------|--------|-------------------|
-| `DesignColorScheme` | Alle Farb-Tokens | BildColorScheme, SportbildColorScheme |
-| `DesignSizingScheme` | Alle Sizing-Tokens | BildSizingScheme, SportbildSizingScheme, AdvertorialSizingScheme |
-| `DesignEffectsScheme` | Shadow/Effect-Tokens (iOS) | BildEffects, SportbildEffects |
-
-**Entscheidung:** Unified Interfaces erlauben brand-agnostischen Code und sichere Polymorphie.
 
 ---
 
-## Platform-Patterns
+## Modes In Detail
+
+### Color Modes
+
+| Mode | Purpose | CSS Selector |
+|------|---------|--------------|
+| `light` | Default light theme | `[data-theme="light"]` |
+| `dark` | Dark theme | `[data-theme="dark"]` |
+
+### Breakpoint Modes
+
+| Mode | Min-Width | Device Class | Native Mapping |
+|------|-----------|--------------|----------------|
+| `xs` | 320px | Mobile (default) | `compact` |
+| `sm` | 390px | Large mobile | `compact` |
+| `md` | 600px | Tablet | `regular` |
+| `lg` | 1024px | Desktop | `regular` |
+
+```
+Web Breakpoints              Native SizeClass
+═══════════════              ════════════════
+
+    xs (320px) ─────┐
+                    ├──────────────→  compact
+    sm (390px) ─────┘
+
+    md (600px) ─────┐
+                    ├──────────────→  regular
+    lg (1024px) ────┘
+```
+
+### Density Modes
+
+| Mode | Purpose | Use Case |
+|------|---------|----------|
+| `default` | Standard spacing | Normal UI |
+| `dense` | Compact spacing | Data-heavy views, lists |
+| `spacious` | Generous spacing | Hero sections, marketing |
+
+---
+
+## Token Reference Chain (Alias Resolution)
+
+Tokens reference each other through aliases. Here's how a button color token resolves:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         ALIAS RESOLUTION CHAIN                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  LAYER 4: Component Token                                                   │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │  button-primary-bg-color                                            │    │
+│  │  └──→ references: core-color-primary                                │    │
+│  └────────────────────────────────────────────────────────────────┬────┘    │
+│                                                                   │         │
+│                                                                   ▼         │
+│  LAYER 3: Semantic Token                                                    │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │  core-color-primary                                                 │    │
+│  │  └──→ references: {BrandColorMapping.primary}                       │    │
+│  └────────────────────────────────────────────────────────────────┬────┘    │
+│                                                                   │         │
+│                                                                   ▼         │
+│  LAYER 2: Brand Mapping (resolves per brand mode)                           │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │  BrandColorMapping.primary                                          │    │
+│  │  ├── Mode BILD:      → bildred                                      │    │
+│  │  └── Mode SportBILD: → sportred                                     │    │
+│  └────────────────────────────────────────────────────────────────┬────┘    │
+│                                                                   │         │
+│                                                                   ▼         │
+│  LAYER 1: Primitive (final value)                                           │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │  bildred = #DD0000                                                  │    │
+│  │  sportred = #E30613                                                 │    │
+│  └─────────────────────────────────────────────────────────────────────┘    │
+│                                                                             │
+│  CSS OUTPUT (preserves chain with var() fallbacks):                         │
+│  ──────────────────────────────────────────────────────────────────────    │
+│                                                                             │
+│  :root {                                                                    │
+│    --bildred: #DD0000;                                                      │
+│  }                                                                          │
+│                                                                             │
+│  [data-brand="bild"][data-theme="light"] {                                  │
+│    --core-color-primary: var(--bildred, #DD0000);                           │
+│    --button-primary-bg-color: var(--core-color-primary, #DD0000);           │
+│  }                                                                          │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Platform Output Patterns
 
 ### Web (CSS)
-
-**Pattern:** Data-Attribute für Brand/Theme-Switching, @media für Breakpoints
 
 ```html
 <html data-brand="bild" data-theme="light" data-density="default">
 ```
 
-```css
-/* Primitives: Global */
-:root { --bildred: #DD0000; }
-
-/* Semantic/Component: Brand + Theme scoped */
-[data-brand="bild"][data-theme="light"] {
-  --text-color-primary: var(--bild015, #232629);
-}
-
-/* Breakpoints: @media (nicht data-breakpoint!) */
-@media (min-width: 1024px) {
-  [data-brand="bild"] { --headline1-font-size: 64px; }
-}
-
-/* Typography/Effects: CSS-Klassen */
-[data-brand="bild"] .headline1 { font-size: var(--headline1-font-size); }
-```
-
-**Entscheidung:** @media statt data-breakpoint, weil @media automatisch funktioniert ohne JS.
+| Token Type | CSS Selector Pattern |
+|------------|---------------------|
+| Primitives | `:root { --token: value; }` |
+| Semantic Colors | `[data-brand][data-theme] { --token: var(...); }` |
+| Breakpoint Sizing | `[data-brand] { } @media (...) { }` |
+| Density | `[data-brand][data-density] { }` |
+| Typography | `[data-brand] .className { }` |
+| Effects | `[data-brand][data-theme] .className { }` |
 
 ### iOS (SwiftUI)
 
-**Pattern:** Environment-basiertes Theme mit @Observable
-
 ```swift
+// Theme setup
+.designSystemTheme(
+    colorBrand: .bild,
+    contentBrand: .bild,
+    darkTheme: false,
+    sizeClass: .compact,
+    density: .default
+)
+
+// Polymorphic access via protocols
 @Environment(\.designSystemTheme) var theme
-
-// Polymorphe Zugriffe
-theme.colors.textColorPrimary    // any DesignColorScheme
-theme.sizing.gridSpaceRespBase   // any DesignSizingScheme
-theme.effects.shadowSoftMd       // any DesignEffectsScheme
+theme.colors.textColorPrimary     // any DesignColorScheme
+theme.sizing.gridSpaceRespBase    // any DesignSizingScheme
+theme.effects.shadowSoftMd        // any DesignEffectsScheme
 ```
-
-**Entscheidung:** @Observable für reaktives Theme-Management, Environment für Propagation.
 
 ### Android (Jetpack Compose)
 
-**Pattern:** CompositionLocal-basiertes Theme
-
 ```kotlin
-// Polymorphe Zugriffe via DesignSystemTheme object
-DesignSystemTheme.colors.textColorPrimary    // DesignColorScheme
-DesignSystemTheme.sizing.gridSpaceRespBase   // DesignSizingScheme
+// Theme setup
+DesignSystemTheme(
+    colorBrand = ColorBrand.Bild,
+    contentBrand = ContentBrand.Bild,
+    darkTheme = isSystemInDarkTheme(),
+    sizeClass = WindowSizeClass.Compact,
+    density = Density.Default
+) {
+    // Polymorphic access via interfaces
+    DesignSystemTheme.colors.textColorPrimary  // DesignColorScheme
+    DesignSystemTheme.sizing.gridSpaceRespBase // DesignSizingScheme
 
-// Component Tokens via current() Accessor
-ButtonTokens.Colors.current().buttonPrimaryBgColorIdle
+    // Component tokens via current()
+    ButtonTokens.Colors.current().buttonPrimaryBgColorIdle
+}
 ```
-
-**Entscheidung:** CompositionLocal für Theme-Propagation, current() für automatische Mode-Selektion.
 
 ---
 
-## Native SizeClass Mapping
+## Unified Interfaces (Native Platforms)
 
-Web hat 4 Breakpoints, Native hat 2 SizeClasses:
+For polymorphic brand access, all brand-specific implementations conform to unified interfaces:
 
-```
-Web Breakpoints              Native SizeClass
-───────────────              ────────────────
-xs (320px) ─────┐
-                ├──────────→ compact (small screens)
-sm (390px) ─────┘
+| Interface/Protocol | Properties | Implementations |
+|--------------------|------------|-----------------|
+| `DesignColorScheme` | 80+ color tokens | `BildLightColors`, `BildDarkColors`, `SportbildLightColors`, `SportbildDarkColors` |
+| `DesignSizingScheme` | 180+ sizing tokens | `BildSizingCompact`, `BildSizingRegular`, `SportbildSizing*`, `AdvertorialSizing*` |
+| `DesignEffectsScheme` | Shadow tokens (iOS) | `BildEffectsLight`, `BildEffectsDark`, `SportbildEffects*` |
 
-md (600px) ─────┐
-                ├──────────→ regular (large screens)
-lg (1024px) ────┘
-```
-
-**Entscheidung:** Mapping von 4→2 statt 1:1, weil Native-Apps typischerweise nur 2 Layouts brauchen.
+**Benefit:** Code can work with `any DesignColorScheme` without knowing the specific brand.
 
 ---
 
 ## Build Pipeline
 
 ```
-Figma (Source of Truth)
-        ↓ TokenSync Plugin Export
-src/design-tokens/bild-design-system-raw-data.json
-        ↓ preprocess.js
-tokens/ (Style Dictionary Format, ~920 JSON files)
-        ↓ build.js + style-dictionary.config.js
-dist/ (Platform-spezifische Outputs)
-        ↓ bundles.js
-dist/css/bundles/ (Convenience CSS Bundles)
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              BUILD PIPELINE                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  FIGMA (Source of Truth)                                                    │
+│  └── Variables with scopes, modes, and aliases                              │
+│              │                                                              │
+│              │ TokenSync Plugin Export                                      │
+│              ▼                                                              │
+│  src/design-tokens/bild-design-system-raw-data.json (~1MB)                  │
+│              │                                                              │
+│              │ preprocess.js                                                │
+│              │ • Parse Figma JSON structure                                 │
+│              │ • Resolve aliases per brand × mode context                   │
+│              │ • Detect component tokens from naming                        │
+│              │ • Extract composite tokens (typography, effects)             │
+│              ▼                                                              │
+│  tokens/ (~920 JSON files in Style Dictionary format)                       │
+│  ├── shared/primitives (colorprimitive, spaceprimitive, etc.)               │
+│  └── brands/{brand}/ (color, density, semantic, components)                 │
+│              │                                                              │
+│              │ build.js + style-dictionary.config.js                        │
+│              │ • Platform-specific transforms                               │
+│              │ • Custom format functions                                    │
+│              │ • Native theme provider generation                           │
+│              ▼                                                              │
+│  dist/ (Platform outputs)                                                   │
+│  ├── css/, scss/, js/, json/                                                │
+│  ├── ios/ (Swift)                                                           │
+│  └── android/compose/ (Kotlin)                                              │
+│              │                                                              │
+│              │ bundles.js                                                   │
+│              ▼                                                              │
+│  dist/css/bundles/ (Convenience CSS bundles per brand)                      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Hauptdateien
+### Key Files
 
-| Datei | Zweck | LOC |
-|-------|-------|-----|
-| `preprocess.js` | Figma JSON → Style Dictionary Format, Alias-Resolution | ~2000 |
-| `build.js` | Style Dictionary Orchestrierung, Platform Generation | ~1800 |
-| `style-dictionary.config.js` | Custom Transforms & Formats | ~2500 |
-| `bundles.js` | CSS Bundle Generierung | ~560 |
-
-### Output-Plattformen
-
-| Plattform | Status | Output |
-|-----------|--------|--------|
-| CSS | Aktiv | `dist/css/` |
-| SCSS | Aktiv | `dist/scss/` |
-| JavaScript | Aktiv | `dist/js/` |
-| JSON | Aktiv | `dist/json/` |
-| iOS Swift | Aktiv | `dist/ios/` |
-| Android Compose | Aktiv | `dist/android/compose/` |
-| Android XML | Deaktiviert | - |
-| Flutter | Deaktiviert | - |
+| File | Purpose |
+|------|---------|
+| `scripts/tokens/preprocess.js` | Figma JSON → Style Dictionary format |
+| `scripts/tokens/build.js` | Orchestrates Style Dictionary builds |
+| `build-config/tokens/style-dictionary.config.js` | Custom transforms & formats |
+| `scripts/tokens/bundles.js` | CSS bundle generation |
 
 ---
 
-## Architektur-Entscheidungen
+## Architecture Decisions
 
-### Warum @media statt data-breakpoint?
-
-```css
-/* NICHT verwendet (benötigt JS): */
-[data-breakpoint="lg"] { ... }
-
-/* VERWENDET (funktioniert automatisch): */
-@media (min-width: 1024px) { ... }
-```
-
-**Rationale:** Native Browser-Unterstützung, kein JS-Overhead, SSR-kompatibel.
-
-### Warum var() mit Fallback?
-
-```css
---button-bg: var(--core-color-primary, #DD0000);
-```
-
-**Rationale:** Robustheit bei fehlenden Variablen, einfacheres Debugging.
-
-### Warum separate Mode-Dateien?
-
-**Rationale:**
-- Lazy Loading möglich (nur light ODER dark laden)
-- Besseres Caching (Themes ändern sich unabhängig)
-- Einfacheres Debugging
-
-### Warum Dual-Axis statt Single Brand Enum?
-
-**Problem:** Advertorial braucht BILD/SportBILD Farben + eigenes Sizing.
-**Lösung:** ColorBrand + ContentBrand als unabhängige Achsen.
-**Rationale:** Flexibilität ohne Code-Duplizierung, klare Separation of Concerns.
-
-### Warum Unified Interfaces?
-
-**Rationale:**
-- Polymorphe Token-Zugriffe ohne Brand-Kenntnis
-- Type-Safety in Swift/Kotlin
-- Einfacher Austausch von Brands zur Laufzeit
-
-### Warum Typography als Klassen statt Variablen?
-
-```css
-/* Klasse mit multiplen Properties: */
-.headline1 {
-  font-size: var(--headline1-font-size);
-  font-weight: var(--headline1-font-weight);
-  line-height: var(--headline1-line-height);
-}
-```
-
-**Rationale:** Typography besteht aus mehreren zusammengehörigen Properties, Klassen gruppieren diese logisch.
+| Decision | Rationale |
+|----------|-----------|
+| **@media over data-breakpoint** | Native browser support, no JS required, SSR-compatible |
+| **var() with fallbacks** | Robustness if variables missing, easier debugging |
+| **Separate mode files** | Lazy loading, better caching, easier debugging |
+| **Dual-Axis architecture** | Enables Advertorial + brand colors combination |
+| **Unified interfaces** | Polymorphic access, type-safety, runtime brand switching |
+| **Typography as classes** | Groups related properties (font-size, weight, line-height) |
+| **4→2 breakpoint mapping** | Native apps typically need only 2 layouts |
 
 ---
 
-## Änderungs-Guide
+## Change Guide
 
-### Token-Werte ändern
-→ **In Figma ändern** (Source of Truth), dann TokenSync Export
-
-### Output-Format ändern
-→ `style-dictionary.config.js` (Transforms & Formats)
-
-### Alias-Logik ändern
-→ `preprocess.js` (resolveAlias Funktion)
-
-### Neuen Brand hinzufügen
-→ `preprocess.js` (BRANDS), `build.js` (BRANDS, COLOR_BRANDS, CONTENT_BRANDS), `bundles.js` (BRANDS)
-
-### Neuen Breakpoint hinzufügen
-→ `preprocess.js` (BREAKPOINTS), `build.js` (BREAKPOINT_VALUES)
-
-### Neue Plattform aktivieren
-→ `build.js` (FLUTTER_ENABLED, ANDROID_XML_ENABLED)
-
-### Component Token Pattern ändern
-→ `style-dictionary.config.js` (compose*Format, iosSwift*Format)
+| Task | Files to Modify |
+|------|-----------------|
+| Change token values | In Figma (Source of Truth) |
+| Modify output format | `style-dictionary.config.js` |
+| Change alias resolution | `preprocess.js` |
+| Add new brand | `preprocess.js`, `build.js`, `bundles.js` |
+| Add new breakpoint | `preprocess.js`, `build.js` |
+| Enable/disable platform | `build.js` (toggle flags) |
+| Modify component token pattern | `style-dictionary.config.js` |
 
 ---
 
-## Debug-Tipps
+## Common Issues
 
-```bash
-# Preprocessed Tokens inspizieren
-cat tokens/brands/bild/color/colormode-light.json | jq .
-
-# CSS Output prüfen
-cat dist/css/bild/theme.css | head -100
-
-# Bundle-Größen
-ls -la dist/css/bundles/
-
-# iOS Output prüfen
-cat dist/ios/shared/DesignSystemTheme.swift | head -50
-
-# Android Output prüfen
-cat dist/android/compose/shared/DesignSystemTheme.kt | head -50
-```
-
----
-
-## Häufige Probleme
-
-| Problem | Mögliche Ursache | Lösung |
-|---------|------------------|--------|
-| Leere CSS-Dateien | Figma Collection-ID geändert | COLLECTION_IDS in preprocess.js prüfen |
-| Fehlende Aliase | Figma Mode-Name geändert | Mode-Namen in Figma prüfen |
-| Native Build-Fehler | Interface nicht synchron | Unified Interface Generierung prüfen |
-| Falsche Farben | ColorBrand/ContentBrand verwechselt | Dual-Axis Konfiguration prüfen |
-
----
-
-## Statistiken
-
-| Metrik | Wert |
-|--------|------|
-| Components | ~55 pro Brand |
-| Token-Dateien | ~920 |
-| Output-Plattformen | 6 (2 deaktiviert) |
-| CSS Bundle Size | ~130 KB pro Brand |
+| Problem | Likely Cause | Solution |
+|---------|--------------|----------|
+| Empty CSS files | Figma Collection ID changed | Check COLLECTION_IDS in preprocess.js |
+| Missing aliases | Figma mode name changed | Verify mode names in Figma |
+| Native build errors | Interface out of sync | Check unified interface generation |
+| Wrong colors | ColorBrand/ContentBrand mismatch | Verify Dual-Axis configuration |
+| Missing tokens | Scope not assigned in Figma | Add appropriate scope in Figma |
