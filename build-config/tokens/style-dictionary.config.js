@@ -2742,6 +2742,49 @@ function toSwiftUIFontWeight(value) {
 }
 
 /**
+ * Helper: Determine Swift type from token $type or type attribute
+ * Returns { swiftType: 'String'|'CGFloat'|'Int', isString: boolean }
+ */
+function getSwiftTypeInfo(token) {
+  const tokenType = token.$type || token.type;
+
+  // String types: fontFamily, string values, breakpointName
+  if (tokenType === 'fontFamily' || tokenType === 'string') {
+    return { swiftType: 'String', isString: true };
+  }
+
+  // Check token name patterns for string types
+  const name = token.name || '';
+  if (name.toLowerCase().includes('fontfamily') ||
+      name.toLowerCase().includes('breakpointname') ||
+      name.toLowerCase().includes('bpspecific') ||
+      name.toLowerCase().includes('changeon')) {
+    // Verify value is actually a string (not a number)
+    const value = token.$value !== undefined ? token.$value : token.value;
+    if (typeof value === 'string' && isNaN(parseFloat(value))) {
+      return { swiftType: 'String', isString: true };
+    }
+  }
+
+  // fontWeight can stay as CGFloat since it's a numeric value
+  // All other sizing tokens are CGFloat
+  return { swiftType: 'CGFloat', isString: false };
+}
+
+/**
+ * Helper: Format value for Swift based on type
+ */
+function formatSwiftValue(value, typeInfo) {
+  if (typeInfo.isString) {
+    // Ensure string value is properly quoted
+    const strValue = String(value);
+    return `"${strValue}"`;
+  }
+  // Numeric value
+  return toSwiftUICGFloat(value);
+}
+
+/**
  * Helper: Convert camelCase to PascalCase
  */
 function toPascalCase(str) {
@@ -3313,10 +3356,11 @@ public protocol ${brandPascal}SizingScheme: Sendable {
     dictionary.allTokens.forEach(token => {
       const name = uniqueNames.get(token.path.join('.')) || token.name;
       const comment = token.comment || token.description;
+      const typeInfo = getSwiftTypeInfo(token);
       if (comment) {
         output += `    /// ${comment}\n`;
       }
-      output += `    var ${name}: CGFloat { get }\n`;
+      output += `    var ${name}: ${typeInfo.swiftType} { get }\n`;
     });
 
     output += `}
@@ -3336,9 +3380,10 @@ public struct ${structName}: ${brandPascal}SizingScheme, DesignSizingScheme {
   dictionary.allTokens.forEach(token => {
     const name = uniqueNames.get(token.path.join('.')) || token.name;
     const value = token.$value !== undefined ? token.$value : token.value;
-    const numValue = toSwiftUICGFloat(value);
+    const typeInfo = getSwiftTypeInfo(token);
+    const formattedValue = formatSwiftValue(value, typeInfo);
 
-    output += `    public let ${name}: CGFloat = ${numValue}\n`;
+    output += `    public let ${name}: ${typeInfo.swiftType} = ${formattedValue}\n`;
   });
 
   output += `}

@@ -4683,21 +4683,26 @@ public extension View {
   }
   const colorPropertyDeclarations = colorProperties.map(prop => `    var ${prop}: Color { get }`).join('\n');
 
-  // Dynamically read sizing properties
+  // Dynamically read sizing properties with their types (CGFloat or String)
   const bildSizingPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'sizeclass', 'SizingCompact.swift');
   let sizingProperties = [];
   if (fs.existsSync(bildSizingPath)) {
     const content = fs.readFileSync(bildSizingPath, 'utf8');
-    // Extract all var declarations with CGFloat type
-    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*CGFloat\s*\{\s*get\s*\}/gm);
+    // Extract all var declarations with their types (CGFloat or String)
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*(CGFloat|String)\s*\{\s*get\s*\}/gm);
     for (const match of propsMatch) {
-      sizingProperties.push(match[1]);
+      sizingProperties.push({ name: match[1], type: match[2] });
     }
   }
   if (sizingProperties.length === 0) {
-    sizingProperties = ['gridSpaceRespBase', 'gridSpaceRespSm', 'gridSpaceRespLg', 'pageInlineSpace'];
+    sizingProperties = [
+      { name: 'gridSpaceRespBase', type: 'CGFloat' },
+      { name: 'gridSpaceRespSm', type: 'CGFloat' },
+      { name: 'gridSpaceRespLg', type: 'CGFloat' },
+      { name: 'pageInlineSpace', type: 'CGFloat' }
+    ];
   }
-  const sizingPropertyDeclarations = sizingProperties.map(prop => `    var ${prop}: CGFloat { get }`).join('\n');
+  const sizingPropertyDeclarations = sizingProperties.map(prop => `    var ${prop.name}: ${prop.type} { get }`).join('\n');
 
   // Dynamically read effects properties
   const bildEffectsPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'effects', 'EffectsLight.swift');
