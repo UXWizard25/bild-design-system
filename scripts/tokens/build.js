@@ -21,6 +21,8 @@ const DIST_DIR = path.join(__dirname, '../../dist');
 
 // Brands and breakpoints
 const BRANDS = ['bild', 'sportbild', 'advertorial'];
+const COLOR_BRANDS = ['bild', 'sportbild'];  // Brands with their own color tokens
+const CONTENT_BRANDS = ['bild', 'sportbild', 'advertorial'];  // All brands (for sizing/typography)
 const BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 const COLOR_MODES = ['light', 'dark'];
 const DENSITY_MODES = ['default', 'dense', 'spacious'];
@@ -31,6 +33,7 @@ const NATIVE_BREAKPOINTS = ['sm', 'lg'];
 // Platform output toggles - set to false to disable output generation
 const FLUTTER_ENABLED = false;
 const COMPOSE_ENABLED = true;
+const SWIFTUI_ENABLED = true;       // SwiftUI output in dist/ios/
 const ANDROID_XML_ENABLED = false;  // Disabled - Compose is the preferred Android format
 
 // Token type toggles - set to false to exclude from all platform outputs
@@ -120,8 +123,9 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         options: { outputReferences: false }
       }]
     },
-    // iOS: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) ? {} : {
+    // iOS: SwiftUI format - For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
+    // Skip ios platform when SWIFTUI_ENABLED since swiftui platform generates the same output correctly
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || SWIFTUI_ENABLED ? {} : {
       ios: {
         transformGroup: 'custom/ios-swift',
         buildPath: (() => {
@@ -142,29 +146,75 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
                 // Extract component name from path (e.g., .../components/Button/ -> Button)
                 const componentMatch = buildPath.match(/\/components\/([^/]+)/);
                 const componentName = componentMatch ? componentMatch[1] : '';
-                return `${componentName}Sizeclass${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.swift`;
+                return `${componentName}Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.swift`;
               }
-              return `Sizeclass${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.swift`;
+              return `Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.swift`;
+            }
+            // For color tokens
+            if (cssOptions.modeType === 'color' && cssOptions.mode) {
+              const mode = cssOptions.mode === 'light' ? 'Light' : 'Dark';
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Colors${mode}.swift`;
+              }
+              return `Colors${mode}.swift`;
+            }
+            // For density tokens
+            if (cssOptions.modeType === 'density' && cssOptions.mode) {
+              const densityMode = cssOptions.mode.charAt(0).toUpperCase() + cssOptions.mode.slice(1);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Density${densityMode}.swift`;
+              }
+              return `Density${densityMode}.swift`;
             }
             return `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`;
           })(),
-          format: 'ios-swift/class',
+          format: (() => {
+            // Use SwiftUI component tokens format based on token type
+            const isComponent = buildPath.includes('/components/');
+            if (isComponent) {
+              return 'swiftui/component-tokens';
+            }
+            // Semantic tokens
+            if (cssOptions.modeType === 'color') {
+              return 'swiftui/color-scheme';
+            }
+            if (cssOptions.modeType === 'breakpoint') {
+              return 'swiftui/sizing-scheme';
+            }
+            return 'swiftui/component-tokens';
+          })(),
           filter: tokenFilter,
           options: {
             outputReferences: false,
-            className: (() => {
-              if (cssOptions.modeType === 'breakpoint' && cssOptions.mode) {
-                const sizeClass = getSizeClassName(cssOptions.mode);
-                const isComponent = buildPath.includes('/components/');
-                if (isComponent) {
-                  const componentMatch = buildPath.match(/\/components\/([^/]+)/);
-                  const componentName = componentMatch ? componentMatch[1] : '';
-                  return `${componentName}Sizeclass${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}`;
-                }
-                return `Sizeclass${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}`;
+            brand: (() => {
+              const brandMatch = buildPath.match(/\/brands\/([^/]+)/);
+              return brandMatch ? brandMatch[1] : 'bild';
+            })(),
+            component: (() => {
+              const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+              return componentMatch ? componentMatch[1] : '';
+            })(),
+            tokenType: (() => {
+              if (cssOptions.modeType === 'color') return 'color';
+              if (cssOptions.modeType === 'density') return 'density';
+              return 'sizing';
+            })(),
+            mode: (() => {
+              if (cssOptions.modeType === 'color') {
+                return cssOptions.mode; // light or dark
               }
-              return fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
-            })()
+              if (cssOptions.modeType === 'breakpoint') {
+                return getSizeClassName(cssOptions.mode); // compact or regular
+              }
+              return cssOptions.mode;
+            })(),
+            sizeClass: getSizeClassName(cssOptions.mode)
           }
         }]
       }
@@ -365,6 +415,122 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
           }
         }]
       }
+    }),
+    // SwiftUI: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
+    // Skip swiftui for overrides (brand mapping layer) - these are intermediate tokens not needed in final output
+    // Skip swiftui for individual primitives (they're consolidated into DesignTokenPrimitives.swift)
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !SWIFTUI_ENABLED || cssOptions.skipCompose || cssOptions.skipSwiftUI ? {} : {
+      swiftui: {
+        transformGroup: 'custom/ios-swift',
+        buildPath: (() => {
+          let swiftuiPath = buildPath.replace(DIST_DIR + '/css/', '');
+          // For semantic breakpoint tokens, change folder from 'breakpoints' to 'sizeclass'
+          if (cssOptions.modeType === 'breakpoint' && swiftuiPath.includes('/breakpoints')) {
+            swiftuiPath = swiftuiPath.replace('/breakpoints', '/sizeclass');
+          }
+          return `${DIST_DIR}/ios/${swiftuiPath}/`;
+        })(),
+        files: [{
+          destination: (() => {
+            // For breakpoint tokens, use sizeclass naming
+            if (cssOptions.modeType === 'breakpoint' && cssOptions.mode) {
+              const sizeClass = getSizeClassName(cssOptions.mode);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.swift`;
+              }
+              return `Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}.swift`;
+            }
+            // For color mode tokens
+            if (cssOptions.modeType === 'theme' && cssOptions.mode) {
+              const modeName = cssOptions.mode.charAt(0).toUpperCase() + cssOptions.mode.slice(1);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Colors${modeName}.swift`;
+              }
+              return `Colors${modeName}.swift`;
+            }
+            // For density tokens
+            if (cssOptions.modeType === 'density' && cssOptions.mode) {
+              const modeName = cssOptions.mode.charAt(0).toUpperCase() + cssOptions.mode.slice(1);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Density${modeName}.swift`;
+              }
+              return `Density${modeName}.swift`;
+            }
+            // Default: PascalCase filename
+            return `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`;
+          })(),
+          format: (() => {
+            // Choose format based on token type
+            if (buildPath.includes('/shared/')) {
+              return 'swiftui/primitives';
+            }
+            // For components, use component-tokens format for all mode types
+            if (buildPath.includes('/components/')) {
+              return 'swiftui/component-tokens';
+            }
+            if (cssOptions.modeType === 'theme') {
+              return 'swiftui/color-scheme';
+            }
+            if (cssOptions.modeType === 'breakpoint') {
+              return 'swiftui/sizing-scheme';
+            }
+            if (cssOptions.modeType === 'density') {
+              return 'swiftui/sizing-scheme';  // density uses same sizing scheme format
+            }
+            return 'swiftui/primitives';
+          })(),
+          filter: tokenFilter,
+          options: {
+            outputReferences: false,
+            brand: cssOptions.brand || '',
+            mode: (() => {
+              if (cssOptions.modeType === 'breakpoint') {
+                return getSizeClassName(cssOptions.mode);
+              }
+              return cssOptions.mode || '';
+            })(),
+            sizeClass: (() => {
+              if (cssOptions.modeType === 'breakpoint') {
+                return getSizeClassName(cssOptions.mode);
+              }
+              return '';
+            })(),
+            modeType: (() => {
+              if (cssOptions.modeType === 'breakpoint') return 'sizeclass';
+              return cssOptions.modeType || '';
+            })(),
+            componentName: (() => {
+              if (buildPath.includes('/components/')) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                return componentMatch ? componentMatch[1] : '';
+              }
+              return '';
+            })(),
+            component: (() => {
+              if (buildPath.includes('/components/')) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                return componentMatch ? componentMatch[1] : '';
+              }
+              return '';
+            })(),
+            tokenType: (() => {
+              if (cssOptions.modeType === 'theme') return 'color';
+              if (cssOptions.modeType === 'breakpoint') return 'sizing';
+              if (cssOptions.modeType === 'density') return 'density';
+              return '';
+            })()
+          }
+        }]
+      }
     })
   };
 }
@@ -503,15 +669,15 @@ function createTypographyConfig(brand, breakpoint) {
         }]
       },
 
-      // iOS: Only compact (sm) and regular (lg) with custom format
+      // iOS: Only compact (sm) and regular (lg) with SwiftUI format
       // Output to semantic/typography/ with sizeclass in filename
       ...(SIZE_CLASS_MAPPING[breakpoint] ? {
         ios: {
-          transforms: ['attribute/cti'],
+          transformGroup: 'custom/ios-swift',
           buildPath: `${DIST_DIR}/ios/brands/${brand}/semantic/typography/`,
           files: [{
             destination: `TypographySizeclass${SIZE_CLASS_MAPPING[breakpoint].charAt(0).toUpperCase() + SIZE_CLASS_MAPPING[breakpoint].slice(1)}.swift`,
-            format: 'ios-swift/typography',
+            format: 'swiftui/typography',
             options: {
               brand: brandName,
               breakpoint,
@@ -593,13 +759,13 @@ function createEffectConfig(brand, colorMode) {
         files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
       },
 
-      // iOS: Custom Swift Effects format
+      // iOS: SwiftUI Effects format
       ios: {
-        transforms: ['attribute/cti'],
+        transformGroup: 'custom/ios-swift',
         buildPath: `${DIST_DIR}/ios/brands/${brand}/semantic/effects/`,
         files: [{
           destination: `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`,
-          format: 'ios-swift/effects',
+          format: 'swiftui/effects',
           options: {
             brand: brandName,
             colorMode
@@ -659,6 +825,8 @@ function createEffectConfig(brand, colorMode) {
 
 /**
  * Builds Shared Primitive Tokens
+ * Note: iOS/SwiftUI primitives are built separately via buildConsolidatedSwiftUIPrimitives()
+ * to create a single consolidated DesignTokenPrimitives.swift file
  */
 async function buildSharedPrimitives() {
   console.log('\n📦 Building Shared Primitives:\n');
@@ -676,9 +844,10 @@ async function buildSharedPrimitives() {
     const baseName = path.basename(file, '.json');
     const sourcePath = path.join(sharedDir, file);
 
+    // Skip SwiftUI for individual primitives - they'll be consolidated later
     const config = {
       source: [sourcePath],
-      platforms: createStandardPlatformConfig(`${DIST_DIR}/css/shared`, baseName)
+      platforms: createStandardPlatformConfig(`${DIST_DIR}/css/shared`, baseName, { skipSwiftUI: true })
     };
 
     try {
@@ -692,6 +861,63 @@ async function buildSharedPrimitives() {
   }
 
   return { total: files.length, successful };
+}
+
+/**
+ * Builds consolidated SwiftUI Primitives
+ * Creates: dist/ios/shared/DesignTokenPrimitives.swift
+ * Combines all primitive JSON files into a single Swift file with nested enums
+ */
+async function buildConsolidatedSwiftUIPrimitives() {
+  if (!SWIFTUI_ENABLED) {
+    return { total: 0, successful: 0 };
+  }
+
+  console.log('🍎 Building Consolidated SwiftUI Primitives...');
+
+  const sharedDir = path.join(TOKENS_DIR, 'shared');
+  if (!fs.existsSync(sharedDir)) {
+    console.log('  ⚠️  No shared/ directory found');
+    return { total: 0, successful: 0 };
+  }
+
+  // Combine all primitive JSON files
+  const files = fs.readdirSync(sharedDir).filter(f => f.endsWith('.json'));
+  const sourcePaths = files.map(f => path.join(sharedDir, f));
+
+  const config = {
+    source: sourcePaths,
+    platforms: {
+      swiftui: {
+        transformGroup: 'custom/ios-swift',
+        buildPath: `${DIST_DIR}/ios/shared/`,
+        files: [{
+          destination: 'DesignTokenPrimitives.swift',
+          format: 'swiftui/primitives',
+          filter: (token) => {
+            // Exclude TextLabels tokens
+            if (token.path && token.path.includes('TextLabels')) {
+              return false;
+            }
+            return true;
+          },
+          options: {
+            outputReferences: false
+          }
+        }]
+      }
+    }
+  };
+
+  try {
+    const sd = new StyleDictionary(config);
+    await sd.buildAllPlatforms();
+    console.log('     ✅ ios/shared/DesignTokenPrimitives.swift');
+    return { total: 1, successful: 1 };
+  } catch (error) {
+    console.error(`  ❌ Consolidated SwiftUI Primitives: ${error.message}`);
+    return { total: 1, successful: 0 };
+  }
 }
 
 /**
@@ -902,14 +1128,14 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
         buildPath: `${DIST_DIR}/json/brands/${brand}/components/${componentName}/`,
         files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
       },
-      // iOS: Only compact (sm) and regular (lg) with sizeclass naming
+      // iOS: Only compact (sm) and regular (lg) with SwiftUI typography format
       ...(breakpoint && isNativeBreakpoint(breakpoint) ? {
         ios: {
-          transforms: ['attribute/cti'],
+          transformGroup: 'custom/ios-swift',
           buildPath: `${DIST_DIR}/ios/brands/${brand}/components/${componentName}/`,
           files: [{
-            destination: `${componentName}Sizeclass${getSizeClassName(breakpoint).charAt(0).toUpperCase() + getSizeClassName(breakpoint).slice(1)}.swift`,
-            format: 'ios-swift/typography',
+            destination: `${componentName}TypographySizing${getSizeClassName(breakpoint).charAt(0).toUpperCase() + getSizeClassName(breakpoint).slice(1)}.swift`,
+            format: 'swiftui/typography',
             options: {
               brand: brandName,
               breakpoint,
@@ -1031,15 +1257,16 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
         files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
       },
       ios: {
-        transforms: ['attribute/cti'],
+        transformGroup: 'custom/ios-swift',
         buildPath: `${DIST_DIR}/ios/brands/${brand}/components/${componentName}/`,
         files: [{
-          destination: `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`,
-          format: 'ios-swift/effects',
+          destination: `${componentName}Effects${colorMode ? colorMode.charAt(0).toUpperCase() + colorMode.slice(1) : ''}.swift`,
+          format: 'swiftui/effects',
           options: {
             brand: brandName,
             colorMode,
-            componentName
+            componentName,
+            mode: colorMode
           }
         }]
       },
@@ -2014,7 +2241,7 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   const imports = ['import androidx.compose.runtime.Immutable'];
   if (needsComposable) {
     imports.push('import androidx.compose.runtime.Composable');
-    imports.push(`import com.bild.designsystem.${brand}.theme.${brandPascal}Theme`);
+    imports.push('import com.bild.designsystem.shared.DesignSystemTheme');
   }
   if (hasDensityTokens) {
     imports.push('import com.bild.designsystem.shared.Density');
@@ -2073,13 +2300,13 @@ object ${componentName}Tokens {
     object Colors {
         /**
          * Returns color tokens for the current theme.
-         * Automatically resolves to Light or Dark based on ${brandPascal}Theme.isDarkTheme
+         * Automatically resolves to Light or Dark based on DesignSystemTheme.isDarkTheme
          *
          * Usage:
          *   val bgColor = ${componentName}Tokens.Colors.current().primaryBgIdle
          */
         @Composable
-        fun current(): ColorTokens = if (${brandPascal}Theme.isDarkTheme) Dark else Light
+        fun current(): ColorTokens = if (DesignSystemTheme.isDarkTheme) Dark else Light
 
         /**
          * Interface for color tokens
@@ -2127,13 +2354,13 @@ object ${componentName}Tokens {
     object Sizing {
         /**
          * Returns sizing tokens for the current window size class.
-         * Automatically resolves to Compact or Regular based on ${brandPascal}Theme.sizeClass
+         * Automatically resolves to Compact or Regular based on DesignSystemTheme.sizeClass
          *
          * Usage:
          *   val fontSize = ${componentName}Tokens.Sizing.current().labelFontSize
          */
         @Composable
-        fun current(): SizingTokens = when (${brandPascal}Theme.sizeClass) {
+        fun current(): SizingTokens = when (DesignSystemTheme.sizeClass) {
             WindowSizeClass.Compact -> Compact
             WindowSizeClass.Regular -> Regular
         }
@@ -2197,13 +2424,13 @@ object ${componentName}Tokens {
     object Density {
         /**
          * Returns density tokens for the current theme density.
-         * Automatically resolves to Dense, Default, or Spacious based on ${brandPascal}Theme.density
+         * Automatically resolves to Dense, Default, or Spacious based on DesignSystemTheme.density
          *
          * Usage:
          *   val gap = ${componentName}Tokens.Density.current().contentGap
          */
         @Composable
-        fun current(): DensityTokens = when (${brandPascal}Theme.density) {
+        fun current(): DensityTokens = when (DesignSystemTheme.density) {
             com.bild.designsystem.shared.Density.Dense -> Dense
             com.bild.designsystem.shared.Density.Default -> Default
             com.bild.designsystem.shared.Density.Spacious -> Spacious
@@ -2270,13 +2497,13 @@ object ${componentName}Tokens {
     object Typography {
         /**
          * Returns typography tokens for the current window size class.
-         * Automatically resolves to Compact or Regular based on ${brandPascal}Theme.sizeClass
+         * Automatically resolves to Compact or Regular based on DesignSystemTheme.sizeClass
          *
          * Usage:
          *   val fontFamily = ${componentName}Tokens.Typography.current().labelFontFamily
          */
         @Composable
-        fun current(): TypographyTokens = when (${brandPascal}Theme.sizeClass) {
+        fun current(): TypographyTokens = when (DesignSystemTheme.sizeClass) {
             WindowSizeClass.Compact -> Compact
             WindowSizeClass.Regular -> Regular
         }
@@ -2323,6 +2550,487 @@ object ${componentName}Tokens {
   return output;
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// SwiftUI COMPONENT AGGREGATION
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Aggregates individual SwiftUI component files into single files per component
+ * Creates: dist/ios/brands/{brand}/components/{Component}/{Component}Tokens.swift
+ */
+async function aggregateSwiftUIComponents() {
+  if (!SWIFTUI_ENABLED) {
+    return { totalComponents: 0, successfulComponents: 0 };
+  }
+
+  console.log('📦 Aggregating SwiftUI component files...');
+
+  let totalComponents = 0;
+  let successfulComponents = 0;
+
+  const iosDir = path.join(DIST_DIR, 'ios', 'brands');
+
+  if (!fs.existsSync(iosDir)) {
+    console.log('  ⚠️  No iOS output found, skipping aggregation');
+    return { totalComponents: 0, successfulComponents: 0 };
+  }
+
+  for (const brand of BRANDS) {
+    const brandComponentsDir = path.join(iosDir, brand, 'components');
+
+    if (!fs.existsSync(brandComponentsDir)) {
+      continue;
+    }
+
+    const componentDirs = fs.readdirSync(brandComponentsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+
+    for (const componentName of componentDirs) {
+      totalComponents++;
+      const componentDir = path.join(brandComponentsDir, componentName);
+      const swiftFiles = fs.readdirSync(componentDir)
+        .filter(f => f.endsWith('.swift') && !f.endsWith('Tokens.swift'))
+        .sort();
+
+      if (swiftFiles.length === 0) continue;
+
+      try {
+        // Parse all individual files and collect tokens
+        const tokenGroups = {
+          colors: { light: [], dark: [] },
+          sizing: { compact: [], regular: [] },
+          density: { default: [], dense: [], spacious: [] },
+          typography: { compact: [], regular: [] }
+        };
+
+        for (const swiftFile of swiftFiles) {
+          const content = fs.readFileSync(path.join(componentDir, swiftFile), 'utf8');
+          const tokens = parseSwiftTokens(content);
+
+          // Categorize based on filename
+          // IMPORTANT: Check typography BEFORE sizing because typography files contain "sizing" in name
+          const lowerFile = swiftFile.toLowerCase();
+          if (lowerFile.includes('colorslight') || lowerFile.includes('colorlight')) {
+            tokenGroups.colors.light = tokens;
+          } else if (lowerFile.includes('colorsdark') || lowerFile.includes('colordark')) {
+            tokenGroups.colors.dark = tokens;
+          } else if (lowerFile.includes('typography')) {
+            // Typography files (e.g., ButtonTypographySizingCompact.swift)
+            if (lowerFile.includes('compact')) {
+              tokenGroups.typography.compact = tokens;
+            } else if (lowerFile.includes('regular')) {
+              tokenGroups.typography.regular = tokens;
+            }
+          } else if (lowerFile.includes('sizingcompact')) {
+            tokenGroups.sizing.compact = tokens;
+          } else if (lowerFile.includes('sizingregular')) {
+            tokenGroups.sizing.regular = tokens;
+          } else if (lowerFile.includes('densitydense')) {
+            tokenGroups.density.dense = tokens;
+          } else if (lowerFile.includes('densitydefault')) {
+            tokenGroups.density.default = tokens;
+          } else if (lowerFile.includes('densityspacious')) {
+            tokenGroups.density.spacious = tokens;
+          }
+        }
+
+        // Generate aggregated file
+        const aggregatedContent = generateAggregatedSwiftComponentFile(
+          brand,
+          componentName,
+          tokenGroups
+        );
+
+        // Write aggregated file
+        const outputPath = path.join(componentDir, `${componentName}Tokens.swift`);
+        fs.writeFileSync(outputPath, aggregatedContent, 'utf8');
+
+        console.log(`     ✅ ${brand}/${componentName}Tokens.swift`);
+        successfulComponents++;
+
+      } catch (error) {
+        console.error(`     ❌ ${brand}/${componentName}: ${error.message}`);
+      }
+    }
+  }
+
+  console.log(`  📊 Aggregated: ${successfulComponents}/${totalComponents} components\n`);
+  return { totalComponents, successfulComponents };
+}
+
+/**
+ * Parses Swift token file and extracts let declarations
+ * Supports both explicit types (let x: Type = value) and implicit types (let x = TextStyle(...))
+ */
+function parseSwiftTokens(content) {
+  const tokens = [];
+
+  // Match: public let tokenName: Type = value (explicit type)
+  const explicitTypeRegex = /public\s+let\s+(\w+):\s*(\w+)\s*=\s*(.+)/g;
+  let match;
+
+  while ((match = explicitTypeRegex.exec(content)) !== null) {
+    tokens.push({
+      name: match[1],
+      type: match[2],
+      value: match[3].trim()
+    });
+  }
+
+  // Match: public let tokenName = TextStyle(...) (implicit type - for typography)
+  // This regex captures multi-line TextStyle declarations
+  const textStyleRegex = /public\s+let\s+(\w+)\s*=\s*(TextStyle\s*\([^)]+\))/gs;
+  while ((match = textStyleRegex.exec(content)) !== null) {
+    tokens.push({
+      name: match[1],
+      type: 'TextStyle',
+      value: match[2].replace(/\s+/g, ' ').trim()
+    });
+  }
+
+  return tokens;
+}
+
+/**
+ * Generates aggregated Swift file with nested enums
+ */
+function generateAggregatedSwiftComponentFile(brand, componentName, tokenGroups) {
+  const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Check what token groups exist
+  const hasColorTokens = tokenGroups.colors.light.length > 0 || tokenGroups.colors.dark.length > 0;
+  const hasSizingTokens = tokenGroups.sizing.compact.length > 0 || tokenGroups.sizing.regular.length > 0;
+  const hasDensityTokens = tokenGroups.density.dense.length > 0 ||
+      tokenGroups.density.default.length > 0 ||
+      tokenGroups.density.spacious.length > 0;
+  const hasTypographyTokens = tokenGroups.typography.compact.length > 0 || tokenGroups.typography.regular.length > 0;
+
+  let output = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Component: ${componentName} | Brand: ${brandPascal}
+// Aggregated component tokens with all modes
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import SwiftUI
+
+/// ${componentName} Design Tokens
+///
+/// Usage:
+///   ${componentName}Tokens.Colors.light.primaryBgIdle
+///   ${componentName}Tokens.Sizing.compact.height
+///   ${componentName}Tokens.Density.current(for: theme.density).contentGap
+public enum ${componentName}Tokens {
+`;
+
+  // Colors section
+  if (hasColorTokens) {
+    const colorTokenNames = new Map();
+    [...tokenGroups.colors.light, ...tokenGroups.colors.dark].forEach(t => {
+      if (!colorTokenNames.has(t.name)) {
+        colorTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Colors
+
+    /// Color tokens protocol
+    public protocol ${componentName}ColorTokens: Sendable {
+`;
+    colorTokenNames.forEach((info, name) => {
+      output += `        var ${name}: Color { get }\n`;
+    });
+    output += `    }
+
+    /// Color scheme accessor
+    public enum Colors {
+        /// Returns color tokens for the specified theme mode
+        public static func current(isDark: Bool) -> any ${componentName}ColorTokens {
+            isDark ? Dark.shared : Light.shared
+        }
+
+        public static var light: Light { Light.shared }
+        public static var dark: Dark { Dark.shared }
+`;
+
+    if (tokenGroups.colors.light.length > 0) {
+      output += `
+        public struct Light: ${componentName}ColorTokens {
+            public static let shared = Light()
+            private init() {}
+`;
+      tokenGroups.colors.light.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.colors.dark.length > 0) {
+      output += `
+        public struct Dark: ${componentName}ColorTokens {
+            public static let shared = Dark()
+            private init() {}
+`;
+      tokenGroups.colors.dark.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Sizing section
+  if (hasSizingTokens) {
+    const sizingTokenNames = new Map();
+    [...tokenGroups.sizing.compact, ...tokenGroups.sizing.regular].forEach(t => {
+      if (!sizingTokenNames.has(t.name)) {
+        sizingTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Sizing
+
+    /// Sizing tokens protocol
+    public protocol ${componentName}SizingTokens: Sendable {
+`;
+    sizingTokenNames.forEach((info, name) => {
+      output += `        var ${name}: ${info.type} { get }\n`;
+    });
+    output += `    }
+
+    /// Size class accessor
+    public enum Sizing {
+        /// Returns sizing tokens for the specified size class
+        public static func current(for sizeClass: SizeClass) -> any ${componentName}SizingTokens {
+            sizeClass == .compact ? Compact.shared : Regular.shared
+        }
+
+        public static var compact: Compact { Compact.shared }
+        public static var regular: Regular { Regular.shared }
+`;
+
+    if (tokenGroups.sizing.compact.length > 0) {
+      output += `
+        public struct Compact: ${componentName}SizingTokens {
+            public static let shared = Compact()
+            private init() {}
+`;
+      tokenGroups.sizing.compact.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.sizing.regular.length > 0) {
+      output += `
+        public struct Regular: ${componentName}SizingTokens {
+            public static let shared = Regular()
+            private init() {}
+`;
+      tokenGroups.sizing.regular.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Density section
+  if (hasDensityTokens) {
+    const densityTokenNames = new Map();
+    [...tokenGroups.density.dense, ...tokenGroups.density.default, ...tokenGroups.density.spacious].forEach(t => {
+      if (!densityTokenNames.has(t.name)) {
+        densityTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Density
+
+    /// Density tokens protocol
+    public protocol ${componentName}DensityTokens: Sendable {
+`;
+    densityTokenNames.forEach((info, name) => {
+      output += `        var ${name}: ${info.type} { get }\n`;
+    });
+    output += `    }
+
+    /// Density accessor
+    public enum DensityMode {
+        /// Returns density tokens for the specified density mode
+        public static func current(for density: Density) -> any ${componentName}DensityTokens {
+            switch density {
+            case .dense: return Dense.shared
+            case .default: return Default.shared
+            case .spacious: return Spacious.shared
+            }
+        }
+
+        public static var dense: Dense { Dense.shared }
+        public static var \`default\`: Default { Default.shared }
+        public static var spacious: Spacious { Spacious.shared }
+`;
+
+    if (tokenGroups.density.dense.length > 0) {
+      output += `
+        public struct Dense: ${componentName}DensityTokens {
+            public static let shared = Dense()
+            private init() {}
+`;
+      tokenGroups.density.dense.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.density.default.length > 0) {
+      output += `
+        public struct Default: ${componentName}DensityTokens {
+            public static let shared = Default()
+            private init() {}
+`;
+      tokenGroups.density.default.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.density.spacious.length > 0) {
+      output += `
+        public struct Spacious: ${componentName}DensityTokens {
+            public static let shared = Spacious()
+            private init() {}
+`;
+      tokenGroups.density.spacious.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Typography section
+  if (hasTypographyTokens) {
+    const typographyTokenNames = new Map();
+    [...tokenGroups.typography.compact, ...tokenGroups.typography.regular].forEach(t => {
+      if (!typographyTokenNames.has(t.name)) {
+        typographyTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Typography
+
+    /// Typography tokens protocol
+    public protocol ${componentName}TypographyTokens: Sendable {
+`;
+    typographyTokenNames.forEach((info, name) => {
+      output += `        var ${name}: ${info.type} { get }\n`;
+    });
+    output += `    }
+
+    /// Typography accessor
+    public enum Typography {
+        /// Returns typography tokens for the specified size class
+        public static func current(for sizeClass: SizeClass) -> any ${componentName}TypographyTokens {
+            sizeClass == .compact ? Compact.shared : Regular.shared
+        }
+
+        public static var compact: Compact { Compact.shared }
+        public static var regular: Regular { Regular.shared }
+`;
+
+    if (tokenGroups.typography.compact.length > 0) {
+      output += `
+        public struct Compact: ${componentName}TypographyTokens {
+            public static let shared = Compact()
+            private init() {}
+`;
+      tokenGroups.typography.compact.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.typography.regular.length > 0) {
+      output += `
+        public struct Regular: ${componentName}TypographyTokens {
+            public static let shared = Regular()
+            private init() {}
+`;
+      tokenGroups.typography.regular.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  output += `}
+`;
+
+  return output;
+}
+
+/**
+ * Cleans up individual SwiftUI component files after aggregation
+ */
+async function cleanupSwiftUIIndividualComponentFiles() {
+  if (!SWIFTUI_ENABLED) {
+    return { cleaned: 0 };
+  }
+
+  console.log('🧹 Cleaning up individual SwiftUI component files...');
+
+  let cleaned = 0;
+
+  const iosDir = path.join(DIST_DIR, 'ios', 'brands');
+
+  if (!fs.existsSync(iosDir)) {
+    return { cleaned: 0 };
+  }
+
+  for (const brand of BRANDS) {
+    const brandComponentsDir = path.join(iosDir, brand, 'components');
+
+    if (!fs.existsSync(brandComponentsDir)) {
+      continue;
+    }
+
+    const componentDirs = fs.readdirSync(brandComponentsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+
+    for (const componentName of componentDirs) {
+      const componentDir = path.join(brandComponentsDir, componentName);
+      const swiftFiles = fs.readdirSync(componentDir)
+        .filter(f => f.endsWith('.swift') && !f.endsWith('Tokens.swift'));
+
+      // Only delete individual files if aggregated file exists
+      const aggregatedFile = path.join(componentDir, `${componentName}Tokens.swift`);
+      if (fs.existsSync(aggregatedFile)) {
+        for (const file of swiftFiles) {
+          fs.unlinkSync(path.join(componentDir, file));
+          cleaned++;
+        }
+      }
+    }
+  }
+
+  console.log(`  📊 Cleaned: ${cleaned} individual files\n`);
+  return { cleaned };
+}
+
 /**
  * Generates Theme Provider files for each brand
  * Creates: dist/compose/brands/{brand}/theme/{Brand}Theme.kt
@@ -2345,63 +3053,77 @@ async function generateComposeThemeProviders() {
     return { totalThemes: 0, successfulThemes: 0 };
   }
 
-  // Generate shared files (brand-independent)
+  // Generate shared files (brand-independent) - Dual-Axis Architecture
   if (fs.existsSync(sharedDir)) {
     // Density.kt
     const densityContent = generateSharedDensityFile();
     const densityFile = path.join(sharedDir, 'Density.kt');
     fs.writeFileSync(densityFile, densityContent, 'utf8');
-    console.log('     ✅ shared/Density.kt (brand-independent)');
+    console.log('     ✅ shared/Density.kt');
 
     // WindowSizeClass.kt
     const windowSizeClassContent = generateSharedWindowSizeClassFile();
     const windowSizeClassFile = path.join(sharedDir, 'WindowSizeClass.kt');
     fs.writeFileSync(windowSizeClassFile, windowSizeClassContent, 'utf8');
-    console.log('     ✅ shared/WindowSizeClass.kt (brand-independent)');
+    console.log('     ✅ shared/WindowSizeClass.kt');
 
-    // Brand.kt
-    const brandEnumContent = generateSharedBrandEnumFile();
-    const brandEnumFile = path.join(sharedDir, 'Brand.kt');
-    fs.writeFileSync(brandEnumFile, brandEnumContent, 'utf8');
-    console.log('     ✅ shared/Brand.kt (all brands enum)');
+    // ColorBrand.kt (Dual-Axis: color palette axis)
+    const colorBrandContent = generateColorBrandEnumFile();
+    const colorBrandFile = path.join(sharedDir, 'ColorBrand.kt');
+    fs.writeFileSync(colorBrandFile, colorBrandContent, 'utf8');
+    console.log('     ✅ shared/ColorBrand.kt (Dual-Axis: color palette)');
 
-    // DesignSystemTheme.kt
+    // ContentBrand.kt (Dual-Axis: content/sizing axis)
+    const contentBrandContent = generateContentBrandEnumFile();
+    const contentBrandFile = path.join(sharedDir, 'ContentBrand.kt');
+    fs.writeFileSync(contentBrandFile, contentBrandContent, 'utf8');
+    console.log('     ✅ shared/ContentBrand.kt (Dual-Axis: content/sizing)');
+
+    // DesignColorScheme.kt (unified interface)
+    const designColorSchemeContent = generateDesignColorSchemeFile();
+    const designColorSchemeFile = path.join(sharedDir, 'DesignColorScheme.kt');
+    fs.writeFileSync(designColorSchemeFile, designColorSchemeContent, 'utf8');
+    console.log('     ✅ shared/DesignColorScheme.kt (unified interface)');
+
+    // DesignSizingScheme.kt (unified interface)
+    const designSizingSchemeContent = generateDesignSizingSchemeFile();
+    const designSizingSchemeFile = path.join(sharedDir, 'DesignSizingScheme.kt');
+    fs.writeFileSync(designSizingSchemeFile, designSizingSchemeContent, 'utf8');
+    console.log('     ✅ shared/DesignSizingScheme.kt (unified interface)');
+
+    // DesignSystemTheme.kt (central theme provider with Dual-Axis)
     const designSystemThemeContent = generateDesignSystemThemeFile();
     const designSystemThemeFile = path.join(sharedDir, 'DesignSystemTheme.kt');
     fs.writeFileSync(designSystemThemeFile, designSystemThemeContent, 'utf8');
-    console.log('     ✅ shared/DesignSystemTheme.kt (multi-brand theme)');
+    console.log('     ✅ shared/DesignSystemTheme.kt (Dual-Axis theme provider)');
+
+    // Remove old Brand.kt if it exists (replaced by ColorBrand + ContentBrand)
+    const oldBrandFile = path.join(sharedDir, 'Brand.kt');
+    if (fs.existsSync(oldBrandFile)) {
+      fs.unlinkSync(oldBrandFile);
+      console.log('     🗑️  Removed old shared/Brand.kt (replaced by Dual-Axis enums)');
+    }
+
+    successfulThemes = 1; // Central theme provider counts as 1
   }
 
+  // Remove old individual brand theme files (Option 3B: single central theme provider)
   for (const brand of BRANDS) {
-    totalThemes++;
     const brandDir = path.join(composeDir, brand);
+    const themeDir = path.join(brandDir, 'theme');
 
-    if (!fs.existsSync(brandDir)) {
-      continue;
-    }
-
-    try {
-      // Create theme directory
-      const themeDir = path.join(brandDir, 'theme');
-      if (!fs.existsSync(themeDir)) {
-        fs.mkdirSync(themeDir, { recursive: true });
+    if (fs.existsSync(themeDir)) {
+      const themeFiles = fs.readdirSync(themeDir).filter(f => f.endsWith('Theme.kt'));
+      for (const themeFile of themeFiles) {
+        fs.unlinkSync(path.join(themeDir, themeFile));
+        console.log(`     🗑️  Removed ${brand}/theme/${themeFile} (using central DesignSystemTheme)`);
       }
-
-      // Check if brand has color tokens
-      const colorDir = path.join(brandDir, 'semantic', 'color');
-      const hasColors = fs.existsSync(colorDir) && fs.readdirSync(colorDir).some(f => f.endsWith('.kt'));
-
-      // Generate Theme Provider
-      const themeContent = generateThemeProviderFile(brand, hasColors);
-      const themeFile = path.join(themeDir, `${brand.charAt(0).toUpperCase() + brand.slice(1)}Theme.kt`);
-      fs.writeFileSync(themeFile, themeContent, 'utf8');
-
-      console.log(`     ✅ ${brand}/theme/${brand.charAt(0).toUpperCase() + brand.slice(1)}Theme.kt ${hasColors ? '' : '(no colors, uses external)'}`);
-      successfulThemes++;
-
-    } catch (error) {
-      console.error(`     ❌ ${brand}: ${error.message}`);
+      // Remove empty theme directory
+      if (fs.readdirSync(themeDir).length === 0) {
+        fs.rmdirSync(themeDir);
+      }
     }
+    totalThemes++;
   }
 
   console.log(`  📊 Generated: ${successfulThemes}/${totalThemes} theme providers\n`);
@@ -2724,16 +3446,17 @@ enum class WindowSizeClass {
 }
 
 /**
- * Generates the shared Brand enum file
- * Creates: dist/android/compose/shared/Brand.kt
+ * Generates the ColorBrand enum file (Dual-Axis Architecture)
+ * Creates: dist/android/compose/shared/ColorBrand.kt
+ * Only brands with their own color tokens (bild, sportbild)
  */
-function generateSharedBrandEnumFile() {
+function generateColorBrandEnumFile() {
   const packageJson = require('../../package.json');
   const version = packageJson.version;
 
-  const brandEntries = BRANDS.map(brand => {
+  const brandEntries = COLOR_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `    /** ${brandPascal} brand */
+    return `    /** ${brandPascal} color palette */
     ${brandPascal}`;
   }).join(',\n');
 
@@ -2743,8 +3466,8 @@ function generateSharedBrandEnumFile() {
  * BILD Design System Tokens v${version}
  * Generated by Style Dictionary
  *
- * Shared Brand Enum
- * All available brands in the BILD Design System
+ * ColorBrand Enum (Dual-Axis Architecture)
+ * Defines the color palette axis - only brands with their own color tokens
  *
  * Copyright (c) 2024 Axel Springer Deutschland GmbH
  */
@@ -2752,47 +3475,270 @@ function generateSharedBrandEnumFile() {
 package com.bild.designsystem.shared
 
 /**
- * Available brands in the BILD Design System
+ * Color brands in the BILD Design System
  *
- * Use this enum to switch between brands at runtime in multi-brand apps.
+ * Determines which color palette to use. Only brands with their own
+ * color tokens are included. Advertorial uses colors from BILD or SportBILD.
  *
  * Usage:
  * \`\`\`kotlin
  * DesignSystemTheme(
- *     brand = Brand.Bild,
+ *     colorBrand = ColorBrand.Bild,        // Use BILD colors
+ *     contentBrand = ContentBrand.Advertorial,  // Use Advertorial sizing
  *     darkTheme = isSystemInDarkTheme()
  * ) {
- *     // Content with Bild branding
+ *     // Advertorial content with BILD colors
  * }
  * \`\`\`
  */
-enum class Brand {
+enum class ColorBrand {
 ${brandEntries}
 }
 `;
 }
 
 /**
- * Generates the central DesignSystemTheme file
+ * Generates the ContentBrand enum file (Dual-Axis Architecture)
+ * Creates: dist/android/compose/shared/ContentBrand.kt
+ * All brands including those without own colors (advertorial)
+ */
+function generateContentBrandEnumFile() {
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  const brandEntries = CONTENT_BRANDS.map(brand => {
+    const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+    const hasColors = COLOR_BRANDS.includes(brand);
+    const note = hasColors ? '' : ' (uses ColorBrand for colors)';
+    return `    /** ${brandPascal} content/sizing${note} */
+    ${brandPascal}`;
+  }).join(',\n');
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * ContentBrand Enum (Dual-Axis Architecture)
+ * Defines the content axis - sizing, typography, and layout tokens
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.shared
+
+/**
+ * Content brands in the BILD Design System
+ *
+ * Determines which sizing, typography, and layout tokens to use.
+ * All brands are included, even those without their own color tokens.
+ *
+ * Note: Advertorial uses ColorBrand for colors but has its own sizing tokens.
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * DesignSystemTheme(
+ *     colorBrand = ColorBrand.Sportbild,   // Use SportBILD colors
+ *     contentBrand = ContentBrand.Advertorial,  // Use Advertorial sizing
+ *     darkTheme = isSystemInDarkTheme()
+ * ) {
+ *     // Advertorial content with SportBILD colors
+ * }
+ * \`\`\`
+ */
+enum class ContentBrand {
+${brandEntries}
+}
+`;
+}
+
+/**
+ * Generates the unified DesignColorScheme interface
+ * Creates: dist/android/compose/shared/DesignColorScheme.kt
+ * All color brands implement this interface for polymorphic color access
+ */
+function generateDesignColorSchemeFile() {
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Read color properties from existing BildColorScheme to ensure consistency
+  const bildColorsPath = path.join(DIST_DIR, 'android', 'compose', 'brands', 'bild', 'semantic', 'color', 'ColorsLight.kt');
+  let colorProperties = [];
+
+  if (fs.existsSync(bildColorsPath)) {
+    const content = fs.readFileSync(bildColorsPath, 'utf8');
+    // Extract interface properties (handles both "interface X {" and "interface X : Y {")
+    const interfaceMatch = content.match(/interface \w+ColorScheme[^{]*\{([^}]+)\}/s);
+    if (interfaceMatch) {
+      const propsMatch = interfaceMatch[1].matchAll(/val\s+(\w+):\s*Color/g);
+      for (const match of propsMatch) {
+        colorProperties.push(match[1]);
+      }
+    }
+  }
+
+  // Fallback to essential properties if file not found
+  if (colorProperties.length === 0) {
+    colorProperties = [
+      'textColorPrimary', 'textColorSecondary', 'textColorMuted', 'textColorAccent',
+      'surfaceColorPrimary', 'surfaceColorSecondary', 'surfaceColorTertiary',
+      'borderColorLowContrast', 'borderColorMediumContrast', 'borderColorHighContrast',
+      'coreColorPrimary', 'coreColorSecondary', 'coreColorTertiary'
+    ];
+  }
+
+  const propertyDeclarations = colorProperties.map(prop => `    val ${prop}: Color`).join('\n');
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Unified DesignColorScheme Interface (Dual-Axis Architecture)
+ * All color brands implement this interface for polymorphic color access
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.shared
+
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.graphics.Color
+
+/**
+ * Unified color scheme interface for the BILD Design System
+ *
+ * All color brands (BILD, SportBILD) implement this interface,
+ * enabling polymorphic color access across brands.
+ *
+ * This follows the Dual-Axis Architecture:
+ * - ColorBrand axis: Determines which color palette (BILD or SportBILD)
+ * - ContentBrand axis: Determines sizing/typography (BILD, SportBILD, or Advertorial)
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * @Composable
+ * fun MyComponent() {
+ *     val colors: DesignColorScheme = DesignSystemTheme.colors
+ *     Text(
+ *         text = "Hello",
+ *         color = colors.textColorPrimary
+ *     )
+ * }
+ * \`\`\`
+ */
+@Stable
+interface DesignColorScheme {
+${propertyDeclarations}
+}
+`;
+}
+
+/**
+ * Generates the unified DesignSizingScheme interface
+ * Creates: dist/android/compose/shared/DesignSizingScheme.kt
+ */
+function generateDesignSizingSchemeFile() {
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Read sizing properties from existing BildSizingScheme
+  const bildSizingPath = path.join(DIST_DIR, 'android', 'compose', 'brands', 'bild', 'semantic', 'sizeclass', 'SizingCompact.kt');
+  let sizingProperties = [];
+
+  if (fs.existsSync(bildSizingPath)) {
+    const content = fs.readFileSync(bildSizingPath, 'utf8');
+    // Extract interface properties (handles both "interface X {" and "interface X : Y {")
+    const interfaceMatch = content.match(/interface \w+SizingScheme[^{]*\{([^}]+)\}/s);
+    if (interfaceMatch) {
+      const propsMatch = interfaceMatch[1].matchAll(/val\s+(\w+):\s*(\w+)/g);
+      for (const match of propsMatch) {
+        sizingProperties.push({ name: match[1], type: match[2] });
+      }
+    }
+  }
+
+  // Fallback to essential properties
+  if (sizingProperties.length === 0) {
+    sizingProperties = [
+      { name: 'gridSpaceRespBase', type: 'Dp' },
+      { name: 'gridSpaceRespSm', type: 'Dp' },
+      { name: 'gridSpaceRespLg', type: 'Dp' },
+      { name: 'pageInlineSpace', type: 'Dp' },
+      { name: 'sectionSpaceBase', type: 'Dp' }
+    ];
+  }
+
+  const propertyDeclarations = sizingProperties.map(prop => `    val ${prop.name}: ${prop.type}`).join('\n');
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Unified DesignSizingScheme Interface (Dual-Axis Architecture)
+ * All content brands implement this interface for polymorphic sizing access
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.shared
+
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+
+/**
+ * Unified sizing scheme interface for the BILD Design System
+ *
+ * All content brands (BILD, SportBILD, Advertorial) implement this interface,
+ * enabling polymorphic sizing access across brands.
+ */
+@Stable
+interface DesignSizingScheme {
+${propertyDeclarations}
+}
+`;
+}
+
+/**
+ * Generates the central DesignSystemTheme file with Dual-Axis Architecture
  * Creates: dist/android/compose/shared/DesignSystemTheme.kt
  */
 function generateDesignSystemThemeFile() {
   const packageJson = require('../../package.json');
   const version = packageJson.version;
 
-  const brandImports = BRANDS.map(brand => {
+  // Generate color imports for all color brands
+  const colorImports = COLOR_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.${brand}.theme.${brandPascal}Theme`;
+    return `import com.bild.designsystem.${brand}.semantic.${brandPascal}LightColors
+import com.bild.designsystem.${brand}.semantic.${brandPascal}DarkColors`;
   }).join('\n');
 
-  const brandCases = BRANDS.map(brand => {
+  // Generate sizing imports for all content brands
+  const sizingImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `        Brand.${brandPascal} -> ${brandPascal}Theme(
-            darkTheme = darkTheme,
-            sizeClass = sizeClass,
-            density = density,
-            content = content
-        )`;
+    return `import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingCompact
+import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingRegular`;
+  }).join('\n');
+
+  // Generate color selection cases
+  const colorCases = COLOR_BRANDS.map(brand => {
+    const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+    return `        ColorBrand.${brandPascal} -> if (darkTheme) ${brandPascal}DarkColors else ${brandPascal}LightColors`;
+  }).join('\n');
+
+  // Generate sizing selection cases
+  const sizingCases = CONTENT_BRANDS.map(brand => {
+    const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+    return `        ContentBrand.${brandPascal} -> when (sizeClass) {
+            WindowSizeClass.Compact -> ${brandPascal}SizingCompact
+            WindowSizeClass.Regular -> ${brandPascal}SizingRegular
+        }`;
   }).join('\n');
 
   return `/**
@@ -2801,8 +3747,8 @@ function generateDesignSystemThemeFile() {
  * BILD Design System Tokens v${version}
  * Generated by Style Dictionary
  *
- * Central Design System Theme Provider
- * Unified entry point for all brands in multi-brand applications
+ * Central Design System Theme Provider (Dual-Axis Architecture)
+ * Unified entry point with separate ColorBrand and ContentBrand axes
  *
  * Copyright (c) 2024 Axel Springer Deutschland GmbH
  */
@@ -2811,59 +3757,208 @@ package com.bild.designsystem.shared
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-${brandImports}
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+
+// Color imports (ColorBrand axis)
+${colorImports}
+
+// Sizing imports (ContentBrand axis)
+${sizingImports}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// COMPOSITION LOCALS
+// ══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Central Design System Theme Provider
+ * CompositionLocal for current color scheme
+ * Type: DesignColorScheme (unified interface)
+ */
+internal val LocalDesignColors = staticCompositionLocalOf<DesignColorScheme> { BildLightColors }
+
+/**
+ * CompositionLocal for current sizing scheme
+ * Type: DesignSizingScheme (unified interface)
+ */
+internal val LocalDesignSizing = staticCompositionLocalOf<DesignSizingScheme> { BildSizingCompact }
+
+/**
+ * CompositionLocal for current window size class
+ */
+internal val LocalWindowSizeClass = staticCompositionLocalOf { WindowSizeClass.Compact }
+
+/**
+ * CompositionLocal for current density
+ */
+internal val LocalDensity = staticCompositionLocalOf { Density.Default }
+
+/**
+ * CompositionLocal for dark theme state
+ */
+internal val LocalIsDarkTheme = staticCompositionLocalOf { false }
+
+/**
+ * CompositionLocal for current color brand
+ */
+internal val LocalColorBrand = staticCompositionLocalOf { ColorBrand.Bild }
+
+/**
+ * CompositionLocal for current content brand
+ */
+internal val LocalContentBrand = staticCompositionLocalOf { ContentBrand.Bild }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// THEME PROVIDER
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Central Design System Theme Provider (Dual-Axis Architecture)
  *
- * Provides a unified entry point for all brands. Use this in multi-brand apps
- * where the brand can be switched at runtime via configuration.
+ * Provides a unified entry point with two independent brand axes:
+ * - ColorBrand: Determines color palette (BILD or SportBILD)
+ * - ContentBrand: Determines sizing/typography (BILD, SportBILD, or Advertorial)
  *
- * For single-brand apps, you can use the brand-specific themes directly
- * (e.g., BildTheme, SportbildTheme, AdvertorialTheme).
+ * This enables use cases like "Advertorial content with SportBILD colors".
  *
- * @param brand The brand to use for theming
+ * @param colorBrand Color palette to use (BILD or SportBILD)
+ * @param contentBrand Content/sizing tokens to use (BILD, SportBILD, or Advertorial)
  * @param darkTheme Whether to use dark color scheme
- * @param sizeClass Current window size class for responsive sizing
+ * @param sizeClass Window size class for responsive sizing
  * @param density UI density for spacing adjustments
  * @param content Composable content to wrap
  *
  * Usage:
  * \`\`\`kotlin
- * // Multi-brand app with runtime brand switching
- * val currentBrand = remember { mutableStateOf(Brand.Bild) }
- *
+ * // Standard BILD app
  * DesignSystemTheme(
- *     brand = currentBrand.value,
- *     darkTheme = isSystemInDarkTheme(),
- *     sizeClass = WindowSizeClass.Compact,
- *     density = Density.Default
+ *     colorBrand = ColorBrand.Bild,
+ *     contentBrand = ContentBrand.Bild
  * ) {
- *     // Your app content - uses the selected brand's tokens
- * }
- * \`\`\`
- *
- * White-label app example:
- * \`\`\`kotlin
- * // Brand from build config or remote config
- * val brand = Brand.valueOf(BuildConfig.BRAND_NAME)
- *
- * DesignSystemTheme(brand = brand) {
  *     MyApp()
+ * }
+ *
+ * // Advertorial with SportBILD colors
+ * DesignSystemTheme(
+ *     colorBrand = ColorBrand.Sportbild,
+ *     contentBrand = ContentBrand.Advertorial
+ * ) {
+ *     AdvertorialContent()
  * }
  * \`\`\`
  */
 @Composable
 fun DesignSystemTheme(
-    brand: Brand,
+    colorBrand: ColorBrand = ColorBrand.Bild,
+    contentBrand: ContentBrand = ContentBrand.Bild,
     darkTheme: Boolean = isSystemInDarkTheme(),
     sizeClass: WindowSizeClass = WindowSizeClass.Compact,
     density: Density = Density.Default,
     content: @Composable () -> Unit
 ) {
-    when (brand) {
-${brandCases}
+    val colors: DesignColorScheme = when (colorBrand) {
+${colorCases}
     }
+
+    val sizing: DesignSizingScheme = when (contentBrand) {
+${sizingCases}
+    }
+
+    CompositionLocalProvider(
+        LocalDesignColors provides colors,
+        LocalDesignSizing provides sizing,
+        LocalWindowSizeClass provides sizeClass,
+        LocalDensity provides density,
+        LocalIsDarkTheme provides darkTheme,
+        LocalColorBrand provides colorBrand,
+        LocalContentBrand provides contentBrand,
+        content = content
+    )
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// THEME ACCESSOR OBJECT
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Accessor object for Design System theme values
+ *
+ * Provides convenient access to current theme values from any composable.
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * @Composable
+ * fun MyButton() {
+ *     Button(
+ *         colors = ButtonDefaults.buttonColors(
+ *             containerColor = DesignSystemTheme.colors.coreColorPrimary
+ *         )
+ *     ) {
+ *         Text(
+ *             text = "Click me",
+ *             fontSize = DesignSystemTheme.sizing.headline1FontSize
+ *         )
+ *     }
+ * }
+ * \`\`\`
+ */
+object DesignSystemTheme {
+
+    /**
+     * Current color scheme (based on ColorBrand and dark/light mode)
+     */
+    val colors: DesignColorScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDesignColors.current
+
+    /**
+     * Current sizing scheme (based on ContentBrand and WindowSizeClass)
+     */
+    val sizing: DesignSizingScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDesignSizing.current
+
+    /**
+     * Current window size class
+     */
+    val sizeClass: WindowSizeClass
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalWindowSizeClass.current
+
+    /**
+     * Current UI density
+     */
+    val density: Density
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDensity.current
+
+    /**
+     * Whether dark theme is currently active
+     */
+    val isDarkTheme: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalIsDarkTheme.current
+
+    /**
+     * Current color brand
+     */
+    val colorBrand: ColorBrand
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalColorBrand.current
+
+    /**
+     * Current content brand
+     */
+    val contentBrand: ContentBrand
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalContentBrand.current
 }
 `;
 }
@@ -2930,7 +4025,7 @@ async function consolidateComposePrimitives() {
  * Copyright (c) 2024 Axel Springer Deutschland GmbH
  */
 
-package com.bild.designsystem
+package com.bild.designsystem.shared
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -3250,6 +4345,689 @@ async function cleanupComposeIndividualFiles() {
 }
 
 /**
+ * Removes individual SwiftUI primitive files, keeping only DesignTokenPrimitives.swift
+ * This follows SwiftUI best practice of consolidated primitives with nested enums
+ */
+async function cleanupSwiftUIIndividualPrimitives() {
+  if (!SWIFTUI_ENABLED) {
+    return { removed: 0 };
+  }
+
+  console.log('🧹 Cleaning up individual SwiftUI primitive files...');
+
+  let removedCount = 0;
+
+  // Clean up individual primitive files (keep only DesignTokenPrimitives.swift)
+  const sharedDir = path.join(DIST_DIR, 'ios', 'shared');
+  if (fs.existsSync(sharedDir)) {
+    const primitiveFiles = ['Colorprimitive.swift', 'Fontprimitive.swift', 'Sizeprimitive.swift', 'Spaceprimitive.swift'];
+    for (const fileName of primitiveFiles) {
+      const filePath = path.join(sharedDir, fileName);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        removedCount++;
+      }
+    }
+  }
+
+  console.log(`  📊 Removed ${removedCount} individual Swift primitive files\n`);
+  return { removed: removedCount };
+}
+
+// ============================================================================
+// SWIFTUI POST-PROCESSING FUNCTIONS
+// ============================================================================
+
+/**
+ * Generates SwiftUI Shared Infrastructure files
+ * Creates: dist/ios/shared/*.swift (Enums, TextStyle, Shadow, ColorExtension)
+ */
+async function generateSwiftUISharedFiles() {
+  if (!SWIFTUI_ENABLED) {
+    return { total: 0, successful: 0 };
+  }
+
+  console.log('🍎 Generating SwiftUI Shared Infrastructure...');
+
+  const sharedDir = path.join(DIST_DIR, 'ios', 'shared');
+  if (!fs.existsSync(sharedDir)) {
+    fs.mkdirSync(sharedDir, { recursive: true });
+  }
+
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+  let successful = 0;
+
+  // Generate Enums.swift (Density, SizeClass, ColorBrand, ContentBrand)
+  const enumsContent = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import Foundation
+
+/// UI density modes for the BILD Design System
+public enum Density: String, CaseIterable, Sendable {
+    case dense
+    case \`default\`
+    case spacious
+}
+
+/// Size class for responsive layouts
+/// Maps to iOS UITraitCollection.horizontalSizeClass
+public enum SizeClass: String, CaseIterable, Sendable {
+    case compact   // Phones (Portrait), small screens - maps to xs/sm breakpoints
+    case regular   // Tablets, Phones (Landscape) - maps to md/lg breakpoints
+}
+
+/// Color brands - defines the color palette and effects
+/// Only brands with their own color schemes are included
+public enum ColorBrand: String, CaseIterable, Sendable {
+    case bild
+    case sportbild
+    // Note: Advertorial uses BILD or SportBILD colors
+}
+
+/// Content brands - defines sizing, typography, and layout tokens
+/// All brands including those without own color schemes
+public enum ContentBrand: String, CaseIterable, Sendable {
+    case bild
+    case sportbild
+    case advertorial
+}
+
+/// Legacy: Combined brand enum for backwards compatibility
+@available(*, deprecated, message: "Use ColorBrand and ContentBrand for dual-axis theming")
+public enum Brand: String, CaseIterable, Sendable {
+    case bild
+    case sportbild
+    case advertorial
+}
+`;
+  fs.writeFileSync(path.join(sharedDir, 'Enums.swift'), enumsContent, 'utf8');
+  console.log('     ✅ shared/Enums.swift');
+  successful++;
+
+  // Generate Color+Hex.swift
+  const colorExtContent = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import SwiftUI
+
+public extension Color {
+    /// Initialize Color from hex value
+    /// - Parameters:
+    ///   - hex: Hex color value (e.g., 0xDD0000)
+    ///   - alpha: Optional alpha value (0.0 - 1.0)
+    init(hex: UInt, alpha: Double = 1.0) {
+        self.init(
+            .sRGB,
+            red: Double((hex >> 16) & 0xFF) / 255,
+            green: Double((hex >> 8) & 0xFF) / 255,
+            blue: Double(hex & 0xFF) / 255,
+            opacity: alpha
+        )
+    }
+}
+`;
+  fs.writeFileSync(path.join(sharedDir, 'Color+Hex.swift'), colorExtContent, 'utf8');
+  console.log('     ✅ shared/Color+Hex.swift');
+  successful++;
+
+  // Generate TextStyle.swift
+  const textStyleContent = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import SwiftUI
+
+/// Composite typography token representing a complete text style
+public struct TextStyle: Equatable, Sendable {
+    public let fontFamily: String
+    public let fontWeight: Font.Weight
+    public let fontSize: CGFloat
+    public let lineHeight: CGFloat
+    public let letterSpacing: CGFloat
+    public let textCase: TextCase
+    public let textDecoration: TextDecoration
+
+    public init(
+        fontFamily: String,
+        fontWeight: Font.Weight,
+        fontSize: CGFloat,
+        lineHeight: CGFloat,
+        letterSpacing: CGFloat,
+        textCase: TextCase = .original,
+        textDecoration: TextDecoration = .none
+    ) {
+        self.fontFamily = fontFamily
+        self.fontWeight = fontWeight
+        self.fontSize = fontSize
+        self.lineHeight = lineHeight
+        self.letterSpacing = letterSpacing
+        self.textCase = textCase
+        self.textDecoration = textDecoration
+    }
+
+    public enum TextCase: String, Sendable {
+        case original = "ORIGINAL"
+        case upper = "UPPER"
+        case lower = "LOWER"
+        case capitalize = "CAPITALIZE"
+
+        var swiftUICase: Text.Case? {
+            switch self {
+            case .original: return nil
+            case .upper: return .uppercase
+            case .lower: return .lowercase
+            case .capitalize: return nil
+            }
+        }
+    }
+
+    public enum TextDecoration: String, Sendable {
+        case none = "NONE"
+        case underline = "UNDERLINE"
+        case strikethrough = "STRIKETHROUGH"
+    }
+
+    /// Create a SwiftUI Font from this text style with Dynamic Type support
+    public func font(relativeTo textStyle: Font.TextStyle = .body) -> Font {
+        Font.custom(fontFamily, size: fontSize, relativeTo: textStyle)
+            .weight(fontWeight)
+    }
+
+    /// Line spacing value for SwiftUI (lineHeight - fontSize)
+    public var lineSpacing: CGFloat {
+        max(0, lineHeight - fontSize)
+    }
+}
+
+/// View modifier for applying TextStyle
+public struct TextStyleModifier: ViewModifier {
+    let style: TextStyle
+    let relativeTo: Font.TextStyle
+
+    public init(_ style: TextStyle, relativeTo: Font.TextStyle = .body) {
+        self.style = style
+        self.relativeTo = relativeTo
+    }
+
+    public func body(content: Content) -> some View {
+        content
+            .font(style.font(relativeTo: relativeTo))
+            .tracking(style.letterSpacing)
+            .lineSpacing(style.lineSpacing)
+            .textCase(style.textCase.swiftUICase)
+    }
+}
+
+public extension View {
+    func textStyle(_ style: TextStyle, relativeTo: Font.TextStyle = .body) -> some View {
+        modifier(TextStyleModifier(style, relativeTo: relativeTo))
+    }
+}
+`;
+  fs.writeFileSync(path.join(sharedDir, 'TextStyle.swift'), textStyleContent, 'utf8');
+  console.log('     ✅ shared/TextStyle.swift');
+  successful++;
+
+  // Generate ShadowStyle.swift
+  const shadowContent = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import SwiftUI
+
+/// Single drop shadow definition
+public struct DropShadow: Equatable, Sendable {
+    public let color: Color
+    public let offsetX: CGFloat
+    public let offsetY: CGFloat
+    public let radius: CGFloat
+    public let spread: CGFloat
+
+    public init(
+        color: Color,
+        offsetX: CGFloat,
+        offsetY: CGFloat,
+        radius: CGFloat,
+        spread: CGFloat = 0
+    ) {
+        self.color = color
+        self.offsetX = offsetX
+        self.offsetY = offsetY
+        self.radius = radius
+        self.spread = spread
+    }
+}
+
+/// Composite shadow token (can contain multiple layers)
+public struct ShadowStyle: Equatable, Sendable {
+    public let shadows: [DropShadow]
+
+    public init(shadows: [DropShadow]) {
+        self.shadows = shadows
+    }
+
+    public init(_ shadow: DropShadow) {
+        self.shadows = [shadow]
+    }
+}
+
+/// View modifier for applying ShadowStyle (applies all shadow layers)
+public struct ShadowStyleModifier: ViewModifier {
+    let style: ShadowStyle
+
+    public init(_ style: ShadowStyle) {
+        self.style = style
+    }
+
+    public func body(content: Content) -> some View {
+        style.shadows.reduce(AnyView(content)) { view, shadow in
+            AnyView(view.shadow(
+                color: shadow.color,
+                radius: shadow.radius,
+                x: shadow.offsetX,
+                y: shadow.offsetY
+            ))
+        }
+    }
+}
+
+public extension View {
+    func shadowStyle(_ style: ShadowStyle) -> some View {
+        modifier(ShadowStyleModifier(style))
+    }
+}
+`;
+  fs.writeFileSync(path.join(sharedDir, 'ShadowStyle.swift'), shadowContent, 'utf8');
+  console.log('     ✅ shared/ShadowStyle.swift');
+  successful++;
+
+  // Generate DesignSystemTheme.swift with dual-axis architecture
+  // Dynamically read color properties from generated iOS files
+  const bildColorsPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'color', 'ColorsLight.swift');
+  let colorProperties = [];
+  if (fs.existsSync(bildColorsPath)) {
+    const content = fs.readFileSync(bildColorsPath, 'utf8');
+    // Extract all var declarations with Color type from the entire file
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*Color\s*\{\s*get\s*\}/gm);
+    for (const match of propsMatch) {
+      colorProperties.push(match[1]);
+    }
+  }
+  // Fallback if file not found
+  if (colorProperties.length === 0) {
+    colorProperties = ['textColorPrimary', 'textColorSecondary', 'surfaceColorPrimary', 'coreColorPrimary'];
+  }
+  const colorPropertyDeclarations = colorProperties.map(prop => `    var ${prop}: Color { get }`).join('\n');
+
+  // Dynamically read sizing properties with their types
+  // Supported types: CGFloat, String, Bool, Int
+  const bildSizingPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'sizeclass', 'SizingCompact.swift');
+  let sizingProperties = [];
+  if (fs.existsSync(bildSizingPath)) {
+    const content = fs.readFileSync(bildSizingPath, 'utf8');
+    // Extract all var declarations with their Swift types
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*(CGFloat|String|Bool|Int)\s*\{\s*get\s*\}/gm);
+    for (const match of propsMatch) {
+      sizingProperties.push({ name: match[1], type: match[2] });
+    }
+  }
+  if (sizingProperties.length === 0) {
+    sizingProperties = [
+      { name: 'gridSpaceRespBase', type: 'CGFloat' },
+      { name: 'gridSpaceRespSm', type: 'CGFloat' },
+      { name: 'gridSpaceRespLg', type: 'CGFloat' },
+      { name: 'pageInlineSpace', type: 'CGFloat' }
+    ];
+  }
+  const sizingPropertyDeclarations = sizingProperties.map(prop => `    var ${prop.name}: ${prop.type} { get }`).join('\n');
+
+  // Dynamically read effects properties
+  const bildEffectsPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'effects', 'EffectsLight.swift');
+  let effectsProperties = [];
+  if (fs.existsSync(bildEffectsPath)) {
+    const content = fs.readFileSync(bildEffectsPath, 'utf8');
+    // Extract all var declarations with ShadowStyle type
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*ShadowStyle\s*\{\s*get\s*\}/gm);
+    for (const match of propsMatch) {
+      effectsProperties.push(match[1]);
+    }
+  }
+  if (effectsProperties.length === 0) {
+    effectsProperties = ['shadowSoftSm', 'shadowSoftMd', 'shadowSoftLg', 'shadowHardSm', 'shadowHardMd', 'shadowHardLg'];
+  }
+  const effectsPropertyDeclarations = effectsProperties.map(prop => `    var ${prop}: ShadowStyle { get }`).join('\n');
+
+  const designSystemThemeContent = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import SwiftUI
+
+// MARK: - Unified Protocols
+
+/// Unified color scheme protocol for all color brands (BILD, SportBILD)
+/// Allows interchangeable color schemes across content brands
+public protocol DesignColorScheme: Sendable {
+${colorPropertyDeclarations}
+}
+
+/// Unified sizing scheme protocol for all content brands
+public protocol DesignSizingScheme: Sendable {
+${sizingPropertyDeclarations}
+}
+
+/// Unified effects scheme protocol for all color brands
+public protocol DesignEffectsScheme: Sendable {
+${effectsPropertyDeclarations}
+}
+
+// MARK: - Dual-Axis Theme Provider
+
+/// Multi-brand theme provider with dual-axis architecture
+/// - ColorBrand axis: Defines colors and effects (BILD, SportBILD)
+/// - ContentBrand axis: Defines sizing, typography, layout (BILD, SportBILD, Advertorial)
+///
+/// Example usage:
+/// \`\`\`swift
+/// // Advertorial content with BILD colors
+/// DesignSystemTheme(colorBrand: .bild, contentBrand: .advertorial)
+///
+/// // Advertorial content with SportBILD colors
+/// DesignSystemTheme(colorBrand: .sportbild, contentBrand: .advertorial)
+/// \`\`\`
+@Observable
+public final class DesignSystemTheme: @unchecked Sendable {
+
+    // MARK: - Shared Instance
+    public static let shared = DesignSystemTheme()
+
+    // MARK: - Theme State (Dual-Axis)
+
+    /// Color brand determines the color palette and effects
+    public var colorBrand: ColorBrand = .bild
+
+    /// Content brand determines sizing, typography, and layout
+    public var contentBrand: ContentBrand = .bild
+
+    /// Dark/Light mode
+    public var isDarkTheme: Bool = false
+
+    /// Size class for responsive layouts
+    public var sizeClass: SizeClass = .compact
+
+    /// Density mode
+    public var density: Density = .default
+
+    private init() {}
+
+    // MARK: - Factory
+
+    public init(
+        colorBrand: ColorBrand = .bild,
+        contentBrand: ContentBrand = .bild,
+        isDarkTheme: Bool = false,
+        sizeClass: SizeClass = .compact,
+        density: Density = .default
+    ) {
+        self.colorBrand = colorBrand
+        self.contentBrand = contentBrand
+        self.isDarkTheme = isDarkTheme
+        self.sizeClass = sizeClass
+        self.density = density
+    }
+
+    // MARK: - Color Access (based on colorBrand)
+
+    /// Current color scheme based on colorBrand and isDarkTheme
+    public var colors: any DesignColorScheme {
+        switch colorBrand {
+        case .bild:
+            return isDarkTheme ? BildDarkColors.shared : BildLightColors.shared
+        case .sportbild:
+            return isDarkTheme ? SportbildDarkColors.shared : SportbildLightColors.shared
+        }
+    }
+
+    /// Current effects scheme based on colorBrand and isDarkTheme
+    public var effects: any DesignEffectsScheme {
+        switch colorBrand {
+        case .bild:
+            return isDarkTheme ? BildEffectsDark.shared : BildEffectsLight.shared
+        case .sportbild:
+            return isDarkTheme ? SportbildEffectsDark.shared : SportbildEffectsLight.shared
+        }
+    }
+
+    // MARK: - Sizing Access (based on contentBrand)
+
+    /// Current sizing scheme based on contentBrand and sizeClass
+    public var sizing: any DesignSizingScheme {
+        switch contentBrand {
+        case .bild:
+            return sizeClass == .compact ? BildSizingCompact.shared : BildSizingRegular.shared
+        case .sportbild:
+            return sizeClass == .compact ? SportbildSizingCompact.shared : SportbildSizingRegular.shared
+        case .advertorial:
+            return sizeClass == .compact ? AdvertorialSizingCompact.shared : AdvertorialSizingRegular.shared
+        }
+    }
+}
+
+// MARK: - Environment Integration
+
+private struct DesignSystemThemeKey: EnvironmentKey {
+    static let defaultValue = DesignSystemTheme.shared
+}
+
+public extension EnvironmentValues {
+    var designSystemTheme: DesignSystemTheme {
+        get { self[DesignSystemThemeKey.self] }
+        set { self[DesignSystemThemeKey.self] = newValue }
+    }
+}
+
+// MARK: - View Modifier
+
+public extension View {
+    /// Apply design system theme with dual-axis brand selection
+    /// - Parameters:
+    ///   - colorBrand: Brand for colors and effects (BILD or SportBILD)
+    ///   - contentBrand: Brand for sizing, typography, layout (BILD, SportBILD, or Advertorial)
+    ///   - darkTheme: Enable dark mode
+    ///   - sizeClass: Size class for responsive layouts
+    ///   - density: UI density mode
+    func designSystemTheme(
+        colorBrand: ColorBrand = .bild,
+        contentBrand: ContentBrand = .bild,
+        darkTheme: Bool = false,
+        sizeClass: SizeClass = .compact,
+        density: Density = .default
+    ) -> some View {
+        let theme = DesignSystemTheme(
+            colorBrand: colorBrand,
+            contentBrand: contentBrand,
+            isDarkTheme: darkTheme,
+            sizeClass: sizeClass,
+            density: density
+        )
+        return self.environment(\\.designSystemTheme, theme)
+    }
+}
+`;
+  fs.writeFileSync(path.join(sharedDir, 'DesignSystemTheme.swift'), designSystemThemeContent, 'utf8');
+  console.log('     ✅ shared/DesignSystemTheme.swift');
+  successful++;
+
+  console.log(`  📊 Generated ${successful} shared SwiftUI files\n`);
+  return { total: 5, successful };
+}
+
+/**
+ * Generates SwiftUI Theme Provider for color brands only (BILD, SportBILD)
+ * Content-only brands like Advertorial use the central DesignSystemTheme
+ * Creates: dist/ios/brands/{brand}/theme/{Brand}Theme.swift
+ */
+async function generateSwiftUIThemeProviders() {
+  if (!SWIFTUI_ENABLED) {
+    return { totalThemes: 0, successfulThemes: 0 };
+  }
+
+  console.log('🎨 Generating SwiftUI Theme Providers (color brands only)...');
+
+  let totalThemes = 0;
+  let successfulThemes = 0;
+
+  const iosDir = path.join(DIST_DIR, 'ios', 'brands');
+
+  if (!fs.existsSync(iosDir)) {
+    console.log('  ⚠️  No iOS output found, skipping theme generation');
+    return { totalThemes: 0, successfulThemes: 0 };
+  }
+
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Only generate theme providers for color brands (those with their own color tokens)
+  const COLOR_BRANDS = ['bild', 'sportbild'];
+
+  for (const brand of COLOR_BRANDS) {
+    totalThemes++;
+    const brandDir = path.join(iosDir, brand);
+
+    if (!fs.existsSync(brandDir)) {
+      continue;
+    }
+
+    try {
+      // Create theme directory
+      const themeDir = path.join(brandDir, 'theme');
+      if (!fs.existsSync(themeDir)) {
+        fs.mkdirSync(themeDir, { recursive: true });
+      }
+
+      const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+      const brandLower = brand.toLowerCase();
+
+      const themeContent = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import SwiftUI
+
+/// Convenience theme provider for ${brandPascal} brand
+/// For multi-brand apps, use DesignSystemTheme with colorBrand and contentBrand axes
+@Observable
+public final class ${brandPascal}Theme: @unchecked Sendable {
+
+    // MARK: - Shared Instance
+    public static let shared = ${brandPascal}Theme()
+
+    // MARK: - Theme State
+    public var isDarkTheme: Bool = false
+    public var sizeClass: SizeClass = .compact
+    public var density: Density = .default
+
+    // MARK: - Token Access
+
+    /// Current color scheme (Light/Dark)
+    public var colors: any ${brandPascal}ColorScheme {
+        isDarkTheme ? ${brandPascal}DarkColors.shared : ${brandPascal}LightColors.shared
+    }
+
+    /// Current sizing scheme (Compact/Regular)
+    public var sizing: any ${brandPascal}SizingScheme {
+        sizeClass == .compact ? ${brandPascal}SizingCompact.shared : ${brandPascal}SizingRegular.shared
+    }
+
+    /// Current effects scheme (Light/Dark)
+    public var effects: any ${brandPascal}EffectsScheme {
+        isDarkTheme ? ${brandPascal}EffectsDark.shared : ${brandPascal}EffectsLight.shared
+    }
+
+    private init() {}
+}
+
+// MARK: - Environment Integration
+
+private struct ${brandPascal}ThemeKey: EnvironmentKey {
+    static let defaultValue = ${brandPascal}Theme.shared
+}
+
+public extension EnvironmentValues {
+    var ${brandLower}Theme: ${brandPascal}Theme {
+        get { self[${brandPascal}ThemeKey.self] }
+        set { self[${brandPascal}ThemeKey.self] = newValue }
+    }
+}
+
+// MARK: - View Modifier
+
+public extension View {
+    /// Apply ${brandPascal} theme to view hierarchy
+    func ${brandLower}Theme(
+        darkTheme: Bool? = nil,
+        sizeClass: SizeClass? = nil,
+        density: Density? = nil
+    ) -> some View {
+        let theme = ${brandPascal}Theme.shared
+        if let darkTheme { theme.isDarkTheme = darkTheme }
+        if let sizeClass { theme.sizeClass = sizeClass }
+        if let density { theme.density = density }
+        return self.environment(\\.${brandLower}Theme, theme)
+    }
+}
+`;
+
+      const themeFile = path.join(themeDir, `${brandPascal}Theme.swift`);
+      fs.writeFileSync(themeFile, themeContent, 'utf8');
+
+      console.log(`     ✅ ${brand}/theme/${brandPascal}Theme.swift`);
+      successfulThemes++;
+
+    } catch (error) {
+      console.error(`     ❌ ${brand}: ${error.message}`);
+    }
+  }
+
+  console.log(`  📊 Generated: ${successfulThemes}/${totalThemes} theme providers\n`);
+  return { totalThemes, successfulThemes };
+}
+
+/**
  * Main function
  */
 async function main() {
@@ -3305,6 +5083,24 @@ async function main() {
   // Cleanup individual Compose files
   stats.composeCleanup = await cleanupComposeIndividualFiles();
 
+  // Generate SwiftUI Shared Infrastructure
+  stats.swiftuiShared = await generateSwiftUISharedFiles();
+
+  // Build consolidated SwiftUI Primitives
+  stats.swiftuiPrimitives = await buildConsolidatedSwiftUIPrimitives();
+
+  // Aggregate SwiftUI component files
+  stats.swiftuiAggregated = await aggregateSwiftUIComponents();
+
+  // Generate SwiftUI Theme Providers
+  stats.swiftuiThemes = await generateSwiftUIThemeProviders();
+
+  // Cleanup individual SwiftUI primitive files
+  stats.swiftuiCleanup = await cleanupSwiftUIIndividualPrimitives();
+
+  // Cleanup individual SwiftUI component files
+  stats.swiftuiComponentCleanup = await cleanupSwiftUIIndividualComponentFiles();
+
   // Create manifest
   createManifest(stats);
 
@@ -3343,6 +5139,24 @@ async function main() {
   if (COMPOSE_ENABLED && stats.composeCleanup) {
     console.log(`   - Compose Files Cleaned: ${stats.composeCleanup.removed} individual files removed`);
   }
+  if (SWIFTUI_ENABLED && stats.swiftuiShared) {
+    console.log(`   - SwiftUI Shared Files: ${stats.swiftuiShared.successful}/${stats.swiftuiShared.total}`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiPrimitives) {
+    console.log(`   - SwiftUI Primitives Consolidated: ${stats.swiftuiPrimitives.successful}/${stats.swiftuiPrimitives.total}`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiThemes) {
+    console.log(`   - SwiftUI Themes: ${stats.swiftuiThemes.successfulThemes}/${stats.swiftuiThemes.totalThemes}`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiCleanup) {
+    console.log(`   - SwiftUI Primitives Cleaned: ${stats.swiftuiCleanup.removed} individual files removed`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiAggregated) {
+    console.log(`   - SwiftUI Components Aggregated: ${stats.swiftuiAggregated.successfulComponents}/${stats.swiftuiAggregated.totalComponents}`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiComponentCleanup) {
+    console.log(`   - SwiftUI Components Cleaned: ${stats.swiftuiComponentCleanup.cleaned} individual files removed`);
+  }
   console.log(`   - Builds erfolgreich: ${successfulBuilds}/${totalBuilds}`);
   console.log(`   - Output-Verzeichnis: dist/\n`);
 
@@ -3352,7 +5166,7 @@ async function main() {
   console.log(`   ├── scss/       (SCSS variables)`);
   console.log(`   ├── js/         (JavaScript ES6)`);
   console.log(`   ├── json/       (JSON)`);
-  console.log(`   ├── ios/        (Swift)`);
+  if (SWIFTUI_ENABLED) console.log(`   ├── ios/        (SwiftUI)`);
   if (COMPOSE_ENABLED) console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Jetpack Compose - Kotlin)`);
   if (ANDROID_XML_ENABLED) console.log(`   ${FLUTTER_ENABLED ? '├' : '└'}── android/    (Android XML resources)`);
   if (FLUTTER_ENABLED) console.log(`   └── flutter/    (Dart classes)`);
