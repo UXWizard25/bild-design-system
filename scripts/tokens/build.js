@@ -21,6 +21,8 @@ const DIST_DIR = path.join(__dirname, '../../dist');
 
 // Brands and breakpoints
 const BRANDS = ['bild', 'sportbild', 'advertorial'];
+const COLOR_BRANDS = ['bild', 'sportbild'];  // Brands with their own color tokens
+const CONTENT_BRANDS = ['bild', 'sportbild', 'advertorial'];  // All brands (for sizing/typography)
 const BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 const COLOR_MODES = ['light', 'dark'];
 const DENSITY_MODES = ['default', 'dense', 'spacious'];
@@ -3050,63 +3052,77 @@ async function generateComposeThemeProviders() {
     return { totalThemes: 0, successfulThemes: 0 };
   }
 
-  // Generate shared files (brand-independent)
+  // Generate shared files (brand-independent) - Dual-Axis Architecture
   if (fs.existsSync(sharedDir)) {
     // Density.kt
     const densityContent = generateSharedDensityFile();
     const densityFile = path.join(sharedDir, 'Density.kt');
     fs.writeFileSync(densityFile, densityContent, 'utf8');
-    console.log('     ✅ shared/Density.kt (brand-independent)');
+    console.log('     ✅ shared/Density.kt');
 
     // WindowSizeClass.kt
     const windowSizeClassContent = generateSharedWindowSizeClassFile();
     const windowSizeClassFile = path.join(sharedDir, 'WindowSizeClass.kt');
     fs.writeFileSync(windowSizeClassFile, windowSizeClassContent, 'utf8');
-    console.log('     ✅ shared/WindowSizeClass.kt (brand-independent)');
+    console.log('     ✅ shared/WindowSizeClass.kt');
 
-    // Brand.kt
-    const brandEnumContent = generateSharedBrandEnumFile();
-    const brandEnumFile = path.join(sharedDir, 'Brand.kt');
-    fs.writeFileSync(brandEnumFile, brandEnumContent, 'utf8');
-    console.log('     ✅ shared/Brand.kt (all brands enum)');
+    // ColorBrand.kt (Dual-Axis: color palette axis)
+    const colorBrandContent = generateColorBrandEnumFile();
+    const colorBrandFile = path.join(sharedDir, 'ColorBrand.kt');
+    fs.writeFileSync(colorBrandFile, colorBrandContent, 'utf8');
+    console.log('     ✅ shared/ColorBrand.kt (Dual-Axis: color palette)');
 
-    // DesignSystemTheme.kt
+    // ContentBrand.kt (Dual-Axis: content/sizing axis)
+    const contentBrandContent = generateContentBrandEnumFile();
+    const contentBrandFile = path.join(sharedDir, 'ContentBrand.kt');
+    fs.writeFileSync(contentBrandFile, contentBrandContent, 'utf8');
+    console.log('     ✅ shared/ContentBrand.kt (Dual-Axis: content/sizing)');
+
+    // DesignColorScheme.kt (unified interface)
+    const designColorSchemeContent = generateDesignColorSchemeFile();
+    const designColorSchemeFile = path.join(sharedDir, 'DesignColorScheme.kt');
+    fs.writeFileSync(designColorSchemeFile, designColorSchemeContent, 'utf8');
+    console.log('     ✅ shared/DesignColorScheme.kt (unified interface)');
+
+    // DesignSizingScheme.kt (unified interface)
+    const designSizingSchemeContent = generateDesignSizingSchemeFile();
+    const designSizingSchemeFile = path.join(sharedDir, 'DesignSizingScheme.kt');
+    fs.writeFileSync(designSizingSchemeFile, designSizingSchemeContent, 'utf8');
+    console.log('     ✅ shared/DesignSizingScheme.kt (unified interface)');
+
+    // DesignSystemTheme.kt (central theme provider with Dual-Axis)
     const designSystemThemeContent = generateDesignSystemThemeFile();
     const designSystemThemeFile = path.join(sharedDir, 'DesignSystemTheme.kt');
     fs.writeFileSync(designSystemThemeFile, designSystemThemeContent, 'utf8');
-    console.log('     ✅ shared/DesignSystemTheme.kt (multi-brand theme)');
+    console.log('     ✅ shared/DesignSystemTheme.kt (Dual-Axis theme provider)');
+
+    // Remove old Brand.kt if it exists (replaced by ColorBrand + ContentBrand)
+    const oldBrandFile = path.join(sharedDir, 'Brand.kt');
+    if (fs.existsSync(oldBrandFile)) {
+      fs.unlinkSync(oldBrandFile);
+      console.log('     🗑️  Removed old shared/Brand.kt (replaced by Dual-Axis enums)');
+    }
+
+    successfulThemes = 1; // Central theme provider counts as 1
   }
 
+  // Remove old individual brand theme files (Option 3B: single central theme provider)
   for (const brand of BRANDS) {
-    totalThemes++;
     const brandDir = path.join(composeDir, brand);
+    const themeDir = path.join(brandDir, 'theme');
 
-    if (!fs.existsSync(brandDir)) {
-      continue;
-    }
-
-    try {
-      // Create theme directory
-      const themeDir = path.join(brandDir, 'theme');
-      if (!fs.existsSync(themeDir)) {
-        fs.mkdirSync(themeDir, { recursive: true });
+    if (fs.existsSync(themeDir)) {
+      const themeFiles = fs.readdirSync(themeDir).filter(f => f.endsWith('Theme.kt'));
+      for (const themeFile of themeFiles) {
+        fs.unlinkSync(path.join(themeDir, themeFile));
+        console.log(`     🗑️  Removed ${brand}/theme/${themeFile} (using central DesignSystemTheme)`);
       }
-
-      // Check if brand has color tokens
-      const colorDir = path.join(brandDir, 'semantic', 'color');
-      const hasColors = fs.existsSync(colorDir) && fs.readdirSync(colorDir).some(f => f.endsWith('.kt'));
-
-      // Generate Theme Provider
-      const themeContent = generateThemeProviderFile(brand, hasColors);
-      const themeFile = path.join(themeDir, `${brand.charAt(0).toUpperCase() + brand.slice(1)}Theme.kt`);
-      fs.writeFileSync(themeFile, themeContent, 'utf8');
-
-      console.log(`     ✅ ${brand}/theme/${brand.charAt(0).toUpperCase() + brand.slice(1)}Theme.kt ${hasColors ? '' : '(no colors, uses external)'}`);
-      successfulThemes++;
-
-    } catch (error) {
-      console.error(`     ❌ ${brand}: ${error.message}`);
+      // Remove empty theme directory
+      if (fs.readdirSync(themeDir).length === 0) {
+        fs.rmdirSync(themeDir);
+      }
     }
+    totalThemes++;
   }
 
   console.log(`  📊 Generated: ${successfulThemes}/${totalThemes} theme providers\n`);
@@ -3429,16 +3445,17 @@ enum class WindowSizeClass {
 }
 
 /**
- * Generates the shared Brand enum file
- * Creates: dist/android/compose/shared/Brand.kt
+ * Generates the ColorBrand enum file (Dual-Axis Architecture)
+ * Creates: dist/android/compose/shared/ColorBrand.kt
+ * Only brands with their own color tokens (bild, sportbild)
  */
-function generateSharedBrandEnumFile() {
+function generateColorBrandEnumFile() {
   const packageJson = require('../../package.json');
   const version = packageJson.version;
 
-  const brandEntries = BRANDS.map(brand => {
+  const brandEntries = COLOR_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `    /** ${brandPascal} brand */
+    return `    /** ${brandPascal} color palette */
     ${brandPascal}`;
   }).join(',\n');
 
@@ -3448,8 +3465,8 @@ function generateSharedBrandEnumFile() {
  * BILD Design System Tokens v${version}
  * Generated by Style Dictionary
  *
- * Shared Brand Enum
- * All available brands in the BILD Design System
+ * ColorBrand Enum (Dual-Axis Architecture)
+ * Defines the color palette axis - only brands with their own color tokens
  *
  * Copyright (c) 2024 Axel Springer Deutschland GmbH
  */
@@ -3457,47 +3474,270 @@ function generateSharedBrandEnumFile() {
 package com.bild.designsystem.shared
 
 /**
- * Available brands in the BILD Design System
+ * Color brands in the BILD Design System
  *
- * Use this enum to switch between brands at runtime in multi-brand apps.
+ * Determines which color palette to use. Only brands with their own
+ * color tokens are included. Advertorial uses colors from BILD or SportBILD.
  *
  * Usage:
  * \`\`\`kotlin
  * DesignSystemTheme(
- *     brand = Brand.Bild,
+ *     colorBrand = ColorBrand.Bild,        // Use BILD colors
+ *     contentBrand = ContentBrand.Advertorial,  // Use Advertorial sizing
  *     darkTheme = isSystemInDarkTheme()
  * ) {
- *     // Content with Bild branding
+ *     // Advertorial content with BILD colors
  * }
  * \`\`\`
  */
-enum class Brand {
+enum class ColorBrand {
 ${brandEntries}
 }
 `;
 }
 
 /**
- * Generates the central DesignSystemTheme file
+ * Generates the ContentBrand enum file (Dual-Axis Architecture)
+ * Creates: dist/android/compose/shared/ContentBrand.kt
+ * All brands including those without own colors (advertorial)
+ */
+function generateContentBrandEnumFile() {
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  const brandEntries = CONTENT_BRANDS.map(brand => {
+    const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+    const hasColors = COLOR_BRANDS.includes(brand);
+    const note = hasColors ? '' : ' (uses ColorBrand for colors)';
+    return `    /** ${brandPascal} content/sizing${note} */
+    ${brandPascal}`;
+  }).join(',\n');
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * ContentBrand Enum (Dual-Axis Architecture)
+ * Defines the content axis - sizing, typography, and layout tokens
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.shared
+
+/**
+ * Content brands in the BILD Design System
+ *
+ * Determines which sizing, typography, and layout tokens to use.
+ * All brands are included, even those without their own color tokens.
+ *
+ * Note: Advertorial uses ColorBrand for colors but has its own sizing tokens.
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * DesignSystemTheme(
+ *     colorBrand = ColorBrand.Sportbild,   // Use SportBILD colors
+ *     contentBrand = ContentBrand.Advertorial,  // Use Advertorial sizing
+ *     darkTheme = isSystemInDarkTheme()
+ * ) {
+ *     // Advertorial content with SportBILD colors
+ * }
+ * \`\`\`
+ */
+enum class ContentBrand {
+${brandEntries}
+}
+`;
+}
+
+/**
+ * Generates the unified DesignColorScheme interface
+ * Creates: dist/android/compose/shared/DesignColorScheme.kt
+ * All color brands implement this interface for polymorphic color access
+ */
+function generateDesignColorSchemeFile() {
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Read color properties from existing BildColorScheme to ensure consistency
+  const bildColorsPath = path.join(DIST_DIR, 'android', 'compose', 'brands', 'bild', 'semantic', 'color', 'ColorsLight.kt');
+  let colorProperties = [];
+
+  if (fs.existsSync(bildColorsPath)) {
+    const content = fs.readFileSync(bildColorsPath, 'utf8');
+    // Extract interface properties (handles both "interface X {" and "interface X : Y {")
+    const interfaceMatch = content.match(/interface \w+ColorScheme[^{]*\{([^}]+)\}/s);
+    if (interfaceMatch) {
+      const propsMatch = interfaceMatch[1].matchAll(/val\s+(\w+):\s*Color/g);
+      for (const match of propsMatch) {
+        colorProperties.push(match[1]);
+      }
+    }
+  }
+
+  // Fallback to essential properties if file not found
+  if (colorProperties.length === 0) {
+    colorProperties = [
+      'textColorPrimary', 'textColorSecondary', 'textColorMuted', 'textColorAccent',
+      'surfaceColorPrimary', 'surfaceColorSecondary', 'surfaceColorTertiary',
+      'borderColorLowContrast', 'borderColorMediumContrast', 'borderColorHighContrast',
+      'coreColorPrimary', 'coreColorSecondary', 'coreColorTertiary'
+    ];
+  }
+
+  const propertyDeclarations = colorProperties.map(prop => `    val ${prop}: Color`).join('\n');
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Unified DesignColorScheme Interface (Dual-Axis Architecture)
+ * All color brands implement this interface for polymorphic color access
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.shared
+
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.graphics.Color
+
+/**
+ * Unified color scheme interface for the BILD Design System
+ *
+ * All color brands (BILD, SportBILD) implement this interface,
+ * enabling polymorphic color access across brands.
+ *
+ * This follows the Dual-Axis Architecture:
+ * - ColorBrand axis: Determines which color palette (BILD or SportBILD)
+ * - ContentBrand axis: Determines sizing/typography (BILD, SportBILD, or Advertorial)
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * @Composable
+ * fun MyComponent() {
+ *     val colors: DesignColorScheme = DesignSystemTheme.colors
+ *     Text(
+ *         text = "Hello",
+ *         color = colors.textColorPrimary
+ *     )
+ * }
+ * \`\`\`
+ */
+@Stable
+interface DesignColorScheme {
+${propertyDeclarations}
+}
+`;
+}
+
+/**
+ * Generates the unified DesignSizingScheme interface
+ * Creates: dist/android/compose/shared/DesignSizingScheme.kt
+ */
+function generateDesignSizingSchemeFile() {
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Read sizing properties from existing BildSizingScheme
+  const bildSizingPath = path.join(DIST_DIR, 'android', 'compose', 'brands', 'bild', 'semantic', 'sizeclass', 'SizingCompact.kt');
+  let sizingProperties = [];
+
+  if (fs.existsSync(bildSizingPath)) {
+    const content = fs.readFileSync(bildSizingPath, 'utf8');
+    // Extract interface properties (handles both "interface X {" and "interface X : Y {")
+    const interfaceMatch = content.match(/interface \w+SizingScheme[^{]*\{([^}]+)\}/s);
+    if (interfaceMatch) {
+      const propsMatch = interfaceMatch[1].matchAll(/val\s+(\w+):\s*(\w+)/g);
+      for (const match of propsMatch) {
+        sizingProperties.push({ name: match[1], type: match[2] });
+      }
+    }
+  }
+
+  // Fallback to essential properties
+  if (sizingProperties.length === 0) {
+    sizingProperties = [
+      { name: 'gridSpaceRespBase', type: 'Dp' },
+      { name: 'gridSpaceRespSm', type: 'Dp' },
+      { name: 'gridSpaceRespLg', type: 'Dp' },
+      { name: 'pageInlineSpace', type: 'Dp' },
+      { name: 'sectionSpaceBase', type: 'Dp' }
+    ];
+  }
+
+  const propertyDeclarations = sizingProperties.map(prop => `    val ${prop.name}: ${prop.type}`).join('\n');
+
+  return `/**
+ * Do not edit directly, this file was auto-generated.
+ *
+ * BILD Design System Tokens v${version}
+ * Generated by Style Dictionary
+ *
+ * Unified DesignSizingScheme Interface (Dual-Axis Architecture)
+ * All content brands implement this interface for polymorphic sizing access
+ *
+ * Copyright (c) 2024 Axel Springer Deutschland GmbH
+ */
+
+package com.bild.designsystem.shared
+
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+
+/**
+ * Unified sizing scheme interface for the BILD Design System
+ *
+ * All content brands (BILD, SportBILD, Advertorial) implement this interface,
+ * enabling polymorphic sizing access across brands.
+ */
+@Stable
+interface DesignSizingScheme {
+${propertyDeclarations}
+}
+`;
+}
+
+/**
+ * Generates the central DesignSystemTheme file with Dual-Axis Architecture
  * Creates: dist/android/compose/shared/DesignSystemTheme.kt
  */
 function generateDesignSystemThemeFile() {
   const packageJson = require('../../package.json');
   const version = packageJson.version;
 
-  const brandImports = BRANDS.map(brand => {
+  // Generate color imports for all color brands
+  const colorImports = COLOR_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.${brand}.theme.${brandPascal}Theme`;
+    return `import com.bild.designsystem.${brand}.semantic.${brandPascal}LightColors
+import com.bild.designsystem.${brand}.semantic.${brandPascal}DarkColors`;
   }).join('\n');
 
-  const brandCases = BRANDS.map(brand => {
+  // Generate sizing imports for all content brands
+  const sizingImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `        Brand.${brandPascal} -> ${brandPascal}Theme(
-            darkTheme = darkTheme,
-            sizeClass = sizeClass,
-            density = density,
-            content = content
-        )`;
+    return `import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingCompact
+import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingRegular`;
+  }).join('\n');
+
+  // Generate color selection cases
+  const colorCases = COLOR_BRANDS.map(brand => {
+    const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+    return `        ColorBrand.${brandPascal} -> if (darkTheme) ${brandPascal}DarkColors else ${brandPascal}LightColors`;
+  }).join('\n');
+
+  // Generate sizing selection cases
+  const sizingCases = CONTENT_BRANDS.map(brand => {
+    const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+    return `        ContentBrand.${brandPascal} -> when (sizeClass) {
+            WindowSizeClass.Compact -> ${brandPascal}SizingCompact
+            WindowSizeClass.Regular -> ${brandPascal}SizingRegular
+        }`;
   }).join('\n');
 
   return `/**
@@ -3506,8 +3746,8 @@ function generateDesignSystemThemeFile() {
  * BILD Design System Tokens v${version}
  * Generated by Style Dictionary
  *
- * Central Design System Theme Provider
- * Unified entry point for all brands in multi-brand applications
+ * Central Design System Theme Provider (Dual-Axis Architecture)
+ * Unified entry point with separate ColorBrand and ContentBrand axes
  *
  * Copyright (c) 2024 Axel Springer Deutschland GmbH
  */
@@ -3516,59 +3756,208 @@ package com.bild.designsystem.shared
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-${brandImports}
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+
+// Color imports (ColorBrand axis)
+${colorImports}
+
+// Sizing imports (ContentBrand axis)
+${sizingImports}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// COMPOSITION LOCALS
+// ══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Central Design System Theme Provider
+ * CompositionLocal for current color scheme
+ * Type: DesignColorScheme (unified interface)
+ */
+internal val LocalDesignColors = staticCompositionLocalOf<DesignColorScheme> { BildLightColors }
+
+/**
+ * CompositionLocal for current sizing scheme
+ * Type: DesignSizingScheme (unified interface)
+ */
+internal val LocalDesignSizing = staticCompositionLocalOf<DesignSizingScheme> { BildSizingCompact }
+
+/**
+ * CompositionLocal for current window size class
+ */
+internal val LocalWindowSizeClass = staticCompositionLocalOf { WindowSizeClass.Compact }
+
+/**
+ * CompositionLocal for current density
+ */
+internal val LocalDensity = staticCompositionLocalOf { Density.Default }
+
+/**
+ * CompositionLocal for dark theme state
+ */
+internal val LocalIsDarkTheme = staticCompositionLocalOf { false }
+
+/**
+ * CompositionLocal for current color brand
+ */
+internal val LocalColorBrand = staticCompositionLocalOf { ColorBrand.Bild }
+
+/**
+ * CompositionLocal for current content brand
+ */
+internal val LocalContentBrand = staticCompositionLocalOf { ContentBrand.Bild }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// THEME PROVIDER
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Central Design System Theme Provider (Dual-Axis Architecture)
  *
- * Provides a unified entry point for all brands. Use this in multi-brand apps
- * where the brand can be switched at runtime via configuration.
+ * Provides a unified entry point with two independent brand axes:
+ * - ColorBrand: Determines color palette (BILD or SportBILD)
+ * - ContentBrand: Determines sizing/typography (BILD, SportBILD, or Advertorial)
  *
- * For single-brand apps, you can use the brand-specific themes directly
- * (e.g., BildTheme, SportbildTheme, AdvertorialTheme).
+ * This enables use cases like "Advertorial content with SportBILD colors".
  *
- * @param brand The brand to use for theming
+ * @param colorBrand Color palette to use (BILD or SportBILD)
+ * @param contentBrand Content/sizing tokens to use (BILD, SportBILD, or Advertorial)
  * @param darkTheme Whether to use dark color scheme
- * @param sizeClass Current window size class for responsive sizing
+ * @param sizeClass Window size class for responsive sizing
  * @param density UI density for spacing adjustments
  * @param content Composable content to wrap
  *
  * Usage:
  * \`\`\`kotlin
- * // Multi-brand app with runtime brand switching
- * val currentBrand = remember { mutableStateOf(Brand.Bild) }
- *
+ * // Standard BILD app
  * DesignSystemTheme(
- *     brand = currentBrand.value,
- *     darkTheme = isSystemInDarkTheme(),
- *     sizeClass = WindowSizeClass.Compact,
- *     density = Density.Default
+ *     colorBrand = ColorBrand.Bild,
+ *     contentBrand = ContentBrand.Bild
  * ) {
- *     // Your app content - uses the selected brand's tokens
- * }
- * \`\`\`
- *
- * White-label app example:
- * \`\`\`kotlin
- * // Brand from build config or remote config
- * val brand = Brand.valueOf(BuildConfig.BRAND_NAME)
- *
- * DesignSystemTheme(brand = brand) {
  *     MyApp()
+ * }
+ *
+ * // Advertorial with SportBILD colors
+ * DesignSystemTheme(
+ *     colorBrand = ColorBrand.Sportbild,
+ *     contentBrand = ContentBrand.Advertorial
+ * ) {
+ *     AdvertorialContent()
  * }
  * \`\`\`
  */
 @Composable
 fun DesignSystemTheme(
-    brand: Brand,
+    colorBrand: ColorBrand = ColorBrand.Bild,
+    contentBrand: ContentBrand = ContentBrand.Bild,
     darkTheme: Boolean = isSystemInDarkTheme(),
     sizeClass: WindowSizeClass = WindowSizeClass.Compact,
     density: Density = Density.Default,
     content: @Composable () -> Unit
 ) {
-    when (brand) {
-${brandCases}
+    val colors: DesignColorScheme = when (colorBrand) {
+${colorCases}
     }
+
+    val sizing: DesignSizingScheme = when (contentBrand) {
+${sizingCases}
+    }
+
+    CompositionLocalProvider(
+        LocalDesignColors provides colors,
+        LocalDesignSizing provides sizing,
+        LocalWindowSizeClass provides sizeClass,
+        LocalDensity provides density,
+        LocalIsDarkTheme provides darkTheme,
+        LocalColorBrand provides colorBrand,
+        LocalContentBrand provides contentBrand,
+        content = content
+    )
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// THEME ACCESSOR OBJECT
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Accessor object for Design System theme values
+ *
+ * Provides convenient access to current theme values from any composable.
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * @Composable
+ * fun MyButton() {
+ *     Button(
+ *         colors = ButtonDefaults.buttonColors(
+ *             containerColor = DesignSystemTheme.colors.coreColorPrimary
+ *         )
+ *     ) {
+ *         Text(
+ *             text = "Click me",
+ *             fontSize = DesignSystemTheme.sizing.headline1FontSize
+ *         )
+ *     }
+ * }
+ * \`\`\`
+ */
+object DesignSystemTheme {
+
+    /**
+     * Current color scheme (based on ColorBrand and dark/light mode)
+     */
+    val colors: DesignColorScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDesignColors.current
+
+    /**
+     * Current sizing scheme (based on ContentBrand and WindowSizeClass)
+     */
+    val sizing: DesignSizingScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDesignSizing.current
+
+    /**
+     * Current window size class
+     */
+    val sizeClass: WindowSizeClass
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalWindowSizeClass.current
+
+    /**
+     * Current UI density
+     */
+    val density: Density
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDensity.current
+
+    /**
+     * Whether dark theme is currently active
+     */
+    val isDarkTheme: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalIsDarkTheme.current
+
+    /**
+     * Current color brand
+     */
+    val colorBrand: ColorBrand
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalColorBrand.current
+
+    /**
+     * Current content brand
+     */
+    val contentBrand: ContentBrand
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalContentBrand.current
 }
 `;
 }

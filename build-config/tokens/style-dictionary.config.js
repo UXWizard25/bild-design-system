@@ -3887,6 +3887,7 @@ package ${packageName}
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
+import com.bild.designsystem.shared.DesignColorScheme
 
 `;
 
@@ -3894,10 +3895,11 @@ import androidx.compose.ui.graphics.Color
   if (mode.toLowerCase() === 'light') {
     output += `/**
  * Color scheme interface for ${brandPascal}
+ * Extends DesignColorScheme for Dual-Axis theming compatibility
  * Allows type-safe access to colors and enables color scheme sharing across brands
  */
 @Stable
-interface ${brandPascal}ColorScheme {
+interface ${brandPascal}ColorScheme : DesignColorScheme {
 `;
     tokens.forEach(token => {
       output += `    val ${token.name}: Color\n`;
@@ -3974,6 +3976,10 @@ const composeSpacingFormat = ({ dictionary, options, file }) => {
     imports.push('import androidx.compose.ui.unit.sp');
     imports.push('import androidx.compose.ui.unit.TextUnit');
   }
+  // Add import for DesignSizingScheme for sizeclass mode
+  if (modeType === 'sizeclass') {
+    imports.push('import com.bild.designsystem.shared.DesignSizingScheme');
+  }
 
   let output = `/**
  * Do not edit directly, this file was auto-generated.
@@ -4008,10 +4014,11 @@ ${imports.join('\n')}
   if (generateInterface && modeType === 'sizeclass') {
     output += `/**
  * Sizing scheme interface for ${brandPascal}
+ * Extends DesignSizingScheme for Dual-Axis theming compatibility
  * Provides type-safe access to sizing tokens across WindowSizeClass variants
  */
 @Stable
-interface ${interfaceName} {
+interface ${interfaceName} : DesignSizingScheme {
 `;
     filteredTokens.forEach(token => {
       const type = token.$type || token.type;
