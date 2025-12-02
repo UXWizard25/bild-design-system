@@ -2248,14 +2248,16 @@ function parseKotlinTokens(content) {
   const processedNames = new Set();
 
   // Helper function to extract multi-line patterns with balanced parentheses
-  const extractMultiLinePattern = (pattern, prefix) => {
+  // initialDepth: how many opening parens the pattern ends with (default 1)
+  const extractMultiLinePattern = (pattern, prefix, initialDepth = 1) => {
     let match;
     while ((match = pattern.exec(content)) !== null) {
       const name = match[1];
       const startIndex = match.index + match[0].length;
 
       // Count parentheses to find the matching closing )
-      let depth = 1;
+      // initialDepth accounts for patterns that end with multiple opening parens
+      let depth = initialDepth;
       let endIndex = startIndex;
       while (depth > 0 && endIndex < content.length) {
         if (content[endIndex] === '(') depth++;
@@ -2264,9 +2266,15 @@ function parseKotlinTokens(content) {
       }
 
       // Extract the inner content and normalize whitespace
-      const innerContent = content.substring(startIndex, endIndex - 1).replace(/\s+/g, ' ').trim();
+      // Also remove spaces before closing parens for clean formatting
+      const innerContent = content.substring(startIndex, endIndex - 1)
+          .replace(/\s+/g, ' ')
+          .replace(/\s+\)/g, ')')
+          .trim();
       tokens.push({
         name: name,
+        // innerContent already includes intermediate closing parens
+        // We just need to wrap with prefix( ... )
         value: `${prefix}(${innerContent})`
       });
       processedNames.add(name);
@@ -2277,7 +2285,8 @@ function parseKotlinTokens(content) {
   extractMultiLinePattern(/val\s+(\w+)\s*=\s*DesignTextStyle\(/g, 'DesignTextStyle');
 
   // Handle multi-line ShadowStyle objects (with listOf)
-  extractMultiLinePattern(/val\s+(\w+)\s*=\s*ShadowStyle\(listOf\(/g, 'ShadowStyle(listOf');
+  // initialDepth = 2 because pattern ends with two opening parens: ShadowStyle(listOf(
+  extractMultiLinePattern(/val\s+(\w+)\s*=\s*ShadowStyle\(listOf\(/g, 'ShadowStyle(listOf', 2);
 
   // Then handle single-line val declarations (excluding already processed patterns)
   const valRegex = /val\s+(\w+)\s*=\s*([^\n]+)/g;
@@ -2427,24 +2436,45 @@ object ${componentName}Tokens {
          */
         interface ColorTokens {
 `;
+    // Helper to determine if a value is an opacity (0-1 float or 0-100 percentage)
+    const isOpacityValue = (value) => {
+      const numStr = String(value).trim();
+      const num = parseFloat(numStr);
+      // Check if it's a simple number (not Color(...) or similar)
+      return !isNaN(num) && !numStr.includes('Color') && !numStr.includes('0x');
+    };
+
     // Generate interface properties
     colorTokenNames.forEach((value, name) => {
-      output += `            val ${name}: Color\n`;
+      const propType = isOpacityValue(value) ? 'Float' : 'Color';
+      output += `            val ${name}: ${propType}\n`;
     });
     output += `        }
 
 `;
+
+    // Helper to format opacity value correctly
+    const formatColorValue = (value) => {
+      if (isOpacityValue(value)) {
+        const num = parseFloat(value);
+        // Convert percentage (e.g., 80) to decimal (0.8) if > 1
+        const normalizedValue = num > 1 ? num / 100 : num;
+        return `${normalizedValue}f`;
+      }
+      return value;
+    };
+
     if (tokenGroups.colors.light.length > 0) {
       output += `        object Light : ColorTokens {\n`;
       tokenGroups.colors.light.forEach(t => {
-        output += `            override val ${t.name} = ${t.value}\n`;
+        output += `            override val ${t.name} = ${formatColorValue(t.value)}\n`;
       });
       output += `        }\n`;
     }
     if (tokenGroups.colors.dark.length > 0) {
       output += `        object Dark : ColorTokens {\n`;
       tokenGroups.colors.dark.forEach(t => {
-        output += `            override val ${t.name} = ${t.value}\n`;
+        output += `            override val ${t.name} = ${formatColorValue(t.value)}\n`;
       });
       output += `        }\n`;
     }

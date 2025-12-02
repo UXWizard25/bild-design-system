@@ -4630,6 +4630,15 @@ const composeEffectsFormat = ({ dictionary, options, file }) => {
   const isLight = colorMode === 'light';
   const className = isLight ? 'EffectsLight' : 'EffectsDark';
 
+  // Helper to convert token names to proper camelCase (shadowSoftSM → shadowSoftSm)
+  const toCamelCase = (name) => {
+    // Convert trailing uppercase sequence to have only first char uppercase
+    // e.g., shadowSoftSM → shadowSoftSm, shadowHardXL → shadowHardXl
+    return name.replace(/([A-Z]+)$/, (match) => {
+      return match.charAt(0) + match.slice(1).toLowerCase();
+    });
+  };
+
   // Helper to convert rgba to Compose Color
   const toComposeColorFromRgba = (rgbaString) => {
     if (!rgbaString) return 'Color.Black';
@@ -4680,7 +4689,7 @@ object ${className} : DesignEffectsScheme {
 `;
 
   dictionary.allTokens.forEach(token => {
-    const name = token.name;
+    const name = toCamelCase(token.name);
     const value = token.$value !== undefined ? token.$value : token.value;
     const comment = token.comment || token.description;
 
