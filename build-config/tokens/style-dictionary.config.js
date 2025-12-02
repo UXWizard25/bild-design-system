@@ -2742,45 +2742,114 @@ function toSwiftUIFontWeight(value) {
 }
 
 /**
+ * Complete Token Type Mapping for iOS (Swift/SwiftUI)
+ *
+ * Token $type values from Figma → Swift types:
+ * ─────────────────────────────────────────────────────────────────
+ * $type          | Swift Type   | Format Example
+ * ─────────────────────────────────────────────────────────────────
+ * dimension      | CGFloat      | 24 (no unit, raw number)
+ * fontSize       | CGFloat      | 16 (no unit for sizing tokens)
+ * lineHeight     | CGFloat      | 24 (no unit)
+ * letterSpacing  | CGFloat      | -0.5
+ * fontWeight     | CGFloat      | 700 (numeric)
+ * fontFamily     | String       | "Gotham XNarrow"
+ * string         | String       | "xs/sm/md"
+ * boolean        | Bool         | true/false
+ * opacity        | Int          | 50 (0-100 percentage)
+ * number         | CGFloat      | 4.5
+ * color          | Color        | Color(hex: 0xDD0000)
+ * shadow         | ShadowStyle  | (composite type)
+ * typography     | TextStyle    | (composite type)
+ * ─────────────────────────────────────────────────────────────────
+ */
+
+/**
  * Helper: Determine Swift type from token $type or type attribute
- * Returns { swiftType: 'String'|'CGFloat'|'Int', isString: boolean }
+ * Returns { swiftType, isString, isBool, isInt }
  */
 function getSwiftTypeInfo(token) {
   const tokenType = token.$type || token.type;
+  const name = token.name || '';
+  const value = token.$value !== undefined ? token.$value : token.value;
 
-  // String types: fontFamily, string values, breakpointName
+  // ═══════════════════════════════════════════════════════════════
+  // STRING TYPES
+  // ═══════════════════════════════════════════════════════════════
+
+  // Explicit string types from Figma
   if (tokenType === 'fontFamily' || tokenType === 'string') {
-    return { swiftType: 'String', isString: true };
+    return { swiftType: 'String', isString: true, isBool: false, isInt: false };
   }
 
-  // Check token name patterns for string types
-  const name = token.name || '';
-  if (name.toLowerCase().includes('fontfamily') ||
-      name.toLowerCase().includes('breakpointname') ||
-      name.toLowerCase().includes('bpspecific') ||
-      name.toLowerCase().includes('changeon')) {
+  // Token name patterns that indicate string values
+  const stringNamePatterns = [
+    'fontfamily',
+    'breakpointname',
+    'bpspecific',
+    'changeon',
+    'textcase',
+    'textdecoration'
+  ];
+
+  const lowerName = name.toLowerCase();
+  if (stringNamePatterns.some(pattern => lowerName.includes(pattern))) {
     // Verify value is actually a string (not a number)
-    const value = token.$value !== undefined ? token.$value : token.value;
     if (typeof value === 'string' && isNaN(parseFloat(value))) {
-      return { swiftType: 'String', isString: true };
+      return { swiftType: 'String', isString: true, isBool: false, isInt: false };
     }
   }
 
-  // fontWeight can stay as CGFloat since it's a numeric value
-  // All other sizing tokens are CGFloat
-  return { swiftType: 'CGFloat', isString: false };
+  // ═══════════════════════════════════════════════════════════════
+  // BOOLEAN TYPES
+  // ═══════════════════════════════════════════════════════════════
+
+  if (tokenType === 'boolean') {
+    return { swiftType: 'Bool', isString: false, isBool: true, isInt: false };
+  }
+
+  // Check if value is actually a boolean
+  if (typeof value === 'boolean') {
+    return { swiftType: 'Bool', isString: false, isBool: true, isInt: false };
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // INTEGER TYPES (opacity is 0-100 percentage)
+  // ═══════════════════════════════════════════════════════════════
+
+  if (tokenType === 'opacity') {
+    return { swiftType: 'Int', isString: false, isBool: false, isInt: true };
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // NUMERIC TYPES (CGFloat) - Default for sizing tokens
+  // dimension, fontSize, lineHeight, letterSpacing, fontWeight, number
+  // ═══════════════════════════════════════════════════════════════
+
+  return { swiftType: 'CGFloat', isString: false, isBool: false, isInt: false };
 }
 
 /**
- * Helper: Format value for Swift based on type
+ * Helper: Format value for Swift based on type info
  */
 function formatSwiftValue(value, typeInfo) {
+  // String type - wrap in quotes
   if (typeInfo.isString) {
-    // Ensure string value is properly quoted
     const strValue = String(value);
     return `"${strValue}"`;
   }
-  // Numeric value
+
+  // Boolean type
+  if (typeInfo.isBool) {
+    return value === true || value === 'true' ? 'true' : 'false';
+  }
+
+  // Integer type (opacity)
+  if (typeInfo.isInt) {
+    return Math.round(Number(value));
+  }
+
+  // Numeric CGFloat value
   return toSwiftUICGFloat(value);
 }
 

@@ -4683,13 +4683,14 @@ public extension View {
   }
   const colorPropertyDeclarations = colorProperties.map(prop => `    var ${prop}: Color { get }`).join('\n');
 
-  // Dynamically read sizing properties with their types (CGFloat or String)
+  // Dynamically read sizing properties with their types
+  // Supported types: CGFloat, String, Bool, Int
   const bildSizingPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'sizeclass', 'SizingCompact.swift');
   let sizingProperties = [];
   if (fs.existsSync(bildSizingPath)) {
     const content = fs.readFileSync(bildSizingPath, 'utf8');
-    // Extract all var declarations with their types (CGFloat or String)
-    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*(CGFloat|String)\s*\{\s*get\s*\}/gm);
+    // Extract all var declarations with their Swift types
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*(CGFloat|String|Bool|Int)\s*\{\s*get\s*\}/gm);
     for (const match of propsMatch) {
       sizingProperties.push({ name: match[1], type: match[2] });
     }
