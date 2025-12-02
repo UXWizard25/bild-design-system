@@ -2547,6 +2547,487 @@ object ${componentName}Tokens {
   return output;
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// SwiftUI COMPONENT AGGREGATION
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Aggregates individual SwiftUI component files into single files per component
+ * Creates: dist/ios/brands/{brand}/components/{Component}/{Component}Tokens.swift
+ */
+async function aggregateSwiftUIComponents() {
+  if (!SWIFTUI_ENABLED) {
+    return { totalComponents: 0, successfulComponents: 0 };
+  }
+
+  console.log('📦 Aggregating SwiftUI component files...');
+
+  let totalComponents = 0;
+  let successfulComponents = 0;
+
+  const iosDir = path.join(DIST_DIR, 'ios', 'brands');
+
+  if (!fs.existsSync(iosDir)) {
+    console.log('  ⚠️  No iOS output found, skipping aggregation');
+    return { totalComponents: 0, successfulComponents: 0 };
+  }
+
+  for (const brand of BRANDS) {
+    const brandComponentsDir = path.join(iosDir, brand, 'components');
+
+    if (!fs.existsSync(brandComponentsDir)) {
+      continue;
+    }
+
+    const componentDirs = fs.readdirSync(brandComponentsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+
+    for (const componentName of componentDirs) {
+      totalComponents++;
+      const componentDir = path.join(brandComponentsDir, componentName);
+      const swiftFiles = fs.readdirSync(componentDir)
+        .filter(f => f.endsWith('.swift') && !f.endsWith('Tokens.swift'))
+        .sort();
+
+      if (swiftFiles.length === 0) continue;
+
+      try {
+        // Parse all individual files and collect tokens
+        const tokenGroups = {
+          colors: { light: [], dark: [] },
+          sizing: { compact: [], regular: [] },
+          density: { default: [], dense: [], spacious: [] },
+          typography: { compact: [], regular: [] }
+        };
+
+        for (const swiftFile of swiftFiles) {
+          const content = fs.readFileSync(path.join(componentDir, swiftFile), 'utf8');
+          const tokens = parseSwiftTokens(content);
+
+          // Categorize based on filename
+          // IMPORTANT: Check typography BEFORE sizing because typography files contain "sizing" in name
+          const lowerFile = swiftFile.toLowerCase();
+          if (lowerFile.includes('colorslight') || lowerFile.includes('colorlight')) {
+            tokenGroups.colors.light = tokens;
+          } else if (lowerFile.includes('colorsdark') || lowerFile.includes('colordark')) {
+            tokenGroups.colors.dark = tokens;
+          } else if (lowerFile.includes('typography')) {
+            // Typography files (e.g., ButtonTypographySizingCompact.swift)
+            if (lowerFile.includes('compact')) {
+              tokenGroups.typography.compact = tokens;
+            } else if (lowerFile.includes('regular')) {
+              tokenGroups.typography.regular = tokens;
+            }
+          } else if (lowerFile.includes('sizingcompact')) {
+            tokenGroups.sizing.compact = tokens;
+          } else if (lowerFile.includes('sizingregular')) {
+            tokenGroups.sizing.regular = tokens;
+          } else if (lowerFile.includes('densitydense')) {
+            tokenGroups.density.dense = tokens;
+          } else if (lowerFile.includes('densitydefault')) {
+            tokenGroups.density.default = tokens;
+          } else if (lowerFile.includes('densityspacious')) {
+            tokenGroups.density.spacious = tokens;
+          }
+        }
+
+        // Generate aggregated file
+        const aggregatedContent = generateAggregatedSwiftComponentFile(
+          brand,
+          componentName,
+          tokenGroups
+        );
+
+        // Write aggregated file
+        const outputPath = path.join(componentDir, `${componentName}Tokens.swift`);
+        fs.writeFileSync(outputPath, aggregatedContent, 'utf8');
+
+        console.log(`     ✅ ${brand}/${componentName}Tokens.swift`);
+        successfulComponents++;
+
+      } catch (error) {
+        console.error(`     ❌ ${brand}/${componentName}: ${error.message}`);
+      }
+    }
+  }
+
+  console.log(`  📊 Aggregated: ${successfulComponents}/${totalComponents} components\n`);
+  return { totalComponents, successfulComponents };
+}
+
+/**
+ * Parses Swift token file and extracts let declarations
+ * Supports both explicit types (let x: Type = value) and implicit types (let x = TextStyle(...))
+ */
+function parseSwiftTokens(content) {
+  const tokens = [];
+
+  // Match: public let tokenName: Type = value (explicit type)
+  const explicitTypeRegex = /public\s+let\s+(\w+):\s*(\w+)\s*=\s*(.+)/g;
+  let match;
+
+  while ((match = explicitTypeRegex.exec(content)) !== null) {
+    tokens.push({
+      name: match[1],
+      type: match[2],
+      value: match[3].trim()
+    });
+  }
+
+  // Match: public let tokenName = TextStyle(...) (implicit type - for typography)
+  // This regex captures multi-line TextStyle declarations
+  const textStyleRegex = /public\s+let\s+(\w+)\s*=\s*(TextStyle\s*\([^)]+\))/gs;
+  while ((match = textStyleRegex.exec(content)) !== null) {
+    tokens.push({
+      name: match[1],
+      type: 'TextStyle',
+      value: match[2].replace(/\s+/g, ' ').trim()
+    });
+  }
+
+  return tokens;
+}
+
+/**
+ * Generates aggregated Swift file with nested enums
+ */
+function generateAggregatedSwiftComponentFile(brand, componentName, tokenGroups) {
+  const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
+  const packageJson = require('../../package.json');
+  const version = packageJson.version;
+
+  // Check what token groups exist
+  const hasColorTokens = tokenGroups.colors.light.length > 0 || tokenGroups.colors.dark.length > 0;
+  const hasSizingTokens = tokenGroups.sizing.compact.length > 0 || tokenGroups.sizing.regular.length > 0;
+  const hasDensityTokens = tokenGroups.density.dense.length > 0 ||
+      tokenGroups.density.default.length > 0 ||
+      tokenGroups.density.spacious.length > 0;
+  const hasTypographyTokens = tokenGroups.typography.compact.length > 0 || tokenGroups.typography.regular.length > 0;
+
+  let output = `//
+// Do not edit directly, this file was auto-generated.
+//
+// BILD Design System Tokens v${version}
+// Generated by Style Dictionary
+//
+// Component: ${componentName} | Brand: ${brandPascal}
+// Aggregated component tokens with all modes
+//
+// Copyright (c) 2024 Axel Springer Deutschland GmbH
+//
+
+import SwiftUI
+
+/// ${componentName} Design Tokens
+///
+/// Usage:
+///   ${componentName}Tokens.Colors.light.primaryBgIdle
+///   ${componentName}Tokens.Sizing.compact.height
+///   ${componentName}Tokens.Density.current(for: theme.density).contentGap
+public enum ${componentName}Tokens {
+`;
+
+  // Colors section
+  if (hasColorTokens) {
+    const colorTokenNames = new Map();
+    [...tokenGroups.colors.light, ...tokenGroups.colors.dark].forEach(t => {
+      if (!colorTokenNames.has(t.name)) {
+        colorTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Colors
+
+    /// Color tokens protocol
+    public protocol ${componentName}ColorTokens: Sendable {
+`;
+    colorTokenNames.forEach((info, name) => {
+      output += `        var ${name}: Color { get }\n`;
+    });
+    output += `    }
+
+    /// Color scheme accessor
+    public enum Colors {
+        /// Returns color tokens for the specified theme mode
+        public static func current(isDark: Bool) -> any ${componentName}ColorTokens {
+            isDark ? Dark.shared : Light.shared
+        }
+
+        public static var light: Light { Light.shared }
+        public static var dark: Dark { Dark.shared }
+`;
+
+    if (tokenGroups.colors.light.length > 0) {
+      output += `
+        public struct Light: ${componentName}ColorTokens {
+            public static let shared = Light()
+            private init() {}
+`;
+      tokenGroups.colors.light.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.colors.dark.length > 0) {
+      output += `
+        public struct Dark: ${componentName}ColorTokens {
+            public static let shared = Dark()
+            private init() {}
+`;
+      tokenGroups.colors.dark.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Sizing section
+  if (hasSizingTokens) {
+    const sizingTokenNames = new Map();
+    [...tokenGroups.sizing.compact, ...tokenGroups.sizing.regular].forEach(t => {
+      if (!sizingTokenNames.has(t.name)) {
+        sizingTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Sizing
+
+    /// Sizing tokens protocol
+    public protocol ${componentName}SizingTokens: Sendable {
+`;
+    sizingTokenNames.forEach((info, name) => {
+      output += `        var ${name}: ${info.type} { get }\n`;
+    });
+    output += `    }
+
+    /// Size class accessor
+    public enum Sizing {
+        /// Returns sizing tokens for the specified size class
+        public static func current(for sizeClass: SizeClass) -> any ${componentName}SizingTokens {
+            sizeClass == .compact ? Compact.shared : Regular.shared
+        }
+
+        public static var compact: Compact { Compact.shared }
+        public static var regular: Regular { Regular.shared }
+`;
+
+    if (tokenGroups.sizing.compact.length > 0) {
+      output += `
+        public struct Compact: ${componentName}SizingTokens {
+            public static let shared = Compact()
+            private init() {}
+`;
+      tokenGroups.sizing.compact.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.sizing.regular.length > 0) {
+      output += `
+        public struct Regular: ${componentName}SizingTokens {
+            public static let shared = Regular()
+            private init() {}
+`;
+      tokenGroups.sizing.regular.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Density section
+  if (hasDensityTokens) {
+    const densityTokenNames = new Map();
+    [...tokenGroups.density.dense, ...tokenGroups.density.default, ...tokenGroups.density.spacious].forEach(t => {
+      if (!densityTokenNames.has(t.name)) {
+        densityTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Density
+
+    /// Density tokens protocol
+    public protocol ${componentName}DensityTokens: Sendable {
+`;
+    densityTokenNames.forEach((info, name) => {
+      output += `        var ${name}: ${info.type} { get }\n`;
+    });
+    output += `    }
+
+    /// Density accessor
+    public enum DensityMode {
+        /// Returns density tokens for the specified density mode
+        public static func current(for density: Density) -> any ${componentName}DensityTokens {
+            switch density {
+            case .dense: return Dense.shared
+            case .default: return Default.shared
+            case .spacious: return Spacious.shared
+            }
+        }
+
+        public static var dense: Dense { Dense.shared }
+        public static var \`default\`: Default { Default.shared }
+        public static var spacious: Spacious { Spacious.shared }
+`;
+
+    if (tokenGroups.density.dense.length > 0) {
+      output += `
+        public struct Dense: ${componentName}DensityTokens {
+            public static let shared = Dense()
+            private init() {}
+`;
+      tokenGroups.density.dense.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.density.default.length > 0) {
+      output += `
+        public struct Default: ${componentName}DensityTokens {
+            public static let shared = Default()
+            private init() {}
+`;
+      tokenGroups.density.default.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.density.spacious.length > 0) {
+      output += `
+        public struct Spacious: ${componentName}DensityTokens {
+            public static let shared = Spacious()
+            private init() {}
+`;
+      tokenGroups.density.spacious.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Typography section
+  if (hasTypographyTokens) {
+    const typographyTokenNames = new Map();
+    [...tokenGroups.typography.compact, ...tokenGroups.typography.regular].forEach(t => {
+      if (!typographyTokenNames.has(t.name)) {
+        typographyTokenNames.set(t.name, { type: t.type, value: t.value });
+      }
+    });
+
+    output += `
+    // MARK: - Typography
+
+    /// Typography tokens protocol
+    public protocol ${componentName}TypographyTokens: Sendable {
+`;
+    typographyTokenNames.forEach((info, name) => {
+      output += `        var ${name}: ${info.type} { get }\n`;
+    });
+    output += `    }
+
+    /// Typography accessor
+    public enum Typography {
+        /// Returns typography tokens for the specified size class
+        public static func current(for sizeClass: SizeClass) -> any ${componentName}TypographyTokens {
+            sizeClass == .compact ? Compact.shared : Regular.shared
+        }
+
+        public static var compact: Compact { Compact.shared }
+        public static var regular: Regular { Regular.shared }
+`;
+
+    if (tokenGroups.typography.compact.length > 0) {
+      output += `
+        public struct Compact: ${componentName}TypographyTokens {
+            public static let shared = Compact()
+            private init() {}
+`;
+      tokenGroups.typography.compact.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+
+    if (tokenGroups.typography.regular.length > 0) {
+      output += `
+        public struct Regular: ${componentName}TypographyTokens {
+            public static let shared = Regular()
+            private init() {}
+`;
+      tokenGroups.typography.regular.forEach(t => {
+        output += `            public let ${t.name}: ${t.type} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  output += `}
+`;
+
+  return output;
+}
+
+/**
+ * Cleans up individual SwiftUI component files after aggregation
+ */
+async function cleanupSwiftUIIndividualComponentFiles() {
+  if (!SWIFTUI_ENABLED) {
+    return { cleaned: 0 };
+  }
+
+  console.log('🧹 Cleaning up individual SwiftUI component files...');
+
+  let cleaned = 0;
+
+  const iosDir = path.join(DIST_DIR, 'ios', 'brands');
+
+  if (!fs.existsSync(iosDir)) {
+    return { cleaned: 0 };
+  }
+
+  for (const brand of BRANDS) {
+    const brandComponentsDir = path.join(iosDir, brand, 'components');
+
+    if (!fs.existsSync(brandComponentsDir)) {
+      continue;
+    }
+
+    const componentDirs = fs.readdirSync(brandComponentsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+
+    for (const componentName of componentDirs) {
+      const componentDir = path.join(brandComponentsDir, componentName);
+      const swiftFiles = fs.readdirSync(componentDir)
+        .filter(f => f.endsWith('.swift') && !f.endsWith('Tokens.swift'));
+
+      // Only delete individual files if aggregated file exists
+      const aggregatedFile = path.join(componentDir, `${componentName}Tokens.swift`);
+      if (fs.existsSync(aggregatedFile)) {
+        for (const file of swiftFiles) {
+          fs.unlinkSync(path.join(componentDir, file));
+          cleaned++;
+        }
+      }
+    }
+  }
+
+  console.log(`  📊 Cleaned: ${cleaned} individual files\n`);
+  return { cleaned };
+}
+
 /**
  * Generates Theme Provider files for each brand
  * Creates: dist/compose/brands/{brand}/theme/{Brand}Theme.kt
@@ -4202,11 +4683,17 @@ async function main() {
   // Build consolidated SwiftUI Primitives
   stats.swiftuiPrimitives = await buildConsolidatedSwiftUIPrimitives();
 
+  // Aggregate SwiftUI component files
+  stats.swiftuiAggregated = await aggregateSwiftUIComponents();
+
   // Generate SwiftUI Theme Providers
   stats.swiftuiThemes = await generateSwiftUIThemeProviders();
 
   // Cleanup individual SwiftUI primitive files
   stats.swiftuiCleanup = await cleanupSwiftUIIndividualPrimitives();
+
+  // Cleanup individual SwiftUI component files
+  stats.swiftuiComponentCleanup = await cleanupSwiftUIIndividualComponentFiles();
 
   // Create manifest
   createManifest(stats);
@@ -4256,7 +4743,13 @@ async function main() {
     console.log(`   - SwiftUI Themes: ${stats.swiftuiThemes.successfulThemes}/${stats.swiftuiThemes.totalThemes}`);
   }
   if (SWIFTUI_ENABLED && stats.swiftuiCleanup) {
-    console.log(`   - SwiftUI Files Cleaned: ${stats.swiftuiCleanup.removed} individual primitive files removed`);
+    console.log(`   - SwiftUI Primitives Cleaned: ${stats.swiftuiCleanup.removed} individual files removed`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiAggregated) {
+    console.log(`   - SwiftUI Components Aggregated: ${stats.swiftuiAggregated.successfulComponents}/${stats.swiftuiAggregated.totalComponents}`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiComponentCleanup) {
+    console.log(`   - SwiftUI Components Cleaned: ${stats.swiftuiComponentCleanup.cleaned} individual files removed`);
   }
   console.log(`   - Builds erfolgreich: ${successfulBuilds}/${totalBuilds}`);
   console.log(`   - Output-Verzeichnis: dist/\n`);
