@@ -1,529 +1,361 @@
 # CLAUDE.md - BILD Design System Token Pipeline
 
-> Context-Dokument für Claude Code Sessions. Beschreibt Architektur, Konventionen und wichtige Details.
+> Context-Dokument für AI-Assistenten. Beschreibt Architektur, Entscheidungen und Strukturen.
 
 ---
 
 ## Quick Reference
 
 ```bash
-# Build-Befehle
 npm run build:tokens    # Vollständiger Build (preprocess + style-dictionary)
 npm run build:bundles   # Nur CSS-Bundles neu generieren
 npm run build           # Alles (tokens + bundles)
 npm run clean           # dist/ und tokens/ löschen
 ```
 
-**Source of Truth:** `src/design-tokens/bild-design-system-raw-data.json` (Figma Export)
+**Source of Truth:** `src/design-tokens/bild-design-system-raw-data.json` (Figma Export via TokenSync Plugin)
+
+**Dokumentation:** Detaillierte Platform-Dokumentation in `README.tokens.md`, `README.android.md`, `README.ios.md`
 
 ---
 
-## Projektübersicht
+## Design System Architektur
 
-Design Token Pipeline für das BILD Design System. Transformiert Figma Variables in plattformspezifische Formate.
+### 4-Layer Token Hierarchie
 
-| Plattform | Format | Output | Status |
-|-----------|--------|--------|--------|
-| Web | CSS Custom Properties | `dist/css/` | ✅ |
-| Web | SCSS Variables | `dist/scss/` | ✅ |
-| Web | JavaScript ES6 | `dist/js/` | ✅ |
-| iOS | Swift Extensions | `dist/ios/` | ✅ |
-| Android | Jetpack Compose (Kotlin) | `dist/android/compose/` | ✅ |
-| Android | XML Resources | `dist/android/` | ⏸️ Disabled |
-| Flutter | Dart Classes | `dist/flutter/` | ⏸️ Disabled |
-
----
-
-## Token-Layer-Architektur (4 Ebenen)
+Das Design System verwendet eine 4-schichtige Token-Architektur mit klarer Referenzierung von oben nach unten:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  LAYER 4: Component Tokens                                      │
-│  ─────────────────────────────────────────────────────────────  │
 │  Button, Card, Teaser, Alert, InputField, etc.                  │
-│  Modes: color (light/dark), density, breakpoint, typography     │
-│  Referenziert → Semantic Tokens                                 │
+│  → Referenziert Semantic Tokens                                 │
+│  → Hat eigene Modes: color, density, breakpoint, typography     │
 ├─────────────────────────────────────────────────────────────────┤
 │  LAYER 3: Semantic Tokens                                       │
-│  ─────────────────────────────────────────────────────────────  │
-│  text-color-primary, surface-color-secondary, etc.              │
-│  Modes: color (light/dark), breakpoint                          │
-│  Referenziert → Brand Mapping                                   │
+│  text-color-primary, surface-color-secondary, border-color-*    │
+│  → Referenziert Brand Mapping                                   │
+│  → Hat Modes: color (light/dark), breakpoint                    │
 ├─────────────────────────────────────────────────────────────────┤
 │  LAYER 2: Brand Mapping + Density                               │
-│  ─────────────────────────────────────────────────────────────  │
-│  BrandColorMapping: Farb-Primitives → Brands                    │
-│  BrandTokenMapping: Andere Primitives → Brands                  │
-│  Density: default, dense, spacious                              │
-│  Modes: BILD, SportBILD, Advertorial                            │
+│  Mappt Primitives auf Brand-spezifische Werte                   │
+│  → Modes: BILD, SportBILD, Advertorial                          │
+│  → Density: default, dense, spacious                            │
 ├─────────────────────────────────────────────────────────────────┤
 │  LAYER 1: Primitives (Global)                                   │
-│  ─────────────────────────────────────────────────────────────  │
 │  colorprimitive, spaceprimitive, sizeprimitive, fontprimitive   │
-│  Absolute Werte: --bildred: #DD0000, --space2x: 16px            │
+│  → Absolute Werte ohne Modes: #DD0000, 16px, etc.               │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Alias-Ketten (var() Referenzen)
+### Alias-Ketten
+
+Tokens referenzieren sich gegenseitig via Aliase. Im CSS wird dies mit `var()` und Fallback abgebildet:
 
 ```css
 /* Component → Semantic → Primitive */
 --button-primary-bg-color: var(--core-color-primary, #DD0000);
-                                ↓
 --core-color-primary: var(--bildred, #DD0000);
-                           ↓
 --bildred: #DD0000;
 ```
+
+**Entscheidung:** Immer Fallback-Werte verwenden für Robustheit bei fehlenden Variablen.
 
 ---
 
 ## Multi-Brand & Multi-Mode System
 
-### Brands (3)
+### Brands
 
-| Brand | ID | Beschreibung |
-|-------|-----|--------------|
-| `bild` | BILD | Hauptmarke |
-| `sportbild` | SportBILD | Sport-Marke |
-| `advertorial` | Advertorial | Werbung (weniger Components) |
+| Brand | Beschreibung | Besonderheit |
+|-------|--------------|--------------|
+| **BILD** | Hauptmarke | Vollständiges Token-Set |
+| **SportBILD** | Sport-Marke | Eigene Farben, eigenes Sizing |
+| **Advertorial** | Werbung | Eigenes Sizing, KEINE eigenen Farben |
 
-### Modes nach Token-Typ
+**Wichtig:** Advertorial hat keine eigenen Farben und verwendet die Farben von BILD oder SportBILD (siehe Dual-Axis Architektur).
 
-| Token-Typ | Modes | CSS-Umsetzung |
-|-----------|-------|---------------|
-| **Color** | `light`, `dark` | `[data-theme="light/dark"]` |
-| **Breakpoint** | `xs` (320px), `sm` (390px), `md` (600px), `lg` (1024px) | `@media (min-width: ...)` |
-| **Density** | `default`, `dense`, `spacious` | `[data-density="..."]` |
-| **Typography** | `xs`, `sm`, `md`, `lg` | `var()` Referenzen auf Breakpoint-Tokens |
+### Token Modes
 
-### CSS Data-Attribute Pattern
+| Mode-Typ | Werte | Verwendung |
+|----------|-------|------------|
+| **Color** | `light`, `dark` | Farbschema |
+| **Breakpoint** | `xs`, `sm`, `md`, `lg` | Responsive Sizing/Typography |
+| **Density** | `default`, `dense`, `spacious` | UI-Dichte |
+| **Typography** | `xs`, `sm`, `md`, `lg` | Schriftgrößen (referenziert Breakpoints) |
+
+### Breakpoint-Werte
+
+| Breakpoint | Min-Width | Geräteklasse |
+|------------|-----------|--------------|
+| `xs` | 320px | Mobile (Standard) |
+| `sm` | 390px | Großes Mobile |
+| `md` | 600px | Tablet |
+| `lg` | 1024px | Desktop |
+
+---
+
+## Dual-Axis Architektur (Native Platforms)
+
+### Problem
+
+Advertorial hat eigene Sizing/Typography-Tokens, aber KEINE eigenen Farben. Es soll die Farben von BILD oder SportBILD verwenden können.
+
+### Lösung: Zwei unabhängige Achsen
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  DUAL-AXIS THEME ARCHITECTURE                                   │
+│                                                                 │
+│  Achse 1: ColorBrand (Farbpalette + Effekte)                    │
+│  ┌──────────────┬──────────────┐                                │
+│  │    BILD      │  SportBILD   │  ← Nur Brands MIT Farben       │
+│  └──────────────┴──────────────┘                                │
+│                                                                 │
+│  Achse 2: ContentBrand (Sizing/Typography)                      │
+│  ┌──────────────┬──────────────┬──────────────┐                 │
+│  │    BILD      │  SportBILD   │  Advertorial │  ← Alle Brands  │
+│  └──────────────┴──────────────┴──────────────┘                 │
+│                                                                 │
+│  Kombination: Advertorial Content + SportBILD Farben            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Implementierung
+
+**iOS (SwiftUI):**
+```swift
+.designSystemTheme(
+    colorBrand: .sportbild,      // Farben von SportBILD
+    contentBrand: .advertorial   // Sizing von Advertorial
+)
+```
+
+**Android (Compose):**
+```kotlin
+DesignSystemTheme(
+    colorBrand = ColorBrand.Sportbild,
+    contentBrand = ContentBrand.Advertorial
+)
+```
+
+### Unified Interfaces
+
+Für polymorphen Zugriff implementieren alle Brand-spezifischen Schemes ein gemeinsames Interface:
+
+| Interface | Inhalt | Implementierungen |
+|-----------|--------|-------------------|
+| `DesignColorScheme` | Alle Farb-Tokens | BildColorScheme, SportbildColorScheme |
+| `DesignSizingScheme` | Alle Sizing-Tokens | BildSizingScheme, SportbildSizingScheme, AdvertorialSizingScheme |
+| `DesignEffectsScheme` | Shadow/Effect-Tokens (iOS) | BildEffects, SportbildEffects |
+
+**Entscheidung:** Unified Interfaces erlauben brand-agnostischen Code und sichere Polymorphie.
+
+---
+
+## Platform-Patterns
+
+### Web (CSS)
+
+**Pattern:** Data-Attribute für Brand/Theme-Switching, @media für Breakpoints
 
 ```html
 <html data-brand="bild" data-theme="light" data-density="default">
 ```
 
 ```css
-/* Primitives: Global via :root */
-:root {
-  --bildred: #DD0000;
-  --space2x: 16px;
-}
+/* Primitives: Global */
+:root { --bildred: #DD0000; }
 
 /* Semantic/Component: Brand + Theme scoped */
 [data-brand="bild"][data-theme="light"] {
   --text-color-primary: var(--bild015, #232629);
-  --button-primary-bg-color: var(--bildred, #DD0000);
 }
 
-/* Breakpoints: Brand scoped + @media queries */
-[data-brand="bild"] {
-  --headline1-font-size: 48px;
-}
+/* Breakpoints: @media (nicht data-breakpoint!) */
 @media (min-width: 1024px) {
-  [data-brand="bild"] {
-    --headline1-font-size: 64px;
-  }
+  [data-brand="bild"] { --headline1-font-size: 64px; }
 }
 
-/* Density: Brand + Density scoped */
-[data-brand="bild"][data-density="dense"] {
-  --button-inline-space: 16px;
-}
-
-/* Effects/Typography: CSS-Klassen */
-[data-brand="bild"][data-theme="light"] .shadow-soft-md {
-  box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.03);
-}
-
-[data-brand="bild"] .headline1 {
-  font-size: var(--headline1-font-size, 48px);
-}
+/* Typography/Effects: CSS-Klassen */
+[data-brand="bild"] .headline1 { font-size: var(--headline1-font-size); }
 ```
+
+**Entscheidung:** @media statt data-breakpoint, weil @media automatisch funktioniert ohne JS.
+
+### iOS (SwiftUI)
+
+**Pattern:** Environment-basiertes Theme mit @Observable
+
+```swift
+@Environment(\.designSystemTheme) var theme
+
+// Polymorphe Zugriffe
+theme.colors.textColorPrimary    // any DesignColorScheme
+theme.sizing.gridSpaceRespBase   // any DesignSizingScheme
+theme.effects.shadowSoftMd       // any DesignEffectsScheme
+```
+
+**Entscheidung:** @Observable für reaktives Theme-Management, Environment für Propagation.
+
+### Android (Jetpack Compose)
+
+**Pattern:** CompositionLocal-basiertes Theme
+
+```kotlin
+// Polymorphe Zugriffe via DesignSystemTheme object
+DesignSystemTheme.colors.textColorPrimary    // DesignColorScheme
+DesignSystemTheme.sizing.gridSpaceRespBase   // DesignSizingScheme
+
+// Component Tokens via current() Accessor
+ButtonTokens.Colors.current().buttonPrimaryBgColorIdle
+```
+
+**Entscheidung:** CompositionLocal für Theme-Propagation, current() für automatische Mode-Selektion.
+
+---
+
+## Native SizeClass Mapping
+
+Web hat 4 Breakpoints, Native hat 2 SizeClasses:
+
+```
+Web Breakpoints              Native SizeClass
+───────────────              ────────────────
+xs (320px) ─────┐
+                ├──────────→ compact (small screens)
+sm (390px) ─────┘
+
+md (600px) ─────┐
+                ├──────────→ regular (large screens)
+lg (1024px) ────┘
+```
+
+**Entscheidung:** Mapping von 4→2 statt 1:1, weil Native-Apps typischerweise nur 2 Layouts brauchen.
 
 ---
 
 ## Build Pipeline
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  src/design-tokens/bild-design-system-raw-data.json             │
-│  (Figma Plugin Export, ~1MB)                                    │
-└───────────────────────────┬─────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  scripts/tokens/preprocess.js (~2000 LOC)                       │
-│  ─────────────────────────────────────────────────────────────  │
-│  • Figma JSON → Style Dictionary Format                         │
-│  • Context-aware Alias Resolution (Brand × Mode)                │
-│  • Component Token Extraction                                   │
-│  • Typography/Effects Composite Token Processing                │
-└───────────────────────────┬─────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  tokens/                                                        │
-│  ├── shared/ (primitives)                                       │
-│  └── brands/{brand}/                                            │
-│      ├── color/, density/, breakpoints/                         │
-│      ├── semantic/ (effects, typography)                        │
-│      └── components/{Component}/ (per-component JSONs)          │
-└───────────────────────────┬─────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  scripts/tokens/build.js (~1800 LOC)                            │
-│  ─────────────────────────────────────────────────────────────  │
-│  • Style Dictionary Orchestration                               │
-│  • Platform Config Generation (7 Plattformen)                   │
-│  • Responsive CSS Conversion (@media queries)                   │
-│  • Typography/Effects Class Generation                          │
-└───────────────────────────┬─────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  build-config/tokens/style-dictionary.config.js (~2500 LOC)     │
-│  ─────────────────────────────────────────────────────────────  │
-│  • 15+ Custom Transforms (color, size, name, etc.)              │
-│  • 22+ Custom Formats (CSS, SCSS, JS, Swift, XML, Dart)         │
-│  • Custom Transform Groups per Platform                         │
-└───────────────────────────┬─────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  scripts/tokens/bundles.js (~560 LOC)                           │
-│  ─────────────────────────────────────────────────────────────  │
-│  • CSS Bundle Generation                                        │
-│  • primitives.css, theme.css, tokens.css                        │
-│  • Per-Component Bundles                                        │
-│  • Full Brand Bundles                                           │
-└───────────────────────────┬─────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  dist/                                                          │
-│  ├── css/, scss/, js/, json/                                    │
-│  ├── ios/, android/compose/ (Jetpack Compose)                   │
-│  ├── (android XML disabled via ANDROID_XML_ENABLED)             │
-│  ├── (flutter/ disabled via FLUTTER_ENABLED)                    │
-│  └── manifest.json                                              │
-└─────────────────────────────────────────────────────────────────┘
+Figma (Source of Truth)
+        ↓ TokenSync Plugin Export
+src/design-tokens/bild-design-system-raw-data.json
+        ↓ preprocess.js
+tokens/ (Style Dictionary Format, ~920 JSON files)
+        ↓ build.js + style-dictionary.config.js
+dist/ (Platform-spezifische Outputs)
+        ↓ bundles.js
+dist/css/bundles/ (Convenience CSS Bundles)
 ```
+
+### Hauptdateien
+
+| Datei | Zweck | LOC |
+|-------|-------|-----|
+| `preprocess.js` | Figma JSON → Style Dictionary Format, Alias-Resolution | ~2000 |
+| `build.js` | Style Dictionary Orchestrierung, Platform Generation | ~1800 |
+| `style-dictionary.config.js` | Custom Transforms & Formats | ~2500 |
+| `bundles.js` | CSS Bundle Generierung | ~560 |
+
+### Output-Plattformen
+
+| Plattform | Status | Output |
+|-----------|--------|--------|
+| CSS | Aktiv | `dist/css/` |
+| SCSS | Aktiv | `dist/scss/` |
+| JavaScript | Aktiv | `dist/js/` |
+| JSON | Aktiv | `dist/json/` |
+| iOS Swift | Aktiv | `dist/ios/` |
+| Android Compose | Aktiv | `dist/android/compose/` |
+| Android XML | Deaktiviert | - |
+| Flutter | Deaktiviert | - |
 
 ---
 
-## Dateistruktur
+## Architektur-Entscheidungen
 
-### Source (Input)
-
-```
-src/design-tokens/
-└── bild-design-system-raw-data.json    # Figma Plugin Export
-```
-
-### Preprocessed (Intermediate)
-
-```
-tokens/
-├── shared/
-│   ├── colorprimitive.json
-│   ├── fontprimitive.json
-│   ├── sizeprimitive.json
-│   └── spaceprimitive.json
-└── brands/{bild|sportbild|advertorial}/
-    ├── breakpoints/
-    │   └── breakpoint-{xs|sm|md|lg}-*.json
-    ├── color/
-    │   └── colormode-{light|dark}.json
-    ├── density/
-    │   └── density-{default|dense|spacious}.json
-    ├── overrides/                        # Brand Mapping (used during preprocessing,
-    │   ├── brandcolormapping.json       # NOT output to dist/ - values already
-    │   └── brandtokenmapping.json       # resolved in semantic/component tokens)
-    ├── semantic/
-    │   ├── effects/
-    │   └── typography/
-    └── components/{Component}/
-        ├── {component}-color-{light|dark}.json
-        ├── {component}-density-*.json
-        ├── {component}-breakpoint-*.json
-        ├── {component}-typography-*.json
-        └── {component}-effects-*.json
-```
-
-### Build Output
-
-```
-dist/
-├── css/
-│   ├── shared/
-│   │   └── primitives.css
-│   ├── {brand}/
-│   │   ├── theme.css           # Light/Dark colors + effects
-│   │   ├── tokens.css          # Breakpoints + Typography + Density
-│   │   └── components/
-│   │       └── {component}.css
-│   └── bundles/
-│       └── {brand}.css         # Full bundle (~130KB)
-├── scss/
-├── js/
-├── json/
-├── ios/
-├── android/
-│   └── compose/                # Jetpack Compose (Kotlin) - enabled
-│       ├── shared/
-│       │   ├── DesignTokenPrimitives.kt   # Consolidated primitives
-│       │   ├── Density.kt                 # Dense/Default/Spacious enum
-│       │   ├── WindowSizeClass.kt         # Compact/Regular enum
-│       │   ├── Brand.kt                   # Bild/Sportbild/Advertorial enum
-│       │   └── DesignSystemTheme.kt       # Multi-brand theme provider
-│       └── brands/{brand}/
-│           ├── components/{Component}/
-│           │   └── {Component}Tokens.kt   # Aggregated with current() accessors
-│           ├── semantic/
-│           │   └── {Brand}SemanticTokens.kt
-│           └── theme/
-│               └── {Brand}Theme.kt        # Theme Provider
-│   (XML disabled via ANDROID_XML_ENABLED)
-├── flutter/                    # Disabled by default (FLUTTER_ENABLED)
-└── manifest.json
-```
-
----
-
-## Wichtige Konstanten (preprocess.js)
-
-### Collection IDs (Figma)
-
-```javascript
-const COLLECTION_IDS = {
-  FONT_PRIMITIVE: 'VariableCollectionId:470:1450',
-  COLOR_PRIMITIVE: 'VariableCollectionId:539:2238',
-  SIZE_PRIMITIVE: 'VariableCollectionId:4072:1817',
-  SPACE_PRIMITIVE: 'VariableCollectionId:2726:12077',
-  DENSITY: 'VariableCollectionId:5695:5841',
-  BRAND_TOKEN_MAPPING: 'VariableCollectionId:18038:10593',
-  BRAND_COLOR_MAPPING: 'VariableCollectionId:18212:14495',
-  BREAKPOINT_MODE: 'VariableCollectionId:7017:25696',
-  COLOR_MODE: 'VariableCollectionId:588:1979'
-};
-```
-
-### Brand Mode IDs
-
-```javascript
-const BRANDS = {
-  BILD: '18038:0',
-  SportBILD: '18094:0',
-  Advertorial: '18094:1'
-};
-```
-
-### Breakpoint Mode IDs
-
-```javascript
-const BREAKPOINTS = {
-  xs: '7017:0',    // 320px
-  sm: '16706:1',   // 390px
-  md: '7015:1',    // 600px
-  lg: '7015:2'     // 1024px
-};
-```
-
-### Breakpoint Pixel Values (style-dictionary.config.js, build.js)
-
-```javascript
-const BREAKPOINT_VALUES = {
-  xs: '320px',
-  sm: '390px',
-  md: '600px',
-  lg: '1024px'
-};
-```
-
-### Output Toggles (build.js)
-
-```javascript
-// Platform output toggles - set to false to disable output generation
-const FLUTTER_ENABLED = false;       // Disables dist/flutter/ output
-const COMPOSE_ENABLED = true;        // Enables dist/android/compose/ output (Jetpack Compose)
-const ANDROID_XML_ENABLED = false;   // Disables Android XML output (Compose is preferred)
-
-// Token type toggles - set to false to exclude from all platform outputs
-const BOOLEAN_TOKENS_ENABLED = false;  // Excludes visibility tokens (hideOnMobile, etc.)
-```
-
-| Toggle | Default | Beschreibung |
-|--------|---------|--------------|
-| `COMPOSE_ENABLED` | `true` | Jetpack Compose Kotlin output in `dist/android/compose/` |
-| `ANDROID_XML_ENABLED` | `false` | Android XML resources (disabled, Compose is preferred) |
-| `FLUTTER_ENABLED` | `false` | Flutter Dart output in `dist/flutter/` |
-| `BOOLEAN_TOKENS_ENABLED` | `false` | Boolean/Visibility tokens (13 Tokens) |
-
----
-
-## Naming Conventions
-
-### CSS Variables
+### Warum @media statt data-breakpoint?
 
 ```css
-/* Primitives: Kurze Namen */
---bildred
---space2x
---size4x
---font-family-gotham
+/* NICHT verwendet (benötigt JS): */
+[data-breakpoint="lg"] { ... }
 
-/* Semantic: Kategorie-basiert */
---text-color-primary
---surface-color-secondary
---border-color-high-contrast
-
-/* Component: Component-Präfix */
---button-primary-bg-color
---card-border-radius
---teaser-title-font-size
+/* VERWENDET (funktioniert automatisch): */
+@media (min-width: 1024px) { ... }
 ```
 
-### Dateinamen
+**Rationale:** Native Browser-Unterstützung, kein JS-Overhead, SSR-kompatibel.
 
-```
-{component}-{token-type}-{mode}.css
+### Warum var() mit Fallback?
 
-Beispiele:
-button-color-light.css
-button-color-dark.css
-button-density-dense.css
-button-breakpoint-responsive.css
-button-typography-responsive.css
+```css
+--button-bg: var(--core-color-primary, #DD0000);
 ```
 
----
+**Rationale:** Robustheit bei fehlenden Variablen, einfacheres Debugging.
 
-## Don'ts und Gotchas
+### Warum separate Mode-Dateien?
 
-### KRITISCH - Nicht ändern ohne Verständnis
+**Rationale:**
+- Lazy Loading möglich (nur light ODER dark laden)
+- Besseres Caching (Themes ändern sich unabhängig)
+- Einfacheres Debugging
 
-1. **COLLECTION_IDS** (preprocess.js:44-54)
-   - Figma Collection Identifier
-   - Änderung bricht Alias-Resolution
+### Warum Dual-Axis statt Single Brand Enum?
 
-2. **Mode Resolution Logik** (preprocess.js:~226-235)
-   ```javascript
-   // Resolvet Aliase dynamisch nach Mode-NAME, nicht ID
-   const brandMode = collection.modes.find(m => m.name === context.brandName);
-   ```
+**Problem:** Advertorial braucht BILD/SportBILD Farben + eigenes Sizing.
+**Lösung:** ColorBrand + ContentBrand als unabhängige Achsen.
+**Rationale:** Flexibilität ohne Code-Duplizierung, klare Separation of Concerns.
 
-3. **Self-Reference Prevention** (style-dictionary.config.js:2283-2288)
-   ```javascript
-   // Verhindert var(--x, --x) wenn Token-Name = Alias-Name
-   if (refName && refName !== uniqueName) {
-     output += `var(--${refName}, ${finalValue})`;
-   }
-   ```
+### Warum Unified Interfaces?
 
-### Häufige Fehler
+**Rationale:**
+- Polymorphe Token-Zugriffe ohne Brand-Kenntnis
+- Type-Safety in Swift/Kotlin
+- Einfacher Austausch von Brands zur Laufzeit
 
-| Problem | Ursache | Lösung |
-|---------|---------|--------|
-| Leere CSS-Dateien | Collection-ID falsch | COLLECTION_IDS prüfen |
-| Fehlende Aliase | Mode nicht gefunden | Figma Mode-Namen prüfen |
-| Doppelte Variablen | Mehrfache Collection-Zuordnung | preprocess.js Filter prüfen |
-| VS Code Highlighting | Variable beginnt mit Zahl | In Figma umbenennen |
+### Warum Typography als Klassen statt Variablen?
 
-### CSS-Spezifische Gotchas
+```css
+/* Klasse mit multiplen Properties: */
+.headline1 {
+  font-size: var(--headline1-font-size);
+  font-weight: var(--headline1-font-weight);
+  line-height: var(--headline1-line-height);
+}
+```
 
-1. **Variablennamen mit Zahlen am Anfang** werden von VS Code nicht korrekt gehighlighted:
-   ```css
-   --700-black-font-weight  /* ⚪ Weiß in VS Code */
-   --font-weight-700-black  /* 🔵 Blau in VS Code (besser) */
-   ```
-
-2. **Typography/Effects sind CSS-Klassen**, keine Variables:
-   ```css
-   /* Richtig: Klasse */
-   [data-brand="bild"] .headline1 { font-size: var(...); }
-
-   /* NICHT: Variable */
-   --headline1: ...;
-   ```
-
-3. **Responsive Typography** verwendet `var()` Referenzen:
-   ```css
-   /* Typography-Klasse referenziert Variable */
-   .headline1 { font-size: var(--headline1-font-size, 48px); }
-
-   /* Variable ändert sich via @media */
-   @media (min-width: 1024px) {
-     [data-brand="bild"] { --headline1-font-size: 64px; }
-   }
-   ```
+**Rationale:** Typography besteht aus mehreren zusammengehörigen Properties, Klassen gruppieren diese logisch.
 
 ---
 
-## Neue Brands/Modes hinzufügen
+## Änderungs-Guide
 
-### Neuer Brand
+### Token-Werte ändern
+→ **In Figma ändern** (Source of Truth), dann TokenSync Export
 
-Änderungen in **3 Dateien**:
+### Output-Format ändern
+→ `style-dictionary.config.js` (Transforms & Formats)
 
-1. `preprocess.js` - BRANDS Object + Mode-ID
-2. `build.js` - BRANDS Array
-3. `bundles.js` - BRANDS Array
+### Alias-Logik ändern
+→ `preprocess.js` (resolveAlias Funktion)
 
-### Neuer Breakpoint
+### Neuen Brand hinzufügen
+→ `preprocess.js` (BRANDS), `build.js` (BRANDS, COLOR_BRANDS, CONTENT_BRANDS), `bundles.js` (BRANDS)
 
-Änderungen in **2 Dateien**:
+### Neuen Breakpoint hinzufügen
+→ `preprocess.js` (BREAKPOINTS), `build.js` (BREAKPOINT_VALUES)
 
-1. `preprocess.js` - BREAKPOINTS Object + Mode-ID
-2. `build.js` / `style-dictionary.config.js` - BREAKPOINT_VALUES
+### Neue Plattform aktivieren
+→ `build.js` (FLUTTER_ENABLED, ANDROID_XML_ENABLED)
 
----
-
-## Format Functions (style-dictionary.config.js)
-
-### CSS Formats
-
-| Format | Selector | Wert-Typ | Use Case |
-|--------|----------|----------|----------|
-| `cssVariablesFormat` | `:root` | Direkt | Primitives |
-| `cssThemedVariablesFormat` | `[data-*]` | Direkt | Theme-Switching |
-| `cssVariablesWithAliasFormat` | `:root` | `var()` | Alias-Ketten |
-| `cssThemedVariablesWithAliasFormat` | `[data-*]` | `var()` | Theme + Alias |
-| `cssTypographyClassesFormat` | `[data-*] .class` | `var()` | Typography |
-| `cssEffectClassesFormat` | `[data-*] .class` | Direkt | Effects/Shadows |
-
-### Andere Plattformen
-
-| Format | Plattform |
-|--------|-----------|
-| `scssVariablesFormat` | SCSS |
-| `javascriptEs6Format` | JS ES6 |
-| `iosSwiftClassFormat` | iOS Swift |
-| `androidResourcesFormat` | Android XML |
-| `flutterDartClassFormat` | Flutter Dart |
+### Component Token Pattern ändern
+→ `style-dictionary.config.js` (compose*Format, iosSwift*Format)
 
 ---
 
-## Für AI-Assistenten
-
-### Bei Token-Änderungen
-
-- **Werte ändern** → In Figma (Source of Truth)
-- **Output-Format ändern** → style-dictionary.config.js
-- **Alias-Logik ändern** → preprocess.js
-- **Bundle-Struktur ändern** → bundles.js
-
-### Bei CSS-Problemen
-
-1. Selector-Pattern prüfen (`[data-brand]`, `[data-theme]`, etc.)
-2. `var()` Referenzen prüfen (korrekte Alias-Auflösung?)
-3. @media Queries bei Breakpoint-Issues prüfen
-
-### Typische Aufgaben
-
-| Aufgabe | Datei(en) |
-|---------|-----------|
-| Neuen Token-Typ | preprocess.js, style-dictionary.config.js |
-| Output-Format ändern | style-dictionary.config.js |
-| Bundle-Struktur ändern | bundles.js |
-| Alias-Logik ändern | preprocess.js (resolveAlias) |
-| Neuen Brand | preprocess.js, build.js, bundles.js |
-
-### Debug-Tipps
+## Debug-Tipps
 
 ```bash
 # Preprocessed Tokens inspizieren
@@ -534,34 +366,24 @@ cat dist/css/bild/theme.css | head -100
 
 # Bundle-Größen
 ls -la dist/css/bundles/
+
+# iOS Output prüfen
+cat dist/ios/shared/DesignSystemTheme.swift | head -50
+
+# Android Output prüfen
+cat dist/android/compose/shared/DesignSystemTheme.kt | head -50
 ```
 
 ---
 
-## Architektur-Entscheidungen
+## Häufige Probleme
 
-### Warum @media statt data-breakpoint?
-
-```css
-/* NICHT verwendet (benötigt JS zum Switchen): */
-[data-breakpoint="lg"] { ... }
-
-/* VERWENDET (funktioniert automatisch): */
-@media (min-width: 1024px) { ... }
-```
-
-### Warum var() mit Fallback?
-
-```css
-/* Immer mit Fallback für Robustheit: */
---button-bg: var(--core-color-primary, #DD0000);
-```
-
-### Warum separate Mode-Dateien?
-
-- **Lazy Loading:** Nur light ODER dark laden
-- **Caching:** Themes separat cachen
-- **Debugging:** Einfacher zu inspizieren
+| Problem | Mögliche Ursache | Lösung |
+|---------|------------------|--------|
+| Leere CSS-Dateien | Figma Collection-ID geändert | COLLECTION_IDS in preprocess.js prüfen |
+| Fehlende Aliase | Figma Mode-Name geändert | Mode-Namen in Figma prüfen |
+| Native Build-Fehler | Interface nicht synchron | Unified Interface Generierung prüfen |
+| Falsche Farben | ColorBrand/ContentBrand verwechselt | Dual-Axis Konfiguration prüfen |
 
 ---
 
@@ -569,9 +391,7 @@ ls -la dist/css/bundles/
 
 | Metrik | Wert |
 |--------|------|
-| Pipeline LOC | ~8500 |
-| Format Functions | 22+ |
-| Transforms | 15+ |
 | Components | ~55 pro Brand |
-| Output Plattformen | 6 (Flutter disabled) |
-| Bundle Size (BILD) | ~130 KB |
+| Token-Dateien | ~920 |
+| Output-Plattformen | 6 (2 deaktiviert) |
+| CSS Bundle Size | ~130 KB pro Brand |
