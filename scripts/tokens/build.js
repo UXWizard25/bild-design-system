@@ -1320,6 +1320,22 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
           }]
         }
       } : {}),
+      // Compose: Component Effects format
+      ...(COMPOSE_ENABLED ? {
+        compose: {
+          transforms: ['attribute/cti'],
+          buildPath: `${DIST_DIR}/android/compose/brands/${brand}/components/${componentName}/`,
+          files: [{
+            destination: `${componentName}Effects${colorMode ? colorMode.charAt(0).toUpperCase() + colorMode.slice(1) : ''}.kt`,
+            format: 'compose/component-effects',
+            options: {
+              brand: brandName,
+              colorMode,
+              componentName
+            }
+          }]
+        }
+      } : {}),
       // Android XML: Disabled by default - Compose is the preferred Android format
       ...(ANDROID_XML_ENABLED ? {
         android: {
@@ -2164,7 +2180,8 @@ async function aggregateComposeComponents() {
           colors: { light: [], dark: [] },
           sizing: { compact: [], regular: [] },
           density: { default: [], dense: [], spacious: [] },
-          typography: { compact: [], regular: [] }
+          typography: { compact: [], regular: [] },
+          effects: { light: [], dark: [] }
         };
 
         for (const ktFile of ktFiles) {
@@ -2191,6 +2208,10 @@ async function aggregateComposeComponents() {
             tokenGroups.typography.compact = tokens;
           } else if (lowerFile.includes('typographyregular')) {
             tokenGroups.typography.regular = tokens;
+          } else if (lowerFile.includes('effectslight')) {
+            tokenGroups.effects.light = tokens;
+          } else if (lowerFile.includes('effectsdark')) {
+            tokenGroups.effects.dark = tokens;
           }
         }
 
@@ -2220,43 +2241,52 @@ async function aggregateComposeComponents() {
 
 /**
  * Parses Kotlin token file and extracts val declarations
- * Handles both single-line values and multi-line DesignTextStyle objects
+ * Handles both single-line values and multi-line composite objects (DesignTextStyle, ShadowStyle)
  */
 function parseKotlinTokens(content) {
   const tokens = [];
   const processedNames = new Set();
 
-  // First, handle multi-line DesignTextStyle objects using balanced parenthesis matching
-  const designTextStylePattern = /val\s+(\w+)\s*=\s*DesignTextStyle\(/g;
-  let match;
+  // Helper function to extract multi-line patterns with balanced parentheses
+  const extractMultiLinePattern = (pattern, prefix) => {
+    let match;
+    while ((match = pattern.exec(content)) !== null) {
+      const name = match[1];
+      const startIndex = match.index + match[0].length;
 
-  while ((match = designTextStylePattern.exec(content)) !== null) {
-    const name = match[1];
-    const startIndex = match.index + match[0].length;
+      // Count parentheses to find the matching closing )
+      let depth = 1;
+      let endIndex = startIndex;
+      while (depth > 0 && endIndex < content.length) {
+        if (content[endIndex] === '(') depth++;
+        if (content[endIndex] === ')') depth--;
+        endIndex++;
+      }
 
-    // Count parentheses to find the matching closing )
-    let depth = 1;
-    let endIndex = startIndex;
-    while (depth > 0 && endIndex < content.length) {
-      if (content[endIndex] === '(') depth++;
-      if (content[endIndex] === ')') depth--;
-      endIndex++;
+      // Extract the inner content and normalize whitespace
+      const innerContent = content.substring(startIndex, endIndex - 1).replace(/\s+/g, ' ').trim();
+      tokens.push({
+        name: name,
+        value: `${prefix}(${innerContent})`
+      });
+      processedNames.add(name);
     }
+  };
 
-    // Extract the inner content and normalize whitespace
-    const innerContent = content.substring(startIndex, endIndex - 1).replace(/\s+/g, ' ').trim();
-    tokens.push({
-      name: name,
-      value: `DesignTextStyle(${innerContent})`
-    });
-    processedNames.add(name);
-  }
+  // Handle multi-line DesignTextStyle objects
+  extractMultiLinePattern(/val\s+(\w+)\s*=\s*DesignTextStyle\(/g, 'DesignTextStyle');
 
-  // Then handle single-line val declarations (excluding already processed DesignTextStyle)
+  // Handle multi-line ShadowStyle objects (with listOf)
+  extractMultiLinePattern(/val\s+(\w+)\s*=\s*ShadowStyle\(listOf\(/g, 'ShadowStyle(listOf');
+
+  // Then handle single-line val declarations (excluding already processed patterns)
   const valRegex = /val\s+(\w+)\s*=\s*([^\n]+)/g;
+  let match;
   while ((match = valRegex.exec(content)) !== null) {
     const name = match[1];
-    if (!processedNames.has(name) && !match[2].includes('DesignTextStyle(')) {
+    if (!processedNames.has(name) &&
+        !match[2].includes('DesignTextStyle(') &&
+        !match[2].includes('ShadowStyle(')) {
       tokens.push({
         name: name,
         value: match[2].trim()
@@ -2285,7 +2315,9 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
     ...tokenGroups.density.default,
     ...tokenGroups.density.spacious,
     ...tokenGroups.typography.compact,
-    ...tokenGroups.typography.regular
+    ...tokenGroups.typography.regular,
+    ...(tokenGroups.effects?.light || []),
+    ...(tokenGroups.effects?.dark || [])
   ];
 
   const hasColor = allTokens.some(t => t.value.includes('Color('));
@@ -2298,9 +2330,10 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   const hasColorTokens = tokenGroups.colors.light.length > 0 || tokenGroups.colors.dark.length > 0;
   const hasSizingTokens = tokenGroups.sizing.compact.length > 0 || tokenGroups.sizing.regular.length > 0;
   const hasTypographyTokens = tokenGroups.typography.compact.length > 0 || tokenGroups.typography.regular.length > 0;
+  const hasEffectsTokens = (tokenGroups.effects?.light?.length > 0) || (tokenGroups.effects?.dark?.length > 0);
 
   // Need @Composable and Theme imports for current() accessors
-  const needsComposable = hasDensityTokens || hasColorTokens || hasSizingTokens || hasTypographyTokens;
+  const needsComposable = hasDensityTokens || hasColorTokens || hasSizingTokens || hasTypographyTokens || hasEffectsTokens;
   // WindowSizeClass needed for both Sizing and Typography (both use Compact/Regular)
   const needsWindowSizeClass = hasSizingTokens || hasTypographyTokens;
 
@@ -2329,6 +2362,12 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
     imports.push('import androidx.compose.ui.text.style.TextDecoration');
     imports.push('import com.bild.designsystem.shared.DesignTextStyle');
     imports.push('import com.bild.designsystem.shared.DesignTextCase');
+  }
+
+  // Check if effects use ShadowStyle
+  if (hasEffectsTokens) {
+    imports.push('import com.bild.designsystem.shared.ShadowStyle');
+    imports.push('import com.bild.designsystem.shared.DropShadow');
   }
 
   let output = `/**
@@ -2622,6 +2661,60 @@ object ${componentName}Tokens {
     if (tokenGroups.typography.regular.length > 0) {
       output += `        object Regular : TypographyTokens {\n`;
       tokenGroups.typography.regular.forEach(t => {
+        output += `            override val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    output += `    }\n`;
+  }
+
+  // Effects section with interface and current() accessor
+  if (hasEffectsTokens) {
+    // Collect all unique token names for interface
+    const effectsTokenNames = new Map();
+    [...(tokenGroups.effects?.light || []), ...(tokenGroups.effects?.dark || [])].forEach(t => {
+      if (!effectsTokenNames.has(t.name)) {
+        effectsTokenNames.set(t.name, t.value);
+      }
+    });
+
+    output += `
+    // ══════════════════════════════════════════════════════════════
+    // EFFECTS (Shadows)
+    // ══════════════════════════════════════════════════════════════
+    object Effects {
+        /**
+         * Returns effects tokens for the current theme.
+         * Automatically resolves to Light or Dark based on DesignSystemTheme.isDarkTheme
+         *
+         * Usage:
+         *   val shadow = ${componentName}Tokens.Effects.current().menuShadow
+         */
+        @Composable
+        fun current(): EffectsTokens = if (DesignSystemTheme.isDarkTheme) Dark else Light
+
+        /**
+         * Interface for effects tokens (ShadowStyle composites)
+         */
+        interface EffectsTokens {
+`;
+    // Generate interface properties
+    effectsTokenNames.forEach((value, name) => {
+      output += `            val ${name}: ShadowStyle\n`;
+    });
+    output += `        }
+
+`;
+    if (tokenGroups.effects?.light?.length > 0) {
+      output += `        object Light : EffectsTokens {\n`;
+      tokenGroups.effects.light.forEach(t => {
+        output += `            override val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.effects?.dark?.length > 0) {
+      output += `        object Dark : EffectsTokens {\n`;
+      tokenGroups.effects.dark.forEach(t => {
         output += `            override val ${t.name} = ${t.value}\n`;
       });
       output += `        }\n`;
