@@ -4258,7 +4258,11 @@ const composeComponentTokensFormat = ({ dictionary, options, file }) => {
     if (needsSpImport) imports.push('import androidx.compose.ui.unit.sp');
   } else if (tokenType === 'typography') {
     className = `${componentName}Typography${modePascal}`;
+    imports.push('import androidx.compose.ui.text.font.FontWeight');
+    imports.push('import androidx.compose.ui.text.style.TextDecoration');
     imports.push('import androidx.compose.ui.unit.sp');
+    imports.push('import com.bild.designsystem.shared.DesignTextStyle');
+    imports.push('import com.bild.designsystem.shared.DesignTextCase');
   } else {
     className = `${componentName}Tokens${modePascal}`;
     imports.push('import androidx.compose.ui.graphics.Color');
@@ -4287,42 +4291,96 @@ ${imports.join('\n')}
 object ${className} {
 `;
 
+  // Helper functions for typography conversion (same as in composeTypographySchemeFormat)
+  const toComposeFontWeightComponent = (weight) => {
+    if (!weight) return 'FontWeight.Normal';
+    const w = parseInt(weight, 10);
+    if (w >= 900) return 'FontWeight.Black';
+    if (w >= 800) return 'FontWeight.ExtraBold';
+    if (w >= 700) return 'FontWeight.Bold';
+    if (w >= 600) return 'FontWeight.SemiBold';
+    if (w >= 500) return 'FontWeight.Medium';
+    if (w >= 400) return 'FontWeight.Normal';
+    if (w >= 300) return 'FontWeight.Light';
+    if (w >= 200) return 'FontWeight.ExtraLight';
+    return 'FontWeight.Thin';
+  };
+
+  const toComposeTextCaseComponent = (textCase) => {
+    if (!textCase) return 'DesignTextCase.Original';
+    switch (textCase.toUpperCase()) {
+      case 'UPPER': return 'DesignTextCase.Uppercase';
+      case 'LOWER': return 'DesignTextCase.Lowercase';
+      case 'TITLE': return 'DesignTextCase.Capitalize';
+      default: return 'DesignTextCase.Original';
+    }
+  };
+
+  const toComposeTextDecorationComponent = (textDecoration) => {
+    if (!textDecoration || textDecoration === 'NONE') return 'TextDecoration.None';
+    if (textDecoration.toUpperCase() === 'UNDERLINE') return 'TextDecoration.Underline';
+    if (textDecoration.toUpperCase() === 'LINE_THROUGH' || textDecoration.toUpperCase() === 'STRIKETHROUGH') return 'TextDecoration.LineThrough';
+    return 'TextDecoration.None';
+  };
+
   dictionary.allTokens.forEach(token => {
     const name = token.name;
     const type = token.$type || token.type;
-    let value = token.value;
+    let value = token.$value || token.value;
 
-    // Apply Compose-specific formatting based on $type (set by preprocessor)
-    if (type === 'color') {
-      value = toComposeColor(value);
-    } else if (type === 'fontSize' || type === 'lineHeight' || type === 'letterSpacing') {
-      // Text-related types use sp units
-      value = toComposeSp(value);
-    } else if (type === 'fontWeight') {
-      // FontWeight should always be an integer (e.g., 700, not "700")
-      if (typeof value === 'string' && /^\d+$/.test(value)) {
-        value = parseInt(value, 10);
+    // Special handling for typography composite tokens
+    if (type === 'typography' && typeof value === 'object' && value !== null) {
+      const fontFamily = value.fontFamily ? `"${value.fontFamily}"` : '"System"';
+      const fontWeight = toComposeFontWeightComponent(value.fontWeight);
+      const fontSize = value.fontSize ? `${value.fontSize}.sp` : '16.sp';
+      const lineHeight = value.lineHeight ? `${value.lineHeight}.sp` : fontSize;
+      const letterSpacing = value.letterSpacing !== null && value.letterSpacing !== undefined ? `(${value.letterSpacing}).sp` : '0.sp';
+      const textCase = toComposeTextCaseComponent(value.textCase);
+      const textDecoration = toComposeTextDecorationComponent(value.textDecoration);
+
+      output += `    val ${name} = DesignTextStyle(
+        fontFamily = ${fontFamily},
+        fontWeight = ${fontWeight},
+        fontSize = ${fontSize},
+        lineHeight = ${lineHeight},
+        letterSpacing = ${letterSpacing},
+        textCase = ${textCase},
+        textDecoration = ${textDecoration}
+    )
+`;
+    } else {
+      // Apply Compose-specific formatting based on $type (set by preprocessor)
+      if (type === 'color') {
+        value = toComposeColor(value);
+      } else if (type === 'fontSize' || type === 'lineHeight' || type === 'letterSpacing') {
+        // Text-related types use sp units
+        value = toComposeSp(value);
+      } else if (type === 'fontWeight') {
+        // FontWeight should always be an integer (e.g., 700, not "700")
+        if (typeof value === 'string' && /^\d+$/.test(value)) {
+          value = parseInt(value, 10);
+        }
+      } else if (type === 'number') {
+        // Unitless integers
+        if (typeof value === 'string' && /^\d+$/.test(value)) {
+          value = parseInt(value, 10);
+        }
+      } else if (type === 'opacity') {
+        // Opacity as float
+        if (typeof value === 'string') {
+          value = parseFloat(value);
+        }
+      } else if (type === 'fontFamily' || type === 'string') {
+        // Quote string values
+        value = `"${value}"`;
+      } else if (type === 'dimension') {
+        value = toComposeDp(value);
+      } else if (type === 'boolean') {
+        value = value ? 'true' : 'false';
       }
-    } else if (type === 'number') {
-      // Unitless integers
-      if (typeof value === 'string' && /^\d+$/.test(value)) {
-        value = parseInt(value, 10);
-      }
-    } else if (type === 'opacity') {
-      // Opacity as float
-      if (typeof value === 'string') {
-        value = parseFloat(value);
-      }
-    } else if (type === 'fontFamily' || type === 'string') {
-      // Quote string values
-      value = `"${value}"`;
-    } else if (type === 'dimension') {
-      value = toComposeDp(value);
-    } else if (type === 'boolean') {
-      value = value ? 'true' : 'false';
+
+      output += `    val ${name} = ${value}\n`;
     }
-
-    output += `    val ${name} = ${value}\n`;
   });
 
   output += `}\n`;
@@ -4470,7 +4528,39 @@ const composeTypographyFormat = ({ dictionary, options, file }) => {
   const version = packageJson.version;
 
   const prefix = componentName ? componentName : brandPascal;
-  const className = `${prefix}Typography${modePascal}Values`;
+  const className = `${prefix}Typography${modePascal}`;
+
+  // Helper functions for typography conversion
+  const toComposeFontWeight = (weight) => {
+    if (!weight) return 'FontWeight.Normal';
+    const w = parseInt(weight, 10);
+    if (w >= 900) return 'FontWeight.Black';
+    if (w >= 800) return 'FontWeight.ExtraBold';
+    if (w >= 700) return 'FontWeight.Bold';
+    if (w >= 600) return 'FontWeight.SemiBold';
+    if (w >= 500) return 'FontWeight.Medium';
+    if (w >= 400) return 'FontWeight.Normal';
+    if (w >= 300) return 'FontWeight.Light';
+    if (w >= 200) return 'FontWeight.ExtraLight';
+    return 'FontWeight.Thin';
+  };
+
+  const toComposeTextCase = (textCase) => {
+    if (!textCase) return 'DesignTextCase.Original';
+    switch (textCase.toUpperCase()) {
+      case 'UPPER': return 'DesignTextCase.Uppercase';
+      case 'LOWER': return 'DesignTextCase.Lowercase';
+      case 'TITLE': return 'DesignTextCase.Capitalize';
+      default: return 'DesignTextCase.Original';
+    }
+  };
+
+  const toComposeTextDecoration = (textDecoration) => {
+    if (!textDecoration || textDecoration === 'NONE') return 'TextDecoration.None';
+    if (textDecoration.toUpperCase() === 'UNDERLINE') return 'TextDecoration.Underline';
+    if (textDecoration.toUpperCase() === 'LINE_THROUGH' || textDecoration.toUpperCase() === 'STRIKETHROUGH') return 'TextDecoration.LineThrough';
+    return 'TextDecoration.None';
+  };
 
   let output = `/**
  * Do not edit directly, this file was auto-generated.
@@ -4484,12 +4574,15 @@ const composeTypographyFormat = ({ dictionary, options, file }) => {
 
 package ${packageName}
 
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import com.bild.designsystem.shared.DesignTextStyle
+import com.bild.designsystem.shared.DesignTextCase
 
 /**
  * ${className}
- * Note: FontFamily should be provided at runtime via CompositionLocal
+ * Typography composite tokens as DesignTextStyle objects
  */
 object ${className} {
 `;
@@ -4497,26 +4590,26 @@ object ${className} {
   dictionary.allTokens.forEach(token => {
     const value = token.$value || token.value;
 
-    // Handle composite typography tokens
+    // Handle composite typography tokens - output as DesignTextStyle
     if (typeof value === 'object' && value !== null) {
-      output += `    // ${token.name}\n`;
-      if (value.fontFamily) output += `    val ${token.name}FontFamily = "${value.fontFamily}"\n`;
-      if (value.fontWeight) {
-        // Ensure fontWeight is an integer, not a string
-        const fontWeight = typeof value.fontWeight === 'string' ? parseInt(value.fontWeight, 10) : value.fontWeight;
-        output += `    val ${token.name}FontWeight = ${fontWeight}\n`;
-      }
-      if (value.fontSize) output += `    val ${token.name}FontSize = ${value.fontSize}.sp\n`;
-      if (value.lineHeight) output += `    val ${token.name}LineHeight = ${value.lineHeight}.sp\n`;
-      if (value.letterSpacing !== null && value.letterSpacing !== undefined) {
-        output += `    val ${token.name}LetterSpacing = ${value.letterSpacing}f.sp\n`;
-      }
-      // Handle fontStyle for italic support - output Compose FontStyle enum value
-      if (value.fontStyle && value.fontStyle !== 'null' && value.fontStyle.toLowerCase() === 'italic') {
-        output += `    val ${token.name}FontStyle = FontStyle.Italic\n`;
-      }
-      if (value.textCase) output += `    val ${token.name}TextCase = "${value.textCase}"\n`;
-      output += `\n`;
+      const fontFamily = value.fontFamily ? `"${value.fontFamily}"` : '"System"';
+      const fontWeight = toComposeFontWeight(value.fontWeight);
+      const fontSize = value.fontSize ? `${value.fontSize}.sp` : '16.sp';
+      const lineHeight = value.lineHeight ? `${value.lineHeight}.sp` : fontSize;
+      const letterSpacing = value.letterSpacing !== null && value.letterSpacing !== undefined ? `(${value.letterSpacing}).sp` : '0.sp';
+      const textCase = toComposeTextCase(value.textCase);
+      const textDecoration = toComposeTextDecoration(value.textDecoration);
+
+      output += `    val ${token.name} = DesignTextStyle(
+        fontFamily = ${fontFamily},
+        fontWeight = ${fontWeight},
+        fontSize = ${fontSize},
+        lineHeight = ${lineHeight},
+        letterSpacing = ${letterSpacing},
+        textCase = ${textCase},
+        textDecoration = ${textDecoration}
+    )
+`;
     } else {
       output += `    val ${token.name} = ${token.value}\n`;
     }

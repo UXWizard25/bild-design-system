@@ -2204,17 +2204,48 @@ async function aggregateComposeComponents() {
 
 /**
  * Parses Kotlin token file and extracts val declarations
+ * Handles both single-line values and multi-line DesignTextStyle objects
  */
 function parseKotlinTokens(content) {
   const tokens = [];
-  const valRegex = /val\s+(\w+)\s*=\s*(.+)/g;
+  const processedNames = new Set();
+
+  // First, handle multi-line DesignTextStyle objects using balanced parenthesis matching
+  const designTextStylePattern = /val\s+(\w+)\s*=\s*DesignTextStyle\(/g;
   let match;
 
-  while ((match = valRegex.exec(content)) !== null) {
+  while ((match = designTextStylePattern.exec(content)) !== null) {
+    const name = match[1];
+    const startIndex = match.index + match[0].length;
+
+    // Count parentheses to find the matching closing )
+    let depth = 1;
+    let endIndex = startIndex;
+    while (depth > 0 && endIndex < content.length) {
+      if (content[endIndex] === '(') depth++;
+      if (content[endIndex] === ')') depth--;
+      endIndex++;
+    }
+
+    // Extract the inner content and normalize whitespace
+    const innerContent = content.substring(startIndex, endIndex - 1).replace(/\s+/g, ' ').trim();
     tokens.push({
-      name: match[1],
-      value: match[2].trim()
+      name: name,
+      value: `DesignTextStyle(${innerContent})`
     });
+    processedNames.add(name);
+  }
+
+  // Then handle single-line val declarations (excluding already processed DesignTextStyle)
+  const valRegex = /val\s+(\w+)\s*=\s*([^\n]+)/g;
+  while ((match = valRegex.exec(content)) !== null) {
+    const name = match[1];
+    if (!processedNames.has(name) && !match[2].includes('DesignTextStyle(')) {
+      tokens.push({
+        name: name,
+        value: match[2].trim()
+      });
+    }
   }
 
   return tokens;
@@ -2274,6 +2305,15 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   if (hasDp) imports.push('import androidx.compose.ui.unit.dp');
   if (hasSp) imports.push('import androidx.compose.ui.unit.sp');
   if (hasSp && needsComposable) imports.push('import androidx.compose.ui.unit.TextUnit');
+
+  // Check if typography uses DesignTextStyle
+  const hasDesignTextStyle = allTokens.some(t => t.value.includes('DesignTextStyle('));
+  if (hasDesignTextStyle || hasTypographyTokens) {
+    imports.push('import androidx.compose.ui.text.font.FontWeight');
+    imports.push('import androidx.compose.ui.text.style.TextDecoration');
+    imports.push('import com.bild.designsystem.shared.DesignTextStyle');
+    imports.push('import com.bild.designsystem.shared.DesignTextCase');
+  }
 
   let output = `/**
  * Do not edit directly, this file was auto-generated.
@@ -2528,19 +2568,29 @@ object ${componentName}Tokens {
         }
 
         /**
-         * Interface for typography tokens
+         * Interface for typography tokens (DesignTextStyle composite objects)
          */
         interface TypographyTokens {
 `;
-    // Generate interface properties
+    // Generate interface properties - check if using DesignTextStyle or individual properties
     typographyTokenNames.forEach((value, name) => {
-      // Determine type based on value
-      let propType = 'String';
-      if (value.includes('.sp')) propType = 'TextUnit';
-      else if (value.includes('.dp')) propType = 'Dp';
-      else if (value.includes('FontStyle.')) propType = 'FontStyle';
-      else if (/^\d+$/.test(value.trim())) propType = 'Int';
-      else if (value.startsWith('"') || value.startsWith("'")) propType = 'String';
+      // Check if this is a DesignTextStyle composite token
+      let propType;
+      if (value.includes('DesignTextStyle(')) {
+        propType = 'DesignTextStyle';
+      } else if (value.includes('.sp')) {
+        propType = 'TextUnit';
+      } else if (value.includes('.dp')) {
+        propType = 'Dp';
+      } else if (value.includes('FontStyle.')) {
+        propType = 'FontStyle';
+      } else if (/^\d+$/.test(value.trim())) {
+        propType = 'Int';
+      } else if (value.startsWith('"') || value.startsWith("'")) {
+        propType = 'String';
+      } else {
+        propType = 'String';
+      }
       output += `            val ${name}: ${propType}\n`;
     });
     output += `        }
