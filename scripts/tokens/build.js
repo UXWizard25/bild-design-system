@@ -4025,7 +4025,7 @@ async function consolidateComposePrimitives() {
  * Copyright (c) 2024 Axel Springer Deutschland GmbH
  */
 
-package com.bild.designsystem
+package com.bild.designsystem.shared
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -4666,6 +4666,55 @@ public extension View {
   successful++;
 
   // Generate DesignSystemTheme.swift with dual-axis architecture
+  // Dynamically read color properties from generated iOS files
+  const bildColorsPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'color', 'ColorsLight.swift');
+  let colorProperties = [];
+  if (fs.existsSync(bildColorsPath)) {
+    const content = fs.readFileSync(bildColorsPath, 'utf8');
+    // Extract all var declarations with Color type from the entire file
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*Color\s*\{\s*get\s*\}/gm);
+    for (const match of propsMatch) {
+      colorProperties.push(match[1]);
+    }
+  }
+  // Fallback if file not found
+  if (colorProperties.length === 0) {
+    colorProperties = ['textColorPrimary', 'textColorSecondary', 'surfaceColorPrimary', 'coreColorPrimary'];
+  }
+  const colorPropertyDeclarations = colorProperties.map(prop => `    var ${prop}: Color { get }`).join('\n');
+
+  // Dynamically read sizing properties
+  const bildSizingPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'sizeclass', 'SizingCompact.swift');
+  let sizingProperties = [];
+  if (fs.existsSync(bildSizingPath)) {
+    const content = fs.readFileSync(bildSizingPath, 'utf8');
+    // Extract all var declarations with CGFloat type
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*CGFloat\s*\{\s*get\s*\}/gm);
+    for (const match of propsMatch) {
+      sizingProperties.push(match[1]);
+    }
+  }
+  if (sizingProperties.length === 0) {
+    sizingProperties = ['gridSpaceRespBase', 'gridSpaceRespSm', 'gridSpaceRespLg', 'pageInlineSpace'];
+  }
+  const sizingPropertyDeclarations = sizingProperties.map(prop => `    var ${prop}: CGFloat { get }`).join('\n');
+
+  // Dynamically read effects properties
+  const bildEffectsPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'semantic', 'effects', 'EffectsLight.swift');
+  let effectsProperties = [];
+  if (fs.existsSync(bildEffectsPath)) {
+    const content = fs.readFileSync(bildEffectsPath, 'utf8');
+    // Extract all var declarations with ShadowStyle type
+    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*ShadowStyle\s*\{\s*get\s*\}/gm);
+    for (const match of propsMatch) {
+      effectsProperties.push(match[1]);
+    }
+  }
+  if (effectsProperties.length === 0) {
+    effectsProperties = ['shadowSoftSm', 'shadowSoftMd', 'shadowSoftLg', 'shadowHardSm', 'shadowHardMd', 'shadowHardLg'];
+  }
+  const effectsPropertyDeclarations = effectsProperties.map(prop => `    var ${prop}: ShadowStyle { get }`).join('\n');
+
   const designSystemThemeContent = `//
 // Do not edit directly, this file was auto-generated.
 //
@@ -4682,56 +4731,17 @@ import SwiftUI
 /// Unified color scheme protocol for all color brands (BILD, SportBILD)
 /// Allows interchangeable color schemes across content brands
 public protocol DesignColorScheme: Sendable {
-    var textColorPrimary: Color { get }
-    var textColorSecondary: Color { get }
-    var textColorMuted: Color { get }
-    var textColorAccent: Color { get }
-    var textColorAccentConstant: Color { get }
-    var textColorPrimaryInverse: Color { get }
-    var textColorPrimaryConstant: Color { get }
-    var textColorPrimaryInverseConstant: Color { get }
-    var textColorSuccessConstant: Color { get }
-    var textColorAttentionHigh: Color { get }
-    var textColorAttentionMedium: Color { get }
-    var textColorOnDarkSurface: Color { get }
-    var surfaceColorPrimary: Color { get }
-    var surfaceColorSecondary: Color { get }
-    var surfaceColorTertiary: Color { get }
-    var surfaceColorQuartenary: Color { get }
-    var surfaceColorPrimaryInverse: Color { get }
-    var surfaceColorPrimaryConstantLight: Color { get }
-    var surfaceColorPrimaryConstantDark: Color { get }
-    var surfaceColorSuccess: Color { get }
-    var borderColorLowContrast: Color { get }
-    var borderColorMediumContrast: Color { get }
-    var borderColorHighContrast: Color { get }
-    var coreColorPrimary: Color { get }
-    var coreColorSecondary: Color { get }
-    var coreColorTertiary: Color { get }
+${colorPropertyDeclarations}
 }
 
 /// Unified sizing scheme protocol for all content brands
 public protocol DesignSizingScheme: Sendable {
-    var gridSpaceRespBase: CGFloat { get }
-    var gridSpaceRespSm: CGFloat { get }
-    var gridSpaceRespLg: CGFloat { get }
-    var gridSpaceRespXl: CGFloat { get }
-    var sectionSpaceBase: CGFloat { get }
-    var sectionSpaceSm: CGFloat { get }
-    var sectionSpaceLg: CGFloat { get }
-    var pageInlineSpace: CGFloat { get }
+${sizingPropertyDeclarations}
 }
 
 /// Unified effects scheme protocol for all color brands
 public protocol DesignEffectsScheme: Sendable {
-    var shadowSoftSm: ShadowStyle { get }
-    var shadowSoftMd: ShadowStyle { get }
-    var shadowSoftLg: ShadowStyle { get }
-    var shadowSoftXl: ShadowStyle { get }
-    var shadowHardSm: ShadowStyle { get }
-    var shadowHardMd: ShadowStyle { get }
-    var shadowHardLg: ShadowStyle { get }
-    var shadowHardXl: ShadowStyle { get }
+${effectsPropertyDeclarations}
 }
 
 // MARK: - Dual-Axis Theme Provider
