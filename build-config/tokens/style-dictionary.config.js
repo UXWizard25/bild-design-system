@@ -3242,10 +3242,10 @@ public protocol ${brandPascal}ColorScheme: Sendable {
 `;
   }
 
-  // Generate implementation struct
+  // Generate implementation struct (conforms to both brand-specific and unified protocols)
   const structName = `${brandPascal}${isLight ? 'Light' : 'Dark'}Colors`;
   output += `/// ${isLight ? 'Light' : 'Dark'} mode color implementation
-public struct ${structName}: ${brandPascal}ColorScheme {
+public struct ${structName}: ${brandPascal}ColorScheme, DesignColorScheme {
     public static let shared = ${structName}()
     private init() {}
 
@@ -3324,10 +3324,10 @@ public protocol ${brandPascal}SizingScheme: Sendable {
 `;
   }
 
-  // Generate implementation struct
+  // Generate implementation struct (conforms to both brand-specific and unified protocols)
   const structName = `${brandPascal}Sizing${isCompact ? 'Compact' : 'Regular'}`;
   output += `/// ${isCompact ? 'Compact' : 'Regular'} size class implementation
-public struct ${structName}: ${brandPascal}SizingScheme {
+public struct ${structName}: ${brandPascal}SizingScheme, DesignSizingScheme {
     public static let shared = ${structName}()
     private init() {}
 
@@ -3470,10 +3470,10 @@ public protocol ${brandPascal}EffectsScheme: Sendable {
 `;
   }
 
-  // Generate implementation struct
+  // Generate implementation struct (conforms to both brand-specific and unified protocols)
   const structName = `${brandPascal}Effects${isLight ? 'Light' : 'Dark'}`;
   output += `/// ${isLight ? 'Light' : 'Dark'} mode effects implementation
-public struct ${structName}: ${brandPascal}EffectsScheme {
+public struct ${structName}: ${brandPascal}EffectsScheme, DesignEffectsScheme {
     public static let shared = ${structName}()
     private init() {}
 

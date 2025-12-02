@@ -3512,7 +3512,7 @@ async function generateSwiftUISharedFiles() {
   const version = packageJson.version;
   let successful = 0;
 
-  // Generate Enums.swift (Density, SizeClass, Brand)
+  // Generate Enums.swift (Density, SizeClass, ColorBrand, ContentBrand)
   const enumsContent = `//
 // Do not edit directly, this file was auto-generated.
 //
@@ -3538,7 +3538,24 @@ public enum SizeClass: String, CaseIterable, Sendable {
     case regular   // Tablets, Phones (Landscape) - maps to md/lg breakpoints
 }
 
-/// Available brands in the BILD Design System
+/// Color brands - defines the color palette and effects
+/// Only brands with their own color schemes are included
+public enum ColorBrand: String, CaseIterable, Sendable {
+    case bild
+    case sportbild
+    // Note: Advertorial uses BILD or SportBILD colors
+}
+
+/// Content brands - defines sizing, typography, and layout tokens
+/// All brands including those without own color schemes
+public enum ContentBrand: String, CaseIterable, Sendable {
+    case bild
+    case sportbild
+    case advertorial
+}
+
+/// Legacy: Combined brand enum for backwards compatibility
+@available(*, deprecated, message: "Use ColorBrand and ContentBrand for dual-axis theming")
 public enum Brand: String, CaseIterable, Sendable {
     case bild
     case sportbild
@@ -3762,7 +3779,7 @@ public extension View {
   console.log('     ✅ shared/ShadowStyle.swift');
   successful++;
 
-  // Generate DesignSystemTheme.swift
+  // Generate DesignSystemTheme.swift with dual-axis architecture
   const designSystemThemeContent = `//
 // Do not edit directly, this file was auto-generated.
 //
@@ -3774,17 +3791,98 @@ public extension View {
 
 import SwiftUI
 
-/// Multi-brand theme provider for white-label apps
+// MARK: - Unified Protocols
+
+/// Unified color scheme protocol for all color brands (BILD, SportBILD)
+/// Allows interchangeable color schemes across content brands
+public protocol DesignColorScheme: Sendable {
+    var textColorPrimary: Color { get }
+    var textColorSecondary: Color { get }
+    var textColorMuted: Color { get }
+    var textColorAccent: Color { get }
+    var textColorAccentConstant: Color { get }
+    var textColorPrimaryInverse: Color { get }
+    var textColorPrimaryConstant: Color { get }
+    var textColorPrimaryInverseConstant: Color { get }
+    var textColorSuccessConstant: Color { get }
+    var textColorAttentionHigh: Color { get }
+    var textColorAttentionMedium: Color { get }
+    var textColorOnDarkSurface: Color { get }
+    var surfaceColorPrimary: Color { get }
+    var surfaceColorSecondary: Color { get }
+    var surfaceColorTertiary: Color { get }
+    var surfaceColorQuartenary: Color { get }
+    var surfaceColorPrimaryInverse: Color { get }
+    var surfaceColorPrimaryConstantLight: Color { get }
+    var surfaceColorPrimaryConstantDark: Color { get }
+    var surfaceColorSuccess: Color { get }
+    var borderColorLowContrast: Color { get }
+    var borderColorMediumContrast: Color { get }
+    var borderColorHighContrast: Color { get }
+    var coreColorPrimary: Color { get }
+    var coreColorSecondary: Color { get }
+    var coreColorTertiary: Color { get }
+}
+
+/// Unified sizing scheme protocol for all content brands
+public protocol DesignSizingScheme: Sendable {
+    var gridSpaceRespBase: CGFloat { get }
+    var gridSpaceRespSm: CGFloat { get }
+    var gridSpaceRespLg: CGFloat { get }
+    var gridSpaceRespXl: CGFloat { get }
+    var sectionSpaceBase: CGFloat { get }
+    var sectionSpaceSm: CGFloat { get }
+    var sectionSpaceLg: CGFloat { get }
+    var pageInlineSpace: CGFloat { get }
+}
+
+/// Unified effects scheme protocol for all color brands
+public protocol DesignEffectsScheme: Sendable {
+    var shadowSoftSm: ShadowStyle { get }
+    var shadowSoftMd: ShadowStyle { get }
+    var shadowSoftLg: ShadowStyle { get }
+    var shadowSoftXl: ShadowStyle { get }
+    var shadowHardSm: ShadowStyle { get }
+    var shadowHardMd: ShadowStyle { get }
+    var shadowHardLg: ShadowStyle { get }
+    var shadowHardXl: ShadowStyle { get }
+}
+
+// MARK: - Dual-Axis Theme Provider
+
+/// Multi-brand theme provider with dual-axis architecture
+/// - ColorBrand axis: Defines colors and effects (BILD, SportBILD)
+/// - ContentBrand axis: Defines sizing, typography, layout (BILD, SportBILD, Advertorial)
+///
+/// Example usage:
+/// \`\`\`swift
+/// // Advertorial content with BILD colors
+/// DesignSystemTheme(colorBrand: .bild, contentBrand: .advertorial)
+///
+/// // Advertorial content with SportBILD colors
+/// DesignSystemTheme(colorBrand: .sportbild, contentBrand: .advertorial)
+/// \`\`\`
 @Observable
 public final class DesignSystemTheme: @unchecked Sendable {
 
     // MARK: - Shared Instance
     public static let shared = DesignSystemTheme()
 
-    // MARK: - Theme State
-    public var brand: Brand = .bild
+    // MARK: - Theme State (Dual-Axis)
+
+    /// Color brand determines the color palette and effects
+    public var colorBrand: ColorBrand = .bild
+
+    /// Content brand determines sizing, typography, and layout
+    public var contentBrand: ContentBrand = .bild
+
+    /// Dark/Light mode
     public var isDarkTheme: Bool = false
+
+    /// Size class for responsive layouts
     public var sizeClass: SizeClass = .compact
+
+    /// Density mode
     public var density: Density = .default
 
     private init() {}
@@ -3792,15 +3890,53 @@ public final class DesignSystemTheme: @unchecked Sendable {
     // MARK: - Factory
 
     public init(
-        brand: Brand = .bild,
+        colorBrand: ColorBrand = .bild,
+        contentBrand: ContentBrand = .bild,
         isDarkTheme: Bool = false,
         sizeClass: SizeClass = .compact,
         density: Density = .default
     ) {
-        self.brand = brand
+        self.colorBrand = colorBrand
+        self.contentBrand = contentBrand
         self.isDarkTheme = isDarkTheme
         self.sizeClass = sizeClass
         self.density = density
+    }
+
+    // MARK: - Color Access (based on colorBrand)
+
+    /// Current color scheme based on colorBrand and isDarkTheme
+    public var colors: any DesignColorScheme {
+        switch colorBrand {
+        case .bild:
+            return isDarkTheme ? BildDarkColors.shared : BildLightColors.shared
+        case .sportbild:
+            return isDarkTheme ? SportbildDarkColors.shared : SportbildLightColors.shared
+        }
+    }
+
+    /// Current effects scheme based on colorBrand and isDarkTheme
+    public var effects: any DesignEffectsScheme {
+        switch colorBrand {
+        case .bild:
+            return isDarkTheme ? BildEffectsDark.shared : BildEffectsLight.shared
+        case .sportbild:
+            return isDarkTheme ? SportbildEffectsDark.shared : SportbildEffectsLight.shared
+        }
+    }
+
+    // MARK: - Sizing Access (based on contentBrand)
+
+    /// Current sizing scheme based on contentBrand and sizeClass
+    public var sizing: any DesignSizingScheme {
+        switch contentBrand {
+        case .bild:
+            return sizeClass == .compact ? BildSizingCompact.shared : BildSizingRegular.shared
+        case .sportbild:
+            return sizeClass == .compact ? SportbildSizingCompact.shared : SportbildSizingRegular.shared
+        case .advertorial:
+            return sizeClass == .compact ? AdvertorialSizingCompact.shared : AdvertorialSizingRegular.shared
+        }
     }
 }
 
@@ -3820,15 +3956,23 @@ public extension EnvironmentValues {
 // MARK: - View Modifier
 
 public extension View {
-    /// Apply design system theme to view hierarchy
+    /// Apply design system theme with dual-axis brand selection
+    /// - Parameters:
+    ///   - colorBrand: Brand for colors and effects (BILD or SportBILD)
+    ///   - contentBrand: Brand for sizing, typography, layout (BILD, SportBILD, or Advertorial)
+    ///   - darkTheme: Enable dark mode
+    ///   - sizeClass: Size class for responsive layouts
+    ///   - density: UI density mode
     func designSystemTheme(
-        brand: Brand,
+        colorBrand: ColorBrand = .bild,
+        contentBrand: ContentBrand = .bild,
         darkTheme: Bool = false,
         sizeClass: SizeClass = .compact,
         density: Density = .default
     ) -> some View {
         let theme = DesignSystemTheme(
-            brand: brand,
+            colorBrand: colorBrand,
+            contentBrand: contentBrand,
             isDarkTheme: darkTheme,
             sizeClass: sizeClass,
             density: density
@@ -3846,7 +3990,8 @@ public extension View {
 }
 
 /**
- * Generates SwiftUI Theme Provider for each brand
+ * Generates SwiftUI Theme Provider for color brands only (BILD, SportBILD)
+ * Content-only brands like Advertorial use the central DesignSystemTheme
  * Creates: dist/ios/brands/{brand}/theme/{Brand}Theme.swift
  */
 async function generateSwiftUIThemeProviders() {
@@ -3854,7 +3999,7 @@ async function generateSwiftUIThemeProviders() {
     return { totalThemes: 0, successfulThemes: 0 };
   }
 
-  console.log('🎨 Generating SwiftUI Theme Providers...');
+  console.log('🎨 Generating SwiftUI Theme Providers (color brands only)...');
 
   let totalThemes = 0;
   let successfulThemes = 0;
@@ -3869,7 +4014,10 @@ async function generateSwiftUIThemeProviders() {
   const packageJson = require('../../package.json');
   const version = packageJson.version;
 
-  for (const brand of BRANDS) {
+  // Only generate theme providers for color brands (those with their own color tokens)
+  const COLOR_BRANDS = ['bild', 'sportbild'];
+
+  for (const brand of COLOR_BRANDS) {
     totalThemes++;
     const brandDir = path.join(iosDir, brand);
 
@@ -3887,10 +4035,6 @@ async function generateSwiftUIThemeProviders() {
       const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
       const brandLower = brand.toLowerCase();
 
-      // Check if brand has color tokens
-      const colorDir = path.join(brandDir, 'semantic', 'color');
-      const hasColors = fs.existsSync(colorDir) && fs.readdirSync(colorDir).some(f => f.endsWith('.swift'));
-
       const themeContent = `//
 // Do not edit directly, this file was auto-generated.
 //
@@ -3902,8 +4046,8 @@ async function generateSwiftUIThemeProviders() {
 
 import SwiftUI
 
-/// Central theme provider for ${brandPascal} brand
-/// Provides reactive access to all design tokens based on current context
+/// Convenience theme provider for ${brandPascal} brand
+/// For multi-brand apps, use DesignSystemTheme with colorBrand and contentBrand axes
 @Observable
 public final class ${brandPascal}Theme: @unchecked Sendable {
 
@@ -3925,6 +4069,11 @@ public final class ${brandPascal}Theme: @unchecked Sendable {
     /// Current sizing scheme (Compact/Regular)
     public var sizing: any ${brandPascal}SizingScheme {
         sizeClass == .compact ? ${brandPascal}SizingCompact.shared : ${brandPascal}SizingRegular.shared
+    }
+
+    /// Current effects scheme (Light/Dark)
+    public var effects: any ${brandPascal}EffectsScheme {
+        isDarkTheme ? ${brandPascal}EffectsDark.shared : ${brandPascal}EffectsLight.shared
     }
 
     private init() {}
