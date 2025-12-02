@@ -158,6 +158,17 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
               }
               return `Colors${mode}.swift`;
             }
+            // For density tokens
+            if (cssOptions.modeType === 'density' && cssOptions.mode) {
+              const densityMode = cssOptions.mode.charAt(0).toUpperCase() + cssOptions.mode.slice(1);
+              const isComponent = buildPath.includes('/components/');
+              if (isComponent) {
+                const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                const componentName = componentMatch ? componentMatch[1] : '';
+                return `${componentName}Density${densityMode}.swift`;
+              }
+              return `Density${densityMode}.swift`;
+            }
             return `${fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.swift`;
           })(),
           format: (() => {
@@ -186,7 +197,11 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
               const componentMatch = buildPath.match(/\/components\/([^/]+)/);
               return componentMatch ? componentMatch[1] : '';
             })(),
-            tokenType: cssOptions.modeType === 'color' ? 'color' : 'sizing',
+            tokenType: (() => {
+              if (cssOptions.modeType === 'color') return 'color';
+              if (cssOptions.modeType === 'density') return 'density';
+              return 'sizing';
+            })(),
             mode: (() => {
               if (cssOptions.modeType === 'color') {
                 return cssOptions.mode; // light or dark
