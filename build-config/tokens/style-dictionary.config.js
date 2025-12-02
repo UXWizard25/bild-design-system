@@ -3034,10 +3034,23 @@ public extension Color {
 };
 
 /**
- * Format: SwiftUI Primitives (consolidated)
+ * Format: SwiftUI Primitives (consolidated with separate Opacity enum)
+ * Best practice: Single file with nested enums for Color, Font, Size, Space
+ * Opacity tokens are separated with Double type for proper SwiftUI usage
  */
 const swiftuiPrimitivesFormat = ({ dictionary, options, file }) => {
   const version = packageJson.version;
+
+  // Helper to detect opacity tokens
+  const isOpacityToken = (token) => {
+    const tokenType = token.$type || token.type;
+    const name = (token.name || '').toLowerCase();
+    return tokenType === 'opacity' || name.includes('opacity');
+  };
+
+  // Separate opacity tokens from other tokens
+  const opacityTokens = dictionary.allTokens.filter(isOpacityToken);
+  const nonOpacityTokens = dictionary.allTokens.filter(t => !isOpacityToken(t));
 
   let output = `//
 // Do not edit directly, this file was auto-generated.
@@ -3051,19 +3064,25 @@ const swiftuiPrimitivesFormat = ({ dictionary, options, file }) => {
 import SwiftUI
 
 /// Primitive design tokens - raw values without semantic meaning
+/// Organized by category with nested enums following SwiftUI best practices
 public enum DesignTokenPrimitives {
 `;
 
-  // Group tokens by their collection/category
+  // Group non-opacity tokens by their collection/category
   const grouped = {};
-  dictionary.allTokens.forEach(token => {
+  nonOpacityTokens.forEach(token => {
     const collectionName = token.$extensions?.['com.figma']?.collectionName || 'Other';
-    const category = collectionName.replace('_', '').replace('Primitive', '');
+    // Normalize category name - remove 'Primitive' suffix and underscores
+    let category = collectionName.replace(/_/g, '').replace(/Primitive$/i, '');
+    // Ensure Color category stays as Color (not just empty)
+    if (category === '' || category.toLowerCase() === 'color') {
+      category = 'Color';
+    }
     if (!grouped[category]) grouped[category] = [];
     grouped[category].push(token);
   });
 
-  // Process each category
+  // Process each category (excluding opacity which is handled separately)
   Object.keys(grouped).sort().forEach(category => {
     const tokens = grouped[category];
     const enumName = toPascalCase(category);
@@ -3082,6 +3101,7 @@ public enum DesignTokenPrimitives {
         return;
       }
       usedNames.add(name);
+
       const type = token.$type || token.type;
       const value = token.$value !== undefined ? token.$value : token.value;
       const comment = token.comment || token.description;
@@ -3091,32 +3111,28 @@ public enum DesignTokenPrimitives {
       }
 
       let valueOutput;
+      let typeAnnotation = '';
+
       if (type === 'color') {
         // Use SwiftUI.Color to avoid collision with enum name
         const colorValue = toSwiftUIColor(value);
         valueOutput = colorValue.replace('Color(', 'SwiftUI.Color(');
-      } else if (type === 'fontFamily') {
-        valueOutput = `"${value}"`;
-      } else if (type === 'fontWeight') {
-        valueOutput = toSwiftUIFontWeight(value);
-      } else if (typeof value === 'number') {
-        valueOutput = `CGFloat(${value})`;
-      } else if (typeof value === 'string' && !isNaN(parseFloat(value))) {
-        valueOutput = `CGFloat(${parseFloat(value)})`;
-      } else {
-        valueOutput = `"${value}"`;
-      }
-
-      // Determine Swift type annotation - use SwiftUI prefix to avoid collision with enum names
-      let typeAnnotation = '';
-      if (type === 'color') {
         typeAnnotation = ': SwiftUI.Color';
       } else if (type === 'fontFamily') {
+        valueOutput = `"${value}"`;
         typeAnnotation = ': String';
       } else if (type === 'fontWeight') {
+        valueOutput = toSwiftUIFontWeight(value);
         typeAnnotation = ': SwiftUI.Font.Weight';  // Use full path to avoid collision with Font enum
-      } else if (typeof value === 'number' || (typeof value === 'string' && !isNaN(parseFloat(value)))) {
+      } else if (typeof value === 'number') {
+        valueOutput = `CGFloat(${value})`;
         typeAnnotation = ': CGFloat';
+      } else if (typeof value === 'string' && !isNaN(parseFloat(value))) {
+        valueOutput = `CGFloat(${parseFloat(value)})`;
+        typeAnnotation = ': CGFloat';
+      } else {
+        valueOutput = `"${value}"`;
+        typeAnnotation = ': String';
       }
 
       output += `        public static let ${name}${typeAnnotation} = ${valueOutput}\n`;
@@ -3124,6 +3140,36 @@ public enum DesignTokenPrimitives {
 
     output += `    }\n`;
   });
+
+  // Generate separate Opacity enum with Double type (SwiftUI best practice)
+  if (opacityTokens.length > 0) {
+    output += `\n    // MARK: - Opacity\n`;
+    output += `    /// Opacity values as Double (0.0 - 1.0) for use with SwiftUI .opacity() modifier\n`;
+    output += `    public enum Opacity {\n`;
+
+    const usedOpacityNames = new Set();
+    opacityTokens.forEach(token => {
+      let name = toSwiftIdentifier(token.name);
+
+      if (usedOpacityNames.has(name)) {
+        return;
+      }
+      usedOpacityNames.add(name);
+
+      const value = token.$value !== undefined ? token.$value : token.value;
+      const comment = token.comment || token.description;
+
+      if (comment) {
+        output += `        /// ${comment}\n`;
+      }
+
+      // Opacity should be Double, not CGFloat
+      let numValue = typeof value === 'number' ? value : parseFloat(value);
+      output += `        public static let ${name}: Double = ${numValue}\n`;
+    });
+
+    output += `    }\n`;
+  }
 
   output += `}\n`;
   return output;

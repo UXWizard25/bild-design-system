@@ -400,7 +400,8 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
     }),
     // SwiftUI: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
     // Skip swiftui for overrides (brand mapping layer) - these are intermediate tokens not needed in final output
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !SWIFTUI_ENABLED || cssOptions.skipCompose ? {} : {
+    // Skip swiftui for individual primitives (they're consolidated into DesignTokenPrimitives.swift)
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !SWIFTUI_ENABLED || cssOptions.skipCompose || cssOptions.skipSwiftUI ? {} : {
       swiftui: {
         transformGroup: 'custom/ios-swift',
         buildPath: (() => {
@@ -806,6 +807,8 @@ function createEffectConfig(brand, colorMode) {
 
 /**
  * Builds Shared Primitive Tokens
+ * Note: iOS/SwiftUI primitives are built separately via buildConsolidatedSwiftUIPrimitives()
+ * to create a single consolidated DesignTokenPrimitives.swift file
  */
 async function buildSharedPrimitives() {
   console.log('\n📦 Building Shared Primitives:\n');
@@ -823,9 +826,10 @@ async function buildSharedPrimitives() {
     const baseName = path.basename(file, '.json');
     const sourcePath = path.join(sharedDir, file);
 
+    // Skip SwiftUI for individual primitives - they'll be consolidated later
     const config = {
       source: [sourcePath],
-      platforms: createStandardPlatformConfig(`${DIST_DIR}/css/shared`, baseName)
+      platforms: createStandardPlatformConfig(`${DIST_DIR}/css/shared`, baseName, { skipSwiftUI: true })
     };
 
     try {
@@ -839,6 +843,63 @@ async function buildSharedPrimitives() {
   }
 
   return { total: files.length, successful };
+}
+
+/**
+ * Builds consolidated SwiftUI Primitives
+ * Creates: dist/ios/shared/DesignTokenPrimitives.swift
+ * Combines all primitive JSON files into a single Swift file with nested enums
+ */
+async function buildConsolidatedSwiftUIPrimitives() {
+  if (!SWIFTUI_ENABLED) {
+    return { total: 0, successful: 0 };
+  }
+
+  console.log('🍎 Building Consolidated SwiftUI Primitives...');
+
+  const sharedDir = path.join(TOKENS_DIR, 'shared');
+  if (!fs.existsSync(sharedDir)) {
+    console.log('  ⚠️  No shared/ directory found');
+    return { total: 0, successful: 0 };
+  }
+
+  // Combine all primitive JSON files
+  const files = fs.readdirSync(sharedDir).filter(f => f.endsWith('.json'));
+  const sourcePaths = files.map(f => path.join(sharedDir, f));
+
+  const config = {
+    source: sourcePaths,
+    platforms: {
+      swiftui: {
+        transformGroup: 'custom/ios-swift',
+        buildPath: `${DIST_DIR}/ios/shared/`,
+        files: [{
+          destination: 'DesignTokenPrimitives.swift',
+          format: 'swiftui/primitives',
+          filter: (token) => {
+            // Exclude TextLabels tokens
+            if (token.path && token.path.includes('TextLabels')) {
+              return false;
+            }
+            return true;
+          },
+          options: {
+            outputReferences: false
+          }
+        }]
+      }
+    }
+  };
+
+  try {
+    const sd = new StyleDictionary(config);
+    await sd.buildAllPlatforms();
+    console.log('     ✅ ios/shared/DesignTokenPrimitives.swift');
+    return { total: 1, successful: 1 };
+  } catch (error) {
+    console.error(`  ❌ Consolidated SwiftUI Primitives: ${error.message}`);
+    return { total: 1, successful: 0 };
+  }
 }
 
 /**
@@ -3397,6 +3458,36 @@ async function cleanupComposeIndividualFiles() {
   return { removed: removedCount };
 }
 
+/**
+ * Removes individual SwiftUI primitive files, keeping only DesignTokenPrimitives.swift
+ * This follows SwiftUI best practice of consolidated primitives with nested enums
+ */
+async function cleanupSwiftUIIndividualPrimitives() {
+  if (!SWIFTUI_ENABLED) {
+    return { removed: 0 };
+  }
+
+  console.log('🧹 Cleaning up individual SwiftUI primitive files...');
+
+  let removedCount = 0;
+
+  // Clean up individual primitive files (keep only DesignTokenPrimitives.swift)
+  const sharedDir = path.join(DIST_DIR, 'ios', 'shared');
+  if (fs.existsSync(sharedDir)) {
+    const primitiveFiles = ['Colorprimitive.swift', 'Fontprimitive.swift', 'Sizeprimitive.swift', 'Spaceprimitive.swift'];
+    for (const fileName of primitiveFiles) {
+      const filePath = path.join(sharedDir, fileName);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        removedCount++;
+      }
+    }
+  }
+
+  console.log(`  📊 Removed ${removedCount} individual Swift primitive files\n`);
+  return { removed: removedCount };
+}
+
 // ============================================================================
 // SWIFTUI POST-PROCESSING FUNCTIONS
 // ============================================================================
@@ -3944,8 +4035,14 @@ async function main() {
   // Generate SwiftUI Shared Infrastructure
   stats.swiftuiShared = await generateSwiftUISharedFiles();
 
+  // Build consolidated SwiftUI Primitives
+  stats.swiftuiPrimitives = await buildConsolidatedSwiftUIPrimitives();
+
   // Generate SwiftUI Theme Providers
   stats.swiftuiThemes = await generateSwiftUIThemeProviders();
+
+  // Cleanup individual SwiftUI primitive files
+  stats.swiftuiCleanup = await cleanupSwiftUIIndividualPrimitives();
 
   // Create manifest
   createManifest(stats);
@@ -3988,8 +4085,14 @@ async function main() {
   if (SWIFTUI_ENABLED && stats.swiftuiShared) {
     console.log(`   - SwiftUI Shared Files: ${stats.swiftuiShared.successful}/${stats.swiftuiShared.total}`);
   }
+  if (SWIFTUI_ENABLED && stats.swiftuiPrimitives) {
+    console.log(`   - SwiftUI Primitives Consolidated: ${stats.swiftuiPrimitives.successful}/${stats.swiftuiPrimitives.total}`);
+  }
   if (SWIFTUI_ENABLED && stats.swiftuiThemes) {
     console.log(`   - SwiftUI Themes: ${stats.swiftuiThemes.successfulThemes}/${stats.swiftuiThemes.totalThemes}`);
+  }
+  if (SWIFTUI_ENABLED && stats.swiftuiCleanup) {
+    console.log(`   - SwiftUI Files Cleaned: ${stats.swiftuiCleanup.removed} individual primitive files removed`);
   }
   console.log(`   - Builds erfolgreich: ${successfulBuilds}/${totalBuilds}`);
   console.log(`   - Output-Verzeichnis: dist/\n`);
