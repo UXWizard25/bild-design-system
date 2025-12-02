@@ -3071,8 +3071,17 @@ public enum DesignTokenPrimitives {
     output += `\n    // MARK: - ${enumName}\n`;
     output += `    public enum ${enumName} {\n`;
 
+    // Track used names to avoid duplicates
+    const usedNames = new Set();
+
     tokens.forEach(token => {
-      const name = toSwiftIdentifier(token.name);
+      let name = toSwiftIdentifier(token.name);
+
+      // Skip if name already used (deduplication)
+      if (usedNames.has(name)) {
+        return;
+      }
+      usedNames.add(name);
       const type = token.$type || token.type;
       const value = token.$value !== undefined ? token.$value : token.value;
       const comment = token.comment || token.description;
@@ -3083,7 +3092,9 @@ public enum DesignTokenPrimitives {
 
       let valueOutput;
       if (type === 'color') {
-        valueOutput = toSwiftUIColor(value);
+        // Use SwiftUI.Color to avoid collision with enum name
+        const colorValue = toSwiftUIColor(value);
+        valueOutput = colorValue.replace('Color(', 'SwiftUI.Color(');
       } else if (type === 'fontFamily') {
         valueOutput = `"${value}"`;
       } else if (type === 'fontWeight') {
@@ -3096,14 +3107,14 @@ public enum DesignTokenPrimitives {
         valueOutput = `"${value}"`;
       }
 
-      // Determine Swift type annotation
+      // Determine Swift type annotation - use SwiftUI prefix to avoid collision with enum names
       let typeAnnotation = '';
       if (type === 'color') {
-        typeAnnotation = ': Color';
+        typeAnnotation = ': SwiftUI.Color';
       } else if (type === 'fontFamily') {
         typeAnnotation = ': String';
       } else if (type === 'fontWeight') {
-        typeAnnotation = ': Font.Weight';
+        typeAnnotation = ': SwiftUI.Font.Weight';  // Use full path to avoid collision with Font enum
       } else if (typeof value === 'number' || (typeof value === 'string' && !isNaN(parseFloat(value)))) {
         typeAnnotation = ': CGFloat';
       }
