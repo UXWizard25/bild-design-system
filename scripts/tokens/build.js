@@ -6102,7 +6102,13 @@ async function buildOptimizedJSOutput() {
 
       let fxOutput = JS_FILE_HEADER + `// Brand: ${brand}\n\n`;
       fxOutput += `export const effects = ${JSON.stringify(effects, null, 2)};\n\n`;
-      fxOutput += `export const light = effects.light;\nexport const dark = effects.dark;\n`;
+      fxOutput += `export const light = effects.light;\nexport const dark = effects.dark;\n\n`;
+      fxOutput += `// Flat exports (light mode) for tree-shaking\n`;
+      if (effects.light) {
+        Object.entries(effects.light).forEach(([name, value]) => {
+          fxOutput += `export const ${name} = ${JSON.stringify(value)};\n`;
+        });
+      }
       writeJsFile(path.join(jsDistDir, 'brands', brand, 'effects.js'), fxOutput);
     }
 
@@ -6116,6 +6122,12 @@ async function buildOptimizedJSOutput() {
     let densityOutput = JS_FILE_HEADER + `// Brand: ${brand}\n\n`;
     densityOutput += `export const density = ${JSON.stringify(density, null, 2)};\n\n`;
     DENSITY_MODES.forEach(m => { densityOutput += `export const ${m === 'default' ? 'defaultDensity' : m} = density.${m};\n`; });
+    densityOutput += `\n// Flat exports (default density) for tree-shaking\n`;
+    if (density.default) {
+      Object.entries(density.default).forEach(([name, value]) => {
+        densityOutput += `export const ${name} = ${formatJsValue(value)};\n`;
+      });
+    }
     writeJsFile(path.join(jsDistDir, 'brands', brand, 'density.js'), densityOutput);
 
     // Build components
@@ -6194,7 +6206,26 @@ async function buildOptimizedJSOutput() {
         compOutput += `export const get${comp}Tokens = (colorMode = 'light', breakpoint = 'md', density = 'default') => ({\n`;
         compOutput += `  ...${comp}.colors?.[colorMode],\n  ...${comp}.sizing?.[breakpoint],\n`;
         compOutput += `  ...${comp}.density?.[density],\n  ...${comp}.typography?.[breakpoint],\n`;
-        compOutput += `  ...${comp}.effects?.[colorMode]\n});\n\nexport default ${comp};\n`;
+        compOutput += `  ...${comp}.effects?.[colorMode]\n});\n\n`;
+
+        // Add flat exports for tree-shaking (light colors, xs sizing, default density)
+        compOutput += `// Flat exports for tree-shaking\n`;
+        if (component.colors?.light) {
+          Object.entries(component.colors.light).forEach(([name, value]) => {
+            compOutput += `export const ${name} = ${formatJsValue(value)};\n`;
+          });
+        }
+        if (component.sizing?.xs) {
+          Object.entries(component.sizing.xs).forEach(([name, value]) => {
+            compOutput += `export const ${name} = ${formatJsValue(value)};\n`;
+          });
+        }
+        if (component.density?.default) {
+          Object.entries(component.density.default).forEach(([name, value]) => {
+            compOutput += `export const ${name} = ${formatJsValue(value)};\n`;
+          });
+        }
+        compOutput += `\nexport default ${comp};\n`;
         writeJsFile(path.join(jsDistDir, 'brands', brand, 'components', `${comp}.js`), compOutput);
         builtComponents.push(comp);
       }
@@ -6300,6 +6331,12 @@ export type SizeValue = string;
 
     // Colors types
     if (hasColors) {
+      const colorData = {};
+      COLOR_MODES.forEach(mode => {
+        const data = readTokenFile(path.join(TOKENS_DIR, 'brands', brand, 'color', `colormode-${mode}.json`));
+        if (data) colorData[mode] = flattenTokens(data);
+      });
+
       let colorsTypes = TS_HEADER + `import type { ColorValue } from '../../types';\n\n`;
       colorsTypes += `export interface ColorTokens {\n`;
       colorsTypes += `  light: Record<string, ColorValue>;\n`;
@@ -6307,30 +6344,96 @@ export type SizeValue = string;
       colorsTypes += `}\n\n`;
       colorsTypes += `export declare const colors: ColorTokens;\n`;
       colorsTypes += `export declare const light: ColorTokens['light'];\n`;
-      colorsTypes += `export declare const dark: ColorTokens['dark'];\n`;
+      colorsTypes += `export declare const dark: ColorTokens['dark'];\n\n`;
+      colorsTypes += `// Flat exports (light mode)\n`;
+      if (colorData.light) {
+        Object.keys(colorData.light).forEach(name => {
+          colorsTypes += `export declare const ${name}: ColorValue;\n`;
+        });
+      }
       writeJsFile(path.join(jsDistDir, 'brands', brand, 'colors.d.ts'), colorsTypes);
     }
 
     // Spacing types
+    const spacingData = {};
+    BREAKPOINTS.forEach(bp => {
+      const bpDir = path.join(TOKENS_DIR, 'brands', brand, 'breakpoints');
+      if (fs.existsSync(bpDir)) {
+        const files = fs.readdirSync(bpDir).filter(f => f.startsWith(`breakpoint-${bp}`));
+        if (files.length > 0) {
+          const data = readTokenFile(path.join(bpDir, files[0]));
+          if (data) spacingData[bp] = flattenTokens(data);
+        }
+      }
+    });
+
     let spacingTypes = TS_HEADER + `import type { SpacingValue } from '../../types';\n\n`;
     spacingTypes += `export interface SpacingTokens {\n`;
     BREAKPOINTS.forEach(bp => { spacingTypes += `  ${bp}: Record<string, SpacingValue>;\n`; });
     spacingTypes += `}\n\n`;
     spacingTypes += `export declare const spacing: SpacingTokens;\n`;
     BREAKPOINTS.forEach(bp => { spacingTypes += `export declare const ${bp}: SpacingTokens['${bp}'];\n`; });
+    spacingTypes += `\n// Flat exports (xs breakpoint)\n`;
+    if (spacingData.xs) {
+      Object.keys(spacingData.xs).forEach(name => {
+        spacingTypes += `export declare const ${name}: SpacingValue;\n`;
+      });
+    }
     writeJsFile(path.join(jsDistDir, 'brands', brand, 'spacing.d.ts'), spacingTypes);
 
     // Typography types
+    const typoData = {};
+    BREAKPOINTS.forEach(bp => {
+      const data = readTokenFile(path.join(TOKENS_DIR, 'brands', brand, 'semantic', 'typography', `typography-${bp}.json`));
+      if (data) {
+        typoData[bp] = {};
+        const extractT = (obj) => {
+          for (const [key, value] of Object.entries(obj)) {
+            if (value && typeof value === 'object') {
+              if ('$value' in value && value.$type === 'typography') {
+                typoData[bp][toCamelCase(key)] = true;
+              } else if (!Array.isArray(value)) extractT(value);
+            }
+          }
+        };
+        extractT(data);
+      }
+    });
+
     let typoTypes = TS_HEADER + `import type { TypographyStyle } from '../../types';\n\n`;
     typoTypes += `export interface TypographyTokens {\n`;
     BREAKPOINTS.forEach(bp => { typoTypes += `  ${bp}: Record<string, TypographyStyle>;\n`; });
     typoTypes += `}\n\n`;
     typoTypes += `export declare const typography: TypographyTokens;\n`;
     BREAKPOINTS.forEach(bp => { typoTypes += `export declare const ${bp}: TypographyTokens['${bp}'];\n`; });
+    typoTypes += `\n// Flat exports (xs breakpoint)\n`;
+    if (typoData.xs) {
+      Object.keys(typoData.xs).forEach(name => {
+        typoTypes += `export declare const ${name}: TypographyStyle;\n`;
+      });
+    }
     writeJsFile(path.join(jsDistDir, 'brands', brand, 'typography.d.ts'), typoTypes);
 
     // Effects types
     if (hasColors) {
+      const fxData = {};
+      COLOR_MODES.forEach(mode => {
+        const data = readTokenFile(path.join(TOKENS_DIR, 'brands', brand, 'semantic', 'effects', `effects-${mode}.json`));
+        if (data) {
+          fxData[mode] = {};
+          const extractFx = (obj) => {
+            for (const [key, value] of Object.entries(obj)) {
+              if (value && typeof value === 'object') {
+                if ('$value' in value && value.$type === 'shadow') {
+                  fxData[mode][toCamelCase(key)] = true;
+                } else if (!Array.isArray(value)) extractFx(value);
+              }
+            }
+          };
+          extractFx(data);
+        }
+      });
+
       let fxTypes = TS_HEADER + `import type { ShadowLayer } from '../../types';\n\n`;
       fxTypes += `export interface EffectsTokens {\n`;
       fxTypes += `  light: Record<string, ShadowLayer[]>;\n`;
@@ -6338,17 +6441,35 @@ export type SizeValue = string;
       fxTypes += `}\n\n`;
       fxTypes += `export declare const effects: EffectsTokens;\n`;
       fxTypes += `export declare const light: EffectsTokens['light'];\n`;
-      fxTypes += `export declare const dark: EffectsTokens['dark'];\n`;
+      fxTypes += `export declare const dark: EffectsTokens['dark'];\n\n`;
+      fxTypes += `// Flat exports (light mode)\n`;
+      if (fxData.light) {
+        Object.keys(fxData.light).forEach(name => {
+          fxTypes += `export declare const ${name}: ShadowLayer[];\n`;
+        });
+      }
       writeJsFile(path.join(jsDistDir, 'brands', brand, 'effects.d.ts'), fxTypes);
     }
 
     // Density types
+    const densityData = {};
+    DENSITY_MODES.forEach(mode => {
+      const data = readTokenFile(path.join(TOKENS_DIR, 'brands', brand, 'density', `density-${mode}.json`));
+      if (data) densityData[mode] = flattenTokens(data);
+    });
+
     let densityTypes = TS_HEADER + `import type { SizeValue } from '../../types';\n\n`;
     densityTypes += `export interface DensityTokens {\n`;
     DENSITY_MODES.forEach(m => { densityTypes += `  ${m}: Record<string, SizeValue>;\n`; });
     densityTypes += `}\n\n`;
     densityTypes += `export declare const density: DensityTokens;\n`;
     DENSITY_MODES.forEach(m => { densityTypes += `export declare const ${m === 'default' ? 'defaultDensity' : m}: DensityTokens['${m}'];\n`; });
+    densityTypes += `\n// Flat exports (default density)\n`;
+    if (densityData.default) {
+      Object.keys(densityData.default).forEach(name => {
+        densityTypes += `export declare const ${name}: SizeValue;\n`;
+      });
+    }
     writeJsFile(path.join(jsDistDir, 'brands', brand, 'density.d.ts'), densityTypes);
 
     // Component types
@@ -6359,6 +6480,23 @@ export type SizeValue = string;
         .filter(f => !f.startsWith('.') && !f.startsWith('_'));
 
       for (const comp of componentNames) {
+        // Read component tokens for flat export declarations
+        const compDir = path.join(componentsDir, comp);
+        const compFiles = fs.readdirSync(compDir).filter(f => f.endsWith('.json'));
+        const flatTokenNames = new Set();
+
+        compFiles.forEach(file => {
+          const data = readTokenFile(path.join(compDir, file));
+          if (!data) return;
+          if (file.includes('-color-') && file.includes('-light')) {
+            Object.keys(flattenTokens(data)).forEach(n => flatTokenNames.add(n));
+          } else if (file.includes('-breakpoint-') && file.includes('-xs')) {
+            Object.keys(flattenTokens(data)).forEach(n => flatTokenNames.add(n));
+          } else if (file.includes('-density-') && file.includes('-default')) {
+            Object.keys(flattenTokens(data)).forEach(n => flatTokenNames.add(n));
+          }
+        });
+
         let compTypes = TS_HEADER + `import type { ColorValue, SpacingValue, TypographyStyle, ShadowLayer } from '../../../types';\n\n`;
         compTypes += `export interface ${comp}Tokens {\n`;
         compTypes += `  colors?: { light?: Record<string, ColorValue>; dark?: Record<string, ColorValue>; };\n`;
@@ -6368,8 +6506,12 @@ export type SizeValue = string;
         compTypes += `  effects?: { light?: Record<string, ShadowLayer[]>; dark?: Record<string, ShadowLayer[]>; };\n`;
         compTypes += `}\n\n`;
         compTypes += `export declare const ${comp}: ${comp}Tokens;\n`;
-        compTypes += `export declare function get${comp}Tokens(colorMode?: 'light' | 'dark', breakpoint?: 'xs' | 'sm' | 'md' | 'lg', density?: 'default' | 'dense' | 'spacious'): Record<string, any>;\n`;
-        compTypes += `export default ${comp};\n`;
+        compTypes += `export declare function get${comp}Tokens(colorMode?: 'light' | 'dark', breakpoint?: 'xs' | 'sm' | 'md' | 'lg', density?: 'default' | 'dense' | 'spacious'): Record<string, any>;\n\n`;
+        compTypes += `// Flat exports\n`;
+        flatTokenNames.forEach(name => {
+          compTypes += `export declare const ${name}: string | number;\n`;
+        });
+        compTypes += `\nexport default ${comp};\n`;
         writeJsFile(path.join(jsDistDir, 'brands', brand, 'components', `${comp}.d.ts`), compTypes);
       }
 
