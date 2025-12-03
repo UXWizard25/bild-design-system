@@ -27,9 +27,6 @@ const BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 const COLOR_MODES = ['light', 'dark'];
 const DENSITY_MODES = ['default', 'dense', 'spacious'];
 
-// Native platforms only use compact (sm) and regular (lg) size classes
-const NATIVE_BREAKPOINTS = ['sm', 'lg'];
-
 // Platform output toggles - set to false to disable output generation
 const FLUTTER_ENABLED = false;
 const COMPOSE_ENABLED = true;
@@ -39,20 +36,37 @@ const ANDROID_XML_ENABLED = false;  // Disabled - Compose is the preferred Andro
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;
 
-// Size class mapping for native platforms
-const SIZE_CLASS_MAPPING = {
+// iOS: Uses 2 size classes (Apple HIG)
+// Maps sm (390px) → compact, lg (1024px) → regular
+const IOS_BREAKPOINTS = ['sm', 'lg'];
+const IOS_SIZE_CLASS_MAPPING = {
   sm: 'compact',
   lg: 'regular'
 };
 
-// Helper to check if a breakpoint should be built for native platforms
-function isNativeBreakpoint(breakpoint) {
-  return NATIVE_BREAKPOINTS.includes(breakpoint);
+// Android: Uses 3 size classes (Material 3 WindowSizeClass)
+// Maps sm (390px) → Compact (<600dp), md (600px) → Medium (600-839dp), lg (1024px) → Expanded (≥840dp)
+const ANDROID_BREAKPOINTS = ['sm', 'md', 'lg'];
+const ANDROID_SIZE_CLASS_MAPPING = {
+  sm: 'compact',
+  md: 'medium',
+  lg: 'expanded'
+};
+
+// Helper to check if a breakpoint should be built for a native platform
+// @param {string} breakpoint - The breakpoint to check (xs, sm, md, lg)
+// @param {string} platform - The platform ('ios' or 'android'), defaults to 'ios'
+function isNativeBreakpoint(breakpoint, platform = 'ios') {
+  const breakpoints = platform === 'android' ? ANDROID_BREAKPOINTS : IOS_BREAKPOINTS;
+  return breakpoints.includes(breakpoint);
 }
 
-// Helper to get sizeclass name from breakpoint
-function getSizeClassName(breakpoint) {
-  return SIZE_CLASS_MAPPING[breakpoint] || breakpoint;
+// Helper to get sizeclass name from breakpoint for a native platform
+// @param {string} breakpoint - The breakpoint (xs, sm, md, lg)
+// @param {string} platform - The platform ('ios' or 'android'), defaults to 'ios'
+function getSizeClassName(breakpoint, platform = 'ios') {
+  const mapping = platform === 'android' ? ANDROID_SIZE_CLASS_MAPPING : IOS_SIZE_CLASS_MAPPING;
+  return mapping[breakpoint] || breakpoint;
 }
 
 /**
@@ -304,7 +318,8 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
     // Compose: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
     // For density mode, output all three density variants
     // Skip compose for overrides (brand mapping layer) - these are intermediate tokens not needed in final output
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !COMPOSE_ENABLED || cssOptions.skipCompose ? {} : {
+    // Android uses 3 size classes: Compact, Medium, Expanded (Material 3 WindowSizeClass)
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode, 'android')) || !COMPOSE_ENABLED || cssOptions.skipCompose ? {} : {
       compose: {
         transformGroup: 'custom/compose',
         buildPath: (() => {
@@ -317,9 +332,9 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         })(),
         files: [{
           destination: (() => {
-            // For breakpoint tokens, use sizeclass naming
+            // For breakpoint tokens, use sizeclass naming (Android: Compact, Medium, Expanded)
             if (cssOptions.modeType === 'breakpoint' && cssOptions.mode) {
-              const sizeClass = getSizeClassName(cssOptions.mode);
+              const sizeClass = getSizeClassName(cssOptions.mode, 'android');
               const isComponent = buildPath.includes('/components/');
               if (isComponent) {
                 const componentMatch = buildPath.match(/\/components\/([^/]+)/);
@@ -388,7 +403,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
             })(),
             className: (() => {
               if (cssOptions.modeType === 'breakpoint' && cssOptions.mode) {
-                const sizeClass = getSizeClassName(cssOptions.mode);
+                const sizeClass = getSizeClassName(cssOptions.mode, 'android');
                 return `Sizing${sizeClass.charAt(0).toUpperCase() + sizeClass.slice(1)}`;
               }
               return fileName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
@@ -411,7 +426,9 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
               if (cssOptions.modeType === 'breakpoint') return 'sizing';
               if (cssOptions.modeType === 'density') return 'density';
               return '';
-            })()
+            })(),
+            // Pass platform info for Android-specific size class naming
+            platform: 'android'
           }
         }]
       }
@@ -638,18 +655,18 @@ function createTypographyConfig(brand, breakpoint) {
       },
 
       // Flutter: Custom Typography format - only compact (sm) and regular (lg)
-      // Output to semantic/typography/ with sizeclass in filename
-      ...(FLUTTER_ENABLED && SIZE_CLASS_MAPPING[breakpoint] ? {
+      // Output to semantic/typography/ with sizeclass in filename (uses iOS breakpoints for Flutter)
+      ...(FLUTTER_ENABLED && isNativeBreakpoint(breakpoint, 'ios') ? {
         flutter: {
           transforms: ['attribute/cti'],
           buildPath: `${DIST_DIR}/flutter/brands/${brand}/semantic/typography/`,
           files: [{
-            destination: `typography_sizeclass_${SIZE_CLASS_MAPPING[breakpoint]}.dart`,
+            destination: `typography_sizeclass_${getSizeClassName(breakpoint, 'ios')}.dart`,
             format: 'flutter/typography',
             options: {
               brand: brandName,
               breakpoint,
-              sizeClass: SIZE_CLASS_MAPPING[breakpoint]
+              sizeClass: getSizeClassName(breakpoint, 'ios')
             }
           }]
         }
@@ -671,54 +688,56 @@ function createTypographyConfig(brand, breakpoint) {
 
       // iOS: Only compact (sm) and regular (lg) with SwiftUI format
       // Output to semantic/typography/ with sizeclass in filename
-      ...(SIZE_CLASS_MAPPING[breakpoint] ? {
+      ...(isNativeBreakpoint(breakpoint, 'ios') ? {
         ios: {
           transformGroup: 'custom/ios-swift',
           buildPath: `${DIST_DIR}/ios/brands/${brand}/semantic/typography/`,
           files: [{
-            destination: `TypographySizeclass${SIZE_CLASS_MAPPING[breakpoint].charAt(0).toUpperCase() + SIZE_CLASS_MAPPING[breakpoint].slice(1)}.swift`,
+            destination: `TypographySizeclass${getSizeClassName(breakpoint, 'ios').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'ios').slice(1)}.swift`,
             format: 'swiftui/typography',
             options: {
               brand: brandName,
               breakpoint,
-              sizeClass: SIZE_CLASS_MAPPING[breakpoint]
+              sizeClass: getSizeClassName(breakpoint, 'ios')
             }
           }]
         }
       } : {}),
 
-      // Jetpack Compose: Only compact (sm) and regular (lg) with TextStyle objects
+      // Jetpack Compose: Compact (sm), Medium (md), Expanded (lg) with Material 3 WindowSizeClass
       // Output to semantic/typography/ with sizeclass in filename
-      ...(COMPOSE_ENABLED && SIZE_CLASS_MAPPING[breakpoint] ? {
+      ...(COMPOSE_ENABLED && isNativeBreakpoint(breakpoint, 'android') ? {
         compose: {
           transforms: ['attribute/cti', 'name/custom/compose'],
           buildPath: `${DIST_DIR}/android/compose/brands/${brand}/semantic/typography/`,
           files: [{
-            destination: `Typography${SIZE_CLASS_MAPPING[breakpoint].charAt(0).toUpperCase() + SIZE_CLASS_MAPPING[breakpoint].slice(1)}.kt`,
+            destination: `Typography${getSizeClassName(breakpoint, 'android').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'android').slice(1)}.kt`,
             format: 'compose/typography-scheme',
             options: {
               packageName: `com.bild.designsystem.${brand}.semantic`,
               brand: brandName,
               breakpoint,
-              sizeClass: SIZE_CLASS_MAPPING[breakpoint]
+              sizeClass: getSizeClassName(breakpoint, 'android'),
+              platform: 'android'
             }
           }]
         }
       } : {}),
 
-      // Android XML: Only compact (sm) and regular (lg) with custom format
+      // Android XML: Only compact (sm), medium (md), and expanded (lg) with custom format
       // Output to semantic/typography/ with sizeclass in filename
       // Disabled by default - Compose is the preferred Android format
-      ...(SIZE_CLASS_MAPPING[breakpoint] && ANDROID_XML_ENABLED ? {
+      ...(isNativeBreakpoint(breakpoint, 'android') && ANDROID_XML_ENABLED ? {
         android: {
           transforms: ['attribute/cti'],
           buildPath: `${DIST_DIR}/android/brands/${brand}/semantic/typography/`,
           files: [{
-            destination: `typography-sizeclass-${SIZE_CLASS_MAPPING[breakpoint]}.xml`,
+            destination: `typography-sizeclass-${getSizeClassName(breakpoint, 'android')}.xml`,
             format: 'android/typography-styles',
             options: {
               brand: brandName,
-              breakpoint
+              breakpoint,
+              sizeClass: getSizeClassName(breakpoint, 'android')
             }
           }]
         }
@@ -1214,19 +1233,20 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
           }]
         }
       } : {}),
-      // Compose: Only compact (sm) and regular (lg) with sizeclass naming
-      ...(COMPOSE_ENABLED && breakpoint && isNativeBreakpoint(breakpoint) ? {
+      // Compose: Compact (sm), Medium (md), and Expanded (lg) with Material 3 WindowSizeClass naming
+      ...(COMPOSE_ENABLED && breakpoint && isNativeBreakpoint(breakpoint, 'android') ? {
         compose: {
           transforms: ['attribute/cti'],
           buildPath: `${DIST_DIR}/android/compose/brands/${brand}/components/${componentName}/`,
           files: [{
-            destination: `${componentName}Typography${getSizeClassName(breakpoint).charAt(0).toUpperCase() + getSizeClassName(breakpoint).slice(1)}.kt`,
+            destination: `${componentName}Typography${getSizeClassName(breakpoint, 'android').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'android').slice(1)}.kt`,
             format: 'compose/typography',
             options: {
               packageName: `com.bild.designsystem.${brand}.components`,
               brand: brand,
-              mode: getSizeClassName(breakpoint),
-              componentName
+              mode: getSizeClassName(breakpoint, 'android'),
+              componentName,
+              platform: 'android'
             }
           }]
         }
@@ -2077,7 +2097,10 @@ function createManifest(stats) {
       brands: BRANDS,
       breakpoints: BREAKPOINTS,
       colorModes: COLOR_MODES,
-      sizeClasses: Object.values(SIZE_CLASS_MAPPING),
+      sizeClasses: {
+        ios: Object.values(IOS_SIZE_CLASS_MAPPING),
+        android: Object.values(ANDROID_SIZE_CLASS_MAPPING)
+      },
       outputPaths: {
         css: {
           shared: 'css/shared/',
@@ -2178,9 +2201,9 @@ async function aggregateComposeComponents() {
         // Parse all individual files and collect tokens
         const tokenGroups = {
           colors: { light: [], dark: [] },
-          sizing: { compact: [], regular: [] },
+          sizing: { compact: [], medium: [], expanded: [] },
           density: { default: [], dense: [], spacious: [] },
-          typography: { compact: [], regular: [] },
+          typography: { compact: [], medium: [], expanded: [] },
           effects: { light: [], dark: [] }
         };
 
@@ -2188,7 +2211,7 @@ async function aggregateComposeComponents() {
           const content = fs.readFileSync(path.join(componentDir, ktFile), 'utf8');
           const tokens = parseKotlinTokens(content);
 
-          // Categorize based on filename
+          // Categorize based on filename (Material 3: Compact, Medium, Expanded)
           const lowerFile = ktFile.toLowerCase();
           if (lowerFile.includes('colorslight')) {
             tokenGroups.colors.light = tokens;
@@ -2196,8 +2219,10 @@ async function aggregateComposeComponents() {
             tokenGroups.colors.dark = tokens;
           } else if (lowerFile.includes('sizingcompact')) {
             tokenGroups.sizing.compact = tokens;
-          } else if (lowerFile.includes('sizingregular')) {
-            tokenGroups.sizing.regular = tokens;
+          } else if (lowerFile.includes('sizingmedium')) {
+            tokenGroups.sizing.medium = tokens;
+          } else if (lowerFile.includes('sizingexpanded')) {
+            tokenGroups.sizing.expanded = tokens;
           } else if (lowerFile.includes('densitydense')) {
             tokenGroups.density.dense = tokens;
           } else if (lowerFile.includes('densitydefault')) {
@@ -2206,8 +2231,10 @@ async function aggregateComposeComponents() {
             tokenGroups.density.spacious = tokens;
           } else if (lowerFile.includes('typographycompact')) {
             tokenGroups.typography.compact = tokens;
-          } else if (lowerFile.includes('typographyregular')) {
-            tokenGroups.typography.regular = tokens;
+          } else if (lowerFile.includes('typographymedium')) {
+            tokenGroups.typography.medium = tokens;
+          } else if (lowerFile.includes('typographyexpanded')) {
+            tokenGroups.typography.expanded = tokens;
           } else if (lowerFile.includes('effectslight')) {
             tokenGroups.effects.light = tokens;
           } else if (lowerFile.includes('effectsdark')) {
@@ -2314,17 +2341,19 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   const packageJson = require('../../package.json');
   const version = packageJson.version;
 
-  // Determine required imports based on token values
+  // Determine required imports based on token values (Material 3: Compact, Medium, Expanded)
   const allTokens = [
     ...tokenGroups.colors.light,
     ...tokenGroups.colors.dark,
     ...tokenGroups.sizing.compact,
-    ...tokenGroups.sizing.regular,
+    ...tokenGroups.sizing.medium,
+    ...tokenGroups.sizing.expanded,
     ...tokenGroups.density.dense,
     ...tokenGroups.density.default,
     ...tokenGroups.density.spacious,
     ...tokenGroups.typography.compact,
-    ...tokenGroups.typography.regular,
+    ...tokenGroups.typography.medium,
+    ...tokenGroups.typography.expanded,
     ...(tokenGroups.effects?.light || []),
     ...(tokenGroups.effects?.dark || [])
   ];
@@ -2337,13 +2366,17 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
       tokenGroups.density.default.length > 0 ||
       tokenGroups.density.spacious.length > 0;
   const hasColorTokens = tokenGroups.colors.light.length > 0 || tokenGroups.colors.dark.length > 0;
-  const hasSizingTokens = tokenGroups.sizing.compact.length > 0 || tokenGroups.sizing.regular.length > 0;
-  const hasTypographyTokens = tokenGroups.typography.compact.length > 0 || tokenGroups.typography.regular.length > 0;
+  const hasSizingTokens = tokenGroups.sizing.compact.length > 0 ||
+      tokenGroups.sizing.medium.length > 0 ||
+      tokenGroups.sizing.expanded.length > 0;
+  const hasTypographyTokens = tokenGroups.typography.compact.length > 0 ||
+      tokenGroups.typography.medium.length > 0 ||
+      tokenGroups.typography.expanded.length > 0;
   const hasEffectsTokens = (tokenGroups.effects?.light?.length > 0) || (tokenGroups.effects?.dark?.length > 0);
 
   // Need @Composable and Theme imports for current() accessors
   const needsComposable = hasDensityTokens || hasColorTokens || hasSizingTokens || hasTypographyTokens || hasEffectsTokens;
-  // WindowSizeClass needed for both Sizing and Typography (both use Compact/Regular)
+  // WindowSizeClass needed for both Sizing and Typography (Material 3: Compact/Medium/Expanded)
   const needsWindowSizeClass = hasSizingTokens || hasTypographyTokens;
 
   const imports = ['import androidx.compose.runtime.Immutable'];
@@ -2481,11 +2514,11 @@ object ${componentName}Tokens {
     output += `    }\n`;
   }
 
-  // Sizing section with interface and current() accessor
-  if (tokenGroups.sizing.compact.length > 0 || tokenGroups.sizing.regular.length > 0) {
+  // Sizing section with interface and current() accessor (Material 3: Compact, Medium, Expanded)
+  if (tokenGroups.sizing.compact.length > 0 || tokenGroups.sizing.medium.length > 0 || tokenGroups.sizing.expanded.length > 0) {
     // Collect all unique token names for interface
     const sizingTokenNames = new Map();
-    [...tokenGroups.sizing.compact, ...tokenGroups.sizing.regular].forEach(t => {
+    [...tokenGroups.sizing.compact, ...tokenGroups.sizing.medium, ...tokenGroups.sizing.expanded].forEach(t => {
       if (!sizingTokenNames.has(t.name)) {
         sizingTokenNames.set(t.name, t.value);
       }
@@ -2493,12 +2526,12 @@ object ${componentName}Tokens {
 
     output += `
     // ══════════════════════════════════════════════════════════════
-    // SIZING (WindowSizeClass)
+    // SIZING (Material 3 WindowSizeClass)
     // ══════════════════════════════════════════════════════════════
     object Sizing {
         /**
          * Returns sizing tokens for the current window size class.
-         * Automatically resolves to Compact or Regular based on DesignSystemTheme.sizeClass
+         * Automatically resolves to Compact, Medium, or Expanded based on DesignSystemTheme.sizeClass
          *
          * Usage:
          *   val fontSize = ${componentName}Tokens.Sizing.current().labelFontSize
@@ -2506,7 +2539,8 @@ object ${componentName}Tokens {
         @Composable
         fun current(): SizingTokens = when (DesignSystemTheme.sizeClass) {
             WindowSizeClass.Compact -> Compact
-            WindowSizeClass.Regular -> Regular
+            WindowSizeClass.Medium -> Medium
+            WindowSizeClass.Expanded -> Expanded
         }
 
         /**
@@ -2537,9 +2571,16 @@ object ${componentName}Tokens {
       });
       output += `        }\n`;
     }
-    if (tokenGroups.sizing.regular.length > 0) {
-      output += `        object Regular : SizingTokens {\n`;
-      tokenGroups.sizing.regular.forEach(t => {
+    if (tokenGroups.sizing.medium.length > 0) {
+      output += `        object Medium : SizingTokens {\n`;
+      tokenGroups.sizing.medium.forEach(t => {
+        output += `            override val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.sizing.expanded.length > 0) {
+      output += `        object Expanded : SizingTokens {\n`;
+      tokenGroups.sizing.expanded.forEach(t => {
         output += `            override val ${t.name} = ${t.value}\n`;
       });
       output += `        }\n`;
@@ -2624,11 +2665,11 @@ object ${componentName}Tokens {
     output += `    }\n`;
   }
 
-  // Typography section with interface and current() accessor
-  if (tokenGroups.typography.compact.length > 0 || tokenGroups.typography.regular.length > 0) {
+  // Typography section with interface and current() accessor (Material 3: Compact, Medium, Expanded)
+  if (tokenGroups.typography.compact.length > 0 || tokenGroups.typography.medium.length > 0 || tokenGroups.typography.expanded.length > 0) {
     // Collect all unique token names for interface
     const typographyTokenNames = new Map();
-    [...tokenGroups.typography.compact, ...tokenGroups.typography.regular].forEach(t => {
+    [...tokenGroups.typography.compact, ...tokenGroups.typography.medium, ...tokenGroups.typography.expanded].forEach(t => {
       if (!typographyTokenNames.has(t.name)) {
         typographyTokenNames.set(t.name, t.value);
       }
@@ -2636,12 +2677,12 @@ object ${componentName}Tokens {
 
     output += `
     // ══════════════════════════════════════════════════════════════
-    // TYPOGRAPHY
+    // TYPOGRAPHY (Material 3 WindowSizeClass)
     // ══════════════════════════════════════════════════════════════
     object Typography {
         /**
          * Returns typography tokens for the current window size class.
-         * Automatically resolves to Compact or Regular based on DesignSystemTheme.sizeClass
+         * Automatically resolves to Compact, Medium, or Expanded based on DesignSystemTheme.sizeClass
          *
          * Usage:
          *   val fontFamily = ${componentName}Tokens.Typography.current().labelFontFamily
@@ -2649,7 +2690,8 @@ object ${componentName}Tokens {
         @Composable
         fun current(): TypographyTokens = when (DesignSystemTheme.sizeClass) {
             WindowSizeClass.Compact -> Compact
-            WindowSizeClass.Regular -> Regular
+            WindowSizeClass.Medium -> Medium
+            WindowSizeClass.Expanded -> Expanded
         }
 
         /**
@@ -2688,9 +2730,16 @@ object ${componentName}Tokens {
       });
       output += `        }\n`;
     }
-    if (tokenGroups.typography.regular.length > 0) {
-      output += `        object Regular : TypographyTokens {\n`;
-      tokenGroups.typography.regular.forEach(t => {
+    if (tokenGroups.typography.medium.length > 0) {
+      output += `        object Medium : TypographyTokens {\n`;
+      tokenGroups.typography.medium.forEach(t => {
+        output += `            override val ${t.name} = ${t.value}\n`;
+      });
+      output += `        }\n`;
+    }
+    if (tokenGroups.typography.expanded.length > 0) {
+      output += `        object Expanded : TypographyTokens {\n`;
+      tokenGroups.typography.expanded.forEach(t => {
         output += `            override val ${t.name} = ${t.value}\n`;
       });
       output += `        }\n`;
@@ -3703,6 +3752,7 @@ enum class Density {
 /**
  * Generates the shared WindowSizeClass enum file
  * Creates: dist/android/compose/shared/WindowSizeClass.kt
+ * Uses Material 3 WindowSizeClass breakpoints: Compact (<600dp), Medium (600-839dp), Expanded (≥840dp)
  */
 function generateSharedWindowSizeClassFile() {
   const packageJson = require('../../package.json');
@@ -3715,7 +3765,7 @@ function generateSharedWindowSizeClassFile() {
  * Generated by Style Dictionary
  *
  * Shared WindowSizeClass Enum
- * Brand-independent window size classification for responsive layouts
+ * Material 3 compliant window size classification for responsive layouts
  *
  * Copyright (c) 2024 Axel Springer Deutschland GmbH
  */
@@ -3723,16 +3773,17 @@ function generateSharedWindowSizeClassFile() {
 package com.bild.designsystem.shared
 
 /**
- * Window size class for responsive layouts
+ * Window size class for responsive layouts (Material 3 compliant)
  *
  * WindowSizeClass is brand-independent and can be used across all brands.
- * Maps to design token breakpoints:
- * - Compact: xs (320px), sm (390px) - Phones in portrait
- * - Regular: md (600px), lg (1024px) - Tablets, phones in landscape, desktops
+ * Follows Material 3 WindowSizeClass specification:
+ * - Compact: width < 600dp - Phones in portrait (maps to sm: 390px breakpoint)
+ * - Medium: 600dp ≤ width < 840dp - Small tablets, foldables (maps to md: 600px breakpoint)
+ * - Expanded: width ≥ 840dp - Large tablets, desktops (maps to lg: 1024px breakpoint)
  *
  * Usage:
  * \`\`\`kotlin
- * BildTheme(
+ * DesignSystemTheme(
  *     sizeClass = WindowSizeClass.Compact
  * ) {
  *     // Content with compact sizing tokens
@@ -3744,15 +3795,20 @@ package com.bild.designsystem.shared
  * val windowSizeClass = calculateWindowSizeClass(activity)
  * val sizeClass = when (windowSizeClass.widthSizeClass) {
  *     WindowWidthSizeClass.Compact -> WindowSizeClass.Compact
- *     else -> WindowSizeClass.Regular
+ *     WindowWidthSizeClass.Medium -> WindowSizeClass.Medium
+ *     WindowWidthSizeClass.Expanded -> WindowSizeClass.Expanded
  * }
  * \`\`\`
+ *
+ * @see <a href="https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes">Material 3 Window Size Classes</a>
  */
 enum class WindowSizeClass {
-    /** Phones in portrait mode (xs: 320px, sm: 390px breakpoints) */
+    /** Phones in portrait mode (width < 600dp, maps to sm: 390px breakpoint) */
     Compact,
-    /** Tablets, phones in landscape, desktops (md: 600px, lg: 1024px breakpoints) */
-    Regular
+    /** Small tablets, foldables in portrait (600dp ≤ width < 840dp, maps to md: 600px breakpoint) */
+    Medium,
+    /** Large tablets, desktops (width ≥ 840dp, maps to lg: 1024px breakpoint) */
+    Expanded
 }
 `;
 }
@@ -4397,18 +4453,20 @@ function generateDesignSystemThemeFile() {
 import com.bild.designsystem.${brand}.semantic.${brandPascal}DarkColors`;
   }).join('\n');
 
-  // Generate sizing imports for all content brands
+  // Generate sizing imports for all content brands (Material 3: Compact, Medium, Expanded)
   const sizingImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
     return `import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingCompact
-import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingRegular`;
+import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingMedium
+import com.bild.designsystem.${brand}.semantic.${brandPascal}SizingExpanded`;
   }).join('\n');
 
-  // Generate typography imports for all content brands
+  // Generate typography imports for all content brands (Material 3: Compact, Medium, Expanded)
   const typographyImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
     return `import com.bild.designsystem.${brand}.semantic.${brandPascal}TypographyCompact
-import com.bild.designsystem.${brand}.semantic.${brandPascal}TypographyRegular`;
+import com.bild.designsystem.${brand}.semantic.${brandPascal}TypographyMedium
+import com.bild.designsystem.${brand}.semantic.${brandPascal}TypographyExpanded`;
   }).join('\n');
 
   // Generate color selection cases
@@ -4417,21 +4475,23 @@ import com.bild.designsystem.${brand}.semantic.${brandPascal}TypographyRegular`;
     return `        ColorBrand.${brandPascal} -> if (darkTheme) ${brandPascal}DarkColors else ${brandPascal}LightColors`;
   }).join('\n');
 
-  // Generate sizing selection cases
+  // Generate sizing selection cases (Material 3: Compact, Medium, Expanded)
   const sizingCases = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
     return `        ContentBrand.${brandPascal} -> when (sizeClass) {
             WindowSizeClass.Compact -> ${brandPascal}SizingCompact
-            WindowSizeClass.Regular -> ${brandPascal}SizingRegular
+            WindowSizeClass.Medium -> ${brandPascal}SizingMedium
+            WindowSizeClass.Expanded -> ${brandPascal}SizingExpanded
         }`;
   }).join('\n');
 
-  // Generate typography selection cases
+  // Generate typography selection cases (Material 3: Compact, Medium, Expanded)
   const typographyCases = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
     return `        ContentBrand.${brandPascal} -> when (sizeClass) {
             WindowSizeClass.Compact -> ${brandPascal}TypographyCompact
-            WindowSizeClass.Regular -> ${brandPascal}TypographyRegular
+            WindowSizeClass.Medium -> ${brandPascal}TypographyMedium
+            WindowSizeClass.Expanded -> ${brandPascal}TypographyExpanded
         }`;
   }).join('\n');
 

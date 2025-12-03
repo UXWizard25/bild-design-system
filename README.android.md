@@ -119,8 +119,8 @@ All brands implement common interfaces for polymorphic access:
 | Interface | Purpose | Implementations |
 |-----------|---------|-----------------|
 | `DesignColorScheme` | All color tokens | `BildLightColors`, `BildDarkColors`, `SportbildLightColors`, `SportbildDarkColors` |
-| `DesignSizingScheme` | All sizing tokens | `BildSizingCompact`, `BildSizingRegular`, `SportbildSizing*`, `AdvertorialSizing*` |
-| `DesignTypographyScheme` | All text styles | `BildTypographyCompact`, `BildTypographyRegular`, `SportbildTypography*`, `AdvertorialTypography*` |
+| `DesignSizingScheme` | All sizing tokens | `BildSizingCompact`, `BildSizingMedium`, `BildSizingExpanded`, `SportbildSizing*`, `AdvertorialSizing*` |
+| `DesignTypographyScheme` | All text styles | `BildTypographyCompact`, `BildTypographyMedium`, `BildTypographyExpanded`, `SportbildTypography*`, `AdvertorialTypography*` |
 | `DesignEffectsScheme` | All shadow tokens | `EffectsLight`, `EffectsDark` (brand-independent, shared) |
 
 ```kotlin
@@ -158,7 +158,7 @@ fun MyApp() {
         colorBrand = ColorBrand.Bild,           // or .Sportbild
         contentBrand = ContentBrand.Bild,       // or .Sportbild, .Advertorial
         darkTheme = isSystemInDarkTheme(),
-        sizeClass = WindowSizeClass.Compact,    // or .Regular
+        sizeClass = WindowSizeClass.Compact,    // or .Medium, .Expanded
         density = Density.Default               // or .Dense, .Spacious
     ) {
         // Your app content
@@ -176,7 +176,15 @@ fun MyApp() {
 | `sizeClass` | `WindowSizeClass` | `Compact` | Responsive Layout |
 | `density` | `Density` | `Default` | UI Density |
 
-### Calculating WindowSizeClass
+### Calculating WindowSizeClass (Material 3)
+
+The Design System uses Material 3 WindowSizeClass breakpoints:
+
+| WindowSizeClass | Width Range | Typical Devices |
+|-----------------|-------------|-----------------|
+| `Compact` | < 600dp | Phones (portrait) |
+| `Medium` | 600dp – 839dp | Small tablets, foldables |
+| `Expanded` | ≥ 840dp | Large tablets, desktops |
 
 ```kotlin
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -187,7 +195,8 @@ fun rememberDesignSystemSizeClass(activity: Activity): WindowSizeClass {
     val windowSizeClass = calculateWindowSizeClass(activity)
     return when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> WindowSizeClass.Compact
-        else -> WindowSizeClass.Regular
+        WindowWidthSizeClass.Medium -> WindowSizeClass.Medium
+        WindowWidthSizeClass.Expanded -> WindowSizeClass.Expanded
     }
 }
 ```
@@ -208,7 +217,7 @@ fun SemanticExample() {
     val bgColor = DesignSystemTheme.colors.surfaceColorPrimary
     val accentColor = DesignSystemTheme.colors.textColorAccent
 
-    // Sizing - automatically Compact/Regular, polymorphic type
+    // Sizing - automatically Compact/Medium/Expanded, polymorphic type
     val headlineSize = DesignSystemTheme.sizing.headline1FontSize
     val bodySize = DesignSystemTheme.sizing.bodyFontSize
 
@@ -247,11 +256,11 @@ fun ComponentExample() {
     val buttonBg = ButtonTokens.Colors.current().buttonPrimaryBgColorIdle
     val buttonHover = ButtonTokens.Colors.current().buttonPrimaryBgColorHover
 
-    // Sizing - automatically Compact/Regular
+    // Sizing - automatically Compact/Medium/Expanded
     val buttonHeight = ButtonTokens.Sizing.current().buttonContentMinHeightSize
     val cardRadius = CardTokens.Sizing.current().cardBorderRadius
 
-    // Typography - composite DesignTextStyle objects (Compact/Regular)
+    // Typography - composite DesignTextStyle objects (Compact/Medium/Expanded)
     val buttonLabel: DesignTextStyle = ButtonTokens.Typography.current().buttonLabel
     Text(
         text = "Click me",
@@ -276,9 +285,10 @@ When you need a specific mode explicitly:
 val lightColor = ButtonTokens.Colors.Light.buttonPrimaryBgColorIdle
 val darkColor = ButtonTokens.Colors.Dark.buttonPrimaryBgColorIdle
 
-// Direct Compact/Regular access
+// Direct Compact/Medium/Expanded access
 val compactSize = ButtonTokens.Sizing.Compact.buttonLabelFontSize
-val regularSize = ButtonTokens.Sizing.Regular.buttonLabelFontSize
+val mediumSize = ButtonTokens.Sizing.Medium.buttonLabelFontSize
+val expandedSize = ButtonTokens.Sizing.Expanded.buttonLabelFontSize
 
 // Direct Dense/Default/Spacious access
 val denseGap = ButtonTokens.Density.Dense.denseButtonContentGapSpace
@@ -390,7 +400,7 @@ com/bild/designsystem/
 ├── shared/                              # Brand-independent
 │   ├── DesignTokenPrimitives.kt         # All Primitives
 │   ├── Density.kt                       # Dense/Default/Spacious
-│   ├── WindowSizeClass.kt               # Compact/Regular
+│   ├── WindowSizeClass.kt               # Compact/Medium/Expanded (Material 3)
 │   ├── ColorBrand.kt                    # Bild/Sportbild (colors only)
 │   ├── ContentBrand.kt                  # Bild/Sportbild/Advertorial (all)
 │   ├── DesignColorScheme.kt             # Unified color interface
@@ -411,10 +421,12 @@ com/bild/designsystem/
 │   │   │   └── ColorsDark.kt            # BildDarkColors
 │   │   ├── sizeclass/
 │   │   │   ├── SizingCompact.kt         # BildSizingCompact : DesignSizingScheme
-│   │   │   └── SizingRegular.kt         # BildSizingRegular
+│   │   │   ├── SizingMedium.kt          # BildSizingMedium
+│   │   │   └── SizingExpanded.kt        # BildSizingExpanded
 │   │   └── typography/
 │   │       ├── TypographyCompact.kt     # BildTypographyCompact : DesignTypographyScheme
-│   │       └── TypographyRegular.kt     # BildTypographyRegular
+│   │       ├── TypographyMedium.kt      # BildTypographyMedium
+│   │       └── TypographyExpanded.kt    # BildTypographyExpanded
 │   └── components/
 │       ├── Button/
 │       │   └── ButtonTokens.kt          # Colors/Sizing/Typography/Density
@@ -429,10 +441,12 @@ com/bild/designsystem/
     └── semantic/                        # No colors (uses ColorBrand)
         ├── sizeclass/                   # Own sizing
         │   ├── SizingCompact.kt
-        │   └── SizingRegular.kt
+        │   ├── SizingMedium.kt
+        │   └── SizingExpanded.kt
         └── typography/                  # Own typography
             ├── TypographyCompact.kt
-            └── TypographyRegular.kt
+            ├── TypographyMedium.kt
+            └── TypographyExpanded.kt
 ```
 
 ---
@@ -506,8 +520,9 @@ enum class Density {
 }
 
 enum class WindowSizeClass {
-    Compact,    // Phones (Portrait)
-    Regular     // Tablets, Phones (Landscape)
+    Compact,    // Phones (Portrait) - width < 600dp
+    Medium,     // Small Tablets, Foldables - 600dp ≤ width < 840dp
+    Expanded    // Large Tablets, Desktops - width ≥ 840dp
 }
 ```
 
@@ -616,14 +631,16 @@ object ButtonTokens {
         object Dark : ColorTokens
     }
     object Sizing {
-        fun current(): SizingTokens   // Theme-aware (Compact/Regular)
+        fun current(): SizingTokens   // Theme-aware (Compact/Medium/Expanded)
         object Compact : SizingTokens
-        object Regular : SizingTokens
+        object Medium : SizingTokens
+        object Expanded : SizingTokens
     }
     object Typography {
-        fun current(): TypographyTokens  // Theme-aware (Compact/Regular)
+        fun current(): TypographyTokens  // Theme-aware (Compact/Medium/Expanded)
         object Compact : TypographyTokens
-        object Regular : TypographyTokens
+        object Medium : TypographyTokens
+        object Expanded : TypographyTokens
     }
     object Density {
         fun current(): DensityTokens  // Theme-aware (Dense/Default/Spacious)
@@ -687,14 +704,15 @@ val color = ButtonTokens.Colors.current().buttonPrimaryBgColorIdle
 val lightColor = ButtonTokens.Colors.Light.buttonPrimaryBgColorIdle
 ```
 
-### 4. WindowSizeClass for Responsive Layouts
+### 4. WindowSizeClass for Responsive Layouts (Material 3)
 
 ```kotlin
 @Composable
 fun ResponsiveLayout() {
     when (DesignSystemTheme.sizeClass) {
         WindowSizeClass.Compact -> PhoneLayout()
-        WindowSizeClass.Regular -> TabletLayout()
+        WindowSizeClass.Medium -> SmallTabletLayout()
+        WindowSizeClass.Expanded -> LargeTabletLayout()
     }
 }
 ```

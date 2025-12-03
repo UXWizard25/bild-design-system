@@ -4122,19 +4122,27 @@ object ${brandPascal}${modePascal}Colors : ${brandPascal}ColorScheme {
 /**
  * Format: Jetpack Compose Spacing/Sizing Object
  * Generates object with Dp values and interfaces for type safety
+ * Android uses Material 3 WindowSizeClass: Compact, Medium, Expanded
  */
 const composeSpacingFormat = ({ dictionary, options, file }) => {
-  const { packageName, brand, mode, modeType } = options;
+  const { packageName, brand, mode, modeType, platform } = options;
   const brandPascal = brandToPascalCase(brand);
   const version = packageJson.version;
 
-  // Map mode to correct name (sm -> Compact, lg -> Regular)
+  // Map mode to correct name based on platform
+  // Android (Material 3): sm -> Compact, md -> Medium, lg -> Expanded
+  // iOS: sm -> Compact, lg -> Regular (handled in Swift formats)
   let modePascal = '';
   if (mode) {
     if (mode === 'sm' || mode === 'compact') {
       modePascal = 'Compact';
-    } else if (mode === 'lg' || mode === 'regular') {
-      modePascal = 'Regular';
+    } else if (mode === 'md' || mode === 'medium') {
+      modePascal = 'Medium';
+    } else if (mode === 'lg' || mode === 'expanded') {
+      modePascal = 'Expanded';
+    } else if (mode === 'regular') {
+      // Legacy support for 'regular' (maps to Expanded for Android)
+      modePascal = platform === 'android' ? 'Expanded' : 'Regular';
     } else {
       modePascal = mode.charAt(0).toUpperCase() + mode.slice(1);
     }
