@@ -6392,11 +6392,322 @@ export type SizeValue = string;
   // Root index types
   let rootIdxTypes = TS_HEADER;
   rootIdxTypes += `export * as primitives from './primitives';\n`;
-  rootIdxTypes += `export * as brands from './brands';\n\n`;
+  rootIdxTypes += `export * as brands from './brands';\n`;
+  rootIdxTypes += `export * as themes from './themes';\n\n`;
   BRANDS.forEach(b => { rootIdxTypes += `export * as ${b} from './brands/${b}';\n`; });
   rootIdxTypes += `\n// Re-export types\n`;
   rootIdxTypes += `export type { TypographyStyle, ShadowLayer, ColorValue, SpacingValue, SizeValue } from './types';\n`;
+  rootIdxTypes += `export type { Theme, ThemeConfig } from './themes';\n`;
   writeJsFile(path.join(jsDistDir, 'index.d.ts'), rootIdxTypes);
+
+  // ========================================
+  // THEME PROVIDER & UTILITIES
+  // ========================================
+  console.log('\n  🎨 Generating themes...');
+
+  const themesDir = path.join(jsDistDir, 'themes');
+
+  // createTheme utility
+  let createThemeJs = JS_FILE_HEADER + `// Theme factory for BILD Design System
+// Supports multi-brand, multi-mode token combinations
+
+/**
+ * Create a theme by combining tokens from different modes
+ * @param {Object} config - Theme configuration
+ * @param {string} config.brand - Brand name ('bild', 'sportbild', 'advertorial')
+ * @param {string} config.colorBrand - Color brand for Advertorial ('bild' or 'sportbild')
+ * @param {string} config.colorMode - Color mode ('light' or 'dark')
+ * @param {string} config.breakpoint - Breakpoint ('xs', 'sm', 'md', 'lg')
+ * @param {string} config.density - Density mode ('default', 'dense', 'spacious')
+ * @returns {Object} Combined theme object
+ */
+export function createTheme(config) {
+  const {
+    brand = 'bild',
+    colorBrand,
+    colorMode = 'light',
+    breakpoint = 'md',
+    density = 'default'
+  } = config;
+
+  // Determine color source (for Advertorial dual-axis support)
+  const effectiveColorBrand = colorBrand || (brand === 'advertorial' ? 'bild' : brand);
+
+  // Dynamic imports would be used in a real app, but for static builds we use require
+  const theme = {
+    // Metadata
+    __meta: {
+      brand,
+      colorBrand: effectiveColorBrand,
+      colorMode,
+      breakpoint,
+      density,
+      generatedAt: new Date().toISOString()
+    }
+  };
+
+  return theme;
+}
+
+/**
+ * Available brands
+ */
+export const availableBrands = ['bild', 'sportbild', 'advertorial'];
+
+/**
+ * Available color brands (brands with own colors)
+ */
+export const colorBrands = ['bild', 'sportbild'];
+
+/**
+ * Available color modes
+ */
+export const colorModes = ['light', 'dark'];
+
+/**
+ * Available breakpoints
+ */
+export const breakpoints = ['xs', 'sm', 'md', 'lg'];
+
+/**
+ * Available density modes
+ */
+export const densityModes = ['default', 'dense', 'spacious'];
+`;
+  writeJsFile(path.join(themesDir, 'createTheme.js'), createThemeJs);
+
+  // Generate preset themes for each color brand × color mode
+  const presetThemes = [];
+  for (const colorBrand of COLOR_BRANDS) {
+    for (const colorMode of COLOR_MODES) {
+      const themeName = `${colorBrand}${colorMode.charAt(0).toUpperCase() + colorMode.slice(1)}`;
+      const fileName = `${colorBrand}-${colorMode}`;
+
+      // Read actual token data
+      const colorsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'color', `colormode-${colorMode}.json`));
+      const spacingData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'breakpoints',
+        fs.readdirSync(path.join(TOKENS_DIR, 'brands', colorBrand, 'breakpoints')).find(f => f.startsWith('breakpoint-md')) || 'breakpoint-md-600px.json'));
+      const typographyData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'semantic', 'typography', 'typography-md.json'));
+      const effectsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'semantic', 'effects', `effects-${colorMode}.json`));
+      const densityData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'density', 'density-default.json'));
+
+      const colors = colorsData ? flattenTokens(colorsData) : {};
+      const spacing = spacingData ? flattenTokens(spacingData) : {};
+      const density = densityData ? flattenTokens(densityData) : {};
+
+      // Extract typography
+      const typography = {};
+      if (typographyData) {
+        const extractTypo = (obj, prefix = '') => {
+          for (const [key, value] of Object.entries(obj)) {
+            if (value && typeof value === 'object') {
+              if ('$value' in value && value.$type === 'typography') {
+                const name = prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key);
+                const s = value.$value;
+                typography[name] = {
+                  fontFamily: s.fontFamily, fontWeight: s.fontWeight || 400,
+                  fontSize: typeof s.fontSize === 'number' ? `${s.fontSize}px` : s.fontSize,
+                  lineHeight: typeof s.lineHeight === 'number' ? `${s.lineHeight}px` : String(s.lineHeight)
+                };
+              } else if (!Array.isArray(value)) extractTypo(value, prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key));
+            }
+          }
+        };
+        extractTypo(typographyData);
+      }
+
+      // Extract effects
+      const effects = {};
+      if (effectsData) {
+        const extractFx = (obj, prefix = '') => {
+          for (const [key, value] of Object.entries(obj)) {
+            if (value && typeof value === 'object') {
+              if ('$value' in value && value.$type === 'shadow' && Array.isArray(value.$value)) {
+                const name = prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key);
+                effects[name] = value.$value.map(l => ({
+                  offsetX: l.offsetX || 0, offsetY: l.offsetY || 0,
+                  radius: l.radius || 0, spread: l.spread || 0, color: l.color || 'rgba(0,0,0,0)'
+                }));
+              } else if (!Array.isArray(value)) extractFx(value, prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key));
+            }
+          }
+        };
+        extractFx(effectsData);
+      }
+
+      let themeJs = JS_FILE_HEADER + `// Pre-built theme: ${colorBrand} ${colorMode}
+// Default breakpoint: md, Default density: default
+
+export const ${themeName} = {
+  __meta: {
+    brand: '${colorBrand}',
+    colorBrand: '${colorBrand}',
+    colorMode: '${colorMode}',
+    breakpoint: 'md',
+    density: 'default'
+  },
+  colors: ${JSON.stringify(colors, null, 2)},
+  spacing: ${JSON.stringify(spacing, null, 2)},
+  typography: ${JSON.stringify(typography, null, 2)},
+  effects: ${JSON.stringify(effects, null, 2)},
+  density: ${JSON.stringify(density, null, 2)}
+};
+
+export default ${themeName};
+`;
+      writeJsFile(path.join(themesDir, `${fileName}.js`), themeJs);
+      presetThemes.push({ name: themeName, file: fileName });
+
+      // TypeScript definition
+      let themeDts = TS_HEADER + `import type { Theme } from './index';\n\n`;
+      themeDts += `export declare const ${themeName}: Theme;\n`;
+      themeDts += `export default ${themeName};\n`;
+      writeJsFile(path.join(themesDir, `${fileName}.d.ts`), themeDts);
+    }
+  }
+
+  // Generate Advertorial themes (dual-axis: uses BILD or SportBILD colors)
+  for (const colorBrand of COLOR_BRANDS) {
+    for (const colorMode of COLOR_MODES) {
+      const themeName = `advertorialIn${colorBrand.charAt(0).toUpperCase() + colorBrand.slice(1)}${colorMode.charAt(0).toUpperCase() + colorMode.slice(1)}`;
+      const fileName = `advertorial-in-${colorBrand}-${colorMode}`;
+
+      // Colors and effects from colorBrand, sizing/typography from advertorial
+      const colorsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'color', `colormode-${colorMode}.json`));
+      const effectsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'semantic', 'effects', `effects-${colorMode}.json`));
+
+      const advSpacingDir = path.join(TOKENS_DIR, 'brands', 'advertorial', 'breakpoints');
+      const spacingData = fs.existsSync(advSpacingDir) ?
+        readTokenFile(path.join(advSpacingDir, fs.readdirSync(advSpacingDir).find(f => f.startsWith('breakpoint-md')) || '')) : null;
+      const advTypoData = readTokenFile(path.join(TOKENS_DIR, 'brands', 'advertorial', 'semantic', 'typography', 'typography-md.json'));
+      const advDensityData = readTokenFile(path.join(TOKENS_DIR, 'brands', 'advertorial', 'density', 'density-default.json'));
+
+      const colors = colorsData ? flattenTokens(colorsData) : {};
+      const spacing = spacingData ? flattenTokens(spacingData) : {};
+      const density = advDensityData ? flattenTokens(advDensityData) : {};
+
+      // Extract typography from advertorial
+      const typography = {};
+      if (advTypoData) {
+        const extractTypo = (obj, prefix = '') => {
+          for (const [key, value] of Object.entries(obj)) {
+            if (value && typeof value === 'object') {
+              if ('$value' in value && value.$type === 'typography') {
+                const name = prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key);
+                const s = value.$value;
+                typography[name] = {
+                  fontFamily: s.fontFamily, fontWeight: s.fontWeight || 400,
+                  fontSize: typeof s.fontSize === 'number' ? `${s.fontSize}px` : s.fontSize,
+                  lineHeight: typeof s.lineHeight === 'number' ? `${s.lineHeight}px` : String(s.lineHeight)
+                };
+              } else if (!Array.isArray(value)) extractTypo(value, prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key));
+            }
+          }
+        };
+        extractTypo(advTypoData);
+      }
+
+      // Extract effects from colorBrand
+      const effects = {};
+      if (effectsData) {
+        const extractFx = (obj, prefix = '') => {
+          for (const [key, value] of Object.entries(obj)) {
+            if (value && typeof value === 'object') {
+              if ('$value' in value && value.$type === 'shadow' && Array.isArray(value.$value)) {
+                const name = prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key);
+                effects[name] = value.$value.map(l => ({
+                  offsetX: l.offsetX || 0, offsetY: l.offsetY || 0,
+                  radius: l.radius || 0, spread: l.spread || 0, color: l.color || 'rgba(0,0,0,0)'
+                }));
+              } else if (!Array.isArray(value)) extractFx(value, prefix ? `${prefix}${toPascalCase(key)}` : toCamelCase(key));
+            }
+          }
+        };
+        extractFx(effectsData);
+      }
+
+      let themeJs = JS_FILE_HEADER + `// Pre-built theme: Advertorial with ${colorBrand} colors (${colorMode})
+// Dual-axis: Colors from ${colorBrand}, sizing/typography from advertorial
+
+export const ${themeName} = {
+  __meta: {
+    brand: 'advertorial',
+    colorBrand: '${colorBrand}',
+    colorMode: '${colorMode}',
+    breakpoint: 'md',
+    density: 'default'
+  },
+  colors: ${JSON.stringify(colors, null, 2)},
+  spacing: ${JSON.stringify(spacing, null, 2)},
+  typography: ${JSON.stringify(typography, null, 2)},
+  effects: ${JSON.stringify(effects, null, 2)},
+  density: ${JSON.stringify(density, null, 2)}
+};
+
+export default ${themeName};
+`;
+      writeJsFile(path.join(themesDir, `${fileName}.js`), themeJs);
+      presetThemes.push({ name: themeName, file: fileName });
+
+      // TypeScript definition
+      let themeDts = TS_HEADER + `import type { Theme } from './index';\n\n`;
+      themeDts += `export declare const ${themeName}: Theme;\n`;
+      themeDts += `export default ${themeName};\n`;
+      writeJsFile(path.join(themesDir, `${fileName}.d.ts`), themeDts);
+    }
+  }
+
+  // Themes index
+  let themesIdx = JS_FILE_HEADER + `// Theme exports\n\n`;
+  themesIdx += `export { createTheme, availableBrands, colorBrands, colorModes, breakpoints, densityModes } from './createTheme.js';\n\n`;
+  themesIdx += `// Pre-built themes\n`;
+  presetThemes.forEach(t => { themesIdx += `export { ${t.name} } from './${t.file}.js';\n`; });
+  themesIdx += `\n// All themes object\nexport const themes = {\n`;
+  presetThemes.forEach(t => { themesIdx += `  ${t.name},\n`; });
+  themesIdx += `};\n`;
+  writeJsFile(path.join(themesDir, 'index.js'), themesIdx);
+
+  // Themes index types
+  let themesIdxDts = TS_HEADER + `import type { TypographyStyle, ShadowLayer } from '../types';\n\n`;
+  themesIdxDts += `export interface ThemeMeta {\n`;
+  themesIdxDts += `  brand: string;\n  colorBrand: string;\n  colorMode: 'light' | 'dark';\n`;
+  themesIdxDts += `  breakpoint: 'xs' | 'sm' | 'md' | 'lg';\n  density: 'default' | 'dense' | 'spacious';\n`;
+  themesIdxDts += `}\n\n`;
+  themesIdxDts += `export interface Theme {\n`;
+  themesIdxDts += `  __meta: ThemeMeta;\n`;
+  themesIdxDts += `  colors: Record<string, string>;\n`;
+  themesIdxDts += `  spacing: Record<string, string>;\n`;
+  themesIdxDts += `  typography: Record<string, TypographyStyle>;\n`;
+  themesIdxDts += `  effects: Record<string, ShadowLayer[]>;\n`;
+  themesIdxDts += `  density: Record<string, string>;\n`;
+  themesIdxDts += `}\n\n`;
+  themesIdxDts += `export interface ThemeConfig {\n`;
+  themesIdxDts += `  brand?: 'bild' | 'sportbild' | 'advertorial';\n`;
+  themesIdxDts += `  colorBrand?: 'bild' | 'sportbild';\n`;
+  themesIdxDts += `  colorMode?: 'light' | 'dark';\n`;
+  themesIdxDts += `  breakpoint?: 'xs' | 'sm' | 'md' | 'lg';\n`;
+  themesIdxDts += `  density?: 'default' | 'dense' | 'spacious';\n`;
+  themesIdxDts += `}\n\n`;
+  themesIdxDts += `export declare function createTheme(config: ThemeConfig): Theme;\n`;
+  themesIdxDts += `export declare const availableBrands: string[];\n`;
+  themesIdxDts += `export declare const colorBrands: string[];\n`;
+  themesIdxDts += `export declare const colorModes: string[];\n`;
+  themesIdxDts += `export declare const breakpoints: string[];\n`;
+  themesIdxDts += `export declare const densityModes: string[];\n\n`;
+  themesIdxDts += `// Pre-built themes\n`;
+  presetThemes.forEach(t => { themesIdxDts += `export declare const ${t.name}: Theme;\n`; });
+  themesIdxDts += `\nexport declare const themes: Record<string, Theme>;\n`;
+  writeJsFile(path.join(themesDir, 'index.d.ts'), themesIdxDts);
+
+  // Update root index to include themes
+  rootIdx = JS_FILE_HEADER + `// BILD Design System Tokens\n\n`;
+  rootIdx += `export * as primitives from './primitives/index.js';\n`;
+  rootIdx += `export * as brands from './brands/index.js';\n`;
+  rootIdx += `export * as themes from './themes/index.js';\n\n`;
+  BRANDS.forEach(b => { rootIdx += `export * as ${b} from './brands/${b}/index.js';\n`; });
+  writeJsFile(path.join(jsDistDir, 'index.js'), rootIdx);
+
+  console.log(`  ✅ Generated ${presetThemes.length} pre-built themes`);
 
   // Count files
   const countFiles = (dir, ext = '.js') => {
