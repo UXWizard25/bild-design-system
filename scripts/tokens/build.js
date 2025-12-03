@@ -33,6 +33,10 @@ const COMPOSE_ENABLED = true;
 const SWIFTUI_ENABLED = true;       // SwiftUI output in dist/ios/
 const ANDROID_XML_ENABLED = false;  // Disabled - Compose is the preferred Android format
 
+// JS output mode: false = skip legacy 918-file generation, use optimized buildOptimizedJSOutput() instead
+// When false, JSON is still generated as the source for optimized JS output
+const JS_LEGACY_ENABLED = false;
+
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;
 
@@ -117,16 +121,19 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         options: { outputReferences: false }
       }]
     },
-    js: {
-      transformGroup: 'custom/js',
-      buildPath: `${DIST_DIR}/js/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
-      files: [{
-        destination: `${fileName}.js`,
-        format: 'custom/javascript/es6',
-        filter: tokenFilter,
-        options: { outputReferences: false }
-      }]
-    },
+    // Legacy JS: Skip when JS_LEGACY_ENABLED=false (optimized output generated separately)
+    ...(JS_LEGACY_ENABLED ? {
+      js: {
+        transformGroup: 'custom/js',
+        buildPath: `${DIST_DIR}/js/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+        files: [{
+          destination: `${fileName}.js`,
+          format: 'custom/javascript/es6',
+          filter: tokenFilter,
+          options: { outputReferences: false }
+        }]
+      }
+    } : {}),
     json: {
       transformGroup: 'custom/js',
       buildPath: `${DIST_DIR}/json/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
