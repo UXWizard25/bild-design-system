@@ -3,12 +3,15 @@
 /**
  * Validate Non-JS Outputs Script
  *
- * This script validates that CSS, SCSS, iOS, and Android outputs remain unchanged
+ * This script validates that SCSS, iOS, Android, and JSON outputs remain unchanged
  * when modifying the JS output generation. It creates checksums of all non-JS files
  * and compares them against a snapshot.
  *
+ * NOTE: CSS is excluded because bundles.js transforms the Style Dictionary output
+ * into a different bundled structure. CSS validation would require a separate approach.
+ *
  * Usage:
- *   npm run validate:snapshot:create  - Create a new snapshot
+ *   npm run validate:snapshot:create  - Create a new snapshot (run AFTER full build)
  *   npm run validate:snapshot:check   - Check current outputs against snapshot
  */
 
@@ -20,7 +23,8 @@ const DIST_DIR = path.join(__dirname, '../../dist');
 const SNAPSHOT_FILE = path.join(__dirname, '../../.output-snapshot.json');
 
 // Directories to validate (non-JS outputs)
-const VALIDATE_DIRS = ['css', 'scss', 'ios', 'android', 'json'];
+// NOTE: CSS excluded - it's transformed by bundles.js into a different structure
+const VALIDATE_DIRS = ['scss', 'ios', 'android', 'json'];
 
 /**
  * Calculate MD5 hash of a file
@@ -213,7 +217,8 @@ Usage:
   node validate-outputs.js --create   Create a new snapshot of non-JS outputs
   node validate-outputs.js --check    Check outputs against snapshot
 
-This script validates CSS, SCSS, iOS, and Android outputs remain unchanged.
+This script validates SCSS, iOS, Android, and JSON outputs remain unchanged.
+Note: CSS is excluded (transformed by bundles.js into bundled structure).
 `);
 }
 
