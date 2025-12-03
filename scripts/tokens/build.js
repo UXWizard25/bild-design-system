@@ -7514,6 +7514,19 @@ async function main() {
   // Build optimized JS output (replaces flat structure with grouped files)
   await buildOptimizedJSOutput();
 
+  // Copy README.js.md to dist/js/README.md (after JS build creates the directory)
+  try {
+    const readmeSrcDir = path.join(__dirname, '../..');
+    const jsReadmeSrc = path.join(readmeSrcDir, 'README.js.md');
+    const jsReadmeDest = path.join(DIST_DIR, 'js/README.md');
+    if (fs.existsSync(jsReadmeSrc)) {
+      fs.copyFileSync(jsReadmeSrc, jsReadmeDest);
+      console.log(`\n📄 README.js.md → dist/js/README.md ✅`);
+    }
+  } catch (err) {
+    console.log(`\n⚠️  Fehler beim Kopieren von README.js.md: ${err.message}`);
+  }
+
   console.log(`\n📁 Struktur:`);
   console.log(`   dist/`);
   console.log(`   ├── css/        (CSS with data-attributes)`);
