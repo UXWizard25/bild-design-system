@@ -5856,16 +5856,32 @@ function readTokenFile(filePath) {
  * Extract flat tokens from nested structure
  * Uses ONLY the last segment as token name (matching Style Dictionary behavior)
  * This ensures consistent naming across all platforms (CSS, JS, iOS, Android)
+ *
+ * Type-aware formatting based on $type:
+ * - dimension, fontSize, lineHeight, letterSpacing → "24px" (string with unit)
+ * - color, fontWeight, fontFamily, string, boolean, opacity, number → unchanged
  */
 function flattenTokens(obj) {
   const tokens = {};
+
+  // Types that should have 'px' suffix added (per W3C DTCG spec & industry best practice)
+  const DIMENSION_TYPES = ['dimension', 'fontSize', 'lineHeight', 'letterSpacing'];
+
   const extract = (node, path = []) => {
     for (const [key, value] of Object.entries(node)) {
       if (value && typeof value === 'object') {
         if ('$value' in value) {
           // Use only the last key as token name (matching name/custom/js transform)
           const tokenName = toCamelCase(key);
-          tokens[tokenName] = value.$value !== undefined ? value.$value : value.value;
+          const rawValue = value.$value !== undefined ? value.$value : value.value;
+          const tokenType = value.$type;
+
+          // Type-aware formatting: dimension types get 'px' suffix
+          if (DIMENSION_TYPES.includes(tokenType) && typeof rawValue === 'number') {
+            tokens[tokenName] = `${rawValue}px`;
+          } else {
+            tokens[tokenName] = rawValue;
+          }
         } else if (!Array.isArray(value)) {
           extract(value, [...path, key]);
         }
