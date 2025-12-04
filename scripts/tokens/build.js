@@ -7932,10 +7932,33 @@ async function main() {
   console.log(`   - Builds erfolgreich: ${successfulBuilds}/${totalBuilds}`);
   console.log(`   - Output-Verzeichnis: dist/\n`);
 
+  // Build optimized JS output (replaces flat structure with grouped files)
+  await buildOptimizedJSOutput();
+
   // Copy platform-specific README files to dist directories
-  console.log(`📄 Kopiere Platform-READMEs:\n`);
+  console.log(`\n📄 Kopiere Platform-READMEs:\n`);
   try {
     const readmeSrcDir = path.join(__dirname, '../..');
+
+    // Copy README.css.md to dist/css/README.md
+    const cssReadmeSrc = path.join(readmeSrcDir, 'README.css.md');
+    const cssReadmeDest = path.join(DIST_DIR, 'css/README.md');
+    if (fs.existsSync(cssReadmeSrc)) {
+      fs.copyFileSync(cssReadmeSrc, cssReadmeDest);
+      console.log(`   ✅ README.css.md → dist/css/README.md`);
+    } else {
+      console.log(`   ⚠️  README.css.md nicht gefunden`);
+    }
+
+    // Copy README.js.md to dist/js/README.md
+    const jsReadmeSrc = path.join(readmeSrcDir, 'README.js.md');
+    const jsReadmeDest = path.join(DIST_DIR, 'js/README.md');
+    if (fs.existsSync(jsReadmeSrc)) {
+      fs.copyFileSync(jsReadmeSrc, jsReadmeDest);
+      console.log(`   ✅ README.js.md → dist/js/README.md`);
+    } else {
+      console.log(`   ⚠️  README.js.md nicht gefunden`);
+    }
 
     // Copy README.android.md to dist/android/compose/README.md
     if (COMPOSE_ENABLED) {
@@ -7960,38 +7983,8 @@ async function main() {
         console.log(`   ⚠️  README.ios.md nicht gefunden`);
       }
     }
-    console.log('');
   } catch (err) {
-    console.log(`   ⚠️  Fehler beim Kopieren der READMEs: ${err.message}\n`);
-  }
-
-  // Build optimized JS output (replaces flat structure with grouped files)
-  await buildOptimizedJSOutput();
-
-  // Copy README.js.md to dist/js/README.md (after JS build creates the directory)
-  try {
-    const readmeSrcDir = path.join(__dirname, '../..');
-    const jsReadmeSrc = path.join(readmeSrcDir, 'README.js.md');
-    const jsReadmeDest = path.join(DIST_DIR, 'js/README.md');
-    if (fs.existsSync(jsReadmeSrc)) {
-      fs.copyFileSync(jsReadmeSrc, jsReadmeDest);
-      console.log(`\n📄 README.js.md → dist/js/README.md ✅`);
-    }
-  } catch (err) {
-    console.log(`\n⚠️  Fehler beim Kopieren von README.js.md: ${err.message}`);
-  }
-
-  // Copy README.css.md to dist/css/README.md
-  try {
-    const readmeSrcDir = path.join(__dirname, '../..');
-    const cssReadmeSrc = path.join(readmeSrcDir, 'README.css.md');
-    const cssReadmeDest = path.join(DIST_DIR, 'css/README.md');
-    if (fs.existsSync(cssReadmeSrc)) {
-      fs.copyFileSync(cssReadmeSrc, cssReadmeDest);
-      console.log(`📄 README.css.md → dist/css/README.md ✅`);
-    }
-  } catch (err) {
-    console.log(`⚠️  Fehler beim Kopieren von README.css.md: ${err.message}`);
+    console.log(`   ⚠️  Fehler beim Kopieren der READMEs: ${err.message}`);
   }
 
   console.log(`\n📁 Struktur:`);
