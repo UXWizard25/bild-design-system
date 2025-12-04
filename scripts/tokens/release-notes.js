@@ -126,7 +126,7 @@ function tableRow(...cells) {
 
 /**
  * Get platform names grouped by token for horizontal table display
- * Returns array of { displayName, platforms: { css, scss, js, swift, android, dart, json } }
+ * Returns array of { displayName, platforms: { css, scss, js, swift, kotlin, json } }
  */
 function getPlatformNamesGroupedByToken(tokens) {
   const results = [];

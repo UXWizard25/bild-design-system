@@ -57,10 +57,10 @@ function generateFileHeader({ fileName, commentStyle, brand, context }) {
     case 'block': // CSS, JS, Swift
       return '/**\n * ' + lines.join('\n * ') + '\n */\n\n';
 
-    case 'line': // SCSS, Dart, Swift alternative
+    case 'line': // SCSS, Swift
       return '//\n// ' + lines.join('\n// ') + '\n//\n\n';
 
-    case 'xml': // Android XML
+    case 'xml': // XML format
       return '<!--\n  ' + lines.join('\n  ') + '\n-->\n';
 
     default:
@@ -137,7 +137,7 @@ const nameTransformers = {
       .replace(/^-|-$/g, '');
   },
 
-  // snake_case für Android (hyphens sind in Android XML nicht erlaubt)
+  // snake_case (for potential future use)
   snake: (str) => {
     return str
       .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
@@ -147,7 +147,7 @@ const nameTransformers = {
       .replace(/^_|_$/g, '');
   },
 
-  // camelCase für JavaScript, Flutter, iOS Swift
+  // camelCase für JavaScript, iOS Swift, Android Compose
   camel: (str) => {
     const kebab = nameTransformers.kebab(str);
     // First: Keep letters after numbers lowercase (e.g., 1-x → 1x, not 1X)
