@@ -1408,6 +1408,182 @@ async function buildComponentTokens() {
 }
 
 /**
+ * Optimizes Component Color CSS by consolidating mode files
+ *
+ * When ALL tokens in a component's color files reference the SAME semantic tokens
+ * in both light and dark modes, we can consolidate them into a single mode-agnostic file.
+ *
+ * This optimization:
+ * 1. Checks if all tokens are semantic references
+ * 2. Checks if semantic token names are identical between light and dark
+ * 3. If yes: Creates a single file with [data-brand] selector (no data-theme)
+ * 4. Deletes the redundant mode-specific files
+ *
+ * This only affects CSS output - native platforms (iOS/Android) are not modified.
+ */
+async function optimizeComponentColorCSS() {
+  console.log('\n🎯 Optimizing Component Color CSS:\n');
+
+  let optimizedCount = 0;
+  let skippedCount = 0;
+
+  /**
+   * Recursively extracts all tokens with their $alias info from nested structure
+   */
+  function extractAllTokens(obj, tokens = []) {
+    for (const key of Object.keys(obj)) {
+      const value = obj[key];
+      if (value && typeof value === 'object') {
+        // Check if this is a token (has $value and $alias)
+        if (value.$value !== undefined && value.$alias) {
+          tokens.push({
+            name: key,
+            alias: value.$alias
+          });
+        } else {
+          // Recurse into nested objects
+          extractAllTokens(value, tokens);
+        }
+      }
+    }
+    return tokens;
+  }
+
+  /**
+   * Check if all tokens are semantic references with identical token names
+   */
+  function canOptimize(lightTokens, darkTokens) {
+    // Must have same number of tokens
+    if (lightTokens.length !== darkTokens.length) {
+      return false;
+    }
+
+    // Create maps for easier comparison
+    const lightMap = new Map(lightTokens.map(t => [t.name, t.alias]));
+    const darkMap = new Map(darkTokens.map(t => [t.name, t.alias]));
+
+    // Check each token
+    for (const [name, lightAlias] of lightMap) {
+      const darkAlias = darkMap.get(name);
+
+      // Token must exist in both modes
+      if (!darkAlias) {
+        return false;
+      }
+
+      // Both must be semantic references
+      if (lightAlias.collectionType !== 'semantic' || darkAlias.collectionType !== 'semantic') {
+        return false;
+      }
+
+      // Semantic token names must be identical
+      if (lightAlias.token !== darkAlias.token) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  for (const brand of BRANDS) {
+    const componentsDir = path.join(TOKENS_DIR, 'brands', brand, 'components');
+    const cssComponentsDir = path.join(DIST_DIR, 'css', 'brands', brand, 'components');
+
+    if (!fs.existsSync(componentsDir)) continue;
+
+    const componentNames = fs.readdirSync(componentsDir).filter(name => {
+      return fs.statSync(path.join(componentsDir, name)).isDirectory();
+    });
+
+    for (const componentName of componentNames) {
+      const componentDir = path.join(componentsDir, componentName);
+      const cssDir = path.join(cssComponentsDir, componentName);
+
+      // Find color token files
+      const lightTokenFile = path.join(componentDir, `${componentName.toLowerCase()}-color-light.json`);
+      const darkTokenFile = path.join(componentDir, `${componentName.toLowerCase()}-color-dark.json`);
+
+      // Both files must exist
+      if (!fs.existsSync(lightTokenFile) || !fs.existsSync(darkTokenFile)) {
+        continue;
+      }
+
+      // Load and parse token files
+      let lightData, darkData;
+      try {
+        lightData = JSON.parse(fs.readFileSync(lightTokenFile, 'utf8'));
+        darkData = JSON.parse(fs.readFileSync(darkTokenFile, 'utf8'));
+      } catch (e) {
+        console.log(`     ⚠️  ${componentName}: Error reading token files`);
+        continue;
+      }
+
+      // Extract all tokens
+      const lightTokens = extractAllTokens(lightData);
+      const darkTokens = extractAllTokens(darkData);
+
+      // Check if optimization is possible
+      if (!canOptimize(lightTokens, darkTokens)) {
+        skippedCount++;
+        continue;
+      }
+
+      // Optimization possible! Modify CSS files
+      const cssLightFile = path.join(cssDir, `${componentName.toLowerCase()}-color-light.css`);
+      const cssDarkFile = path.join(cssDir, `${componentName.toLowerCase()}-color-dark.css`);
+      const cssOptimizedFile = path.join(cssDir, `${componentName.toLowerCase()}-color.css`);
+
+      if (!fs.existsSync(cssLightFile)) {
+        continue;
+      }
+
+      try {
+        // Read light CSS file
+        let cssContent = fs.readFileSync(cssLightFile, 'utf8');
+
+        // Update header comment
+        cssContent = cssContent.replace(
+          /Brand: \w+ \| Context: theme: light/,
+          `Brand: ${brand.charAt(0).toUpperCase() + brand.slice(1)} | Context: Color (Mode-agnostic)`
+        );
+
+        // Update selector: remove data-theme attribute
+        cssContent = cssContent.replace(
+          /\[data-brand="[^"]+"\]\[data-theme="light"\]/g,
+          `[data-brand="${brand}"]`
+        );
+
+        // Remove fallback values from semantic references (already done in format, but ensure cleanup)
+        // Match: var(--semantic-token, #hexvalue) -> var(--semantic-token)
+        cssContent = cssContent.replace(
+          /var\((--[a-z-]+),\s*#[A-Fa-f0-9]+\)/g,
+          'var($1)'
+        );
+
+        // Write optimized file
+        fs.writeFileSync(cssOptimizedFile, cssContent);
+
+        // Delete original mode-specific files
+        fs.unlinkSync(cssLightFile);
+        if (fs.existsSync(cssDarkFile)) {
+          fs.unlinkSync(cssDarkFile);
+        }
+
+        optimizedCount++;
+        console.log(`     ✅ ${brand}/${componentName}: Consolidated to mode-agnostic file`);
+
+      } catch (e) {
+        console.log(`     ❌ ${componentName}: Error optimizing CSS - ${e.message}`);
+      }
+    }
+  }
+
+  console.log(`\n   📊 Summary: ${optimizedCount} components optimized, ${skippedCount} skipped (mixed/different refs)`);
+
+  return { optimizedCount, skippedCount };
+}
+
+/**
  * Builds Typography Tokens (brand-specific)
  */
 async function buildTypographyTokens() {
@@ -7393,6 +7569,9 @@ async function main() {
   // Build component tokens
   stats.componentTokens = await buildComponentTokens();
 
+  // Optimize component color CSS (consolidate semantic-only mode files)
+  stats.colorCssOptimization = await optimizeComponentColorCSS();
+
   // Build typography tokens
   stats.typographyTokens = await buildTypographyTokens();
 
@@ -7455,6 +7634,9 @@ async function main() {
   console.log(`   - Shared Primitives: ${stats.sharedPrimitives.successful}/${stats.sharedPrimitives.total}`);
   console.log(`   - Brand-spezifische Tokens: ${stats.brandSpecific.successfulBuilds}/${stats.brandSpecific.totalBuilds}`);
   console.log(`   - Component Tokens: ${stats.componentTokens.successfulBuilds}/${stats.componentTokens.totalBuilds}`);
+  if (stats.colorCssOptimization) {
+    console.log(`   - Color CSS Optimized: ${stats.colorCssOptimization.optimizedCount} components (${stats.colorCssOptimization.skippedCount} skipped)`);
+  }
   console.log(`   - Typography Builds: ${stats.typographyTokens.successfulBuilds}/${stats.typographyTokens.totalBuilds}`);
   console.log(`   - Effect Builds: ${stats.effectTokens.successfulBuilds}/${stats.effectTokens.totalBuilds}`);
   console.log(`   - Responsive CSS Files: ${stats.responsiveCSS.successfulConversions}/${stats.responsiveCSS.totalConversions}`);
