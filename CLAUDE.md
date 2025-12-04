@@ -551,6 +551,59 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 | **CSS token-level split** | Mode-agnostic tokens separate from light/dark-specific for smaller bundle size |
 | **CSS cascade optimization** | Only output @media when value changes from previous breakpoint |
 | **CSS effects consolidation** | Identical light/dark shadows merged into single mode-agnostic output |
+| **Format-agnostic naming** | Transformers normalize any input format (camelCase, kebab-case, snake_case) to consistent output |
+
+---
+
+## Token Naming Conventions
+
+The build system normalizes token names to platform-specific conventions, regardless of the input format from Figma.
+
+### Naming Rules per Platform
+
+| Platform | Format | Rules | Examples |
+|----------|--------|-------|----------|
+| **CSS/SCSS** | `kebab-case` | Separation before AND after numbers | `--space-1-x`, `--alpha-red-50-a-80`, `.shadow-soft-sm` |
+| **JavaScript** | `camelCase` | Lowercase after numbers, capitalized abbreviations | `space1x`, `alphaRed50a80`, `shadowSoftSm` |
+| **iOS/Swift** | `camelCase` | Lowercase after numbers, capitalized abbreviations | `space1x`, `alphaRed50a80`, `shadowSoftSm` |
+| **Android/Kotlin** | `camelCase` | Lowercase after numbers, capitalized abbreviations | `space1x`, `alphaRed50a80`, `shadowSoftSm` |
+
+### Format-Agnostic Input
+
+The transformers produce consistent output regardless of Figma input format:
+
+```
+Figma Input          →  CSS              →  JS/Swift/Kotlin
+─────────────────────────────────────────────────────────────
+space1x              →  --space-1-x      →  space1x
+space-1-x            →  --space-1-x      →  space1x
+space_1_x            →  --space-1-x      →  space1x
+Space1X              →  --space-1-x      →  space1x
+
+shadowSoftSM         →  .shadow-soft-sm  →  shadowSoftSm
+shadow-soft-sm       →  .shadow-soft-sm  →  shadowSoftSm
+shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
+```
+
+### Implementation Details
+
+| Transformer | Location | Purpose |
+|-------------|----------|---------|
+| `nameTransformers.kebab` | `style-dictionary.config.js` | CSS/SCSS names with full number separation |
+| `nameTransformers.camel` | `style-dictionary.config.js` | Swift/Kotlin names via Style Dictionary |
+| `toCamelCase()` | `build.js` | JavaScript names with consistent casing |
+
+### Key Transformation Rules
+
+1. **CSS kebab-case:**
+   - Letter→Number: `red50` → `red-50`
+   - Number→Letter: `1x` → `1-x`
+   - Consecutive uppercase: `SM` → `s-m`
+
+2. **JS/Native camelCase:**
+   - Letters after numbers stay lowercase: `50a` → `50a` (not `50A`)
+   - Abbreviations get capitalized: `SM` → `Sm` (not `SM`)
+   - First character always lowercase
 
 ---
 
@@ -571,6 +624,7 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 | Modify CSS color optimization | `build.js` → `optimizeComponentColorCSS()` function |
 | Modify CSS effects optimization | `build.js` → `optimizeComponentEffectsCSS()` function |
 | Change CSS bundle structure | `bundles.js` → `buildBrandTokens()`, `buildBrandBundle()` |
+| Modify token naming conventions | `style-dictionary.config.js` → `nameTransformers`, `build.js` → `toCamelCase()` |
 
 ---
 

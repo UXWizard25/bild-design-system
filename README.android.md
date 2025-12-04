@@ -15,6 +15,7 @@
 - [Multi-Brand Apps](#multi-brand-apps)
 - [File Structure](#file-structure)
 - [API Reference](#api-reference)
+- [Naming Conventions](#naming-conventions)
 
 ---
 
@@ -732,6 +733,38 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class")
 }
 ```
+
+---
+
+## Naming Conventions
+
+Kotlin tokens use **camelCase** with lowercase letters after numbers:
+
+| Token Type | Example | Pattern |
+|------------|---------|---------|
+| Spacing | `space1x`, `space2x` | Lowercase after numbers |
+| Decimal spacing | `space0p5x`, `space1p25x` | Decimals use `p` for point |
+| Colors | `bildred`, `alphaRed50a80` | Lowercase after numbers |
+| Typography | `headline1`, `body` | Standard camelCase |
+| Effects | `shadowSoftSm`, `shadowHardMd` | Capitalized abbreviations (Sm, Md, Lg) |
+
+### Format-Agnostic Input
+
+The build system normalizes any Figma input format to consistent output:
+
+```kotlin
+// All these Figma inputs produce the same Kotlin output:
+// "space1x", "space-1-x", "space_1_x" → space1x
+// "shadowSoftSM", "shadow-soft-sm" → shadowSoftSm
+
+// Accessing tokens
+DesignTokenPrimitives.Space.space1x      // Dp
+DesignTokenPrimitives.Space.space2x      // Dp
+DesignSystemTheme.effects.shadowSoftSm   // ShadowStyle
+DesignSystemTheme.sizing.gridSpaceRespBase // Dp
+```
+
+> **Note:** This ensures consistency regardless of how tokens are named in Figma.
 
 ---
 
