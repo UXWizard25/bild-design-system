@@ -15,6 +15,7 @@
 - [Multi-Brand Apps](#multi-brand-apps)
 - [File Structure](#file-structure)
 - [API Reference](#api-reference)
+- [Naming Conventions](#naming-conventions)
 
 ---
 
@@ -738,6 +739,38 @@ RoundedRectangle(cornerRadius: 8)
 - iOS 17.0+ (for `@Observable`)
 - Swift 5.9+
 - SwiftUI
+
+---
+
+## Naming Conventions
+
+Swift tokens use **camelCase** with lowercase letters after numbers:
+
+| Token Type | Example | Pattern |
+|------------|---------|---------|
+| Spacing | `space1x`, `space2x` | Lowercase after numbers |
+| Decimal spacing | `space0p5x`, `space1p25x` | Decimals use `p` for point |
+| Colors | `bildred`, `alphaRed50a80` | Lowercase after numbers |
+| Typography | `headline1`, `body` | Standard camelCase |
+| Effects | `shadowSoftSm`, `shadowHardMd` | Capitalized abbreviations (Sm, Md, Lg) |
+
+### Format-Agnostic Input
+
+The build system normalizes any Figma input format to consistent output:
+
+```swift
+// All these Figma inputs produce the same Swift output:
+// "space1x", "space-1-x", "space_1_x" → space1x
+// "shadowSoftSM", "shadow-soft-sm" → shadowSoftSm
+
+// Accessing tokens
+DesignTokenPrimitives.Space.space1x      // 8.0 (CGFloat)
+DesignTokenPrimitives.Space.space2x      // 16.0 (CGFloat)
+theme.effects.shadowSoftSm               // ShadowStyle
+theme.sizing.gridSpaceRespBase           // CGFloat
+```
+
+> **Note:** This ensures consistency regardless of how tokens are named in Figma.
 
 ---
 

@@ -10,6 +10,7 @@
 
 - [Quick Start](#quick-start)
 - [File Structure](#file-structure)
+- [Naming Conventions](#naming-conventions)
 - [Data Attributes](#data-attributes)
 - [Bundle Options](#bundle-options)
 - [Token Categories](#token-categories)
@@ -105,6 +106,22 @@ dist/css/
 
 ---
 
+## Naming Conventions
+
+CSS tokens use **kebab-case** with hyphen separation before AND after numbers:
+
+| Token Type | Example | Pattern |
+|------------|---------|---------|
+| Spacing | `--space-1-x`, `--space-2-x` | Numbers separated by hyphens |
+| Decimal spacing | `--space-0-p-5-x`, `--space-1-p-25-x` | Decimals use `p` for point |
+| Colors | `--color-bild-red-50`, `--alpha-red-50-a-80` | Numbers and suffixes separated |
+| Typography | `.display-1`, `.headline-2` | Class names with hyphen before number |
+| Effects | `.shadow-soft-sm`, `.shadow-hard-md` | Size abbreviations in lowercase |
+
+> **Note:** This ensures consistency and readability. The build system normalizes any Figma input format to this convention.
+
+---
+
 ## Data Attributes
 
 ### Required Attributes
@@ -187,14 +204,14 @@ Raw design values, brand-independent.
   --bild015: #232629;
   --white100: #FFFFFF;
 
-  /* Spacing */
-  --space1x: 8px;
-  --space2x: 16px;
-  --space3x: 24px;
+  /* Spacing (note: numbers are hyphen-separated) */
+  --space-1-x: 8px;
+  --space-2-x: 16px;
+  --space-3-x: 24px;
 
   /* Sizes */
-  --size4x: 32px;
-  --size6x: 48px;
+  --size-4-x: 32px;
+  --size-6-x: 48px;
 
   /* Fonts */
   --font-family-gotham-xnarrow: Gotham XNarrow;
@@ -231,23 +248,23 @@ Breakpoint-aware sizing and typography.
 ```css
 /* Base (mobile-first) */
 [data-brand="bild"] {
-  --headline1-font-size: 48px;
-  --grid-space-resp-base: var(--space1p5x, 12px);
+  --headline-1-font-size: 48px;
+  --grid-space-resp-base: var(--space-1-p-5-x, 12px);
 }
 
 /* Tablet (600px+) */
 @media (min-width: 600px) {
   [data-brand="bild"] {
-    --headline1-font-size: 72px;
-    --grid-space-resp-base: var(--space1p5x, 12px);
+    --headline-1-font-size: 72px;
+    --grid-space-resp-base: var(--space-1-p-5-x, 12px);
   }
 }
 
 /* Desktop (1024px+) */
 @media (min-width: 1024px) {
   [data-brand="bild"] {
-    --headline1-font-size: 100px;
-    --grid-space-resp-base: var(--space2x, 16px);
+    --headline-1-font-size: 100px;
+    --grid-space-resp-base: var(--space-2-x, 16px);
   }
 }
 ```

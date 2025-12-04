@@ -5197,7 +5197,7 @@ import androidx.compose.ui.unit.sp
  * Design Token Primitives
  *
  * Usage:
- *   DesignTokenPrimitives.Colors.bildred
+ *   DesignTokenPrimitives.Colors.colorBildRed50
  *   DesignTokenPrimitives.Space.space2x
  *   DesignTokenPrimitives.Size.size4x
  *   DesignTokenPrimitives.Font.fontWeightBold
@@ -6242,10 +6242,21 @@ const JS_FILE_HEADER = `/**
 
 /**
  * Convert string to camelCase
+ * - Handles consecutive uppercase letters (e.g., shadowSoftSM → shadowSoftSm)
+ * - Keeps letters after digits lowercase (e.g., space-1-x → space1x, not space1X)
+ * - Works with any input format: camelCase, kebab-case, snake_case
  */
 function toCamelCase(str) {
   return str
+    // Split on lowercase-to-uppercase transitions (e.g., softSM → soft-S-M)
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    // Lowercase everything
+    .toLowerCase()
+    // Keep letters after digits lowercase (remove separator without capitalizing)
+    .replace(/(\d)[-_\s]+([a-z])/g, '$1$2')
+    // Capitalize letters after remaining separators
     .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ''))
+    // Ensure first character is lowercase
     .replace(/^(.)/, (c) => c.toLowerCase());
 }
 
