@@ -405,7 +405,8 @@ const sizePxTransform = {
     const value = token.$value || token.value;
 
     // Only match if type is dimension-related AND value is numeric
-    const isMatchingType = ['spacing', 'size', 'fontSize', 'dimension'].includes(type);
+    // Includes lineHeight and letterSpacing which also need px units in CSS
+    const isMatchingType = ['spacing', 'size', 'fontSize', 'dimension', 'lineHeight', 'letterSpacing'].includes(type);
     const isNumeric = typeof value === 'number';
 
     return isMatchingType && isNumeric;
