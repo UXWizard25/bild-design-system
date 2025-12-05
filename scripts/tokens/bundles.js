@@ -1,5 +1,5 @@
 /**
- * Build CSS Bundles with Optimized Structure
+ * Build CSS Bundles with Optimized Structure (Dual-Axis Architecture)
  *
  * Creates a clean, consumption-ready CSS structure:
  *
@@ -8,25 +8,28 @@
  * │   └── primitives.css          ← All primitives (space, size, color, font)
  * │
  * ├── bild/
- * │   ├── theme.css               ← Light/Dark colors + effects
- * │   ├── tokens.css              ← Breakpoints + Typography + Density
+ * │   ├── theme.css               ← Light/Dark colors + effects (data-color-brand)
+ * │   ├── tokens.css              ← Breakpoints + Typography + Density (data-content-brand)
  * │   └── components/
  * │       └── button.css          ← All button tokens combined
  * │
  * ├── sportbild/                  ← Same structure
- * ├── advertorial/                ← Same structure
+ * ├── advertorial/                ← Content tokens only (no color tokens!)
  * │
  * └── bundles/
  *     ├── bild.css                ← Full bundle (primitives + theme + tokens + components)
  *     ├── sportbild.css
  *     └── advertorial.css
  *
- * Optimization Features:
- * - Single primitives.css for all brands
- * - Theme switching via data-theme="light/dark"
+ * Dual-Axis Architecture:
+ * - ColorBrand (data-color-brand): colors, effects - BILD, SportBILD only
+ * - ContentBrand (data-content-brand): breakpoints, typography, density - all brands
+ * - Theme switching via data-theme="light/dark" (combined with data-color-brand)
  * - Responsive breakpoints with @media queries
- * - Per-component bundles with all tokens combined
- * - Full brand bundles for quick start
+ *
+ * Usage:
+ * <html data-color-brand="bild" data-content-brand="bild" data-theme="light">
+ * <article data-content-brand="advertorial"> <!-- Inherits colors from parent -->
  */
 
 const fs = require('fs');

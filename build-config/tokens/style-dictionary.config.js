@@ -88,6 +88,38 @@ function getContextString(options) {
 // ============================================================================
 
 /**
+ * Dual-Axis Architecture: Determines which brand attribute to use
+ *
+ * ColorBrand axis (data-color-brand): colors, effects - only BILD, SportBILD
+ * ContentBrand axis (data-content-brand): breakpoints, typography, density - all brands including Advertorial
+ *
+ * @param {string} modeType - The mode type: 'theme', 'breakpoint', 'density'
+ * @param {string} [filePath] - Optional file path for additional context
+ * @returns {'data-color-brand' | 'data-content-brand'} - The brand attribute to use
+ */
+function getBrandAttribute(modeType, filePath = '') {
+  // Theme-dependent tokens (colors, effects) use ColorBrand axis
+  if (modeType === 'theme') {
+    return 'data-color-brand';
+  }
+
+  // File path fallback for cases without modeType
+  if (filePath) {
+    const lowerPath = filePath.toLowerCase();
+    if (lowerPath.includes('color-light') ||
+        lowerPath.includes('color-dark') ||
+        lowerPath.includes('colormode-') ||
+        lowerPath.includes('effects-light') ||
+        lowerPath.includes('effects-dark')) {
+      return 'data-color-brand';
+    }
+  }
+
+  // Everything else (breakpoints, typography, density) uses ContentBrand axis
+  return 'data-content-brand';
+}
+
+/**
  * Groups tokens hierarchically by path segments
  * Returns a structure: { topLevel: { subLevel: [tokens] } }
  */
@@ -998,9 +1030,10 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
 
   const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
 
-  // Build data-attribute selector for Strategy A (full brand + breakpoint scoping)
+  // Build data-attribute selector for Dual-Axis Architecture (ContentBrand + breakpoint)
   const brandLowercase = brand.toLowerCase();
-  const dataSelector = `[data-brand="${brandLowercase}"][data-breakpoint="${breakpoint}"]`;
+  const brandAttr = getBrandAttribute('breakpoint'); // Typography uses ContentBrand axis
+  const dataSelector = `[${brandAttr}="${brandLowercase}"][data-breakpoint="${breakpoint}"]`;
 
   let isFirstTopLevel = true;
   Object.keys(hierarchicalGroups).forEach(topLevel => {
@@ -1089,9 +1122,10 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
 
   const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
 
-  // Build data-attribute selector for Strategy A (full brand + theme scoping)
+  // Build data-attribute selector for Dual-Axis Architecture (ColorBrand + theme)
   const brandLowercase = brand.toLowerCase();
-  const dataSelector = `[data-brand="${brandLowercase}"][data-theme="${colorMode}"]`;
+  const brandAttr = getBrandAttribute('theme'); // Effects use ColorBrand axis
+  const dataSelector = `[${brandAttr}="${brandLowercase}"][data-theme="${colorMode}"]`;
 
   let isFirstTopLevel = true;
   Object.keys(hierarchicalGroups).forEach(topLevel => {
@@ -1622,12 +1656,16 @@ const customTransformGroups = {
 // ============================================================================
 
 /**
- * Format: CSS Themed Variables with Data-Attributes
- * Generates CSS with [data-brand] and [data-theme/data-breakpoint] selectors
- * for runtime theme switching without file swapping.
+ * Format: CSS Themed Variables with Data-Attributes (Dual-Axis Architecture)
+ * Generates CSS with [data-color-brand] or [data-content-brand] selectors
+ * combined with [data-theme/data-breakpoint/data-density] for runtime switching.
+ *
+ * Dual-Axis:
+ * - ColorBrand (data-color-brand): colors, effects - BILD, SportBILD only
+ * - ContentBrand (data-content-brand): breakpoints, typography, density - all brands
  *
  * Options:
- * - brand: Brand name (e.g., 'bild', 'sportbild')
+ * - brand: Brand name (e.g., 'bild', 'sportbild', 'advertorial')
  * - mode: Color mode, breakpoint, or density (e.g., 'light', 'dark', 'xs', 'dense')
  * - modeType: Type of mode ('theme', 'breakpoint', 'density')
  * - includeRoot: Whether to include default :root fallback (default: false)
@@ -1643,17 +1681,19 @@ const cssThemedVariablesFormat = ({ dictionary, options, file }) => {
     context: modeType && mode ? `${modeType}: ${mode}` : 'All Modes'
   });
 
-  // Build selector based on brand and mode
+  // Build selector based on brand and mode (Dual-Axis Architecture)
   let selector;
+  const brandAttr = getBrandAttribute(modeType, file.destination);
+
   if (brand && mode) {
     // Specific brand + mode combination
     const dataMode = modeType === 'theme' ? 'data-theme' :
                      modeType === 'breakpoint' ? 'data-breakpoint' :
                      modeType === 'density' ? 'data-density' : 'data-mode';
-    selector = `[data-brand="${brand}"][${dataMode}="${mode}"]`;
+    selector = `[${brandAttr}="${brand}"][${dataMode}="${mode}"]`;
   } else if (brand) {
     // Brand only
-    selector = `[data-brand="${brand}"]`;
+    selector = `[${brandAttr}="${brand}"]`;
   } else if (mode) {
     // Mode only
     const dataMode = modeType === 'theme' ? 'data-theme' :
@@ -1838,15 +1878,17 @@ const cssThemedVariablesWithAliasFormat = ({ dictionary, options, file }) => {
     context: modeType && mode ? `${modeType}: ${mode}` : 'All Modes'
   });
 
-  // Build selector based on brand and mode
+  // Build selector based on brand and mode (Dual-Axis Architecture)
   let selector;
+  const brandAttr = getBrandAttribute(modeType, file.destination);
+
   if (brand && mode) {
     const dataMode = modeType === 'theme' ? 'data-theme' :
                      modeType === 'breakpoint' ? 'data-breakpoint' :
                      modeType === 'density' ? 'data-density' : 'data-mode';
-    selector = `[data-brand="${brand}"][${dataMode}="${mode}"]`;
+    selector = `[${brandAttr}="${brand}"][${dataMode}="${mode}"]`;
   } else if (brand) {
-    selector = `[data-brand="${brand}"]`;
+    selector = `[${brandAttr}="${brand}"]`;
   } else if (mode) {
     const dataMode = modeType === 'theme' ? 'data-theme' :
                      modeType === 'breakpoint' ? 'data-breakpoint' :
