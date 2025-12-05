@@ -36,7 +36,7 @@ The BILD Design Ops Pipeline transforms design assets from Figma into production
 
 | Pipeline | Input | Output | Platforms |
 |----------|-------|--------|-----------|
-| **🎨 Token Pipeline** | Figma Variables | Design Tokens | 6 platforms (Flutter/Android XML disabled) |
+| **🎨 Token Pipeline** | Figma Variables | Design Tokens | 3 platforms (6 formats) |
 | **🖼️ Icon Pipeline** | Figma Icons (SVG) | Multi-format Icons | 5 platforms |
 
 Both pipelines use the **TokenSync Figma Plugin** for automated exports.
@@ -117,7 +117,7 @@ Both pipelines use the **TokenSync Figma Plugin** for automated exports.
 │  ├── json/    (Raw Data)    │    │  └── ios/      (xcassets)   │
 │  ├── ios/     (Swift)       │    │                             │
 │  └── android/ (Compose/Kt)  │    │                             │
-│  (flutter/XML disabled)     │    │                             │
+│                             │    │                             │
 └──────────────┬──────────────┘    └──────────────┬──────────────┘
                │                                  │
                │  npm publish                     │  npm publish
@@ -371,10 +371,8 @@ npm run clean:icons        # Remove dist/icons/
 | SCSS | Variables | `dist/scss/**/*.scss` | ✅ Production |
 | JavaScript | ES Modules + React | `dist/js/**/*.js` | ✅ Production |
 | JSON | Raw Data | `dist/json/**/*.json` | ✅ Production |
-| iOS Swift | UIColor, CGFloat | `dist/ios/**/*.swift` | ✅ Production |
+| iOS Swift | SwiftUI Color, CGFloat | `dist/ios/**/*.swift` | ✅ Production |
 | Android | Jetpack Compose (Kotlin) | `dist/android/compose/**/*.kt` | ✅ Production |
-| Android | XML Resources | `dist/android/**/*.xml` | ⏸️ Disabled |
-| Flutter | Dart Classes | `dist/flutter/**/*.dart` | ⏸️ Disabled |
 
 ### 🖼️ Icon Platforms
 
