@@ -154,17 +154,18 @@ FontPrimitive ──┘           | Advertorial)     │
                            (default|dense|spacious)   └─ Typography
 ```
 
-### Mode Dependencies (CSS Output)
+### Mode Dependencies (CSS Output - Dual-Axis)
 
 | Token Type | Depends On | CSS Output Scope |
 |------------|------------|------------------|
 | Primitives | – | `:root { }` |
-| Semantic Colors | BrandColorMapping + ColorMode | `[data-brand][data-theme] { }` |
-| Semantic Sizing | BrandTokenMapping + Breakpoint | `[data-brand] { } @media (...) { }` |
-| Density | Density mode | `[data-brand][data-density] { }` |
-| Effects | BrandColorMapping + ColorMode | `[data-brand][data-theme] .className { }` |
-| Typography | BrandTokenMapping + Breakpoint | `[data-brand] .className { }` |
-| Component Tokens | All above | Inherits from semantic layer |
+| Semantic Colors | BrandColorMapping + ColorMode | `[data-color-brand][data-theme] { }` |
+| Semantic Sizing | BrandTokenMapping + Breakpoint | `[data-content-brand] { } @media (...) { }` |
+| Density | Density mode | `[data-content-brand][data-density] { }` |
+| Effects | BrandColorMapping + ColorMode | `[data-color-brand][data-theme] .className { }` |
+| Typography | BrandTokenMapping + Breakpoint | `[data-content-brand] .className { }` |
+| Component Colors | ColorMode | `[data-color-brand][data-theme] { }` |
+| Component Sizing | Breakpoint + Density | `[data-content-brand] { }` |
 
 ---
 
@@ -333,11 +334,11 @@ Tokens reference each other through aliases. Here's how a button color token res
 │  ──────────────────────────────────────────────────────────────────────    │
 │                                                                             │
 │  :root {                                                                    │
-│    --bildred: #DD0000;                                                      │
+│    --color-bild-red-50: #DD0000;                                            │
 │  }                                                                          │
 │                                                                             │
-│  [data-brand="bild"][data-theme="light"] {                                  │
-│    --core-color-primary: var(--bildred, #DD0000);                           │
+│  [data-color-brand="bild"][data-theme="light"] {                            │
+│    --core-color-primary: var(--color-bild-red-50, #DD0000);                 │
 │    --button-primary-bg-color: var(--core-color-primary, #DD0000);           │
 │  }                                                                          │
 │                                                                             │
@@ -348,20 +349,29 @@ Tokens reference each other through aliases. Here's how a button color token res
 
 ## Platform Output Patterns
 
-### Web (CSS)
+### Web (CSS) - Dual-Axis Architecture
 
 ```html
-<html data-brand="bild" data-theme="light" data-density="default">
+<!-- Standard BILD -->
+<html data-color-brand="bild" data-content-brand="bild" data-theme="light" data-density="default">
+
+<!-- Advertorial in BILD context -->
+<html data-color-brand="bild" data-content-brand="advertorial" data-theme="light">
+
+<!-- Advertorial in SportBILD context -->
+<html data-color-brand="sportbild" data-content-brand="advertorial" data-theme="dark">
 ```
 
 | Token Type | CSS Selector Pattern |
 |------------|---------------------|
 | Primitives | `:root { --token: value; }` |
-| Semantic Colors | `[data-brand][data-theme] { --token: var(...); }` |
-| Breakpoint Sizing | `[data-brand] { } @media (...) { }` |
-| Density | `[data-brand][data-density] { }` |
-| Typography | `[data-brand] .className { }` |
-| Effects | `[data-brand][data-theme] .className { }` |
+| Semantic Colors | `[data-color-brand][data-theme] { --token: var(...); }` |
+| Breakpoint Sizing | `[data-content-brand] { } @media (...) { }` |
+| Density | `[data-content-brand][data-density] { }` |
+| Typography | `[data-content-brand] .className { }` |
+| Effects | `[data-color-brand][data-theme] .className { }` |
+| Component Colors | `[data-color-brand][data-theme] { }` |
+| Component Sizing | `[data-content-brand] { }` |
 
 ### iOS (SwiftUI)
 
@@ -542,7 +552,7 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 | **@media over data-breakpoint** | Native browser support, no JS required, SSR-compatible |
 | **var() with fallbacks** | Robustness if variables missing, easier debugging |
 | **Separate mode files** | Lazy loading, better caching, easier debugging |
-| **Dual-Axis architecture** | Enables Advertorial + brand colors combination (native platforms) |
+| **Dual-Axis architecture** | Enables Advertorial + brand colors combination (all platforms: CSS, iOS, Android, JS) |
 | **Unified interfaces** | Polymorphic access, type-safety, runtime brand switching |
 | **Typography as classes** | Groups related properties (font-size, weight, line-height) |
 | **Platform-specific breakpoint mapping** | iOS: 4→2 (compact/regular), Android: 4→3 (Compact/Medium/Expanded per Material 3) |
@@ -551,6 +561,7 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 | **CSS token-level split** | Mode-agnostic tokens separate from light/dark-specific for smaller bundle size |
 | **CSS cascade optimization** | Only output @media when value changes from previous breakpoint |
 | **CSS effects consolidation** | Identical light/dark shadows merged into single mode-agnostic output |
+| **CSS Dual-Axis selectors** | `data-color-brand` for colors/effects, `data-content-brand` for typography/sizing |
 | **Format-agnostic naming** | Transformers normalize any input format (camelCase, kebab-case, snake_case) to consistent output |
 
 ---
@@ -624,6 +635,7 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify CSS color optimization | `build.js` → `optimizeComponentColorCSS()` function |
 | Modify CSS effects optimization | `build.js` → `optimizeComponentEffectsCSS()` function |
 | Change CSS bundle structure | `bundles.js` → `buildBrandTokens()`, `buildBrandBundle()` |
+| Modify CSS Dual-Axis selectors | `style-dictionary.config.js` → `getBrandAttribute()`, `build.js` → optimization functions |
 | Modify token naming conventions | `style-dictionary.config.js` → `nameTransformers`, `build.js` → `toCamelCase()` |
 
 ---
