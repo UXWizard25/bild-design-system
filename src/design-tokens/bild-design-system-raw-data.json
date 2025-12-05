@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-12-04T13:40:35.891Z",
+  "lastModified": "2025-12-05T09:40:41.840Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -8558,7 +8558,7 @@
         },
         {
           "id": "VariableID:7015:23730",
-          "name": "Semantic/Layout/Grid/Responsive/gridSpaceRespLG",
+          "name": "Semantic/Layout/Grid/Responsive/gridSpaceRespLg",
           "description": "24-24-32-32 – use for side paddings and gutters in responsive layouts",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -8618,7 +8618,7 @@
         },
         {
           "id": "VariableID:7015:23734",
-          "name": "Semantic/Layout/Grid/Responsive/gridSpaceRespXL",
+          "name": "Semantic/Layout/Grid/Responsive/gridSpaceRespXl",
           "description": "48-48-64-64 – use for side paddings and gutters in responsive layouts",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -9004,7 +9004,7 @@
         },
         {
           "id": "VariableID:7129:11073",
-          "name": "Semantic/Layout/Grid/Responsive/gridSpaceRespSM",
+          "name": "Semantic/Layout/Grid/Responsive/gridSpaceRespSm",
           "description": "6-6-6-8 – use for side paddings and gutters in responsive layouts",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -10305,7 +10305,7 @@
         },
         {
           "id": "VariableID:7630:46655",
-          "name": "Semantic/Border/BorderRadius/borderRadiusXS",
+          "name": "Semantic/Border/BorderRadius/borderRadiusXs",
           "description": "2-2-2-2 use for corner rounding on very small UI elements such as tooltips and badges.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -10539,7 +10539,7 @@
         },
         {
           "id": "VariableID:7650:50023",
-          "name": "Semantic/Border/BorderRadius/borderRadiusMD",
+          "name": "Semantic/Border/BorderRadius/borderRadiusMd",
           "description": "8-8-8-8 – Standard radius for buttons, chips, input fields, and medium-sized interactive elements.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -11924,7 +11924,7 @@
         },
         {
           "id": "VariableID:8439:33352",
-          "name": "Semantic/Border/BorderRadius/borderRadiusSM",
+          "name": "Semantic/Border/BorderRadius/borderRadiusSm",
           "description": "4-4-4-4 – use for corner rounding on compact components like checkboxes or small input controls.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -13124,7 +13124,7 @@
         },
         {
           "id": "VariableID:9758:15195",
-          "name": "Semantic/Border/BorderRadius/borderRadiusXL",
+          "name": "Semantic/Border/BorderRadius/borderRadiusXl",
           "description": "24-24-24-24 – use for corner rounding on larger cards, overlays, dialogs, and other container components.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -13560,7 +13560,7 @@
         },
         {
           "id": "VariableID:12270:164841",
-          "name": "Semantic/Border/BorderRadius/borderRadiusLG",
+          "name": "Semantic/Border/BorderRadius/borderRadiusLg",
           "description": "16-16-16-16 – use for corner rounding on small cards, overlays, and modal surfaces.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -31309,7 +31309,7 @@
   "effectStyles": [
     {
       "id": "S:0b02e84f03c817d8280c0471c86dc942e18e77f1,",
-      "name": "Global/DropShadowSoft/shadowSoftSM",
+      "name": "Global/DropShadowSoft/shadowSoftSm",
       "description": "Broad and soft shadows with low contrast. Best for cards, sheets, or subtle surface separation.",
       "type": "EFFECT",
       "effects": [
@@ -31355,7 +31355,7 @@
     },
     {
       "id": "S:4d1a81b6694aad9edfc26cfa54991096bcb619ea,",
-      "name": "Global/DropShadowSoft/shadowSoftMD",
+      "name": "Global/DropShadowSoft/shadowSoftMd",
       "description": "Broad and soft shadows with low contrast. Best for cards, sheets, or subtle surface separation.",
       "type": "EFFECT",
       "effects": [
@@ -31401,7 +31401,7 @@
     },
     {
       "id": "S:6d95e6e2d4ba10697dd5406e0887c2ac9423a113,",
-      "name": "Global/DropShadowSoft/shadowSoftLG",
+      "name": "Global/DropShadowSoft/shadowSoftLg",
       "description": "Broad and soft shadows with low contrast. Best for cards, sheets, or subtle surface separation.",
       "type": "EFFECT",
       "effects": [
@@ -31447,7 +31447,7 @@
     },
     {
       "id": "S:1454904b263cbea328c17cd0077e0da81e2c8561,",
-      "name": "Global/DropShadowSoft/shadowSoftXL",
+      "name": "Global/DropShadowSoft/shadowSoftXl",
       "description": "Broad and soft shadows with low contrast. Best for cards, sheets, or subtle surface separation.",
       "type": "EFFECT",
       "effects": [
@@ -31493,7 +31493,7 @@
     },
     {
       "id": "S:b1cc00467e7239838dcdb1ed376813d6c1d3bdd2,",
-      "name": "Global/DropShadowHard/shadowHardSM",
+      "name": "Global/DropShadowHard/shadowHardSm",
       "description": "Sharper, higher-contrast shadows. Best for dialogs, modals, dropdowns and overlays that require stronger focus.",
       "type": "EFFECT",
       "effects": [
@@ -31549,7 +31549,7 @@
     },
     {
       "id": "S:c1a05d3395cb3fc489136aa2f0202d471b832f6a,",
-      "name": "Global/DropShadowHard/shadowHardMD",
+      "name": "Global/DropShadowHard/shadowHardMd",
       "description": "Sharper, higher-contrast shadows. Best for dialogs, modals, dropdowns and overlays that require stronger focus.",
       "type": "EFFECT",
       "effects": [
@@ -31600,7 +31600,7 @@
     },
     {
       "id": "S:d1813d3e2c9b7b28971862752d79399f5432831d,",
-      "name": "Global/DropShadowHard/shadowHardLG",
+      "name": "Global/DropShadowHard/shadowHardLg",
       "description": "Sharper, higher-contrast shadows. Best for dialogs, modals, dropdowns and overlays that require stronger focus.",
       "type": "EFFECT",
       "effects": [
@@ -31656,7 +31656,7 @@
     },
     {
       "id": "S:0827f80a0b51f48f992b59b426a1aa12e5d51915,",
-      "name": "Global/DropShadowHard/shadowHardXL",
+      "name": "Global/DropShadowHard/shadowHardXl",
       "description": "Sharper, higher-contrast shadows. Best for dialogs, modals, dropdowns and overlays that require stronger focus.",
       "type": "EFFECT",
       "effects": [
