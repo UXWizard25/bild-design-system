@@ -1197,7 +1197,7 @@ async function buildComponentTokens() {
  * This optimization:
  * 1. Checks if all tokens are semantic references
  * 2. Checks if semantic token names are identical between light and dark
- * 3. If yes: Creates a single file with [data-brand] selector (no data-theme)
+ * 3. If yes: Creates a single file with [data-color-brand] selector (no data-theme)
  * 4. Deletes the redundant mode-specific files
  *
  * This only affects CSS output - native platforms (iOS/Android) are not modified.
@@ -1393,11 +1393,11 @@ async function optimizeComponentColorCSS() {
           }
         }
 
-        // Write output files
+        // Write output files (Dual-Axis: Color tokens use data-color-brand)
         if (optimizedVars.length > 0) {
           const optimizedContent = generateCssContent(
             lightCss.header,
-            `[data-brand="${brand}"]`,
+            `[data-color-brand="${brand}"]`,
             optimizedVars,
             'Color (Mode-agnostic)'
           );
@@ -1415,7 +1415,7 @@ async function optimizeComponentColorCSS() {
           if (lightOnlyVars.length > 0) {
             const lightContent = generateCssContent(
               lightCss.header,
-              `[data-brand="${brand}"][data-theme="light"]`,
+              `[data-color-brand="${brand}"][data-theme="light"]`,
               lightOnlyVars,
               'theme: light'
             );
@@ -1427,7 +1427,7 @@ async function optimizeComponentColorCSS() {
           if (darkOnlyVars.length > 0) {
             const darkContent = generateCssContent(
               darkCss.header,
-              `[data-brand="${brand}"][data-theme="dark"]`,
+              `[data-color-brand="${brand}"][data-theme="dark"]`,
               darkOnlyVars,
               'theme: dark'
             );
@@ -1474,8 +1474,8 @@ async function optimizeComponentEffectsCSS() {
   function parseEffectsCssFile(cssContent) {
     const rules = new Map();
 
-    // Match: [data-brand="..."][data-theme="..."] .class-name { ... }
-    const ruleRegex = /\[data-brand="[^"]+"\]\[data-theme="[^"]+"\]\s+\.([a-z0-9-]+)\s*\{([^}]+)\}/gi;
+    // Match: [data-color-brand="..."][data-theme="..."] .class-name { ... } (Dual-Axis)
+    const ruleRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\]\s+\.([a-z0-9-]+)\s*\{([^}]+)\}/gi;
     let match;
 
     while ((match = ruleRegex.exec(cssContent)) !== null) {
@@ -1517,7 +1517,7 @@ async function optimizeComponentEffectsCSS() {
     let output = updatedHeader + '\n\n';
 
     for (const [className, ruleContent] of rules) {
-      output += `[data-brand="${brand}"] .${className} {\n`;
+      output += `[data-color-brand="${brand}"] .${className} {\n`;
       output += `  ${ruleContent}\n`;
       output += `}\n\n`;
     }
@@ -1885,8 +1885,8 @@ async function generateResponsiveFile(dir, baseName, brand, breakpointConfig, op
     breakpointClasses[bp] = classes;
   }
 
-  // Generate responsive CSS with media queries
-  output += `[data-brand="${brand}"] {\n`;
+  // Generate responsive CSS with media queries (Dual-Axis: Typography uses ContentBrand)
+  output += `[data-content-brand="${brand}"] {\n`;
 
   // Base styles (XS)
   if (breakpointClasses.xs && breakpointClasses.xs.length > 0) {
@@ -1960,8 +1960,8 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
   // Get base values (XS)
   const baseVars = breakpointVarMaps.xs || breakpointVarMaps.sm || breakpointVarMaps.md || breakpointVarMaps.lg;
 
-  // Generate responsive CSS with media queries using [data-brand] selector
-  output += `[data-brand="${brand}"] {\n`;
+  // Generate responsive CSS with media queries (Dual-Axis: Breakpoints use ContentBrand)
+  output += `[data-content-brand="${brand}"] {\n`;
   if (baseVars && Object.keys(baseVars).length > 0) {
     for (const [varName, value] of Object.entries(baseVars)) {
       output += `  ${varName}: ${value};\n`;
@@ -1981,7 +1981,7 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
 
       if (Object.keys(changedVars).length > 0) {
         output += `@media (min-width: ${breakpointConfig[bp]}) {\n`;
-        output += `  [data-brand="${brand}"] {\n`;
+        output += `  [data-content-brand="${brand}"] {\n`;
         for (const [varName, value] of Object.entries(changedVars)) {
           output += `    ${varName}: ${value};\n`;
         }
@@ -1999,7 +1999,7 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
 
 /**
  * Generates a responsive CSS file with media queries for component breakpoint tokens
- * Converts [data-brand][data-breakpoint] selectors to @media queries with [data-brand] only
+ * Converts [data-content-brand][data-breakpoint] selectors to @media queries (Dual-Axis)
  * Only outputs values that change between breakpoints to minimize redundancy
  */
 async function generateComponentBreakpointResponsive(dir, componentName, brand, breakpointConfig) {
@@ -2053,9 +2053,9 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
   // Get base values (XS)
   const baseVars = breakpointVarMaps.xs || breakpointVarMaps.sm || breakpointVarMaps.md || breakpointVarMaps.lg;
 
-  // Generate responsive CSS with media queries
-  // Base styles (XS) - use [data-brand] selector
-  output += `[data-brand="${brand}"] {\n`;
+  // Generate responsive CSS with media queries (Dual-Axis: Component breakpoints use ContentBrand)
+  // Base styles (XS)
+  output += `[data-content-brand="${brand}"] {\n`;
   if (baseVars && Object.keys(baseVars).length > 0) {
     for (const [varName, value] of Object.entries(baseVars)) {
       output += `  ${varName}: ${value};\n`;
@@ -2075,7 +2075,7 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
 
       if (Object.keys(changedVars).length > 0) {
         output += `@media (min-width: ${breakpointConfig[bp]}) {\n`;
-        output += `  [data-brand="${brand}"] {\n`;
+        output += `  [data-content-brand="${brand}"] {\n`;
         for (const [varName, value] of Object.entries(changedVars)) {
           output += `    ${varName}: ${value};\n`;
         }
@@ -2097,8 +2097,8 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
 function extractRootVariables(content) {
   const variables = [];
 
-  // Match [data-brand="..."][data-breakpoint="..."] { ... } or :root { ... }
-  const selectorMatch = content.match(/(?:\[data-brand="[^"]+"\]\[data-breakpoint="[^"]+"\]|:root)\s*\{([\s\S]*)\}/);
+  // Match [data-content-brand="..."][data-breakpoint="..."] { ... } or :root { ... } (Dual-Axis)
+  const selectorMatch = content.match(/(?:\[data-content-brand="[^"]+"\]\[data-breakpoint="[^"]+"\]|:root)\s*\{([\s\S]*)\}/);
   if (selectorMatch) {
     const selectorContent = selectorMatch[1];
 
@@ -2177,12 +2177,12 @@ function getChangedVariables(baseVars, compareVars, previousBpVars = null) {
 function extractClasses(content, brand, breakpoint) {
   const classes = [];
 
-  // Check if content uses data-attribute selectors or plain classes
-  const hasDataAttributes = content.includes(`[data-brand="${brand}"][data-breakpoint="${breakpoint}"]`);
+  // Check if content uses data-attribute selectors or plain classes (Dual-Axis: Typography uses ContentBrand)
+  const hasDataAttributes = content.includes(`[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`);
 
   if (hasDataAttributes) {
     // Component typography with data attributes
-    const selector = `[data-brand="${brand}"][data-breakpoint="${breakpoint}"]`;
+    const selector = `[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`;
     const classRegex = new RegExp(`\\/\\*[\\s\\S]*?\\*\\/\\s*${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+\\.(\\S+)\\s*{([^}]*)}`, 'g');
     let match;
 
