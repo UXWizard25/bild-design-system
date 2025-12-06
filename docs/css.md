@@ -568,7 +568,7 @@ For legacy browser support, fallback values are included:
 
 ## Related Documentation
 
-- [JavaScript/React Tokens](./dist/js/README.md)
-- [Android Compose Tokens](./dist/android/compose/README.md)
-- [iOS SwiftUI Tokens](./dist/ios/README.md)
-- [Architecture Overview](./CLAUDE.md)
+- [JavaScript/React Tokens](./js.md)
+- [Android Compose Tokens](./android.md)
+- [iOS SwiftUI Tokens](./ios.md)
+- [Architecture Overview](../CLAUDE.md)

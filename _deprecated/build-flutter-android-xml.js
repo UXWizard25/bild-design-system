@@ -17,7 +17,7 @@
  *
  * 2. Copy the conditional blocks below back into the appropriate functions in build.js
  *
- * 3. Re-add the transforms and formats from deprecated/flutter-android-xml-formats.js
+ * 3. Re-add the transforms and formats from _deprecated/flutter-android-xml-formats.js
  *    to style-dictionary.config.js
  */
 

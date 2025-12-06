@@ -772,12 +772,12 @@ DesignSystemTheme.sizing.gridSpaceRespBase // Dp
 
 | Document | Description |
 |----------|-------------|
-| [README.md](./README.md) | Project Overview |
-| [README.tokens.md](./README.tokens.md) | All Platforms |
-| [README.css.md](./README.css.md) | CSS Custom Properties |
-| [README.js.md](./README.js.md) | JavaScript/React Integration |
-| [README.ios.md](./README.ios.md) | iOS SwiftUI Integration |
-| [CLAUDE.md](./CLAUDE.md) | Build Pipeline Details |
+| [README.md](../README.md) | Project Overview |
+| [README.tokens.md](../README.tokens.md) | All Platforms |
+| [css.md](./css.md) | CSS Custom Properties |
+| [js.md](./js.md) | JavaScript/React Integration |
+| [ios.md](./ios.md) | iOS SwiftUI Integration |
+| [CLAUDE.md](../CLAUDE.md) | Build Pipeline Details |
 
 ---
 

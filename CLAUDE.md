@@ -15,7 +15,7 @@ npm run clean           # Delete dist/ and tokens/
 
 **Source of Truth:** `src/design-tokens/bild-design-system-raw-data.json` (Figma Export via TokenSync Plugin)
 
-**Platform Documentation:** `README.tokens.md`, `README.css.md`, `README.js.md`, `README.android.md`, `README.ios.md`
+**Platform Documentation:** `README.tokens.md`, `docs/css.md`, `docs/js.md`, `docs/android.md`, `docs/ios.md`
 
 ---
 

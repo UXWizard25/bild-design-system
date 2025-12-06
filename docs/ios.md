@@ -778,12 +778,12 @@ theme.sizing.gridSpaceRespBase           // CGFloat
 
 | Document | Description |
 |----------|-------------|
-| [README.md](./README.md) | Project Overview |
-| [README.tokens.md](./README.tokens.md) | All Platforms |
-| [README.css.md](./README.css.md) | CSS Custom Properties |
-| [README.js.md](./README.js.md) | JavaScript/React Integration |
-| [README.android.md](./README.android.md) | Android Jetpack Compose Integration |
-| [CLAUDE.md](./CLAUDE.md) | Build Pipeline Details |
+| [README.md](../README.md) | Project Overview |
+| [README.tokens.md](../README.tokens.md) | All Platforms |
+| [css.md](./css.md) | CSS Custom Properties |
+| [js.md](./js.md) | JavaScript/React Integration |
+| [android.md](./android.md) | Android Jetpack Compose Integration |
+| [CLAUDE.md](../CLAUDE.md) | Build Pipeline Details |
 
 ---
 
