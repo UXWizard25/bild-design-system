@@ -1908,19 +1908,18 @@ async function generateResponsiveFile(dir, baseName, brand, breakpointConfig, op
   }
 
   // Generate responsive CSS with media queries (Dual-Axis: Typography uses ContentBrand)
-  // Uses dual selectors for Shadow DOM compatibility
+  // Uses dual selectors for Shadow DOM compatibility (flat, non-nested for browser compatibility)
   const attrSelector = `[data-content-brand="${brand}"]`;
 
-  output += `${attrSelector},\n:host(${attrSelector}) {\n`;
-
-  // Base styles (XS)
+  // Base styles (XS) - use flat dual selectors (no CSS nesting)
   if (breakpointClasses.xs && breakpointClasses.xs.length > 0) {
     for (const cls of breakpointClasses.xs) {
-      output += `  .${cls.name} {\n`;
+      // Generate dual selector: [attr] .class, :host([attr]) .class
+      output += `${attrSelector} .${cls.name},\n:host(${attrSelector}) .${cls.name} {\n`;
       for (const prop of cls.properties) {
-        output += `    ${prop}\n`;
+        output += `  ${prop}\n`;
       }
-      output += `  }\n\n`;
+      output += `}\n\n`;
     }
   }
 
@@ -1928,20 +1927,18 @@ async function generateResponsiveFile(dir, baseName, brand, breakpointConfig, op
   if (!skipMediaQueries) {
     for (const bp of ['sm', 'md', 'lg']) {
       if (breakpointClasses[bp] && breakpointClasses[bp].length > 0 && breakpointConfig[bp]) {
-        output += `  @media (min-width: ${breakpointConfig[bp]}) {\n`;
+        output += `@media (min-width: ${breakpointConfig[bp]}) {\n`;
         for (const cls of breakpointClasses[bp]) {
-          output += `    .${cls.name} {\n`;
+          output += `  ${attrSelector} .${cls.name},\n  :host(${attrSelector}) .${cls.name} {\n`;
           for (const prop of cls.properties) {
-            output += `      ${prop}\n`;
+            output += `    ${prop}\n`;
           }
-          output += `    }\n\n`;
+          output += `  }\n\n`;
         }
-        output += `  }\n\n`;
+        output += `}\n\n`;
       }
     }
   }
-
-  output += `}\n`;
 
   return output;
 }
@@ -2212,6 +2209,7 @@ function getChangedVariables(baseVars, compareVars, previousBpVars = null) {
 
 /**
  * Extracts CSS classes from a file
+ * Supports both single selectors and dual selectors (for Shadow DOM compatibility)
  */
 function extractClasses(content, brand, breakpoint) {
   const classes = [];
@@ -2220,9 +2218,21 @@ function extractClasses(content, brand, breakpoint) {
   const hasDataAttributes = content.includes(`[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`);
 
   if (hasDataAttributes) {
-    // Component typography with data attributes
+    // Component typography with data attributes (supports dual selectors)
+    // Match pattern: /* comment */ [selector] .class, :host([selector]) .class { properties }
+    // Or single: /* comment */ [selector] .class { properties }
     const selector = `[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`;
-    const classRegex = new RegExp(`\\/\\*[\\s\\S]*?\\*\\/\\s*${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+\\.(\\S+)\\s*{([^}]*)}`, 'g');
+    const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // Regex that handles dual selectors: matches the first selector, optional :host part, then class and properties
+    const classRegex = new RegExp(
+      `\\/\\*[\\s\\S]*?\\*\\/\\s*` +                          // /* comment */
+      `${escapedSelector}\\s+` +                              // [data-content-brand="..."][data-breakpoint="..."]
+      `\\.(\\S+?)` +                                          // .className (capture group 1)
+      `(?:,\\s*:host\\(${escapedSelector}\\)\\s+\\.\\S+)?` +  // optional: , :host([...]) .className
+      `\\s*\\{([^}]*)\\}`,                                    // { properties } (capture group 2)
+      'g'
+    );
     let match;
 
     while ((match = classRegex.exec(content)) !== null) {
@@ -2239,11 +2249,22 @@ function extractClasses(content, brand, breakpoint) {
       });
     }
   } else {
-    // Semantic typography without data attributes
-    const classRegex = /\/\*[\s\S]*?\*\/\s*\.([\w-]+)\s*{([^}]*)}/g;
-    let match;
+    // Semantic typography - supports dual selectors format
+    // Match pattern: /* comment */ [selector] .class, :host([selector]) .class { properties }
+    // Or: /* comment */ .class { properties } (plain classes)
 
-    while ((match = classRegex.exec(content)) !== null) {
+    // First try to match dual selector pattern with data-content-brand
+    const dualSelectorRegex = new RegExp(
+      `\\/\\*[\\s\\S]*?\\*\\/\\s*` +                                           // /* comment */
+      `\\[data-content-brand="${brand}"\\]\\[data-breakpoint="${breakpoint}"\\]\\s+` +  // [data-content-brand][data-breakpoint]
+      `\\.(\\S+?)` +                                                            // .className (capture group 1)
+      `(?:,\\s*:host\\([^)]+\\)\\s+\\.\\S+)?` +                                  // optional: , :host(...) .className
+      `\\s*\\{([^}]*)\\}`,                                                      // { properties } (capture group 2)
+      'g'
+    );
+
+    let match;
+    while ((match = dualSelectorRegex.exec(content)) !== null) {
       const className = match[1];
       const properties = match[2]
         .split(';')
@@ -2255,6 +2276,24 @@ function extractClasses(content, brand, breakpoint) {
         name: className,
         properties
       });
+    }
+
+    // If no dual selectors found, try plain class selectors
+    if (classes.length === 0) {
+      const plainClassRegex = /\/\*[\s\S]*?\*\/\s*\.([\w-]+)\s*{([^}]*)}/g;
+      while ((match = plainClassRegex.exec(content)) !== null) {
+        const className = match[1];
+        const properties = match[2]
+          .split(';')
+          .map(p => p.trim())
+          .filter(p => p.length > 0)
+          .map(p => p + ';');
+
+        classes.push({
+          name: className,
+          properties
+        });
+      }
     }
   }
 
