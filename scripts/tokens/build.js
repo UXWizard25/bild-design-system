@@ -7719,47 +7719,47 @@ async function main() {
   try {
     const readmeSrcDir = path.join(__dirname, '../..');
 
-    // Copy README.css.md to dist/css/README.md
-    const cssReadmeSrc = path.join(readmeSrcDir, 'README.css.md');
+    // Copy docs/css.md to dist/css/README.md
+    const cssReadmeSrc = path.join(readmeSrcDir, 'docs/css.md');
     const cssReadmeDest = path.join(DIST_DIR, 'css/README.md');
     if (fs.existsSync(cssReadmeSrc)) {
       fs.copyFileSync(cssReadmeSrc, cssReadmeDest);
-      console.log(`   ✅ README.css.md → dist/css/README.md`);
+      console.log(`   ✅ docs/css.md → dist/css/README.md`);
     } else {
-      console.log(`   ⚠️  README.css.md nicht gefunden`);
+      console.log(`   ⚠️  docs/css.md nicht gefunden`);
     }
 
-    // Copy README.js.md to dist/js/README.md
-    const jsReadmeSrc = path.join(readmeSrcDir, 'README.js.md');
+    // Copy docs/js.md to dist/js/README.md
+    const jsReadmeSrc = path.join(readmeSrcDir, 'docs/js.md');
     const jsReadmeDest = path.join(DIST_DIR, 'js/README.md');
     if (fs.existsSync(jsReadmeSrc)) {
       fs.copyFileSync(jsReadmeSrc, jsReadmeDest);
-      console.log(`   ✅ README.js.md → dist/js/README.md`);
+      console.log(`   ✅ docs/js.md → dist/js/README.md`);
     } else {
-      console.log(`   ⚠️  README.js.md nicht gefunden`);
+      console.log(`   ⚠️  docs/js.md nicht gefunden`);
     }
 
-    // Copy README.android.md to dist/android/compose/README.md
+    // Copy docs/android.md to dist/android/compose/README.md
     if (COMPOSE_ENABLED) {
-      const androidReadmeSrc = path.join(readmeSrcDir, 'README.android.md');
+      const androidReadmeSrc = path.join(readmeSrcDir, 'docs/android.md');
       const androidReadmeDest = path.join(DIST_DIR, 'android/compose/README.md');
       if (fs.existsSync(androidReadmeSrc)) {
         fs.copyFileSync(androidReadmeSrc, androidReadmeDest);
-        console.log(`   ✅ README.android.md → dist/android/compose/README.md`);
+        console.log(`   ✅ docs/android.md → dist/android/compose/README.md`);
       } else {
-        console.log(`   ⚠️  README.android.md nicht gefunden`);
+        console.log(`   ⚠️  docs/android.md nicht gefunden`);
       }
     }
 
-    // Copy README.ios.md to dist/ios/README.md
+    // Copy docs/ios.md to dist/ios/README.md
     if (SWIFTUI_ENABLED) {
-      const iosReadmeSrc = path.join(readmeSrcDir, 'README.ios.md');
+      const iosReadmeSrc = path.join(readmeSrcDir, 'docs/ios.md');
       const iosReadmeDest = path.join(DIST_DIR, 'ios/README.md');
       if (fs.existsSync(iosReadmeSrc)) {
         fs.copyFileSync(iosReadmeSrc, iosReadmeDest);
-        console.log(`   ✅ README.ios.md → dist/ios/README.md`);
+        console.log(`   ✅ docs/ios.md → dist/ios/README.md`);
       } else {
-        console.log(`   ⚠️  README.ios.md nicht gefunden`);
+        console.log(`   ⚠️  docs/ios.md nicht gefunden`);
       }
     }
   } catch (err) {

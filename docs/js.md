@@ -895,12 +895,12 @@ theme.effects.shadowSoftSm      // [{ offsetX: 0, ... }]
 
 | Document | Description |
 |----------|-------------|
-| [README.md](./README.md) | Project Overview |
-| [README.tokens.md](./README.tokens.md) | All Platforms |
-| [README.css.md](./README.css.md) | CSS Custom Properties |
-| [README.ios.md](./README.ios.md) | iOS SwiftUI Integration |
-| [README.android.md](./README.android.md) | Android Jetpack Compose |
-| [CLAUDE.md](./CLAUDE.md) | Build Pipeline Details |
+| [README.md](../README.md) | Project Overview |
+| [README.tokens.md](../README.tokens.md) | All Platforms |
+| [css.md](./css.md) | CSS Custom Properties |
+| [ios.md](./ios.md) | iOS SwiftUI Integration |
+| [android.md](./android.md) | Android Jetpack Compose |
+| [CLAUDE.md](../CLAUDE.md) | Build Pipeline Details |
 
 ---
 

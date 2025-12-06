@@ -49,9 +49,9 @@ Both pipelines use the **TokenSync Figma Plugin** for automated exports.
 |---------|-------------|---------|---------------|
 | **@marioschmidt/design-system-tokens** | Multi-platform design tokens | [![npm](https://img.shields.io/npm/v/@marioschmidt/design-system-tokens.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-tokens) | [📖 README.tokens.md](./README.tokens.md) |
 | **@marioschmidt/design-system-icons** | Multi-platform icon assets | [![npm](https://img.shields.io/npm/v/@marioschmidt/design-system-icons.svg)](https://www.npmjs.com/package/@marioschmidt/design-system-icons) | [📖 README.icons.md](./README.icons.md) |
-| **JavaScript/React** | ESM + ThemeProvider (Dual-Axis) | - | [📖 README.js.md](./README.js.md) |
-| **Android Compose** | Jetpack Compose (Dual-Axis) | - | [📖 README.android.md](./README.android.md) |
-| **iOS SwiftUI** | SwiftUI (Dual-Axis) | - | [📖 README.ios.md](./README.ios.md) |
+| **JavaScript/React** | ESM + ThemeProvider (Dual-Axis) | - | [📖 docs/js.md](./docs/js.md) |
+| **Android Compose** | Jetpack Compose (Dual-Axis) | - | [📖 docs/android.md](./docs/android.md) |
+| **iOS SwiftUI** | SwiftUI (Dual-Axis) | - | [📖 docs/ios.md](./docs/ios.md) |
 
 ---
 
@@ -300,6 +300,12 @@ vv-token-test-v3/
 ├── 📄 package.json                     # Token package config
 ├── 📄 package.icons.json               # Icon package config
 │
+├── 📁 docs/                            # Platform documentation
+│   ├── css.md                          # CSS Custom Properties
+│   ├── js.md                           # JavaScript/React
+│   ├── android.md                      # Android Compose
+│   └── ios.md                          # iOS SwiftUI
+│
 ├── 📄 README.md                        # 👈 This file
 ├── 📄 README.tokens.md                 # Token documentation
 └── 📄 README.icons.md                  # Icon documentation
@@ -391,10 +397,10 @@ npm run clean:icons        # Remove dist/icons/
 | Document | Description |
 |----------|-------------|
 | [📖 README.tokens.md](./README.tokens.md) | Complete token pipeline documentation |
-| [📖 README.js.md](./README.js.md) | JavaScript/React integration (Dual-Axis) |
+| [📖 docs/js.md](./docs/js.md) | JavaScript/React integration (Dual-Axis) |
 | [📖 README.icons.md](./README.icons.md) | Complete icon pipeline documentation |
-| [📖 README.android.md](./README.android.md) | Android Jetpack Compose (Dual-Axis) |
-| [📖 README.ios.md](./README.ios.md) | iOS SwiftUI (Dual-Axis) |
+| [📖 docs/android.md](./docs/android.md) | Android Jetpack Compose (Dual-Axis) |
+| [📖 docs/ios.md](./docs/ios.md) | iOS SwiftUI (Dual-Axis) |
 
 ### Quick Links
 
@@ -405,10 +411,10 @@ npm run clean:icons        # Remove dist/icons/
 - [Troubleshooting](./README.tokens.md#-troubleshooting)
 
 **JavaScript/React:**
-- [Quick Start](./README.js.md#quick-start)
-- [React ThemeProvider](./README.js.md#react-themeprovider)
-- [Token Type Mapping](./README.js.md#token-type-mapping)
-- [Multi-Brand Apps](./README.js.md#multi-brand-apps)
+- [Quick Start](./docs/js.md#quick-start)
+- [React ThemeProvider](./docs/js.md#react-themeprovider)
+- [Token Type Mapping](./docs/js.md#token-type-mapping)
+- [Multi-Brand Apps](./docs/js.md#multi-brand-apps)
 
 **Icons:**
 - [Platform Usage Examples](./README.icons.md#usage)

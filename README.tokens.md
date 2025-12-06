@@ -198,7 +198,7 @@ Figma token types (`$type`) are automatically mapped to platform-specific types:
 
 ### JavaScript / React
 
-> **See [README.js.md](./README.js.md) for complete documentation**
+> **See [docs/js.md](./docs/js.md) for complete documentation**
 
 ```javascript
 // With React ThemeProvider (Dual-Axis Architecture)
@@ -270,7 +270,7 @@ let padding: CGFloat = BildSizingCompact.space2x  // 16
 
 ### Android Jetpack Compose (Dual-Axis Architecture)
 
-> **See [README.android.md](./README.android.md) for complete documentation**
+> **See [docs/android.md](./docs/android.md) for complete documentation**
 
 ```kotlin
 import com.bild.designsystem.shared.DesignSystemTheme
@@ -342,7 +342,7 @@ All Component Tokens provide theme-aware `current()` accessors:
 
 ### iOS SwiftUI (Dual-Axis Architecture)
 
-> **See [README.ios.md](./README.ios.md) for complete documentation**
+> **See [docs/ios.md](./docs/ios.md) for complete documentation**
 
 ```swift
 import SwiftUI
@@ -756,10 +756,10 @@ grep "Space2x" dist/ios/shared/Spaceprimitive.swift
 | Document | Description |
 |----------|-------------|
 | [📖 README.md](./README.md) | Main project overview |
-| [📖 README.css.md](./README.css.md) | CSS Custom Properties documentation |
-| [📖 README.js.md](./README.js.md) | JavaScript/React integration (Dual-Axis) |
-| [📖 README.android.md](./README.android.md) | Android Jetpack Compose (Dual-Axis) |
-| [📖 README.ios.md](./README.ios.md) | iOS SwiftUI (Dual-Axis) |
+| [📖 docs/css.md](./docs/css.md) | CSS Custom Properties documentation |
+| [📖 docs/js.md](./docs/js.md) | JavaScript/React integration (Dual-Axis) |
+| [📖 docs/android.md](./docs/android.md) | Android Jetpack Compose (Dual-Axis) |
+| [📖 docs/ios.md](./docs/ios.md) | iOS SwiftUI (Dual-Axis) |
 | [📖 README.icons.md](./README.icons.md) | Icon pipeline documentation |
 | [Style Dictionary](https://styledictionary.com/) | Build tool documentation |
 
