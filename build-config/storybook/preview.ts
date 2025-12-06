@@ -1,11 +1,30 @@
 import type { Preview } from '@storybook/web-components';
 import { html } from 'lit';
+import { addons } from '@storybook/preview-api';
+import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 
 // Import custom themes for UI styling
 import { bildLightTheme, bildDarkTheme } from './manager';
 
 // Stencil components are loaded via script tag in preview-head.html
 // This ensures they're available before stories render
+
+/**
+ * Sync dark mode toggle with content area
+ *
+ * When the dark mode toggle is clicked, update data-theme on body.
+ * CSS will automatically update because selectors like [data-theme="dark"] will match.
+ */
+try {
+  const channel = addons.getChannel();
+  channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    }
+  });
+} catch (e) {
+  // Channel not available during initial load, ignore
+}
 
 /**
  * 4-Axis Design Token Decorator
@@ -119,7 +138,7 @@ const preview: Preview = {
       },
     },
 
-    // storybook-dark-mode: UI theme follows our theme dropdown
+    // storybook-dark-mode: Custom BILD themes for UI
     darkMode: {
       dark: bildDarkTheme,
       light: bildLightTheme,
