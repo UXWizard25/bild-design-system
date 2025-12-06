@@ -2,14 +2,13 @@ import { addons } from '@storybook/manager-api';
 import { create } from '@storybook/theming';
 
 /**
- * BILD Design System - Custom Storybook Themes
+ * BILD Design System - Custom Storybook UI Theme
  *
- * These themes style the Storybook UI (sidebar, toolbar, etc.)
+ * Styles the Storybook UI (sidebar, toolbar, etc.)
  * to match the BILD Design System look and feel.
  */
 
-// Light theme based on BILD design tokens
-const bildLightTheme = create({
+const bildTheme = create({
   base: 'light',
 
   // Brand
@@ -44,46 +43,7 @@ const bildLightTheme = create({
   inputBorderRadius: 4,
 });
 
-// Dark theme based on BILD design tokens
-const bildDarkTheme = create({
-  base: 'dark',
-
-  // Brand
-  brandTitle: 'BILD Design System',
-  brandUrl: 'https://github.com/UXWizard25/vv-token-test-v3',
-
-  // Colors - based on BILD color primitives
-  colorPrimary: '#DD0000', // --color-bild-red-50
-  colorSecondary: '#F52D2D', // --color-bild-red-53 (lighter for dark mode)
-
-  // UI colors
-  appBg: '#1C1C1C', // --color-neutral-10
-  appContentBg: '#232629', // --color-neutral-15
-  appBorderColor: '#343C41', // --color-neutral-25
-  appBorderRadius: 4,
-
-  // Text colors
-  textColor: '#F2F4F5', // --color-neutral-96
-  textInverseColor: '#232629', // --color-neutral-15
-  textMutedColor: '#AEB4B9', // --color-neutral-73
-
-  // Toolbar
-  barTextColor: '#CED4DA', // --color-neutral-85
-  barSelectedColor: '#DD0000', // --color-bild-red-50
-  barHoverColor: '#F52D2D', // --color-bild-red-53
-  barBg: '#232629', // --color-neutral-15
-
-  // Form colors
-  inputBg: '#2C3138', // --color-neutral-20
-  inputBorder: '#4B525A', // --color-neutral-35
-  inputTextColor: '#F2F4F5',
-  inputBorderRadius: 4,
-});
-
-// Configure Storybook with custom themes
+// Configure Storybook with custom BILD theme
 addons.setConfig({
-  theme: bildLightTheme,
+  theme: bildTheme,
 });
-
-// Export themes for use with storybook-dark-mode addon
-export { bildLightTheme, bildDarkTheme };
