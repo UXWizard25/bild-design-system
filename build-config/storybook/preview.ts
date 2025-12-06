@@ -7,8 +7,7 @@ import { bildLightTheme, bildDarkTheme } from './manager';
 // Stencil components are loaded via script tag in preview-head.html
 // This ensures they're available before stories render
 
-// Track if we've set up the dark mode listener
-let darkModeListenerSetup = false;
+// Dark mode sync is handled in preview-body.html via localStorage polling
 
 /**
  * 4-Axis Design Token Decorator
@@ -16,46 +15,26 @@ let darkModeListenerSetup = false;
  * Wraps stories with the correct data attributes for the Dual-Axis architecture:
  * - data-color-brand: Controls colors and effects (bild, sportbild)
  * - data-content-brand: Controls typography, spacing, density (bild, sportbild, advertorial)
- * - data-theme: Light/dark mode
+ * - data-theme: Light/dark mode (synced with storybook-dark-mode via preview-body.html)
  * - data-density: Spacing density (default, dense, spacious)
  */
 const withDesignTokens = (Story: () => unknown, context: { globals: Record<string, string> }) => {
-  const { colorBrand, contentBrand, theme, density } = context.globals;
-
-  // Set up dark mode listener once (when first story renders)
-  if (!darkModeListenerSetup && typeof window !== 'undefined') {
-    darkModeListenerSetup = true;
-
-    // Dynamically import to avoid issues during SSR/build
-    import('@storybook/preview-api').then(({ addons }) => {
-      try {
-        const channel = addons.getChannel();
-        channel.on('DARK_MODE', (isDark: boolean) => {
-          if (document.body) {
-            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-          }
-        });
-      } catch (e) {
-        console.warn('Could not set up dark mode listener:', e);
-      }
-    }).catch(() => {
-      // Ignore import errors
-    });
-  }
+  const { colorBrand, contentBrand, density } = context.globals;
 
   // Set attributes on document.body for global CSS inheritance
+  // Note: data-theme is managed by preview-body.html in sync with storybook-dark-mode addon
   if (typeof document !== 'undefined' && document.body) {
     document.body.setAttribute('data-color-brand', colorBrand);
     document.body.setAttribute('data-content-brand', contentBrand);
-    document.body.setAttribute('data-theme', theme);
     document.body.setAttribute('data-density', density);
   }
 
+  // Note: data-theme is NOT set on the wrapper div - it inherits from body
+  // which is synced with storybook-dark-mode addon via preview-body.html
   return html`
     <div
       data-color-brand=${colorBrand}
       data-content-brand=${contentBrand}
-      data-theme=${theme}
       data-density=${density}
       style="padding: 1rem; min-height: 100px;"
     >
@@ -95,18 +74,8 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
-    theme: {
-      description: 'Color theme',
-      toolbar: {
-        title: 'Theme',
-        icon: 'sun',
-        items: [
-          { value: 'light', title: 'Light', icon: 'sun' },
-          { value: 'dark', title: 'Dark', icon: 'moon' },
-        ],
-        dynamicTitle: true,
-      },
-    },
+    // Note: theme is controlled by storybook-dark-mode toggle (moon icon in toolbar)
+    // which syncs both UI and content via preview-body.html
     density: {
       description: 'Spacing density',
       toolbar: {
@@ -126,7 +95,6 @@ const preview: Preview = {
   initialGlobals: {
     colorBrand: 'bild',
     contentBrand: 'bild',
-    theme: 'light',
     density: 'default',
   },
 

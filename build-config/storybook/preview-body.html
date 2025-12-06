@@ -1,59 +1,75 @@
 <script>
-  // Listen for dark mode changes from storybook-dark-mode addon
+  // Sync dark mode between storybook-dark-mode addon and design tokens
   (function() {
-    function setupDarkModeListener() {
-      var channel = window.__STORYBOOK_ADDONS_CHANNEL__;
-      if (!channel) {
-        console.log('[DarkMode] Channel not available yet');
-        return false;
+    var STORAGE_KEY = 'sb-addon-themes-3';
+
+    // Get initial dark mode state from localStorage (where addon stores it)
+    function getInitialDarkMode() {
+      try {
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          var parsed = JSON.parse(stored);
+          return parsed.current === 'dark';
+        }
+      } catch (e) {
+        console.warn('[DarkMode] Could not read initial state:', e);
       }
-
-      // Check if listener already added
-      if (window.__DARK_MODE_LISTENER_ADDED__) {
-        return true;
-      }
-
-      console.log('[DarkMode] Setting up listener on channel:', channel);
-
-      // Try using the on method
-      if (typeof channel.on === 'function') {
-        channel.on('DARK_MODE', function(isDark) {
-          console.log('[DarkMode] Event received:', isDark);
-          document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        });
-        window.__DARK_MODE_LISTENER_ADDED__ = true;
-        console.log('[DarkMode] Listener added successfully');
-        return true;
-      }
-
-      // Fallback: try addListener
-      if (typeof channel.addListener === 'function') {
-        channel.addListener('DARK_MODE', function(isDark) {
-          console.log('[DarkMode] Event received (addListener):', isDark);
-          document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        });
-        window.__DARK_MODE_LISTENER_ADDED__ = true;
-        console.log('[DarkMode] Listener added via addListener');
-        return true;
-      }
-
-      console.log('[DarkMode] Could not add listener, channel methods:', Object.keys(channel));
       return false;
     }
 
-    // Try immediately
-    if (!setupDarkModeListener()) {
-      // Retry with interval
+    // Apply dark mode state to document
+    function applyDarkMode(isDark) {
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    }
+
+    // Set initial state from localStorage
+    var initialDark = getInitialDarkMode();
+    applyDarkMode(initialDark);
+
+    // Watch for localStorage changes (from other tabs or addon updates)
+    window.addEventListener('storage', function(e) {
+      if (e.key === STORAGE_KEY) {
+        var isDark = getInitialDarkMode();
+        applyDarkMode(isDark);
+      }
+    });
+
+    // Also listen for channel events for real-time updates
+    function setupChannelListener() {
+      var channel = window.__STORYBOOK_ADDONS_CHANNEL__;
+      if (!channel || window.__DARK_MODE_LISTENER_ADDED__) {
+        return !!channel;
+      }
+
+      if (typeof channel.on === 'function') {
+        channel.on('DARK_MODE', function(isDark) {
+          applyDarkMode(isDark);
+        });
+        window.__DARK_MODE_LISTENER_ADDED__ = true;
+        return true;
+      }
+      return false;
+    }
+
+    // Try to set up channel listener
+    if (!setupChannelListener()) {
       var attempts = 0;
       var interval = setInterval(function() {
         attempts++;
-        if (setupDarkModeListener() || attempts > 100) {
+        if (setupChannelListener() || attempts > 50) {
           clearInterval(interval);
-          if (attempts > 100) {
-            console.warn('[DarkMode] Failed to set up listener after 100 attempts');
-          }
         }
-      }, 50);
+      }, 100);
     }
+
+    // Poll localStorage as robust fallback (in case channel events don't work)
+    var lastDarkState = initialDark;
+    setInterval(function() {
+      var isDark = getInitialDarkMode();
+      if (isDark !== lastDarkState) {
+        lastDarkState = isDark;
+        applyDarkMode(isDark);
+      }
+    }, 200);
   })();
 </script>
