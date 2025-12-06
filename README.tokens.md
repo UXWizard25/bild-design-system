@@ -439,14 +439,23 @@ export class MyButton { /* ... */ }
 
 ```html
 <!-- Usage: Tokens on body, components inherit automatically -->
-<body data-color-brand="bild" data-content-brand="bild" data-theme="light">
+<body data-color-brand="bild" data-content-brand="bild" data-theme="light" data-density="default">
   <my-button>BILD Button</my-button>  <!-- Red -->
 </body>
 
-<body data-color-brand="sportbild" data-theme="dark">
+<body data-color-brand="sportbild" data-content-brand="sportbild" data-theme="dark" data-density="dense">
   <my-button>Sport Button</my-button>  <!-- Blue -->
 </body>
 ```
+
+**Theming Attributes:**
+
+| Attribute | Options | Purpose |
+|-----------|---------|---------|
+| `data-color-brand` | bild, sportbild | Colors & effects |
+| `data-content-brand` | bild, sportbild, advertorial | Typography & sizing |
+| `data-theme` | light, dark | Color mode |
+| `data-density` | default, dense, spacious | Spacing density |
 
 > **Note:** See [docs/css.md](./docs/css.md#shadow-dom--web-components) for complete Shadow DOM documentation.
 

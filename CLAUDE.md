@@ -880,19 +880,28 @@ dist/
 
 ### Brand Switching in Components
 
-Components automatically adapt to brand/theme changes via CSS Custom Property inheritance:
+Components automatically adapt to brand/theme/density changes via CSS Custom Property inheritance:
 
 ```html
-<!-- BILD Brand -->
-<body data-color-brand="bild" data-content-brand="bild" data-theme="light">
+<!-- BILD Brand (default density) -->
+<body data-color-brand="bild" data-content-brand="bild" data-theme="light" data-density="default">
   <ds-button variant="primary">BILD Button</ds-button>
 </body>
 
-<!-- SportBILD Brand -->
-<body data-color-brand="sportbild" data-content-brand="sportbild" data-theme="dark">
+<!-- SportBILD Brand (dense layout) -->
+<body data-color-brand="sportbild" data-content-brand="sportbild" data-theme="dark" data-density="dense">
   <ds-button variant="primary">Sport Button</ds-button>
 </body>
 ```
+
+**Demo Page Brand Switcher** (`src/components/index.html`):
+
+| Selector | Options | Data Attribute |
+|----------|---------|----------------|
+| Color Brand | BILD, SportBILD | `data-color-brand` |
+| Theme | Light, Dark | `data-theme` |
+| Content Brand | BILD, SportBILD, Advertorial | `data-content-brand` |
+| Density | Default, Dense, Spacious | `data-density` |
 
 No JavaScript required – pure CSS Custom Property inheritance through Shadow DOM.
 

@@ -685,6 +685,17 @@ npm run dev:stencil
 - `<ds-button>` – Button with variant prop (primary, secondary, tertiary)
 - `<ds-card>` – Card with surface prop (primary, secondary)
 
+**Brand Switcher (index.html):**
+
+The demo page includes a brand switcher with all four theming axes:
+
+| Selector | Options | Data Attribute |
+|----------|---------|----------------|
+| Color Brand | BILD, SportBILD | `data-color-brand` |
+| Theme | Light, Dark | `data-theme` |
+| Content Brand | BILD, SportBILD, Advertorial | `data-content-brand` |
+| Density | Default, Dense, Spacious | `data-density` |
+
 **Project Structure:**
 ```
 build-config/stencil/
