@@ -1,34 +1,30 @@
 import type { Preview } from '@storybook/web-components';
 import { html } from 'lit';
 import { addons } from '@storybook/preview-api';
-import { DARK_MODE_EVENT_NAME, UPDATE_DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
+import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 
-// Import custom themes
+// Import custom themes for UI styling
 import { bildLightTheme, bildDarkTheme } from './manager';
 
 // Stencil components are loaded via script tag in preview-head.html
 // This ensures they're available before stories render
 
 /**
- * Sync dark mode addon with our theme global
+ * Sync dark mode toggle with content area
  *
- * When the dark mode toggle is clicked, we update the 'theme' global
- * which triggers a re-render of all stories with the new theme.
+ * When the dark mode toggle is clicked, update data-theme on body.
+ * CSS will automatically update because selectors like [data-theme="dark"] will match.
  */
-const channel = addons.getChannel();
-
-// Listen for dark mode changes and update the theme global
-channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
-  const theme = isDark ? 'dark' : 'light';
-
-  // Update body attribute immediately for CSS
-  if (typeof document !== 'undefined' && document.body) {
-    document.body.setAttribute('data-theme', theme);
-  }
-
-  // Update the global to trigger story re-render
-  channel.emit('updateGlobals', { globals: { theme } });
-});
+try {
+  const channel = addons.getChannel();
+  channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    }
+  });
+} catch (e) {
+  // Channel not available during initial load, ignore
+}
 
 /**
  * 4-Axis Design Token Decorator
@@ -36,7 +32,7 @@ channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
  * Wraps stories with the correct data attributes for the Dual-Axis architecture:
  * - data-color-brand: Controls colors and effects (bild, sportbild)
  * - data-content-brand: Controls typography, spacing, density (bild, sportbild, advertorial)
- * - data-theme: Light/dark mode (synced with storybook-dark-mode addon)
+ * - data-theme: Light/dark mode
  * - data-density: Spacing density (default, dense, spacious)
  */
 const withDesignTokens = (Story: () => unknown, context: { globals: Record<string, string> }) => {
@@ -95,7 +91,7 @@ const preview: Preview = {
       },
     },
     theme: {
-      description: 'Color theme (synced with dark mode toggle)',
+      description: 'Color theme',
       toolbar: {
         title: 'Theme',
         icon: 'sun',
@@ -142,16 +138,22 @@ const preview: Preview = {
       },
     },
 
-    // storybook-dark-mode configuration
+    // storybook-dark-mode: Custom BILD themes for UI
     darkMode: {
       dark: bildDarkTheme,
       light: bildLightTheme,
-      current: 'light',
       stylePreview: true,
     },
 
-    // Backgrounds addon - disabled since we use darkMode addon
-    backgrounds: { disable: true },
+    // Backgrounds addon - use canvas background
+    backgrounds: {
+      default: 'canvas',
+      values: [
+        { name: 'canvas', value: 'var(--surface-color-canvas, #F0F2F4)' },
+        { name: 'white', value: '#ffffff' },
+        { name: 'dark', value: '#232629' },
+      ],
+    },
 
     // Docs configuration
     docs: {
