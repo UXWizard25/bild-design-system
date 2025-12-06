@@ -16,6 +16,7 @@ const config: StorybookConfig = {
   addons: [
     getAbsolutePath('@storybook/addon-essentials'),
     getAbsolutePath('@storybook/addon-docs'),
+    getAbsolutePath('storybook-dark-mode'),
   ],
 
   // Framework: Web Components with Vite
