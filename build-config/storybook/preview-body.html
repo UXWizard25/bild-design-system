@@ -1,33 +1,75 @@
 <script>
-  // Listen for dark mode changes from storybook-dark-mode addon
-  // This script runs in the preview iframe where stories are rendered
+  // Sync dark mode between storybook-dark-mode addon and design tokens
   (function() {
-    // Wait for the Storybook channel to be available
-    function setupDarkModeListener() {
+    var STORAGE_KEY = 'sb-addon-themes-3';
+
+    // Get initial dark mode state from localStorage (where addon stores it)
+    function getInitialDarkMode() {
       try {
-        // Access the channel from the parent window
-        if (window.__STORYBOOK_ADDONS_CHANNEL__) {
-          window.__STORYBOOK_ADDONS_CHANNEL__.on('DARK_MODE', function(isDark) {
-            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-          });
-          return true;
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          var parsed = JSON.parse(stored);
+          return parsed.current === 'dark';
         }
-        return false;
       } catch (e) {
-        return false;
+        console.warn('[DarkMode] Could not read initial state:', e);
       }
+      return false;
     }
 
-    // Try to set up immediately
-    if (!setupDarkModeListener()) {
-      // If not ready, try again after a short delay
+    // Apply dark mode state to document
+    function applyDarkMode(isDark) {
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    }
+
+    // Set initial state from localStorage
+    var initialDark = getInitialDarkMode();
+    applyDarkMode(initialDark);
+
+    // Watch for localStorage changes (from other tabs or addon updates)
+    window.addEventListener('storage', function(e) {
+      if (e.key === STORAGE_KEY) {
+        var isDark = getInitialDarkMode();
+        applyDarkMode(isDark);
+      }
+    });
+
+    // Also listen for channel events for real-time updates
+    function setupChannelListener() {
+      var channel = window.__STORYBOOK_ADDONS_CHANNEL__;
+      if (!channel || window.__DARK_MODE_LISTENER_ADDED__) {
+        return !!channel;
+      }
+
+      if (typeof channel.on === 'function') {
+        channel.on('DARK_MODE', function(isDark) {
+          applyDarkMode(isDark);
+        });
+        window.__DARK_MODE_LISTENER_ADDED__ = true;
+        return true;
+      }
+      return false;
+    }
+
+    // Try to set up channel listener
+    if (!setupChannelListener()) {
       var attempts = 0;
       var interval = setInterval(function() {
-        if (setupDarkModeListener() || attempts > 50) {
+        attempts++;
+        if (setupChannelListener() || attempts > 50) {
           clearInterval(interval);
         }
-        attempts++;
       }, 100);
     }
+
+    // Poll localStorage as robust fallback (in case channel events don't work)
+    var lastDarkState = initialDark;
+    setInterval(function() {
+      var isDark = getInitialDarkMode();
+      if (isDark !== lastDarkState) {
+        lastDarkState = isDark;
+        applyDarkMode(isDark);
+      }
+    }, 200);
   })();
 </script>
