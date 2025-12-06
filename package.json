@@ -112,7 +112,7 @@
     "build:all": "npm run build && npm run build:stencil",
     "watch": "nodemon --watch src/design-tokens --ext json --exec npm run build:tokens",
     "clean": "rm -rf dist tokens",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build:all"
   },
   "repository": {
     "type": "git",
