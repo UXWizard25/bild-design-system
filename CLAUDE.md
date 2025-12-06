@@ -13,6 +13,8 @@ npm run build           # Everything (tokens + bundles)
 npm run build:stencil   # Build Stencil Web Components
 npm run dev:stencil     # Stencil dev server (port 3333)
 npm run build:all       # Everything (tokens + bundles + stencil)
+npm run storybook       # Storybook dev server (port 6006)
+npm run build:storybook # Build static Storybook
 npm run clean           # Delete dist/ and tokens/
 ```
 
@@ -644,6 +646,12 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify Stencil config | `build-config/stencil/stencil.config.ts` |
 | Change Stencil output targets | `build-config/stencil/stencil.config.ts` → `outputTargets` |
 | Change global CSS bundle for Stencil | `build-config/stencil/stencil.config.ts` → `globalStyle` |
+| Add new story | `src/components/ds-{name}/ds-{name}.stories.ts` |
+| Modify Storybook addons | `build-config/storybook/main.ts` → `addons` |
+| Change Storybook toolbar controls | `build-config/storybook/preview.ts` → `globalTypes` |
+| Modify Storybook UI themes | `build-config/storybook/manager.ts` |
+| Change dark mode sync behavior | `build-config/storybook/preview-body.html` |
+| Add static files to Storybook | `build-config/storybook/main.ts` → `staticDirs` |
 
 ---
 
@@ -907,6 +915,156 @@ No JavaScript required – pure CSS Custom Property inheritance through Shadow D
 
 ---
 
+## Storybook Integration
+
+Storybook 8.x is configured for developing and documenting Web Components with full design token support.
+
+### Project Structure
+
+```
+build-config/
+  storybook/
+    main.ts                 # Storybook configuration
+    preview.ts              # Decorators, globalTypes, parameters
+    manager.ts              # Custom BILD UI themes (light/dark)
+    preview-head.html       # CSS imports, initial data attributes
+    preview-body.html       # Dark mode sync script
+
+src/
+  components/
+    ds-button/
+      ds-button.stories.ts  # Story file (co-located with component)
+```
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `main.ts` | Framework (`@storybook/web-components-vite`), addons, static dirs |
+| `preview.ts` | `withDesignTokens` decorator, toolbar controls, dark mode themes |
+| `manager.ts` | Custom BILD themes for Storybook UI (sidebar, toolbar) |
+| `preview-head.html` | CSS bundle import, initial `data-*` attributes on body |
+| `preview-body.html` | Dark mode sync via localStorage polling |
+
+### Key Features
+
+**4-Axis Token Architecture in Toolbar:**
+
+| Control | Options | Data Attribute |
+|---------|---------|----------------|
+| Color Brand | BILD, SportBILD | `data-color-brand` |
+| Content Brand | BILD, SportBILD, Advertorial | `data-content-brand` |
+| Theme | Light, Dark (via dark mode toggle) | `data-theme` |
+| Density | Default, Dense, Spacious | `data-density` |
+
+**Dark Mode Sync:**
+
+The `storybook-dark-mode` addon controls both UI and content area:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         DARK MODE ARCHITECTURE                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Manager (Storybook UI)          Preview (Component Area)                   │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│                                                                             │
+│  storybook-dark-mode addon       preview-body.html script:                  │
+│  ├── Stores state in             ├── Reads localStorage on load             │
+│  │   localStorage                ├── Polls localStorage every 200ms         │
+│  │   (sb-addon-themes-3)         └── Sets body[data-theme]                  │
+│  └── Applies UI theme                                                       │
+│                                                                             │
+│  Toggle Click → localStorage → Polling detects → body[data-theme] updated  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Addons
+
+| Addon | Purpose |
+|-------|---------|
+| `@storybook/addon-essentials` | Controls, actions, viewport, backgrounds |
+| `@storybook/addon-docs` | Auto-generated documentation |
+| `storybook-dark-mode` | Dark mode toggle with custom BILD themes |
+
+### Static Directories
+
+| Path | Mapped To | Purpose |
+|------|-----------|---------|
+| `dist/css` | `/css` | Design token CSS bundles |
+| `dist/stencil` | `/stencil` | Built Stencil components |
+
+### Writing Stories
+
+```tsx
+// src/components/ds-button/ds-button.stories.ts
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+
+// Ensure component is loaded
+import '../ds-button';
+
+const meta: Meta = {
+  title: 'Components/Button',
+  tags: ['autodocs'],
+  render: (args) => html`
+    <ds-button variant=${args.variant}>
+      ${args.label}
+    </ds-button>
+  `,
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'ghost'],
+    },
+    label: { control: 'text' },
+  },
+};
+
+export default meta;
+type Story = StoryObj;
+
+export const Primary: Story = {
+  args: {
+    variant: 'primary',
+    label: 'Click me',
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    variant: 'secondary',
+    label: 'Secondary',
+  },
+};
+```
+
+### Custom BILD Themes (manager.ts)
+
+```typescript
+const bildLightTheme = create({
+  base: 'light',
+  brandTitle: 'BILD Design System',
+  colorPrimary: '#DD0000',    // BILD Red
+  colorSecondary: '#DD0000',
+  appBg: '#F2F4F5',           // --color-neutral-96
+  appContentBg: '#FFFFFF',
+  // ... more theme values
+});
+
+const bildDarkTheme = create({
+  base: 'dark',
+  brandTitle: 'BILD Design System',
+  colorPrimary: '#DD0000',
+  appBg: '#1C1C1C',           // --color-neutral-10
+  appContentBg: '#232629',    // --color-neutral-15
+  // ... more theme values
+});
+```
+
+---
+
 ## Common Issues
 
 | Problem | Likely Cause | Solution |
@@ -921,3 +1079,9 @@ No JavaScript required – pure CSS Custom Property inheritance through Shadow D
 | Stencil build fails with "Unable to find CSS" | Tokens not built | Run `npm run build` before `npm run build:stencil` |
 | Stencil components not rendering | Script not loaded | Check `<script src="/build/bds.esm.js">` in HTML |
 | Brand switching not working in Stencil | Missing data attributes | Add `data-color-brand`, `data-content-brand`, `data-theme` to `<body>` |
+| Storybook shows loading spinner | Build error in preview | Check console for errors, ensure `npm run build:all` completed |
+| Storybook dark mode toggle doesn't change content | localStorage key changed | Verify `sb-addon-themes-3` key in preview-body.html |
+| Storybook toolbar controls missing | globalTypes not configured | Check `preview.ts` → `globalTypes` configuration |
+| Stories not found | Wrong stories glob pattern | Check `main.ts` → `stories` path pattern |
+| CSS tokens not loading in Storybook | Static dirs misconfigured | Verify `main.ts` → `staticDirs` and `npm run build` completed |
+| Components not rendering in stories | Stencil not built | Run `npm run build:all` before `npm run storybook` |

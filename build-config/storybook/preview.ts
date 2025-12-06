@@ -1,36 +1,30 @@
 import type { Preview } from '@storybook/web-components';
 import { html } from 'lit';
-
-// Import custom themes for UI styling
-import { bildLightTheme, bildDarkTheme } from './manager';
+import { withThemeByDataAttribute } from '@storybook/addon-themes';
 
 // Stencil components are loaded via script tag in preview-head.html
 // This ensures they're available before stories render
 
-// Dark mode sync is handled in preview-body.html via localStorage polling
-
 /**
- * 4-Axis Design Token Decorator
+ * Design Token Decorator for Color Brand, Content Brand, and Density
  *
- * Wraps stories with the correct data attributes for the Dual-Axis architecture:
+ * Sets data attributes for the Dual-Axis architecture:
  * - data-color-brand: Controls colors and effects (bild, sportbild)
  * - data-content-brand: Controls typography, spacing, density (bild, sportbild, advertorial)
- * - data-theme: Light/dark mode (synced with storybook-dark-mode via preview-body.html)
  * - data-density: Spacing density (default, dense, spacious)
+ *
+ * Note: data-theme is handled by withThemeByDataAttribute from @storybook/addon-themes
  */
 const withDesignTokens = (Story: () => unknown, context: { globals: Record<string, string> }) => {
   const { colorBrand, contentBrand, density } = context.globals;
 
   // Set attributes on document.body for global CSS inheritance
-  // Note: data-theme is managed by preview-body.html in sync with storybook-dark-mode addon
   if (typeof document !== 'undefined' && document.body) {
     document.body.setAttribute('data-color-brand', colorBrand);
     document.body.setAttribute('data-content-brand', contentBrand);
     document.body.setAttribute('data-density', density);
   }
 
-  // Note: data-theme is NOT set on the wrapper div - it inherits from body
-  // which is synced with storybook-dark-mode addon via preview-body.html
   return html`
     <div
       data-color-brand=${colorBrand}
@@ -45,9 +39,20 @@ const withDesignTokens = (Story: () => unknown, context: { globals: Record<strin
 
 const preview: Preview = {
   // Global decorators
-  decorators: [withDesignTokens],
+  decorators: [
+    withDesignTokens,
+    // Theme decorator from @storybook/addon-themes - sets data-theme attribute
+    withThemeByDataAttribute({
+      themes: {
+        light: 'light',
+        dark: 'dark',
+      },
+      defaultTheme: 'light',
+      attributeName: 'data-theme',
+    }),
+  ],
 
-  // Toolbar controls for 4-axis switching
+  // Toolbar controls for brand and density switching
   globalTypes: {
     colorBrand: {
       description: 'Color brand (colors & effects)',
@@ -74,8 +79,6 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
-    // Note: theme is controlled by storybook-dark-mode toggle (moon icon in toolbar)
-    // which syncs both UI and content via preview-body.html
     density: {
       description: 'Spacing density',
       toolbar: {
@@ -109,13 +112,6 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
-    },
-
-    // storybook-dark-mode: Custom BILD themes for UI
-    darkMode: {
-      dark: bildDarkTheme,
-      light: bildLightTheme,
-      stylePreview: true,
     },
 
     // Backgrounds addon - use canvas background
