@@ -24,7 +24,8 @@ A comprehensive design operations pipeline for the BILD Design System. Transform
 - [⚙️ Build Commands](#️-build-commands)
 - [🔄 CI/CD Workflows](#-cicd-workflows)
 - [📊 Platform Support](#-platform-support)
-- [📚 Documentation](#-documentation)
+- [📚 Storybook](#-storybook)
+- [📖 Documentation](#-documentation)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 
@@ -313,9 +314,15 @@ vv-token-test-v3/
 │   ├── icons/
 │   │   ├── svgo.config.js              # SVG optimization
 │   │   └── tsconfig.json               # React TypeScript config
-│   └── stencil/
-│       ├── stencil.config.ts           # Stencil Web Components config
-│       └── tsconfig.json               # Stencil TypeScript config
+│   ├── stencil/
+│   │   ├── stencil.config.ts           # Stencil Web Components config
+│   │   └── tsconfig.json               # Stencil TypeScript config
+│   └── storybook/
+│       ├── main.ts                     # Storybook configuration
+│       ├── preview.ts                  # Decorators, globalTypes
+│       ├── manager.ts                  # Custom BILD UI themes
+│       ├── preview-head.html           # CSS imports
+│       └── preview-body.html           # Dark mode sync
 │
 ├── 📁 tokens/                          # Preprocessed (Git tracked)
 ├── 📁 dist/                            # Build output (Git ignored)
@@ -354,6 +361,13 @@ npm run clean              # Remove dist/ and tokens/
 npm run build:stencil      # Build Stencil Web Components
 npm run dev:stencil        # Dev server with hot reload (port 3333)
 npm run build:all          # Full build (tokens + bundles + stencil)
+```
+
+### 📚 Storybook
+
+```bash
+npm run storybook          # Start Storybook dev server (port 6006)
+npm run build:storybook    # Build static Storybook for deployment
 ```
 
 ### 🖼️ Icons
@@ -423,7 +437,58 @@ npm run clean:icons        # Remove dist/icons/
 
 ---
 
-## 📚 Documentation
+## 📚 Storybook
+
+Storybook provides an interactive component development environment with the **4-axis design token architecture** fully integrated.
+
+### Features
+
+- **4-Axis Token Controls**: Switch between Color Brand, Content Brand, Theme, and Density via toolbar
+- **Dark Mode Integration**: Unified dark mode toggle syncs both Storybook UI and component preview
+- **Custom BILD Themes**: Storybook UI styled with BILD Design System colors
+- **Web Components Ready**: Full support for Stencil components in stories
+
+### Quick Start
+
+```bash
+npm run storybook    # Start at http://localhost:6006
+```
+
+### Writing Stories
+
+```tsx
+// src/components/ds-button/ds-button.stories.ts
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+
+const meta: Meta = {
+  title: 'Components/Button',
+  tags: ['autodocs'],
+  render: (args) => html`<ds-button variant=${args.variant}>${args.label}</ds-button>`,
+  argTypes: {
+    variant: { control: 'select', options: ['primary', 'secondary', 'ghost'] },
+  },
+};
+export default meta;
+
+export const Primary: StoryObj = {
+  args: { variant: 'primary', label: 'Click me' },
+};
+```
+
+### Configuration
+
+| File | Purpose |
+|------|---------|
+| `build-config/storybook/main.ts` | Addons, framework, static dirs |
+| `build-config/storybook/preview.ts` | Decorators, globalTypes, parameters |
+| `build-config/storybook/manager.ts` | Custom BILD UI themes |
+| `build-config/storybook/preview-head.html` | CSS imports, initial data attributes |
+| `build-config/storybook/preview-body.html` | Dark mode sync script |
+
+---
+
+## 📖 Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -432,6 +497,7 @@ npm run clean:icons        # Remove dist/icons/
 | [📖 README.icons.md](./README.icons.md) | Complete icon pipeline documentation |
 | [📖 docs/android.md](./docs/android.md) | Android Jetpack Compose (Dual-Axis) |
 | [📖 docs/ios.md](./docs/ios.md) | iOS SwiftUI (Dual-Axis) |
+| [📖 docs/css.md](./docs/css.md) | CSS Custom Properties & Web Components |
 
 ### Quick Links
 

@@ -19,6 +19,7 @@
 - [Component Tokens](#component-tokens)
 - [Typography & Effects](#typography--effects)
 - [Usage Examples](#usage-examples)
+- [Storybook](#storybook)
 
 ---
 
@@ -712,6 +713,86 @@ src/components/
 
 ---
 
+## Storybook
+
+The design system includes a **Storybook 8.x** setup for component development and documentation with full 4-axis token support.
+
+### Quick Start
+
+```bash
+# Build tokens first (required)
+npm run build
+
+# Start Storybook dev server (port 6006)
+npm run storybook
+
+# Build static Storybook site
+npm run build:storybook
+```
+
+### Features
+
+**4-Axis Token Switching in Toolbar:**
+
+| Toolbar Control | Options | Description |
+|-----------------|---------|-------------|
+| Color Brand | BILD, SportBILD | Colors + effects axis |
+| Content Brand | BILD, SportBILD, Advertorial | Typography + sizing axis |
+| Dark Mode Toggle (🌙) | Light, Dark | Unified UI + content theming |
+| Density | Default, Dense, Spacious | Spacing density |
+
+### Dark Mode Integration
+
+The `storybook-dark-mode` addon provides unified dark mode:
+
+- **Moon icon (🌙)** in toolbar toggles both Storybook UI and content area
+- Design tokens (`data-theme`) sync automatically via localStorage polling
+- Custom BILD themes match the design system look
+
+### Writing Stories
+
+```typescript
+// src/components/ds-button/ds-button.stories.ts
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import './ds-button';
+
+const meta: Meta = {
+  title: 'Components/Button',
+  component: 'ds-button',
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'tertiary'],
+    },
+  },
+};
+
+export default meta;
+type Story = StoryObj;
+
+export const Primary: Story = {
+  args: { variant: 'primary' },
+  render: (args) => html`
+    <ds-button variant=${args.variant}>Primary Button</ds-button>
+  `,
+};
+```
+
+### Configuration
+
+| File | Purpose |
+|------|---------|
+| `build-config/storybook/main.ts` | Framework, addons, static dirs |
+| `build-config/storybook/preview.ts` | Decorators, toolbar controls |
+| `build-config/storybook/preview-body.html` | Dark mode sync script |
+| `build-config/storybook/manager.ts` | Custom BILD UI themes |
+
+> See [CLAUDE.md](../CLAUDE.md#storybook-integration) for complete Storybook documentation.
+
+---
+
 ## Browser Support
 
 CSS Custom Properties are supported in all modern browsers:
@@ -736,3 +817,4 @@ For legacy browser support, fallback values are included:
 - [Android Compose Tokens](./android.md)
 - [iOS SwiftUI Tokens](./ios.md)
 - [Architecture Overview](../CLAUDE.md)
+- [Storybook Integration](../CLAUDE.md#storybook-integration)
