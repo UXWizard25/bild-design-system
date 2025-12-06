@@ -114,8 +114,6 @@
     "prestorybook": "npm run build:all",
     "build:storybook": "storybook build -c build-config/storybook -o dist/storybook",
     "prebuild:storybook": "npm run build:all",
-    "chromatic": "chromatic --exit-zero-on-changes --storybook-build-dir=dist/storybook",
-    "prechromatic": "npm run build:storybook",
     "watch": "nodemon --watch src/design-tokens --ext json --exec npm run build:tokens",
     "clean": "rm -rf dist tokens",
     "prepublishOnly": "npm run build:all"
@@ -154,7 +152,6 @@
     "@storybook/web-components-vite": "^8.6.14",
     "@svgr/core": "^8.1.0",
     "@types/react": "^19.2.7",
-    "chromatic": "^13.3.4",
     "fantasticon": "^3.0.0",
     "lit": "^3.3.1",
     "nodemon": "^3.0.1",
