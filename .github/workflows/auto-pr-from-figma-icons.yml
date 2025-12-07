@@ -20,7 +20,7 @@ on:
     branches:
       - figma-icons
     paths:
-      - 'src/icons/**'
+      - 'packages/icons/src/**'
 
 # Prevent concurrent runs
 concurrency:
@@ -72,11 +72,11 @@ jobs:
           # Try to get existing icons from main
           git fetch origin main:refs/remotes/origin/main || true
 
-          if git show origin/main:dist/icons/svg 2>/dev/null; then
-            git checkout origin/main -- dist/icons || true
-            if [ -d "dist/icons" ]; then
-              cp -r dist/icons/* dist-icons-old/ 2>/dev/null || true
-              rm -rf dist/icons
+          if git show origin/main:packages/icons/dist/svg 2>/dev/null; then
+            git checkout origin/main -- packages/icons/dist || true
+            if [ -d "packages/icons/dist" ]; then
+              cp -r packages/icons/dist/* dist-icons-old/ 2>/dev/null || true
+              rm -rf packages/icons/dist
             fi
           fi
 
@@ -100,7 +100,7 @@ jobs:
         id: compare
         run: |
           echo "::group::Comparing builds"
-          node scripts/icons/compare-icon-builds.js dist-icons-old dist/icons
+          node scripts/icons/compare-icon-builds.js dist-icons-old packages/icons/dist
           echo "::endgroup::"
 
           # Read summary from diff
@@ -131,8 +131,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Only commit the codepoint registry (for Flutter stability)
-          # dist/icons/ is NOT committed - builds happen during npm publish
-          git add src/icons/.codepoints.json
+          # packages/icons/dist/ is NOT committed - builds happen during npm publish
+          git add packages/icons/src/.codepoints.json
 
           # Check if there are changes to commit
           if git diff --staged --quiet; then
@@ -225,7 +225,7 @@ jobs:
         with:
           name: icon-build-figma
           path: |
-            dist/icons/
+            packages/icons/dist/
             icons-diff.json
             icons-release-notes.md
           retention-days: 30
