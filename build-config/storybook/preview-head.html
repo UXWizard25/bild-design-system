@@ -270,6 +270,150 @@
   .token.builtin {
     color: var(--text-color-accent, #DD0000) !important;
   }
+
+  /* ========================================
+     EXPLICIT DARK MODE OVERRIDES
+     Using [data-theme="dark"] with hardcoded colors
+     because CSS variables require multiple selectors
+     ======================================== */
+
+  [data-theme="dark"] body,
+  [data-theme="dark"] .sbdocs-wrapper,
+  html[data-theme="dark"] body,
+  html[data-theme="dark"] .sbdocs-wrapper {
+    background-color: #1C1C1C !important;
+  }
+
+  [data-theme="dark"] .sbdocs-content,
+  html[data-theme="dark"] .sbdocs-content {
+    background-color: #232629 !important;
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .docs-story,
+  [data-theme="dark"] .sbdocs-preview,
+  html[data-theme="dark"] .docs-story,
+  html[data-theme="dark"] .sbdocs-preview {
+    background-color: #232629 !important;
+    border-color: #4B525A !important;
+  }
+
+  [data-theme="dark"] .sbdocs h1,
+  [data-theme="dark"] .sbdocs h2,
+  [data-theme="dark"] .sbdocs h3,
+  [data-theme="dark"] .sbdocs h4,
+  [data-theme="dark"] .sbdocs h5,
+  [data-theme="dark"] .sbdocs h6,
+  [data-theme="dark"] .sbdocs-h1,
+  [data-theme="dark"] .sbdocs-h2,
+  [data-theme="dark"] .sbdocs-h3,
+  html[data-theme="dark"] .sbdocs h1,
+  html[data-theme="dark"] .sbdocs h2,
+  html[data-theme="dark"] .sbdocs h3,
+  html[data-theme="dark"] .sbdocs h4,
+  html[data-theme="dark"] .sbdocs h5,
+  html[data-theme="dark"] .sbdocs h6 {
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .sbdocs p,
+  [data-theme="dark"] .sbdocs li,
+  [data-theme="dark"] .sbdocs td,
+  [data-theme="dark"] .sbdocs th,
+  [data-theme="dark"] .sbdocs-p,
+  html[data-theme="dark"] .sbdocs p,
+  html[data-theme="dark"] .sbdocs li,
+  html[data-theme="dark"] .sbdocs td,
+  html[data-theme="dark"] .sbdocs th {
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .sbdocs code,
+  [data-theme="dark"] .sbdocs pre,
+  html[data-theme="dark"] .sbdocs code,
+  html[data-theme="dark"] .sbdocs pre {
+    background-color: #2E3438 !important;
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .sbdocs table,
+  html[data-theme="dark"] .sbdocs table {
+    border-color: #4B525A !important;
+  }
+
+  [data-theme="dark"] .sbdocs th,
+  html[data-theme="dark"] .sbdocs th {
+    background-color: #2E3438 !important;
+  }
+
+  [data-theme="dark"] .sbdocs td,
+  [data-theme="dark"] .sbdocs th,
+  html[data-theme="dark"] .sbdocs td,
+  html[data-theme="dark"] .sbdocs th {
+    border-color: #4B525A !important;
+  }
+
+  [data-theme="dark"] .sbdocs a,
+  html[data-theme="dark"] .sbdocs a {
+    color: #FF6B6B !important;
+  }
+
+  [data-theme="dark"] .sbdocs blockquote,
+  html[data-theme="dark"] .sbdocs blockquote {
+    background-color: #2E3438 !important;
+    border-left-color: #DD0000 !important;
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .docblock-argstable,
+  html[data-theme="dark"] .docblock-argstable {
+    background-color: #232629 !important;
+  }
+
+  [data-theme="dark"] .docblock-argstable th,
+  [data-theme="dark"] .docblock-argstable td,
+  html[data-theme="dark"] .docblock-argstable th,
+  html[data-theme="dark"] .docblock-argstable td {
+    background-color: #232629 !important;
+    border-color: #4B525A !important;
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .docblock-source,
+  html[data-theme="dark"] .docblock-source {
+    background-color: #2E3438 !important;
+  }
+
+  [data-theme="dark"] .docblock-source pre,
+  [data-theme="dark"] .docblock-source code,
+  html[data-theme="dark"] .docblock-source pre,
+  html[data-theme="dark"] .docblock-source code {
+    background-color: transparent !important;
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .sb-bar,
+  html[data-theme="dark"] .sb-bar {
+    background-color: #232629 !important;
+    border-color: #4B525A !important;
+  }
+
+  [data-theme="dark"] .sb-bar button,
+  html[data-theme="dark"] .sb-bar button {
+    color: #F2F4F5 !important;
+  }
+
+  /* Dark mode for main wrapper elements */
+  [data-theme="dark"] #storybook-docs,
+  html[data-theme="dark"] #storybook-docs {
+    background-color: #1C1C1C !important;
+    color: #F2F4F5 !important;
+  }
+
+  [data-theme="dark"] .sb-show-main,
+  html[data-theme="dark"] .sb-show-main {
+    background-color: #1C1C1C !important;
+  }
 </style>
 
 <script>
