@@ -116,28 +116,24 @@ function generateColorsDocs() {
   const primitivePath = path.join(TOKENS_DIR, 'shared/colorprimitive.json');
   const primitives = loadTokens(primitivePath);
 
-  // Build sections for each category
-  const categories = [
-    { key: 'Text', title: 'Text Colors' },
-    { key: 'Surface', title: 'Surface Colors' },
-    { key: 'Core', title: 'Core Colors' },
-    { key: 'Border', title: 'Border Colors' },
-    { key: 'Icon', title: 'Icon Colors' },
-    { key: 'State', title: 'State Colors' },
-    { key: 'Attention', title: 'Attention Colors' },
-    { key: 'Label', title: 'Label Colors' },
-    { key: 'Heading', title: 'Heading Colors' },
-    { key: 'Overlay', title: 'Overlay Colors' },
-  ];
+  // Build sections dynamically from JSON structure keys
+  // Skip internal/documentation-only categories
+  const skipCategories = ['TextLabels', 'LayerOpacity'];
 
   let semanticSections = '';
 
-  for (const cat of categories) {
-    if (semantic[cat.key]) {
-      const tokens = extractTokensFromCategory(semantic[cat.key]);
-      if (tokens.length > 0) {
-        semanticSections += `
-<div className="category-header">${cat.title}</div>
+  // Iterate over all top-level keys in the semantic object
+  for (const [categoryKey, categoryValue] of Object.entries(semantic)) {
+    if (skipCategories.includes(categoryKey)) continue;
+    if (!categoryValue || typeof categoryValue !== 'object') continue;
+
+    const tokens = extractTokensFromCategory(categoryValue);
+    if (tokens.length > 0) {
+      // Generate human-readable title from key (e.g., "Text" -> "Text Colors")
+      const title = `${toDisplayName(categoryKey)} Colors`;
+
+      semanticSections += `
+<div className="category-header">${title}</div>
 
 <table className="color-table">
   <thead>
@@ -152,15 +148,14 @@ ${generateColorTableRows(tokens)}
   </tbody>
 </table>
 `;
-      }
     }
   }
 
-  // Generate primitive color grid
+  // Generate primitive color grid dynamically from JSON structure
   let primitiveGrid = '';
   if (primitives) {
-    // Recursively extract all color tokens from nested structure
-    function extractAllColorTokens(obj, parentKey = '') {
+    // Helper to extract color tokens from a group
+    function extractColorTokensFromGroup(obj) {
       const tokens = [];
       for (const [key, value] of Object.entries(obj)) {
         if (value && typeof value === 'object') {
@@ -173,31 +168,16 @@ ${generateColorTableRows(tokens)}
               name: key,
               displayName: toDisplayName(key),
               cssVar: `--${toKebabCase(key)}`,
-              value: value.$value || value.value,
-              category: parentKey
+              value: value.$value || value.value
             });
           } else {
-            // Recurse into nested objects
-            tokens.push(...extractAllColorTokens(value, key));
+            // Recurse into nested objects (e.g., "red", "neutrals" subcategories)
+            tokens.push(...extractColorTokensFromGroup(value));
           }
         }
       }
       return tokens;
     }
-
-    const allPrimitives = extractAllColorTokens(primitives);
-
-    // Group by category
-    const bildColors = allPrimitives.filter(t => t.name.toLowerCase().includes('bild') && !t.name.toLowerCase().includes('sport'));
-    const sportColors = allPrimitives.filter(t => t.name.toLowerCase().includes('sport'));
-    const neutralColors = allPrimitives.filter(t => t.name.toLowerCase().includes('neutral'));
-    const feedbackColors = allPrimitives.filter(t =>
-      t.name.toLowerCase().includes('green') ||
-      t.name.toLowerCase().includes('orange') ||
-      t.name.toLowerCase().includes('yellow') ||
-      t.name.toLowerCase().includes('blue')
-    );
-    const alphaColors = allPrimitives.filter(t => t.name.toLowerCase().includes('alpha'));
 
     const generateColorCards = (tokens) => tokens.map(t => `  <div className="color-card">
     <div className="color-card-swatch" style={{background: 'var(${t.cssVar})'}}></div>
@@ -207,54 +187,25 @@ ${generateColorTableRows(tokens)}
     </div>
   </div>`).join('\n');
 
-    if (bildColors.length > 0) {
-      primitiveGrid += `
-### BILD Brand Colors
+    // Iterate over top-level groups in primitives JSON (BILD, Shared, Partner, SportBILD, Opacity, etc.)
+    for (const [groupKey, groupValue] of Object.entries(primitives)) {
+      // Skip documentation-only groups
+      if (groupKey === 'TextLabels') continue;
+      if (!groupValue || typeof groupValue !== 'object') continue;
+
+      const tokens = extractColorTokensFromGroup(groupValue);
+      if (tokens.length > 0) {
+        // Generate readable title from group key
+        const title = toDisplayName(groupKey);
+
+        primitiveGrid += `
+### ${title}
 
 <div className="color-grid">
-${generateColorCards(bildColors)}
+${generateColorCards(tokens)}
 </div>
 `;
-    }
-
-    if (sportColors.length > 0) {
-      primitiveGrid += `
-### SportBILD Brand Colors
-
-<div className="color-grid">
-${generateColorCards(sportColors)}
-</div>
-`;
-    }
-
-    if (neutralColors.length > 0) {
-      primitiveGrid += `
-### Neutral Scale
-
-<div className="color-grid">
-${generateColorCards(neutralColors)}
-</div>
-`;
-    }
-
-    if (feedbackColors.length > 0) {
-      primitiveGrid += `
-### Feedback Colors
-
-<div className="color-grid">
-${generateColorCards(feedbackColors)}
-</div>
-`;
-    }
-
-    if (alphaColors.length > 0) {
-      primitiveGrid += `
-### Alpha/Transparency Colors
-
-<div className="color-grid">
-${generateColorCards(alphaColors)}
-</div>
-`;
+      }
     }
   }
 
