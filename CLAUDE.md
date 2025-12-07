@@ -37,7 +37,7 @@ npm run publish:components # npm publish -w @marioschmidt/design-system-componen
 
 **Source of Truth:** `src/design-tokens/bild-design-system-raw-data.json` (Figma Export via CodeBridge Plugin)
 
-**Platform Documentation:** `README.tokens.md`, `docs/css.md`, `docs/js.md`, `docs/android.md`, `docs/ios.md`
+**Platform Documentation:** `packages/tokens/README.md`, `packages/tokens/docs/css.md`, `packages/tokens/docs/js.md`, `packages/tokens/docs/android.md`, `packages/tokens/docs/ios.md`
 
 ---
 

@@ -93,7 +93,8 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "docs/"
   ],
   "scripts": {
     "build": "node ../../scripts/tokens/preprocess.js && node ../../scripts/tokens/build.js && node ../../scripts/tokens/bundles.js",
