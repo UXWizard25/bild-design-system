@@ -681,6 +681,363 @@ Typography scales automatically based on viewport width:
 }
 
 /**
+ * Generate the spacing.mdx documentation
+ */
+function generateSpacingDocs() {
+  // Load semantic spacing tokens from breakpoints (xs is base reference)
+  const spacingPath = path.join(TOKENS_DIR, 'brands/bild/breakpoints/breakpoint-xs-320px.json');
+  const spacingData = loadTokens(spacingPath);
+
+  if (!spacingData || !spacingData.Semantic || !spacingData.Semantic.Layout) {
+    console.error('Could not load semantic spacing tokens');
+    return null;
+  }
+
+  const layout = spacingData.Semantic.Layout;
+
+  // Load space primitives
+  const primitivePath = path.join(TOKENS_DIR, 'shared/spaceprimitive.json');
+  const primitives = loadTokens(primitivePath);
+
+  // Helper to extract dimension tokens from a category (recursive)
+  function extractSpacingTokens(obj, prefix = '') {
+    const tokens = [];
+    for (const [key, value] of Object.entries(obj)) {
+      if (value && typeof value === 'object') {
+        // If it has $value and is dimension type, it's a token
+        if ((value.$value !== undefined || value.value !== undefined) && value.$type === 'dimension') {
+          const cssVar = `--${toKebabCase(key)}`;
+          tokens.push({
+            name: key,
+            displayName: toDisplayName(key),
+            cssVar,
+            value: value.$value ?? value.value,
+            comment: value.comment || ''
+          });
+        } else if (!value.$value && !value.value) {
+          // It's a nested category, recurse
+          tokens.push(...extractSpacingTokens(value, key));
+        }
+      }
+    }
+    return tokens;
+  }
+
+  // Build spacing sections dynamically from JSON structure
+  let spacingSections = '';
+  let allSpacingTokens = [];
+
+  // Iterate over all categories in Layout (Grid, Section, ContentWidth, Breakpoints, etc.)
+  for (const [categoryKey, categoryValue] of Object.entries(layout)) {
+    if (!categoryValue || typeof categoryValue !== 'object') continue;
+
+    // Skip non-dimension tokens (like number types for column counts)
+    // Check if it's a direct token or a category
+    if (categoryValue.$type && categoryValue.$type !== 'dimension') continue;
+
+    // If it's a direct token at the Layout level (e.g., canvasHeightSizeWeb)
+    if (categoryValue.$value !== undefined || categoryValue.value !== undefined) {
+      if (categoryValue.$type === 'dimension') {
+        const cssVar = `--${toKebabCase(categoryKey)}`;
+        allSpacingTokens.push({
+          name: categoryKey,
+          displayName: toDisplayName(categoryKey),
+          cssVar,
+          value: categoryValue.$value ?? categoryValue.value,
+          comment: categoryValue.comment || '',
+          category: 'Layout'
+        });
+      }
+      continue;
+    }
+
+    // Extract tokens from this category
+    const tokens = extractSpacingTokens(categoryValue);
+    if (tokens.length === 0) continue;
+
+    // Add to all tokens for table
+    tokens.forEach(t => {
+      t.category = categoryKey;
+      allSpacingTokens.push(t);
+    });
+
+    // Generate category title from key (e.g., "Grid" -> "Grid", "ContentWidth" -> "Content Width")
+    const categoryTitle = toDisplayName(categoryKey);
+
+    // Get category description from first token comment (if descriptive)
+    const categoryDesc = tokens[0].comment
+      ? tokens[0].comment.split('–').slice(-1)[0].trim().split('.')[0]
+      : '';
+
+    // Generate spacing demo cards
+    const spacingCards = tokens.map(t => {
+      // Create width style - use CSS variable for live preview
+      return `<div className="spacing-demo">
+  <span className="spacing-value">${t.displayName.replace('Grid Space ', '').replace('Section Space ', '').replace('Content Max Width ', '')}</span>
+  <div className="spacing-bar" style={{width: 'var(${t.cssVar})'}}></div>
+  <span className="spacing-token">${t.cssVar}</span>
+</div>`;
+    }).join('\n\n');
+
+    spacingSections += `
+<div className="category-header">${categoryTitle}</div>
+${categoryDesc ? `<p className="category-desc">${categoryDesc}</p>` : ''}
+
+${spacingCards}
+`;
+  }
+
+  // Generate primitives section dynamically
+  let primitivesSection = '';
+  if (primitives) {
+    const primitiveTokens = [];
+    for (const [key, value] of Object.entries(primitives)) {
+      if (value && (value.$value !== undefined || value.value !== undefined) && value.$type === 'dimension') {
+        primitiveTokens.push({
+          name: key,
+          displayName: toDisplayName(key),
+          cssVar: `--${toKebabCase(key)}`,
+          value: value.$value ?? value.value
+        });
+      }
+    }
+
+    // Sort by value for better visualization
+    primitiveTokens.sort((a, b) => a.value - b.value);
+
+    if (primitiveTokens.length > 0) {
+      const primitiveCards = primitiveTokens.map(t => `<div className="spacing-demo">
+  <span className="spacing-value">${t.value}px</span>
+  <div className="spacing-bar" style={{width: '${t.value}px'}}></div>
+  <span className="spacing-token">${t.cssVar}</span>
+</div>`).join('\n\n');
+
+      primitivesSection = `
+## Space Primitives
+
+These are the raw spacing values from Layer 0 (8px base grid).
+
+${primitiveCards}
+`;
+    }
+  }
+
+  // Generate tokens table dynamically
+  let tokensTable = '';
+  if (allSpacingTokens.length > 0) {
+    const tokenRows = allSpacingTokens.map(t => {
+      // Generate usage description from comment
+      let usage = t.comment
+        ? t.comment.split('–').slice(-1)[0].trim().split('.')[0]
+        : toDisplayName(t.name);
+
+      return `    <tr>
+      <td><code>${t.cssVar}</code></td>
+      <td>${usage}</td>
+    </tr>`;
+    }).join('\n');
+
+    tokensTable = `
+<table className="spacing-table">
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Usage</th>
+    </tr>
+  </thead>
+  <tbody>
+${tokenRows}
+  </tbody>
+</table>
+`;
+  }
+
+  // Final MDX content
+  const mdxContent = `import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Spacing" />
+
+{/*
+  AUTO-GENERATED FILE - DO NOT EDIT MANUALLY
+  Generated by: scripts/tokens/generate-docs.js
+  To update: run npm run build:docs or npm run build:tokens
+*/}
+
+<style>
+  {\`
+    .spacing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 2rem;
+    }
+    .spacing-table th, .spacing-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color-low-contrast);
+      color: var(--text-color-primary);
+    }
+    .spacing-table th {
+      background: var(--surface-color-secondary);
+      font-weight: 600;
+    }
+    .spacing-table code {
+      background: var(--surface-color-tertiary);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.85em;
+    }
+    .spacing-bar {
+      height: 24px;
+      background: var(--core-color-primary);
+      border-radius: 4px;
+      opacity: 0.8;
+      min-width: 4px;
+      max-width: 300px;
+    }
+    .spacing-demo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px;
+      background: var(--surface-color-secondary);
+      border-radius: 8px;
+      margin: 8px 0;
+    }
+    .spacing-value {
+      min-width: 120px;
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--text-color-secondary);
+    }
+    .spacing-token {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--text-color-secondary);
+      margin-left: auto;
+    }
+    .hint-box {
+      padding: 12px 16px;
+      background: var(--surface-color-tertiary);
+      border-radius: 8px;
+      border-left: 4px solid var(--core-color-primary);
+      margin: 1rem 0;
+      font-size: 14px;
+      color: var(--text-color-primary);
+    }
+    .category-header {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color-low-contrast);
+    }
+    .category-desc {
+      font-size: 14px;
+      color: var(--text-color-secondary);
+      margin: 0 0 1rem 0;
+    }
+  \`}
+</style>
+
+# Spacing
+
+The BILD Design System uses an **8px base grid** with semantic spacing tokens from the BreakpointMode collection.
+
+<div className="hint-box">
+  <strong>Live Preview:</strong> All spacing visualizations use CSS custom properties. Resize your browser to see responsive values change across breakpoints.
+</div>
+
+---
+
+## Semantic Spacing Tokens
+
+These are the meaning-based spacing tokens from Layer 2 that adapt to breakpoints.
+${spacingSections}
+---
+
+${primitivesSection}
+---
+
+## All Spacing Tokens
+${tokensTable}
+---
+
+## Responsive Breakpoints
+
+Spacing tokens adapt to viewport width via CSS \`@media\` queries:
+
+<table className="spacing-table">
+  <thead>
+    <tr>
+      <th>Breakpoint</th>
+      <th>Min-Width</th>
+      <th>Device Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>xs</code></td>
+      <td>320px</td>
+      <td>Mobile (default)</td>
+    </tr>
+    <tr>
+      <td><code>sm</code></td>
+      <td>390px</td>
+      <td>Large Mobile</td>
+    </tr>
+    <tr>
+      <td><code>md</code></td>
+      <td>600px</td>
+      <td>Tablet</td>
+    </tr>
+    <tr>
+      <td><code>lg</code></td>
+      <td>1024px</td>
+      <td>Desktop</td>
+    </tr>
+  </tbody>
+</table>
+
+**Try it:** Resize your browser window to see spacing values change responsively.
+
+---
+
+## Usage
+
+\`\`\`css
+/* Grid layout with responsive gaps */
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-space-resp-base);
+}
+
+/* Section spacing */
+.page-section {
+  padding-block: var(--section-space-base);
+}
+
+/* Content width constraints */
+.article-body {
+  max-width: var(--content-max-width-medium);
+  margin: 0 auto;
+}
+
+/* Page-level inline padding */
+.page-container {
+  padding-inline: var(--page-inline-space);
+}
+\`\`\`
+`;
+
+  return mdxContent;
+}
+
+/**
  * Generate the effects.mdx documentation
  */
 function generateEffectsDocs() {
@@ -988,6 +1345,15 @@ function main() {
     const effectsPath = path.join(DOCS_DIR, 'effects.mdx');
     fs.writeFileSync(effectsPath, effectsDocs);
     console.log(`  Written: ${effectsPath}`);
+  }
+
+  // Generate spacing documentation
+  console.log('Generating spacing.mdx...');
+  const spacingDocs = generateSpacingDocs();
+  if (spacingDocs) {
+    const spacingPath = path.join(DOCS_DIR, 'spacing.mdx');
+    fs.writeFileSync(spacingPath, spacingDocs);
+    console.log(`  Written: ${spacingPath}`);
   }
 
   console.log('\nDocumentation generation complete!');
