@@ -1,7 +1,7 @@
 {
-  "name": "@bild/design-tokens",
+  "name": "@marioschmidt/design-system-tokens",
   "version": "1.0.0",
-  "description": "BILD Design System Tokens - Multi-brand design tokens for BILD, SportBILD, and Advertorial",
+  "description": "BILD Design System Token Pipeline with Style Dictionary - Multi-brand design tokens for BILD, SportBILD, and Advertorial",
   "main": "dist/js/index.js",
   "module": "dist/js/index.js",
   "types": "dist/js/index.d.ts",

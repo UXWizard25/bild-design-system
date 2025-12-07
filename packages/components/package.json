@@ -1,5 +1,5 @@
 {
-  "name": "@bild/design-components",
+  "name": "@marioschmidt/design-system-components",
   "version": "1.0.0",
   "description": "BILD Design System Web Components - Stencil-based component library",
   "main": "dist/index.cjs.js",
@@ -44,10 +44,10 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@bild/design-tokens": "^1.0.0"
+    "@marioschmidt/design-system-tokens": "^1.0.0"
   },
   "peerDependenciesMeta": {
-    "@bild/design-tokens": {
+    "@marioschmidt/design-system-tokens": {
       "optional": true
     }
   }

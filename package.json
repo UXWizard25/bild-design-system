@@ -8,17 +8,17 @@
   ],
   "scripts": {
     "build": "npm run build:tokens && npm run build:components",
-    "build:tokens": "npm run build -w @bild/design-tokens",
-    "build:icons": "npm run build -w @bild/design-icons",
-    "build:components": "npm run build -w @bild/design-components",
+    "build:tokens": "npm run build -w @marioschmidt/design-system-tokens",
+    "build:icons": "npm run build -w @marioschmidt/design-system-icons",
+    "build:components": "npm run build -w @marioschmidt/design-system-components",
     "build:all": "npm run build:tokens && npm run build:icons && npm run build:components",
-    "dev:stencil": "npm run dev -w @bild/design-components",
+    "dev:stencil": "npm run dev -w @marioschmidt/design-system-components",
     "storybook": "npm run build:tokens && npm run build:components && storybook dev -p 6006 -c build-config/storybook",
     "build:storybook": "npm run build:tokens && npm run build:components && storybook build -c build-config/storybook -o dist/storybook",
     "clean": "npm run clean --workspaces --if-present && rm -rf dist",
-    "publish:tokens": "npm publish -w @bild/design-tokens",
-    "publish:icons": "npm publish -w @bild/design-icons",
-    "publish:components": "npm publish -w @bild/design-components"
+    "publish:tokens": "npm publish -w @marioschmidt/design-system-tokens",
+    "publish:icons": "npm publish -w @marioschmidt/design-system-icons",
+    "publish:components": "npm publish -w @marioschmidt/design-system-components"
   },
   "repository": {
     "type": "git",
