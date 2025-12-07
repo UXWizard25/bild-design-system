@@ -1,8 +1,8 @@
 # CSS - Design System Tokens
 
-> **CSS Custom Properties für Web-Anwendungen**
+> **CSS Custom Properties for Web Applications**
 >
-> Dual-Axis Architektur, responsive, multi-brand ready.
+> Responsive, multi-brand ready with **Dual-Axis Architecture**.
 
 ---
 
@@ -709,7 +709,7 @@ src/components/
   index.html              # Dev/test page with brand switcher
 ```
 
-> See [CLAUDE.md](../CLAUDE.md#stencil-web-components-integration) for complete Stencil documentation.
+> See [CLAUDE.md](../../CLAUDE.md#stencil-web-components-integration) for complete Stencil documentation.
 
 ---
 
@@ -803,7 +803,7 @@ These pages use MDX with `@storybook/blocks` and include styled visual elements 
 | `build-config/storybook/preview-body.html` | Dark mode sync script |
 | `build-config/storybook/manager.ts` | Custom BILD UI themes |
 
-> See [CLAUDE.md](../CLAUDE.md#storybook-integration) for complete Storybook documentation.
+> See [CLAUDE.md](../../CLAUDE.md#storybook-integration) for complete Storybook documentation.
 
 ---
 
@@ -827,8 +827,11 @@ For legacy browser support, fallback values are included:
 
 ## Related Documentation
 
-- [JavaScript/React Tokens](./js.md)
-- [Android Compose Tokens](./android.md)
-- [iOS SwiftUI Tokens](./ios.md)
-- [Architecture Overview](../CLAUDE.md)
-- [Storybook Integration](../CLAUDE.md#storybook-integration)
+| Document | Description |
+|----------|-------------|
+| [JavaScript/React](./js.md) | ESM tokens with React ThemeProvider |
+| [Android Compose](./android.md) | Kotlin tokens for Jetpack Compose |
+| [iOS SwiftUI](./ios.md) | Swift tokens for SwiftUI |
+| [Tokens README](../README.md) | Token pipeline overview |
+| [Main README](../../README.md) | Project overview |
+| [CLAUDE.md](../../CLAUDE.md) | Architecture & build details |
