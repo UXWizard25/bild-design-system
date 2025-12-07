@@ -40,6 +40,12 @@
   ],
   "author": "BILD Design System Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AXS-Digital/vv-tokens-test.git",
+    "directory": "packages/components"
+  },
+  "homepage": "https://github.com/AXS-Digital/vv-tokens-test#readme",
   "publishConfig": {
     "access": "public"
   },
