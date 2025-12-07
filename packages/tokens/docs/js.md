@@ -1,4 +1,4 @@
-# JavaScript/React - Design System Tokens
+# ⚡ JavaScript/React - Design System Tokens
 
 > **ESM Design Tokens for JavaScript & React**
 >
@@ -6,21 +6,27 @@
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
-- [Quick Start](#quick-start)
-- [Dual-Axis Architecture](#dual-axis-architecture)
-- [React ThemeProvider](#react-themeprovider)
-- [Token Access](#token-access)
-- [Multi-Brand Apps](#multi-brand-apps)
-- [File Structure](#file-structure)
-- [API Reference](#api-reference)
-- [Token Type Mapping](#token-type-mapping)
-- [Naming Conventions](#naming-conventions)
+- [🚀 Quick Start](#-quick-start)
+- [🔀 Dual-Axis Architecture](#-dual-axis-architecture)
+- [🎨 React ThemeProvider](#-react-themeprovider)
+- [🔑 Token Access](#-token-access)
+- [🏷️ Multi-Brand Apps](#️-multi-brand-apps)
+- [📁 File Structure](#-file-structure)
+- [📚 API Reference](#-api-reference)
+- [🌳 Tree-Shaking](#-tree-shaking)
+- [📘 TypeScript Support](#-typescript-support)
+- [💅 CSS-in-JS Integration](#-css-in-js-integration)
+- [✅ Best Practices](#-best-practices)
+- [🔄 Token Type Mapping](#-token-type-mapping)
+- [⚙️ Requirements](#️-requirements)
+- [📝 Naming Conventions](#-naming-conventions)
+- [📖 Related Documentation](#-related-documentation)
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Install Package
 
@@ -99,7 +105,7 @@ console.log(theme.typography.headline1);        // { fontFamily, fontSize: "72px
 
 ---
 
-## Dual-Axis Architecture
+## 🔀 Dual-Axis Architecture
 
 The design system uses a **Dual-Axis Architecture** that separates color selection from content selection:
 
@@ -143,7 +149,7 @@ The design system uses a **Dual-Axis Architecture** that separates color selecti
 
 ---
 
-## React ThemeProvider
+## 🎨 React ThemeProvider
 
 ### Basic Usage
 
@@ -273,7 +279,7 @@ import { BREAKPOINTS } from '@marioschmidt/design-system-tokens/js/react';
 
 ---
 
-## Token Access
+## 🔑 Token Access
 
 ### Pre-built Themes
 
@@ -360,7 +366,7 @@ console.log(sportbild.semantic.color.dark.accentColorPrimary);
 
 ---
 
-## Multi-Brand Apps
+## 🏷️ Multi-Brand Apps
 
 ### Runtime Brand Switching
 
@@ -431,7 +437,7 @@ const contentBrand = process.env.REACT_APP_CONTENT_BRAND || 'bild';
 
 ---
 
-## File Structure
+## 📁 File Structure
 
 ```
 dist/js/
@@ -484,7 +490,7 @@ dist/js/
 
 ---
 
-## API Reference
+## 📚 API Reference
 
 ### createTheme(options)
 
@@ -623,7 +629,7 @@ const BREAKPOINTS: {
 
 ---
 
-## Tree-Shaking
+## 🌳 Tree-Shaking
 
 The package is designed for optimal tree-shaking:
 
@@ -651,7 +657,7 @@ import * as themes from '@marioschmidt/design-system-tokens/js/themes';
 
 ---
 
-## TypeScript Support
+## 📘 TypeScript Support
 
 Full TypeScript definitions are included:
 
@@ -670,7 +676,7 @@ const color: string = theme.color.textColorPrimary;
 
 ---
 
-## CSS-in-JS Integration
+## 💅 CSS-in-JS Integration
 
 ### With styled-components
 
@@ -743,7 +749,7 @@ function generateCSSVariables(theme) {
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Use Dual-Axis for Advertorial
 
@@ -792,7 +798,7 @@ import { createTheme } from '@marioschmidt/design-system-tokens/js/themes';
 
 ---
 
-## Token Type Mapping
+## 🔄 Token Type Mapping
 
 Token values are automatically formatted based on their `$type` from the Figma source, following the [W3C Design Tokens Community Group (DTCG)](https://www.designtokens.org/) specification:
 
@@ -851,7 +857,7 @@ theme.effects.shadowSoftMd = [
 
 ---
 
-## Requirements
+## ⚙️ Requirements
 
 - Node.js 16+ (ESM support)
 - React 18+ (for React bindings)
@@ -859,7 +865,7 @@ theme.effects.shadowSoftMd = [
 
 ---
 
-## Naming Conventions
+## 📝 Naming Conventions
 
 JavaScript tokens use **camelCase** with lowercase letters after numbers:
 
@@ -891,7 +897,7 @@ theme.effects.shadowSoftSm      // [{ offsetX: 0, ... }]
 
 ---
 
-## Related Documentation
+## 📖 Related Documentation
 
 | Document | Description |
 |----------|-------------|

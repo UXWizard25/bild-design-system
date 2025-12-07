@@ -1,4 +1,4 @@
-# Android Jetpack Compose - Design System Tokens
+# 🤖 Android Jetpack Compose - Design System Tokens
 
 > **Kotlin-based Design Tokens for Jetpack Compose**
 >
@@ -6,20 +6,24 @@
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
-- [Quick Start](#quick-start)
-- [Dual-Axis Architecture](#dual-axis-architecture)
-- [Theme Provider](#theme-provider)
-- [Token Access](#token-access)
-- [Multi-Brand Apps](#multi-brand-apps)
-- [File Structure](#file-structure)
-- [API Reference](#api-reference)
-- [Naming Conventions](#naming-conventions)
+- [🚀 Quick Start](#-quick-start)
+- [🔀 Dual-Axis Architecture](#-dual-axis-architecture)
+- [🎨 Theme Provider](#-theme-provider)
+- [🔑 Token Access](#-token-access)
+- [🏷️ Multi-Brand Apps](#️-multi-brand-apps)
+- [📁 File Structure](#-file-structure)
+- [🔄 Token Type Mapping](#-token-type-mapping)
+- [📚 API Reference](#-api-reference)
+- [✅ Best Practices](#-best-practices)
+- [⚙️ Dependencies](#️-dependencies)
+- [📝 Naming Conventions](#-naming-conventions)
+- [📖 Related Documentation](#-related-documentation)
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Copy Files
 
@@ -80,7 +84,7 @@ fun MyScreen() {
 
 ---
 
-## Dual-Axis Architecture
+## 🔀 Dual-Axis Architecture
 
 The design system uses a **Dual-Axis Architecture** that separates color selection from content selection:
 
@@ -140,7 +144,7 @@ Text(
 
 ---
 
-## Theme Provider
+## 🎨 Theme Provider
 
 ### DesignSystemTheme (Central Entry Point)
 
@@ -204,7 +208,7 @@ fun rememberDesignSystemSizeClass(activity: Activity): WindowSizeClass {
 
 ---
 
-## Token Access
+## 🔑 Token Access
 
 ### Semantic Tokens (via DesignSystemTheme)
 
@@ -315,7 +319,7 @@ val size4x = DesignTokenPrimitives.Size.size4x
 
 ---
 
-## Multi-Brand Apps
+## 🏷️ Multi-Brand Apps
 
 ### Advertorial with Brand Colors
 
@@ -394,7 +398,7 @@ DesignSystemTheme(
 
 ---
 
-## File Structure
+## 📁 File Structure
 
 ```
 com/bild/designsystem/
@@ -452,7 +456,7 @@ com/bild/designsystem/
 
 ---
 
-## Token Type Mapping
+## 🔄 Token Type Mapping
 
 Figma token types (`$type`) are automatically mapped to Kotlin types during build:
 
@@ -494,7 +498,7 @@ object BildSizingCompact : BildSizingScheme {
 
 ---
 
-## API Reference
+## 📚 API Reference
 
 ### Shared Enums
 
@@ -671,7 +675,7 @@ object MenuTokens {
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Use Dual-Axis for Advertorial
 
@@ -720,7 +724,7 @@ fun ResponsiveLayout() {
 
 ---
 
-## Dependencies
+## ⚙️ Dependencies
 
 ```kotlin
 // build.gradle.kts
@@ -736,7 +740,7 @@ dependencies {
 
 ---
 
-## Naming Conventions
+## 📝 Naming Conventions
 
 Kotlin tokens use **camelCase** with lowercase letters after numbers:
 
@@ -768,7 +772,7 @@ DesignSystemTheme.sizing.gridSpaceRespBase // Dp
 
 ---
 
-## Related Documentation
+## 📖 Related Documentation
 
 | Document | Description |
 |----------|-------------|

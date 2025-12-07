@@ -1,4 +1,4 @@
-# CSS - Design System Tokens
+# 🌐 CSS - Design System Tokens
 
 > **CSS Custom Properties for Web Applications**
 >
@@ -6,24 +6,24 @@
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
-- [Quick Start](#quick-start)
-- [Dual-Axis Architecture](#dual-axis-architecture)
-- [File Structure](#file-structure)
-- [Naming Conventions](#naming-conventions)
-- [Data Attributes](#data-attributes)
-- [Bundle Options](#bundle-options)
-- [Token Categories](#token-categories)
-- [Responsive Tokens](#responsive-tokens)
-- [Component Tokens](#component-tokens)
-- [Typography & Effects](#typography--effects)
-- [Usage Examples](#usage-examples)
-- [Storybook](#storybook)
+- [🚀 Quick Start](#-quick-start)
+- [🔀 Dual-Axis Architecture](#-dual-axis-architecture)
+- [📁 File Structure](#-file-structure)
+- [📝 Naming Conventions](#-naming-conventions)
+- [🏷️ Data Attributes](#️-data-attributes)
+- [📦 Bundle Options](#-bundle-options)
+- [🎨 Token Categories](#-token-categories)
+- [📱 Responsive Tokens](#-responsive-tokens)
+- [🧩 Component Tokens](#-component-tokens)
+- [✍️ Typography & Effects](#️-typography--effects)
+- [💡 Usage Examples](#-usage-examples)
+- [📚 Storybook](#-storybook)
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. HTML Setup
 
@@ -81,7 +81,7 @@ document.documentElement.dataset.contentBrand = 'advertorial';
 
 ---
 
-## Dual-Axis Architecture
+## 🔀 Dual-Axis Architecture
 
 The CSS output uses a **Dual-Axis Architecture** to separate concerns:
 
@@ -122,7 +122,7 @@ The CSS output uses a **Dual-Axis Architecture** to separate concerns:
 
 ---
 
-## File Structure
+## 📁 File Structure
 
 ```
 dist/css/
@@ -154,7 +154,7 @@ dist/css/
 
 ---
 
-## Naming Conventions
+## 📝 Naming Conventions
 
 CSS tokens use **kebab-case** with hyphen separation before AND after numbers:
 
@@ -170,7 +170,7 @@ CSS tokens use **kebab-case** with hyphen separation before AND after numbers:
 
 ---
 
-## Data Attributes
+## 🏷️ Data Attributes
 
 ### Required Attributes
 
@@ -205,7 +205,7 @@ CSS tokens use **kebab-case** with hyphen separation before AND after numbers:
 
 ---
 
-## Bundle Options
+## 📦 Bundle Options
 
 ### Option A: All-in-One Bundle
 
@@ -244,7 +244,7 @@ Best for: Using only semantic tokens, no component tokens.
 
 ---
 
-## Token Categories
+## 🎨 Token Categories
 
 ### 1. Primitives (shared/primitives.css)
 
@@ -347,7 +347,7 @@ Component-specific design decisions. Uses both axes.
 
 ---
 
-## Responsive Tokens
+## 📱 Responsive Tokens
 
 ### Breakpoints
 
@@ -380,7 +380,7 @@ Tokens only appear in media queries when values change:
 
 ---
 
-## Component Tokens
+## 🧩 Component Tokens
 
 ### Structure per Component
 
@@ -423,7 +423,7 @@ Each component file contains:
 
 ---
 
-## Typography & Effects
+## ✍️ Typography & Effects
 
 ### Typography Classes
 
@@ -471,7 +471,7 @@ Usage:
 
 ---
 
-## Usage Examples
+## 💡 Usage Examples
 
 ### Standard BILD App
 
@@ -549,7 +549,7 @@ setDensity('spacious'); // Generous spacing
 
 ---
 
-## Shadow DOM / Web Components
+## 🕸️ Shadow DOM / Web Components
 
 The CSS output is **Shadow DOM compatible** for use with frameworks like **Stencil**, **Lit**, or native Web Components.
 
@@ -713,7 +713,7 @@ src/components/
 
 ---
 
-## Storybook
+## 📚 Storybook
 
 The design system includes a **Storybook 8.x** setup for component development and documentation with full 4-axis token support.
 
@@ -807,7 +807,7 @@ These pages use MDX with `@storybook/blocks` and include styled visual elements 
 
 ---
 
-## Browser Support
+## 🌐 Browser Support
 
 CSS Custom Properties are supported in all modern browsers:
 
@@ -825,7 +825,7 @@ For legacy browser support, fallback values are included:
 
 ---
 
-## Related Documentation
+## 📖 Related Documentation
 
 | Document | Description |
 |----------|-------------|
