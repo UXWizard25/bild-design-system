@@ -4,7 +4,7 @@
 >
 > This pipeline is under active development. Generated packages are for **testing purposes only**.
 
-A comprehensive design operations pipeline for the BILD Design System. Transforms Figma exports into production-ready assets across multiple platforms using the **TokenSync Plugin**.
+A comprehensive design operations pipeline for the BILD Design System. Transforms Figma exports into production-ready assets across multiple platforms using the **CodeBridge Plugin**.
 
 [![Build Tokens](https://github.com/UXWizard25/vv-token-test-v3/workflows/Build%20Design%20Tokens/badge.svg)](https://github.com/UXWizard25/vv-token-test-v3/actions)
 [![Build Icons](https://github.com/UXWizard25/vv-token-test-v3/workflows/Build%20Icons/badge.svg)](https://github.com/UXWizard25/vv-token-test-v3/actions)
@@ -40,7 +40,7 @@ The BILD Design Ops Pipeline transforms design assets from Figma into production
 | **🎨 Token Pipeline** | Figma Variables | Design Tokens | 3 platforms (6 formats) |
 | **🖼️ Icon Pipeline** | Figma Icons (SVG) | Multi-format Icons | 5 platforms |
 
-Both pipelines use the **TokenSync Figma Plugin** for automated exports.
+Both pipelines use the **CodeBridge Figma Plugin** for automated exports.
 
 ---
 
@@ -70,7 +70,7 @@ Both pipelines use the **TokenSync Figma Plugin** for automated exports.
 │  └──────────┬──────────┘              └──────────┬──────────┘              │
 └─────────────┼───────────────────────────────────┼──────────────────────────┘
               │                                   │
-              │  TokenSync Plugin                 │  TokenSync Plugin
+              │  CodeBridge Plugin                │  CodeBridge Plugin
               │                                   │
               ▼                                   ▼
 ┌─────────────────────────────┐    ┌─────────────────────────────┐
@@ -83,52 +83,40 @@ Both pipelines use the **TokenSync Figma Plugin** for automated exports.
                ▼                                  ▼
 ┌─────────────────────────────┐    ┌─────────────────────────────┐
 │  🔧 TOKEN PIPELINE          │    │  🔧 ICON PIPELINE           │
-│                             │    │                             │
-│  ┌───────────────────────┐  │    │  ┌───────────────────────┐  │
-│  │ 1. Preprocessing      │  │    │  │ 1. SVG Validation     │  │
-│  │    • Scope detection  │  │    │  │    • Security checks  │  │
-│  │    • Alias resolution │  │    │  │    • Structure check  │  │
-│  │    • Type mapping     │  │    │  └───────────┬───────────┘  │
-│  └───────────┬───────────┘  │    │              │              │
-│              │              │    │              ▼              │
-│              ▼              │    │  ┌───────────────────────┐  │
-│  ┌───────────────────────┐  │    │  │ 2. SVGO Optimization  │  │
-│  │ 2. Style Dictionary   │  │    │  │    • currentColor     │  │
-│  │    • Transforms       │  │    │  │    • Remove metadata  │  │
-│  │    • Formats          │  │    │  └───────────┬───────────┘  │
-│  │    • Platform builds  │  │    │              │              │
-│  └───────────┬───────────┘  │    │              ▼              │
-│              │              │    │  ┌───────────────────────┐  │
-│              ▼              │    │  │ 3. Platform Generation│  │
-│  ┌───────────────────────┐  │    │  │    • React (TSX→JS)   │  │
-│  │ 3. Bundle Generation  │  │    │  │    • Android XML      │  │
-│  │    • Quick Start      │  │    │  │    • Flutter TTF      │  │
-│  │    • Per-component    │  │    │  │    • iOS Assets       │  │
-│  └───────────────────────┘  │    │  └───────────────────────┘  │
+│  scripts/tokens/            │    │  scripts/icons/             │
 └──────────────┬──────────────┘    └──────────────┬──────────────┘
                │                                  │
                ▼                                  ▼
-┌─────────────────────────────┐    ┌─────────────────────────────┐
-│  📤 OUTPUT                  │    │  📤 OUTPUT                  │
-│                             │    │                             │
-│  dist/                      │    │  dist/icons/                │
-│  ├── css/     (CSS Vars)    │    │  ├── svg/      (Optimized)  │
-│  │   └── bundles/ (Quick)   │    │  ├── react/    (ESM + d.ts) │
-│  ├── scss/    (SCSS Vars)   │    │  ├── android/  (XML)        │
-│  ├── js/      (ESM + React) │    │  ├── flutter/  (TTF + Dart) │
-│  ├── json/    (Raw Data)    │    │  └── ios/      (xcassets)   │
-│  ├── ios/     (Swift)       │    │                             │
-│  └── android/ (Compose/Kt)  │    │                             │
-│                             │    │                             │
-└──────────────┬──────────────┘    └──────────────┬──────────────┘
-               │                                  │
-               │  npm publish                     │  npm publish
-               │                                  │
-               ▼                                  ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  📦 MONOREPO (npm workspaces)                                                │
+│                                                                              │
+│  packages/                                                                   │
+│  ├── tokens/                    ├── icons/                                   │
+│  │   └── dist/                  │   └── dist/                                │
+│  │       ├── css/               │       ├── svg/                             │
+│  │       ├── scss/              │       ├── react/                           │
+│  │       ├── js/                │       ├── android/                         │
+│  │       ├── ios/               │       ├── flutter/                         │
+│  │       └── android/           │       └── ios/                             │
+│  │                              │                                            │
+│  └── components/                                                             │
+│      └── dist/                  ← Stencil Web Components                     │
+│                                                                              │
+└──────────────┬───────────────────────────────────┬───────────────────────────┘
+               │                                   │
+               │  npm publish                      │  npm publish
+               │                                   │
+               ▼                                   ▼
 ┌─────────────────────────────┐    ┌─────────────────────────────┐
 │  📦 @marioschmidt/          │    │  📦 @marioschmidt/          │
 │     design-system-tokens    │    │     design-system-icons     │
 └─────────────────────────────┘    └─────────────────────────────┘
+                              │
+                              ▼
+               ┌─────────────────────────────┐
+               │  📦 @marioschmidt/          │
+               │     design-system-components│
+               └─────────────────────────────┘
 ```
 
 ---
@@ -255,7 +243,7 @@ BildIcon.add.image.foregroundColor(.primary)
 
 ## 🔗 Figma Integration
 
-Both pipelines integrate with Figma via the **TokenSync Plugin**:
+Both pipelines integrate with Figma via the **CodeBridge Plugin**:
 
 | Branch | Content | Trigger |
 |--------|---------|---------|
@@ -265,7 +253,7 @@ Both pipelines integrate with Figma via the **TokenSync Plugin**:
 ### Workflow
 
 ```
-1. Designer exports from Figma using TokenSync Plugin
+1. Designer exports from Figma using CodeBridge Plugin
 2. Plugin pushes to dedicated branch (figma-tokens / figma-icons)
 3. GitHub Actions automatically builds and creates PR
 4. Team reviews PR with build artifacts
@@ -563,13 +551,13 @@ export const Primary: StoryObj = {
 > **⚠️ IMPORTANT: Figma is the Single Source of Truth**
 >
 > Design assets (tokens and icons) must **NOT** be edited directly in the repository.
-> All changes must be made in Figma and exported via the **TokenSync Plugin**.
+> All changes must be made in Figma and exported via the **CodeBridge Plugin**.
 
 ### Allowed Workflow
 
 ```
 1. Make changes in Figma
-2. Export with TokenSync Plugin
+2. Export with CodeBridge Plugin
 3. Automatic PR is created
 4. Review and merge PR
 ```

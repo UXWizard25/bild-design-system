@@ -58,7 +58,7 @@ This pipeline transforms SVG icons from Figma into optimized, production-ready a
 │  └────────────────────────────┬────────────────────────────┘   │
 └───────────────────────────────┼─────────────────────────────────┘
                                 │
-                                │  TokenSync Plugin Export
+                                │  CodeBridge Plugin Export
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
@@ -285,7 +285,7 @@ npm run clean:icons
 
 ### Via Figma (Recommended)
 
-1. Export SVGs from Figma using the **TokenSync Plugin**
+1. Export SVGs from Figma using the **CodeBridge Plugin**
 2. Plugin pushes to `figma-icons` branch
 3. CI automatically builds and creates PR
 4. Review and merge PR
@@ -543,11 +543,11 @@ import addSvg from '@marioschmidt/design-system-icons/svg/add.svg';
 
 > **⚠️ IMPORTANT: Figma is the Single Source of Truth**
 >
-> Icons must **NOT** be edited directly in the repository. All icon changes must be made in Figma and exported via the TokenSync Plugin.
+> Icons must **NOT** be edited directly in the repository. All icon changes must be made in Figma and exported via the **CodeBridge Plugin**.
 
 **Workflow:**
 1. Edit/create icons in Figma
-2. Export with TokenSync Plugin
+2. Export with CodeBridge Plugin
 3. Review and merge PR
 
 **NOT Allowed:**

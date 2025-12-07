@@ -92,7 +92,7 @@ This enables:
 │ Figma Variables (Design Source)                 │
 │ • BILD Design System file                       │
 │ • Variables with Scopes & Aliases               │
-│ • TokenSync plugin export                       │
+│ • CodeBridge plugin export                      │
 └───────────────────────┬─────────────────────────┘
                         ↓
 ┌─────────────────────────────────────────────────┐
@@ -835,11 +835,11 @@ grep "Space2x" dist/ios/shared/Spaceprimitive.swift
 > **⚠️ IMPORTANT: Figma is the Single Source of Truth**
 >
 > Design Tokens must **NOT** be edited directly in the repository.
-> All token changes must be made in Figma and exported via the **TokenSync Plugin**.
+> All token changes must be made in Figma and exported via the **CodeBridge Plugin**.
 
 **Workflow:**
 1. Edit/create tokens in Figma
-2. Export with TokenSync Plugin
+2. Export with CodeBridge Plugin
 3. Review and merge PR
 
 **NOT Allowed:**

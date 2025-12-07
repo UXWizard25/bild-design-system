@@ -35,7 +35,7 @@ npm run publish:icons      # npm publish -w @marioschmidt/design-system-icons
 npm run publish:components # npm publish -w @marioschmidt/design-system-components
 ```
 
-**Source of Truth:** `src/design-tokens/bild-design-system-raw-data.json` (Figma Export via TokenSync Plugin)
+**Source of Truth:** `src/design-tokens/bild-design-system-raw-data.json` (Figma Export via CodeBridge Plugin)
 
 **Platform Documentation:** `README.tokens.md`, `docs/css.md`, `docs/js.md`, `docs/android.md`, `docs/ios.md`
 
@@ -506,7 +506,7 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 │  FIGMA (Source of Truth)                                                    │
 │  └── Variables with scopes, modes, and aliases                              │
 │              │                                                              │
-│              │ TokenSync Plugin Export                                      │
+│              │ CodeBridge Plugin Export                                     │
 │              ▼                                                              │
 │  src/design-tokens/bild-design-system-raw-data.json (~1MB)                  │
 │              │                                                              │
