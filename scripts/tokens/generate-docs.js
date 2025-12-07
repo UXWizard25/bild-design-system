@@ -90,13 +90,12 @@ function extractTokensFromCategory(category, prefix = '') {
  */
 function generateColorTableRows(tokens) {
   return tokens.map(token => {
-    const usage = token.comment
-      ? token.comment.split('.')[0].replace(/^[A-Z]/, c => c.toLowerCase())
-      : toDisplayName(token.name);
+    // Use full comment if available, otherwise generate from token name
+    const usage = token.comment || toDisplayName(token.name);
 
     return `    <tr>
       <td><code>${token.cssVar}</code></td>
-      <td><span className="color-swatch" style={{background: 'var(${token.cssVar})'}}></span></td>
+      <td><span className="color-swatch"><span style={{background: 'var(${token.cssVar})'}}></span></span></td>
       <td>${usage}</td>
     </tr>`;
   }).join('\n');
@@ -185,7 +184,7 @@ ${generateColorTableRows(tokens)}
     }
 
     const generateColorCards = (tokens) => tokens.map(t => `  <div className="color-card">
-    <div className="color-card-swatch" style={{background: 'var(${t.cssVar})'}}></div>
+    <div className="color-card-swatch"><span style={{background: 'var(${t.cssVar})'}}></span></div>
     <div className="color-card-info">
       <div className="color-card-name">${t.displayName}</div>
       <div className="color-card-token">${t.cssVar}</div>
@@ -262,6 +261,26 @@ ${generateColorCards(tokens)}
       border: 1px solid var(--border-color-low-contrast);
       vertical-align: middle;
       margin-right: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Checkerboard pattern for transparency */
+    .color-swatch::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+        linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+        linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+      background-size: 8px 8px;
+      background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+      background-color: #fff;
+    }
+    .color-swatch > span {
+      position: absolute;
+      inset: 0;
     }
     .color-grid {
       display: grid;
@@ -277,6 +296,25 @@ ${generateColorCards(tokens)}
     }
     .color-card-swatch {
       height: 64px;
+      position: relative;
+    }
+    /* Checkerboard pattern for transparency in cards */
+    .color-card-swatch::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+        linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+        linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+      background-color: #fff;
+    }
+    .color-card-swatch > span {
+      position: absolute;
+      inset: 0;
     }
     .color-card-info {
       padding: 12px;
@@ -486,10 +524,8 @@ ${fontRows}
 
       // Generate style samples
       for (const style of styles) {
-        // Extract first sentence of comment as description, or generate a default
-        let description = style.comment
-          ? style.comment.split('.')[0].trim()
-          : `${toDisplayName(style.name)} typography style`;
+        // Use full comment if available, or generate a default description
+        let description = style.comment || `${toDisplayName(style.name)} typography style`;
 
         typographyClassesSection += `<div className="font-sample">
   <div className="font-sample-label">.${style.className}</div>
@@ -1061,10 +1097,8 @@ ${shadows.map(s => `  <div className="shadow-card ${s.className}">
     for (const [effectKey, effectValue] of Object.entries(categoryEffects)) {
       if (effectValue && effectValue.$type === 'shadow') {
         const className = toKebabCase(effectKey);
-        // Generate usage description from comment or create a default
-        let usage = effectValue.comment
-          ? effectValue.comment.split('.')[0].trim()
-          : `${toDisplayName(effectKey)} effect`;
+        // Use full comment if available, or create a default description
+        const usage = effectValue.comment || `${toDisplayName(effectKey)} effect`;
 
         allShadows.push({
           cssVar: `--${className}`,
