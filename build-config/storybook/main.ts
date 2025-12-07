@@ -18,7 +18,6 @@ const config: StorybookConfig = {
   // Addons
   addons: [
     getAbsolutePath('@storybook/addon-essentials'),
-    getAbsolutePath('@storybook/addon-themes'),
   ],
 
   // Framework: Web Components with Vite

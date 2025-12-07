@@ -1,29 +1,27 @@
 import type { Preview } from '@storybook/web-components';
 import { html } from 'lit';
-import { withThemeByDataAttribute } from '@storybook/addon-themes';
 
 // Stencil components are loaded via script tag in preview-head.html
 // This ensures they're available before stories render
 
 /**
- * Design Token Decorator for Color Brand, Content Brand, and Density
+ * Design Token Decorator
  *
  * Sets data attributes for the Dual-Axis architecture:
+ * - data-theme: Light/dark mode (light, dark)
  * - data-color-brand: Controls colors and effects (bild, sportbild)
  * - data-content-brand: Controls typography, spacing, density (bild, sportbild, advertorial)
  * - data-density: Spacing density (default, dense, spacious)
  *
- * IMPORTANT: All attributes MUST be set on document.documentElement (html)
- * because withThemeByDataAttribute sets data-theme there, and CSS selectors
- * require all attributes on the same element:
+ * All attributes are set on document.documentElement (html) for CSS selector matching:
  * [data-color-brand="bild"][data-theme="light"] { ... }
  */
 const withDesignTokens = (Story: () => unknown, context: { globals: Record<string, string> }) => {
-  const { colorBrand, contentBrand, density } = context.globals;
+  const { theme, colorBrand, contentBrand, density } = context.globals;
 
-  // Set attributes on document.documentElement (html) for CSS selector matching
-  // withThemeByDataAttribute also sets data-theme on documentElement
+  // Set all attributes on document.documentElement (html) for CSS selector matching
   if (typeof document !== 'undefined' && document.documentElement) {
+    document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.setAttribute('data-color-brand', colorBrand);
     document.documentElement.setAttribute('data-content-brand', contentBrand);
     document.documentElement.setAttribute('data-density', density);
@@ -39,22 +37,22 @@ const withDesignTokens = (Story: () => unknown, context: { globals: Record<strin
 };
 
 const preview: Preview = {
-  // Global decorators - order matters! withThemeByDataAttribute should run first
-  decorators: [
-    withDesignTokens,
-    // Theme decorator from @storybook/addon-themes - sets data-theme on document.documentElement
-    withThemeByDataAttribute({
-      themes: {
-        light: 'light',
-        dark: 'dark',
-      },
-      defaultTheme: 'light',
-      attributeName: 'data-theme',
-    }),
-  ],
+  decorators: [withDesignTokens],
 
-  // Toolbar controls for brand and density switching
+  // Toolbar controls - order here determines toolbar order
   globalTypes: {
+    theme: {
+      description: 'Color theme (light/dark)',
+      toolbar: {
+        title: 'Theme',
+        icon: 'mirror',
+        items: [
+          { value: 'light', title: 'Light', icon: 'sun' },
+          { value: 'dark', title: 'Dark', icon: 'moon' },
+        ],
+        dynamicTitle: true,
+      },
+    },
     colorBrand: {
       description: 'Color brand (colors & effects)',
       toolbar: {
@@ -97,6 +95,7 @@ const preview: Preview = {
 
   // Initial global values
   initialGlobals: {
+    theme: 'light',
     colorBrand: 'bild',
     contentBrand: 'bild',
     density: 'default',
