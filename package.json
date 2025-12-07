@@ -9,7 +9,8 @@
   "scripts": {
     "preprocess": "node scripts/tokens/preprocess.js",
     "build": "npm run build:tokens && npm run build:components",
-    "build:tokens": "npm run preprocess && node scripts/tokens/build.js && node scripts/tokens/bundles.js",
+    "build:tokens": "npm run preprocess && node scripts/tokens/build.js && node scripts/tokens/bundles.js && node scripts/tokens/generate-docs.js",
+    "build:docs": "node scripts/tokens/generate-docs.js",
     "build:icons": "npm run build -w @marioschmidt/design-system-icons",
     "build:components": "npm run build -w @marioschmidt/design-system-components",
     "build:all": "npm run build:tokens && npm run build:icons && npm run build:components",
