@@ -688,19 +688,15 @@ function generateSpacingDocs() {
   const spacingPath = path.join(TOKENS_DIR, 'brands/bild/breakpoints/breakpoint-xs-320px.json');
   const spacingData = loadTokens(spacingPath);
 
-  if (!spacingData || !spacingData.Semantic || !spacingData.Semantic.Layout) {
+  if (!spacingData || !spacingData.Semantic || !spacingData.Semantic.Space) {
     console.error('Could not load semantic spacing tokens');
     return null;
   }
 
-  const layout = spacingData.Semantic.Layout;
-
-  // Load space primitives
-  const primitivePath = path.join(TOKENS_DIR, 'shared/spaceprimitive.json');
-  const primitives = loadTokens(primitivePath);
+  const space = spacingData.Semantic.Space;
 
   // Helper to extract dimension tokens from a category (recursive)
-  function extractSpacingTokens(obj, prefix = '') {
+  function extractSpacingTokens(obj) {
     const tokens = [];
     for (const [key, value] of Object.entries(obj)) {
       if (value && typeof value === 'object') {
@@ -716,7 +712,7 @@ function generateSpacingDocs() {
           });
         } else if (!value.$value && !value.value) {
           // It's a nested category, recurse
-          tokens.push(...extractSpacingTokens(value, key));
+          tokens.push(...extractSpacingTokens(value));
         }
       }
     }
@@ -727,31 +723,11 @@ function generateSpacingDocs() {
   let spacingSections = '';
   let allSpacingTokens = [];
 
-  // Iterate over all categories in Layout (Grid, Section, ContentWidth, Breakpoints, etc.)
-  for (const [categoryKey, categoryValue] of Object.entries(layout)) {
+  // Iterate over all categories in Space (Inline, Stack, Gap)
+  for (const [categoryKey, categoryValue] of Object.entries(space)) {
     if (!categoryValue || typeof categoryValue !== 'object') continue;
 
-    // Skip non-dimension tokens (like number types for column counts)
-    // Check if it's a direct token or a category
-    if (categoryValue.$type && categoryValue.$type !== 'dimension') continue;
-
-    // If it's a direct token at the Layout level (e.g., canvasHeightSizeWeb)
-    if (categoryValue.$value !== undefined || categoryValue.value !== undefined) {
-      if (categoryValue.$type === 'dimension') {
-        const cssVar = `--${toKebabCase(categoryKey)}`;
-        allSpacingTokens.push({
-          name: categoryKey,
-          displayName: toDisplayName(categoryKey),
-          cssVar,
-          value: categoryValue.$value ?? categoryValue.value,
-          comment: categoryValue.comment || '',
-          category: 'Layout'
-        });
-      }
-      continue;
-    }
-
-    // Extract tokens from this category
+    // Extract tokens from this category (handles nested Responsive/Constant)
     const tokens = extractSpacingTokens(categoryValue);
     if (tokens.length === 0) continue;
 
@@ -761,19 +737,29 @@ function generateSpacingDocs() {
       allSpacingTokens.push(t);
     });
 
-    // Generate category title from key (e.g., "Grid" -> "Grid", "ContentWidth" -> "Content Width")
-    const categoryTitle = toDisplayName(categoryKey);
+    // Generate category title from key (e.g., "Inline" -> "Inline Space", "Stack" -> "Stack Space")
+    const categoryTitle = `${toDisplayName(categoryKey)} Space`;
 
-    // Get category description from first token comment (if descriptive)
-    const categoryDesc = tokens[0].comment
-      ? tokens[0].comment.split('–').slice(-1)[0].trim().split('.')[0]
-      : '';
+    // Get category description based on category type
+    let categoryDesc = '';
+    if (categoryKey === 'Inline') {
+      categoryDesc = 'Horizontal (left/right) padding for UI elements';
+    } else if (categoryKey === 'Stack') {
+      categoryDesc = 'Vertical (top/bottom) padding for UI elements';
+    } else if (categoryKey === 'Gap') {
+      categoryDesc = 'Gap spacing between elements in layouts';
+    }
 
-    // Generate spacing demo cards
+    // Generate spacing demo cards with token comment
     const spacingCards = tokens.map(t => {
-      // Create width style - use CSS variable for live preview
+      // Create readable label from token name
+      const label = t.displayName
+        .replace('Inline Space ', '')
+        .replace('Stack Space ', '')
+        .replace('Gap Space ', '');
+
       return `<div className="spacing-demo">
-  <span className="spacing-value">${t.displayName.replace('Grid Space ', '').replace('Section Space ', '').replace('Content Max Width ', '')}</span>
+  <span className="spacing-value">${label}</span>
   <div className="spacing-bar" style={{width: 'var(${t.cssVar})'}}></div>
   <span className="spacing-token">${t.cssVar}</span>
 </div>`;
@@ -781,45 +767,10 @@ function generateSpacingDocs() {
 
     spacingSections += `
 <div className="category-header">${categoryTitle}</div>
-${categoryDesc ? `<p className="category-desc">${categoryDesc}</p>` : ''}
+<p className="category-desc">${categoryDesc}</p>
 
 ${spacingCards}
 `;
-  }
-
-  // Generate primitives section dynamically
-  let primitivesSection = '';
-  if (primitives) {
-    const primitiveTokens = [];
-    for (const [key, value] of Object.entries(primitives)) {
-      if (value && (value.$value !== undefined || value.value !== undefined) && value.$type === 'dimension') {
-        primitiveTokens.push({
-          name: key,
-          displayName: toDisplayName(key),
-          cssVar: `--${toKebabCase(key)}`,
-          value: value.$value ?? value.value
-        });
-      }
-    }
-
-    // Sort by value for better visualization
-    primitiveTokens.sort((a, b) => a.value - b.value);
-
-    if (primitiveTokens.length > 0) {
-      const primitiveCards = primitiveTokens.map(t => `<div className="spacing-demo">
-  <span className="spacing-value">${t.value}px</span>
-  <div className="spacing-bar" style={{width: '${t.value}px'}}></div>
-  <span className="spacing-token">${t.cssVar}</span>
-</div>`).join('\n\n');
-
-      primitivesSection = `
-## Space Primitives
-
-These are the raw spacing values from Layer 0 (8px base grid).
-
-${primitiveCards}
-`;
-    }
   }
 
   // Generate tokens table dynamically
@@ -828,7 +779,7 @@ ${primitiveCards}
     const tokenRows = allSpacingTokens.map(t => {
       // Generate usage description from comment
       let usage = t.comment
-        ? t.comment.split('–').slice(-1)[0].trim().split('.')[0]
+        ? t.comment.split('–').slice(-1)[0].trim()
         : toDisplayName(t.name);
 
       return `    <tr>
@@ -904,7 +855,7 @@ ${tokenRows}
       margin: 8px 0;
     }
     .spacing-value {
-      min-width: 120px;
+      min-width: 140px;
       font-family: monospace;
       font-size: 13px;
       color: var(--text-color-secondary);
@@ -931,7 +882,7 @@ ${tokenRows}
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-top: 2rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--border-color-low-contrast);
     }
@@ -957,9 +908,6 @@ The BILD Design System uses an **8px base grid** with semantic spacing tokens fr
 
 These are the meaning-based spacing tokens from Layer 2 that adapt to breakpoints.
 ${spacingSections}
----
-
-${primitivesSection}
 ---
 
 ## All Spacing Tokens
@@ -1009,27 +957,25 @@ Spacing tokens adapt to viewport width via CSS \`@media\` queries:
 ## Usage
 
 \`\`\`css
-/* Grid layout with responsive gaps */
-.article-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--grid-space-resp-base);
+/* Horizontal padding with responsive inline space */
+.card {
+  padding-inline: var(--inline-space-resp-md);
 }
 
-/* Section spacing */
-.page-section {
-  padding-block: var(--section-space-base);
+/* Vertical padding with responsive stack space */
+.section {
+  padding-block: var(--stack-space-resp-lg);
 }
 
-/* Content width constraints */
-.article-body {
-  max-width: var(--content-max-width-medium);
-  margin: 0 auto;
+/* Gap between flex/grid items */
+.button-group {
+  display: flex;
+  gap: var(--gap-space-resp-sm);
 }
 
-/* Page-level inline padding */
-.page-container {
-  padding-inline: var(--page-inline-space);
+/* Fixed spacing that doesn't change across breakpoints */
+.compact-item {
+  padding: var(--stack-space-const-sm) var(--inline-space-const-md);
 }
 \`\`\`
 `;
