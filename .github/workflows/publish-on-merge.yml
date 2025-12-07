@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths:
-      - 'src/design-tokens/**'
-      - 'src/components/**'
+      - 'packages/tokens/src/**'
+      - 'packages/components/src/**'
 
 permissions:
   contents: write
@@ -47,7 +47,7 @@ jobs:
           echo "📦 Installing dependencies..."
           npm ci
 
-      # 5. Version erhöhen (Patch)
+      # 5. Version erhöhen (Patch) - Synchronized für Tokens + Components
       - name: Bump Version (Patch)
         id: version
         run: |
@@ -66,15 +66,24 @@ jobs:
           CURRENT_VERSION=${LATEST_TAG#v}
           echo "Current version: $CURRENT_VERSION"
 
-          # Setze Version in package.json (temporär, nur für Build)
+          # Bump version in BOTH packages (synchronized)
+          echo "📦 Bumping tokens package..."
+          cd packages/tokens
           npm version $CURRENT_VERSION --no-git-tag-version --allow-same-version
-
-          # Erhöhe Patch-Version
           npm version patch --no-git-tag-version
+          cd ../..
 
-          # Neue Version
-          NEW_VERSION=$(node -p "require('./package.json').version")
+          # Neue Version aus Tokens package lesen
+          NEW_VERSION=$(node -p "require('./packages/tokens/package.json').version")
           echo "New version: $NEW_VERSION"
+
+          # Sync Components package to same version
+          echo "📦 Syncing components package to same version..."
+          cd packages/components
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+          cd ../..
+
+          echo "✅ Both packages at version $NEW_VERSION"
 
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
@@ -153,12 +162,20 @@ jobs:
 
           echo "ℹ️  Note: Version bump is not committed to main (avoids race conditions)"
 
-      # 11. Package veröffentlichen
-      - name: Publish to npmjs.org
+      # 11. Packages veröffentlichen (Tokens + Components)
+      - name: Publish Tokens to npmjs.org
         run: |
           echo "📦 Publishing @marioschmidt/design-system-tokens@${{ steps.version.outputs.new }} to npmjs.org..."
-          npm publish
-          echo "✅ Package published successfully!"
+          npm publish -w @marioschmidt/design-system-tokens --access public
+          echo "✅ Tokens package published successfully!"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish Components to npmjs.org
+        run: |
+          echo "📦 Publishing @marioschmidt/design-system-components@${{ steps.version.outputs.new }} to npmjs.org..."
+          npm publish -w @marioschmidt/design-system-components --access public
+          echo "✅ Components package published successfully!"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -169,7 +186,7 @@ jobs:
           echo "📊 Building baseline for token comparison..."
 
           # Aktuellen dist speichern
-          mv dist/ dist-new/
+          mv packages/tokens/dist/ dist-new/
 
           # Vorherigen Tag finden
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
@@ -178,25 +195,26 @@ jobs:
             echo "Building baseline from $PREVIOUS_TAG..."
 
             # Zu vorherigem Tag wechseln und bauen
-            git checkout "$PREVIOUS_TAG" -- src/design-tokens/ 2>/dev/null || true
-            npm run build 2>/dev/null || true
+            git checkout "$PREVIOUS_TAG" -- packages/tokens/src/ 2>/dev/null || true
+            npm run build:tokens 2>/dev/null || true
 
-            if [ -d "dist" ]; then
-              mv dist/ dist-old/
+            if [ -d "packages/tokens/dist" ]; then
+              mv packages/tokens/dist/ dist-old/
               echo "has_baseline=true" >> $GITHUB_OUTPUT
             else
               echo "has_baseline=false" >> $GITHUB_OUTPUT
             fi
 
             # Zurück zum aktuellen Stand
-            git checkout HEAD -- src/design-tokens/ 2>/dev/null || true
+            git checkout HEAD -- packages/tokens/src/ 2>/dev/null || true
           else
             echo "No previous tag found, skipping baseline"
             echo "has_baseline=false" >> $GITHUB_OUTPUT
           fi
 
-          # dist-new zurück zu dist
-          mv dist-new/ dist/
+          # dist-new zurück zu packages/tokens/dist
+          mkdir -p packages/tokens
+          mv dist-new/ packages/tokens/dist/
 
       # 13. Token-Diff generieren
       - name: Generate Token Diff
@@ -206,7 +224,7 @@ jobs:
             echo "🔍 Comparing token builds..."
             node scripts/tokens/compare-builds.js \
               --old dist-old/ \
-              --new dist/ \
+              --new packages/tokens/dist/ \
               --output dist-diff.json
 
             echo "has_diff=true" >> $GITHUB_OUTPUT
@@ -232,25 +250,30 @@ jobs:
           else
             echo "📝 Generating fallback release notes..."
             {
-              echo "## 🎨 Design Tokens v${{ steps.version.outputs.new }}"
+              echo "## 🎨 Design System v${{ steps.version.outputs.new }}"
               echo ""
               echo "### 📦 Installation"
               echo ""
               echo '```bash'
+              echo "# Design Tokens (CSS, JS, iOS, Android)"
               echo "npm install @marioschmidt/design-system-tokens@${{ steps.version.outputs.new }}"
+              echo ""
+              echo "# Web Components (Stencil)"
+              echo "npm install @marioschmidt/design-system-components@${{ steps.version.outputs.new }}"
               echo '```'
               echo ""
               echo "### 📋 Build Info"
               echo ""
               echo "- **Build Status:** ✅ ${{ steps.build.outputs.successful_builds }}/${{ steps.build.outputs.total_builds }} successful"
               echo "- **Package Size:** ${{ steps.package.outputs.package_size }}"
-              # Note: Flutter Dart output currently disabled (FLUTTER_ENABLED = false in build.js)
-              echo "- **Formats:** CSS, SCSS, JavaScript, Swift, Android XML, JSON, Stencil Components"
+              echo "- **Tokens:** CSS, SCSS, JavaScript, Swift, Android XML, JSON"
+              echo "- **Components:** Stencil Web Components"
               echo ""
               echo "### 🔗 Links"
               echo ""
               echo "- [📖 Documentation](https://github.com/${{ github.repository }}#readme)"
-              echo "- [📦 npm Package](https://www.npmjs.com/package/@marioschmidt/design-system-tokens)"
+              echo "- [📦 Tokens on npm](https://www.npmjs.com/package/@marioschmidt/design-system-tokens)"
+              echo "- [📦 Components on npm](https://www.npmjs.com/package/@marioschmidt/design-system-components)"
             } > release-notes.md
           fi
 
@@ -273,9 +296,12 @@ jobs:
       # 16. Success Summary
       - name: Create Publish Summary
         run: |
-          echo "## 🚀 Package Published Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 Packages Published Successfully!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Package:** \`@marioschmidt/design-system-tokens\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Packages:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@marioschmidt/design-system-tokens\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@marioschmidt/design-system-components\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Previous Version:** \`${{ steps.version.outputs.current }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**New Version:** \`${{ steps.version.outputs.new }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Registry:** npmjs.org" >> $GITHUB_STEP_SUMMARY
@@ -283,11 +309,16 @@ jobs:
           echo "### 📥 Installation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Design Tokens" >> $GITHUB_STEP_SUMMARY
           echo "npm install @marioschmidt/design-system-tokens@${{ steps.version.outputs.new }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Web Components" >> $GITHUB_STEP_SUMMARY
+          echo "npm install @marioschmidt/design-system-components@${{ steps.version.outputs.new }}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔗 Links" >> $GITHUB_STEP_SUMMARY
-          echo "- [📦 View on npmjs.org](https://www.npmjs.com/package/@marioschmidt/design-system-tokens)" >> $GITHUB_STEP_SUMMARY
+          echo "- [📦 Tokens on npm](https://www.npmjs.com/package/@marioschmidt/design-system-tokens)" >> $GITHUB_STEP_SUMMARY
+          echo "- [📦 Components on npm](https://www.npmjs.com/package/@marioschmidt/design-system-components)" >> $GITHUB_STEP_SUMMARY
           echo "- [📋 Release Notes](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.new }})" >> $GITHUB_STEP_SUMMARY
           echo "- [🎨 Pull Requests](https://github.com/${{ github.repository }}/pulls?q=is%3Apr+is%3Amerged)" >> $GITHUB_STEP_SUMMARY
 

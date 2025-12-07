@@ -58,7 +58,7 @@ This pipeline transforms SVG icons from Figma into optimized, production-ready a
 │  └────────────────────────────┬────────────────────────────┘   │
 └───────────────────────────────┼─────────────────────────────────┘
                                 │
-                                │  TokenSync Plugin Export
+                                │  CodeBridge Plugin Export
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
@@ -210,6 +210,16 @@ ForEach(BildIcon.allCases, id: \.self) { icon in
 
 ## 📁 File Structure
 
+### Monorepo Structure
+
+This package is part of the npm workspaces monorepo:
+
+| Package | npm Name | Location |
+|---------|----------|----------|
+| Tokens | `@marioschmidt/design-system-tokens` | `packages/tokens/` |
+| Icons | `@marioschmidt/design-system-icons` | `packages/icons/` |
+| Components | `@marioschmidt/design-system-components` | `packages/components/` |
+
 ```
 src/icons/
 ├── icon-add.svg           ← Source SVGs from Figma
@@ -231,7 +241,7 @@ scripts/icons/
 build-config/icons/
 └── svgo.config.js         ← SVG optimization config
 
-dist/icons/                 ← Generated output (gitignored)
+packages/icons/dist/        ← Generated output (gitignored)
 ├── svg/                   ← Optimized SVGs
 ├── react-src/             ← TSX source (intermediate)
 ├── react/                 ← Compiled ESM JavaScript
@@ -275,7 +285,7 @@ npm run clean:icons
 
 ### Via Figma (Recommended)
 
-1. Export SVGs from Figma using the **TokenSync Plugin**
+1. Export SVGs from Figma using the **CodeBridge Plugin**
 2. Plugin pushes to `figma-icons` branch
 3. CI automatically builds and creates PR
 4. Review and merge PR
@@ -533,11 +543,11 @@ import addSvg from '@marioschmidt/design-system-icons/svg/add.svg';
 
 > **⚠️ IMPORTANT: Figma is the Single Source of Truth**
 >
-> Icons must **NOT** be edited directly in the repository. All icon changes must be made in Figma and exported via the TokenSync Plugin.
+> Icons must **NOT** be edited directly in the repository. All icon changes must be made in Figma and exported via the **CodeBridge Plugin**.
 
 **Workflow:**
 1. Edit/create icons in Figma
-2. Export with TokenSync Plugin
+2. Export with CodeBridge Plugin
 3. Review and merge PR
 
 **NOT Allowed:**
