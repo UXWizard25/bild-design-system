@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2025-12-07T15:45:48.383Z",
+  "lastModified": "2025-12-08T09:38:20.734Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -8522,7 +8522,8 @@
         "VariableID:20153:462",
         "VariableID:20243:56065",
         "VariableID:20534:79979",
-        "VariableID:20534:79980"
+        "VariableID:20534:79980",
+        "VariableID:21292:45"
       ],
       "variables": [
         {
@@ -20638,6 +20639,23 @@
             "ALL_SCOPES"
           ],
           "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:7017:25696"
+        },
+        {
+          "id": "VariableID:21292:45",
+          "name": "Component/Button/buttonLabelFontFamily",
+          "description": "",
+          "resolvedType": "STRING",
+          "valuesByMode": {
+            "7015:1": "String value",
+            "7015:2": "String value",
+            "7017:0": "String value",
+            "16706:1": "String value"
+          },
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "hiddenFromPublishing": false,
           "variableCollectionId": "VariableCollectionId:7017:25696"
         }
       ]
