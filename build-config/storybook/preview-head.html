@@ -414,6 +414,174 @@
   html[data-theme="dark"] .sb-show-main {
     background-color: #1C1C1C !important;
   }
+
+  /* ========================================
+     STORY CANVAS / PREVIEW AREA
+     The white box where components render
+     ======================================== */
+
+  [data-theme="dark"] .docs-story,
+  [data-theme="dark"] .docs-story > div,
+  [data-theme="dark"] .docs-story > div > div,
+  html[data-theme="dark"] .docs-story,
+  html[data-theme="dark"] .docs-story > div,
+  html[data-theme="dark"] .docs-story > div > div {
+    background-color: #232629 !important;
+  }
+
+  /* Story iframe container */
+  [data-theme="dark"] [id^="story--"],
+  html[data-theme="dark"] [id^="story--"] {
+    background-color: #232629 !important;
+  }
+
+  /* Zoom toolbar in story canvas */
+  [data-theme="dark"] .docs-story button,
+  [data-theme="dark"] .docs-story [class*="zoom"],
+  html[data-theme="dark"] .docs-story button,
+  html[data-theme="dark"] .docs-story [class*="zoom"] {
+    background-color: #2E3438 !important;
+    color: #F2F4F5 !important;
+    border-color: #4B525A !important;
+  }
+
+  /* "Show code" button */
+  [data-theme="dark"] .docs-story button svg,
+  html[data-theme="dark"] .docs-story button svg {
+    fill: #F2F4F5 !important;
+    color: #F2F4F5 !important;
+  }
+
+  /* ========================================
+     CONTROLS TABLE / ARGSTABLE
+     Input fields, toggles, selects
+     ======================================== */
+
+  /* Input fields */
+  [data-theme="dark"] .docblock-argstable input,
+  [data-theme="dark"] .docblock-argstable select,
+  [data-theme="dark"] .docblock-argstable textarea,
+  html[data-theme="dark"] .docblock-argstable input,
+  html[data-theme="dark"] .docblock-argstable select,
+  html[data-theme="dark"] .docblock-argstable textarea {
+    background-color: #2E3438 !important;
+    border-color: #4B525A !important;
+    color: #F2F4F5 !important;
+  }
+
+  /* Boolean toggle switch */
+  [data-theme="dark"] [class*="BooleanControl"],
+  [data-theme="dark"] [class*="boolean"],
+  html[data-theme="dark"] [class*="BooleanControl"],
+  html[data-theme="dark"] [class*="boolean"] {
+    background-color: #2E3438 !important;
+  }
+
+  /* Toggle switch button */
+  [data-theme="dark"] [class*="BooleanControl"] button,
+  html[data-theme="dark"] [class*="BooleanControl"] button {
+    background-color: #4B525A !important;
+    border-color: #4B525A !important;
+  }
+
+  /* Type badges/pills (string, boolean, etc.) */
+  [data-theme="dark"] .docblock-argstable span[class*="Type"],
+  [data-theme="dark"] .docblock-argstable code,
+  html[data-theme="dark"] .docblock-argstable span[class*="Type"],
+  html[data-theme="dark"] .docblock-argstable code {
+    background-color: #3A4048 !important;
+    color: #CED4DA !important;
+  }
+
+  /* Default value badges */
+  [data-theme="dark"] .docblock-argstable [class*="Default"],
+  html[data-theme="dark"] .docblock-argstable [class*="Default"] {
+    background-color: #3A4048 !important;
+    color: #9CA3AB !important;
+  }
+
+  /* Select dropdown */
+  [data-theme="dark"] select option,
+  html[data-theme="dark"] select option {
+    background-color: #232629 !important;
+    color: #F2F4F5 !important;
+  }
+
+  /* Reset button in controls */
+  [data-theme="dark"] .docblock-argstable [class*="Reset"],
+  [data-theme="dark"] .docblock-argstable [class*="reset"],
+  html[data-theme="dark"] .docblock-argstable [class*="Reset"],
+  html[data-theme="dark"] .docblock-argstable [class*="reset"] {
+    color: #9CA3AB !important;
+  }
+
+  /* ========================================
+     ADDITIONAL UI ELEMENTS
+     ======================================== */
+
+  /* All buttons in docs */
+  [data-theme="dark"] .sbdocs button,
+  html[data-theme="dark"] .sbdocs button {
+    background-color: #2E3438 !important;
+    border-color: #4B525A !important;
+    color: #F2F4F5 !important;
+  }
+
+  /* Dividers/separators */
+  [data-theme="dark"] hr,
+  [data-theme="dark"] .sbdocs hr,
+  html[data-theme="dark"] hr,
+  html[data-theme="dark"] .sbdocs hr {
+    border-color: #4B525A !important;
+    background-color: #4B525A !important;
+  }
+
+  /* Secondary/muted text */
+  [data-theme="dark"] .sbdocs [class*="subtitle"],
+  [data-theme="dark"] .sbdocs [class*="Subtitle"],
+  [data-theme="dark"] .sbdocs [class*="muted"],
+  html[data-theme="dark"] .sbdocs [class*="subtitle"],
+  html[data-theme="dark"] .sbdocs [class*="Subtitle"],
+  html[data-theme="dark"] .sbdocs [class*="muted"] {
+    color: #9CA3AB !important;
+  }
+
+  /* Description text in controls */
+  [data-theme="dark"] .docblock-argstable td p,
+  [data-theme="dark"] .docblock-argstable td span,
+  html[data-theme="dark"] .docblock-argstable td p,
+  html[data-theme="dark"] .docblock-argstable td span {
+    color: #CED4DA !important;
+  }
+
+  /* First column (property names) - make them brighter */
+  [data-theme="dark"] .docblock-argstable td:first-child,
+  [data-theme="dark"] .docblock-argstable td:first-child span,
+  html[data-theme="dark"] .docblock-argstable td:first-child,
+  html[data-theme="dark"] .docblock-argstable td:first-child span {
+    color: #F2F4F5 !important;
+  }
+
+  /* Inline code in docs */
+  [data-theme="dark"] .sbdocs :not(pre) > code,
+  html[data-theme="dark"] .sbdocs :not(pre) > code {
+    background-color: #3A4048 !important;
+    color: #FF8A8A !important;
+  }
+
+  /* Scrollbar styling for dark mode */
+  [data-theme="dark"] ::-webkit-scrollbar {
+    background-color: #1C1C1C;
+  }
+
+  [data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background-color: #4B525A;
+    border-radius: 4px;
+  }
+
+  [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background-color: #666B70;
+  }
 </style>
 
 <script>
