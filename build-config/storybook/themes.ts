@@ -21,11 +21,11 @@ export const bildLightTheme = create({
   colorPrimary: '#DD0000', // --color-bild-red-50
   colorSecondary: '#DD0000', // --color-bild-red-50
 
-  // UI colors (light mode)
-  appBg: '#F2F4F5', // --color-neutral-96
+  // UI colors (light mode) - consistent backgrounds
+  appBg: '#FFFFFF', // Same as content for consistency
   appContentBg: '#FFFFFF', // --color-neutral-100
   appPreviewBg: '#FFFFFF', // --color-neutral-100 (preview/canvas area)
-  appBorderColor: '#CED4DA', // --color-neutral-85
+  appBorderColor: '#E8EAED', // Lighter border for subtle separation
   appBorderRadius: 4,
 
   // Text colors (light mode)
@@ -58,8 +58,8 @@ export const bildDarkTheme = create({
   colorPrimary: '#DD0000', // --color-bild-red-50
   colorSecondary: '#DD0000', // --color-bild-red-50
 
-  // UI colors (dark mode)
-  appBg: '#1C1C1C', // --color-neutral-10
+  // UI colors (dark mode) - consistent backgrounds
+  appBg: '#232629', // Same as content for consistency
   appContentBg: '#232629', // --color-neutral-15
   appPreviewBg: '#232629', // --color-neutral-15 (preview/canvas area)
   appBorderColor: '#4B525A', // --color-neutral-35
@@ -74,10 +74,10 @@ export const bildDarkTheme = create({
   barTextColor: '#CED4DA', // --color-neutral-85
   barSelectedColor: '#DD0000', // --color-bild-red-50
   barHoverColor: '#DD0000', // --color-bild-red-50
-  barBg: '#1C1C1C', // --color-neutral-10
+  barBg: '#232629', // Same as appBg for consistency
 
   // Form colors
-  inputBg: '#232629',
+  inputBg: '#2E3438',
   inputBorder: '#4B525A',
   inputTextColor: '#F2F4F5',
   inputBorderRadius: 4,
