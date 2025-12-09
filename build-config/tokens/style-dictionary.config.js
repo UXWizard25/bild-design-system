@@ -308,12 +308,22 @@ function generateUniqueNames(tokens, transformType = 'kebab') {
 // ============================================================================
 
 /**
- * Checks if a token references the semantic layer (ColorMode or BreakpointMode)
+ * Collection types that are always defined in the same CSS bundle
+ * and therefore don't need fallback values:
+ * - semantic: tokens from ColorMode/BreakpointMode (defined in tokens.css/theme.css)
+ * - density: density-specific tokens (defined in same component file)
+ * - component-breakpoint: component breakpoint tokens (defined in same component file)
+ */
+const BUNDLED_COLLECTION_TYPES = ['semantic', 'density', 'component-breakpoint'];
+
+/**
+ * Checks if a token references a bundled collection (defined in same CSS file)
+ * These don't need fallback values since they're always present
  * @param {Object} token - Style Dictionary token
  * @returns {boolean}
  */
 function isSemanticReference(token) {
-  return token.$alias?.collectionType === 'semantic';
+  return BUNDLED_COLLECTION_TYPES.includes(token.$alias?.collectionType);
 }
 
 /**
@@ -1090,13 +1100,13 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
           const aliases = token.$aliases || {};
 
           // Helper to get value with var() reference if alias exists
-          // Semantic references don't need fallbacks (always defined in same bundle)
+          // Bundled references (semantic, density, component-breakpoint) don't need fallbacks
           const getValueWithAlias = (property, value, unit = '') => {
             const alias = aliases[property];
             if (alias?.token) {
               const varName = nameTransformers.kebab(alias.token);
-              // Semantic references: no fallback needed
-              if (alias.collectionType === 'semantic') {
+              // Bundled collection types: no fallback needed (defined in same CSS file)
+              if (BUNDLED_COLLECTION_TYPES.includes(alias.collectionType)) {
                 return `var(--${varName})`;
               }
               // Primitive references: include fallback
