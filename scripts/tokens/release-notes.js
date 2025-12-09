@@ -373,20 +373,21 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
   // Collect counts
   const uniqueModified = summary.uniqueTokensModified ?? summary.tokensModified ?? 0;
   const uniqueAdded = summary.uniqueTokensAdded ?? summary.tokensAdded ?? 0;
-  const uniqueRenamed = summary.uniqueTokensRenamed ?? 0;
   const uniqueStylesRenamed = summary.uniqueStylesRenamed ?? 0;
-  const breakingRenames = summary.breakingRenames ?? 0;
-  const totalRenames = uniqueRenamed + uniqueStylesRenamed;
-  const nonBreakingRenames = totalRenames - breakingRenames;
 
   // Calculate removed counts by layer (consumption vs primitive)
   const removedTokens = diff?.byUniqueToken?.removed || [];
   const breakingRemoved = removedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer)).length;
   const internalRemoved = removedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer)).length;
-  const totalRemoved = removedTokens.length;
+
+  // Calculate renamed counts by layer (consumption vs primitive)
+  const variableRenames = diff?.renames || [];
+  const breakingRenames = variableRenames.filter(r => CONSUMPTION_LAYERS.includes(r.layer)).length;
+  const internalRenames = variableRenames.filter(r => !CONSUMPTION_LAYERS.includes(r.layer)).length;
+  const totalRenames = variableRenames.length + uniqueStylesRenamed;
 
   // Summary table with Impact classification
-  const hasChanges = uniqueAdded > 0 || uniqueModified > 0 || totalRemoved > 0 || totalRenames > 0;
+  const hasChanges = uniqueAdded > 0 || uniqueModified > 0 || removedTokens.length > 0 || totalRenames > 0;
 
   if (hasChanges) {
     md += '### 📊 Summary\n\n';
@@ -409,8 +410,8 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
     if (breakingRenames > 0) {
       md += `| 🔄 Renamed (breaking) | ${breakingRenames} | 🔴 Breaking |\n`;
     }
-    if (nonBreakingRenames > 0) {
-      md += `| 🔄 Renamed (internal) | ${nonBreakingRenames} | 🟢 Safe |\n`;
+    if (internalRenames > 0) {
+      md += `| 🔄 Renamed (internal) | ${internalRenames} | 🟢 Safe |\n`;
     }
 
     md += '\n';
@@ -573,11 +574,11 @@ function generateBreakingChangesSection(diff, options = {}) {
   const allRemovedTokens = diff?.byUniqueToken?.removed || [];
   const breakingRemovedTokens = allRemovedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer));
 
-  // Collect breaking renames only
+  // Collect breaking renames - only consumption layer
   const variableRenames = diff?.renames || [];
   const styleRenames = diff?.styleRenames || [];
-  const breakingVariableRenames = variableRenames.filter(r => r.isBreaking);
-  const breakingStyleRenames = styleRenames.filter(r => r.isBreaking);
+  const breakingVariableRenames = variableRenames.filter(r => CONSUMPTION_LAYERS.includes(r.layer));
+  const breakingStyleRenames = styleRenames.filter(r => CONSUMPTION_LAYERS.includes(r.layer));
 
   const totalBreakingRenames = breakingVariableRenames.length + breakingStyleRenames.length;
   const hasBreakingChanges = breakingRemovedTokens.length > 0 || totalBreakingRenames > 0;
@@ -1012,7 +1013,7 @@ function generateSafeChangesSection(diff, options = {}) {
   const internalRemovedTokens = allRemovedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
 
   const variableRenames = diff?.renames || [];
-  const nonBreakingRenames = variableRenames.filter(r => !r.isBreaking);
+  const nonBreakingRenames = variableRenames.filter(r => !CONSUMPTION_LAYERS.includes(r.layer));
 
   const hasAdded = addedTokens.length > 0;
   const hasInternal = internalRemovedTokens.length > 0 || nonBreakingRenames.length > 0;
