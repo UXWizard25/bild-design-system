@@ -233,12 +233,17 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
   const uniqueModified = summary.uniqueTokensModified ?? summary.tokensModified;
   const uniqueAdded = summary.uniqueTokensAdded ?? summary.tokensAdded;
   const uniqueRenamed = summary.uniqueTokensRenamed ?? 0;
+  const uniqueStylesRenamed = summary.uniqueStylesRenamed ?? 0;
+  const breakingRenames = summary.breakingRenames ?? 0;
+  const totalRenames = uniqueRenamed + uniqueStylesRenamed;
 
   if (uniqueRemoved > 0) {
     stats.push(`🔴 **${uniqueRemoved} Removed**`);
   }
-  if (uniqueRenamed > 0) {
-    stats.push(`🔄 **${uniqueRenamed} Renamed**`);
+  if (breakingRenames > 0) {
+    stats.push(`🔴 **${breakingRenames} Breaking Renames**`);
+  } else if (totalRenames > 0) {
+    stats.push(`🔄 **${totalRenames} Renamed**`);
   }
   if (uniqueModified > 0) {
     stats.push(`🟡 **${uniqueModified} Modified**`);
@@ -386,42 +391,205 @@ function generateUnifiedTokenChanges(diff, options = {}) {
 // =============================================================================
 
 /**
- * Generate renamed tokens section - shows tokens that were renamed (detected via Figma Variable ID)
+ * Generate renamed tokens section - shows tokens that were renamed
+ * Separates breaking (consumption layer) from non-breaking (primitive layer) renames
+ * Includes both variable renames and style renames (Typography/Effects)
  */
 function generateRenamesSection(diff, options = {}) {
-  if (!diff || !diff.renames || diff.renames.length === 0) return '';
+  const { maxTokens = 15 } = options;
 
-  const { maxTokens = 20 } = options;
-  const renames = diff.renames;
+  // Collect all renames
+  const variableRenames = diff?.renames || [];
+  const styleRenames = diff?.styleRenames || [];
 
-  let md = '## 🔄 Renamed Tokens\n\n';
-  md += '> ✅ Auto-detected via Figma Variable ID (100% confidence)\n\n';
-  md += '| Old Name | → | New Name | Category |\n';
-  md += '|----------|:---:|----------|----------|\n';
+  // Separate breaking from non-breaking
+  const breakingVariableRenames = variableRenames.filter(r => r.isBreaking);
+  const nonBreakingVariableRenames = variableRenames.filter(r => !r.isBreaking);
+  const breakingStyleRenames = styleRenames.filter(r => r.isBreaking);
 
-  const displayRenames = renames.slice(0, maxTokens);
-  for (const rename of displayRenames) {
-    const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
-    md += `| \`${truncate(rename.oldName, 35)}\` | → | \`${truncate(rename.newName, 35)}\` | ${catConfig.icon} |\n`;
+  const totalBreaking = breakingVariableRenames.length + breakingStyleRenames.length;
+  const totalNonBreaking = nonBreakingVariableRenames.length;
+
+  if (totalBreaking === 0 && totalNonBreaking === 0) return '';
+
+  let md = '';
+
+  // === Breaking Renames (Consumption Layer) ===
+  if (totalBreaking > 0) {
+    md += '## 🔴 Breaking Renames\n\n';
+    md += '> ⚠️ **Consumption layer renames require code changes**\n';
+    md += '> Auto-detected via Figma ID (100% confidence)\n\n';
+
+    // Variable renames (semantic + component layer)
+    if (breakingVariableRenames.length > 0) {
+      md += `### Variables (${breakingVariableRenames.length})\n\n`;
+      md += '| Old Name | → | New Name | Layer | Category |\n';
+      md += '|----------|:---:|----------|-------|----------|\n';
+
+      for (const rename of breakingVariableRenames.slice(0, maxTokens)) {
+        const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
+        const layerConfig = LAYER_CONFIG[rename.layer] || LAYER_CONFIG.semantic;
+        md += `| \`${truncate(rename.oldName, 30)}\` | → | \`${truncate(rename.newName, 30)}\` | ${layerConfig.icon} | ${catConfig.icon} |\n`;
+      }
+
+      if (breakingVariableRenames.length > maxTokens) {
+        md += `| ... | | *${breakingVariableRenames.length - maxTokens} more* | | |\n`;
+      }
+      md += '\n';
+    }
+
+    // Style renames (Typography + Effects)
+    if (breakingStyleRenames.length > 0) {
+      md += `### Styles (${breakingStyleRenames.length})\n\n`;
+      md += '| Old Name | → | New Name | Type |\n';
+      md += '|----------|:---:|----------|------|\n';
+
+      for (const rename of breakingStyleRenames.slice(0, maxTokens)) {
+        const typeIcon = rename.type === 'typography' ? '📝' : '✨';
+        md += `| \`${truncate(rename.oldName, 30)}\` | → | \`${truncate(rename.newName, 30)}\` | ${typeIcon} |\n`;
+      }
+
+      if (breakingStyleRenames.length > maxTokens) {
+        md += `| ... | | *${breakingStyleRenames.length - maxTokens} more* | |\n`;
+      }
+      md += '\n';
+    }
+
+    // Migration help for breaking renames
+    const allBreaking = [...breakingVariableRenames, ...breakingStyleRenames];
+    md += '<details>\n<summary>📋 Migration Commands</summary>\n\n';
+    md += '```bash\n# Find & Replace suggestions:\n';
+    for (const rename of allBreaking.slice(0, 8)) {
+      const oldSimple = rename.oldName.split('/').pop();
+      const newSimple = rename.newName.split('/').pop();
+      md += `# ${oldSimple} → ${newSimple}\n`;
+    }
+    if (allBreaking.length > 8) {
+      md += `# ... and ${allBreaking.length - 8} more\n`;
+    }
+    md += '```\n\n</details>\n\n';
+
+    md += '---\n\n';
   }
 
-  if (renames.length > maxTokens) {
-    md += `| ... | | *${renames.length - maxTokens} more* | |\n`;
+  // === Non-Breaking Renames (Primitive Layer) ===
+  if (totalNonBreaking > 0) {
+    md += '<details>\n';
+    md += `<summary>🔄 Primitive Renames (${totalNonBreaking} - no consumer impact)</summary>\n\n`;
+    md += '> ℹ️ Internal token renames, no code changes needed\n\n';
+
+    md += '| Old Name | → | New Name | Category |\n';
+    md += '|----------|:---:|----------|----------|\n';
+
+    for (const rename of nonBreakingVariableRenames.slice(0, maxTokens)) {
+      const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
+      md += `| \`${truncate(rename.oldName, 30)}\` | → | \`${truncate(rename.newName, 30)}\` | ${catConfig.icon} |\n`;
+    }
+
+    if (nonBreakingVariableRenames.length > maxTokens) {
+      md += `| ... | | *${nonBreakingVariableRenames.length - maxTokens} more* | |\n`;
+    }
+
+    md += '\n</details>\n\n';
   }
 
-  // Migration help
-  md += '\n<details>\n<summary>📋 Migration Commands</summary>\n\n';
-  md += '```bash\n# Find & Replace suggestions:\n';
-  for (const rename of renames.slice(0, 5)) {
-    // Extract last part of path for simpler token name
-    const oldSimple = rename.oldName.split('/').pop();
-    const newSimple = rename.newName.split('/').pop();
-    md += `# ${oldSimple} → ${newSimple}\n`;
+  return md;
+}
+
+/**
+ * Generate combined token changes section (Typography/Effects property changes)
+ */
+function generateStyleChangesSection(diff, options = {}) {
+  if (!diff?.styleChanges) return '';
+
+  const { maxTokens = 10 } = options;
+  const typography = diff.styleChanges.typography || { added: [], modified: [], removed: [] };
+  const effects = diff.styleChanges.effects || { added: [], modified: [], removed: [] };
+
+  const totalTypography = typography.added.length + typography.modified.length + typography.removed.length;
+  const totalEffects = effects.added.length + effects.modified.length + effects.removed.length;
+
+  if (totalTypography === 0 && totalEffects === 0) return '';
+
+  let md = '## 📝 Combined Token Changes\n\n';
+
+  // Typography changes
+  if (totalTypography > 0) {
+    md += `<details>\n<summary>📝 Typography (${totalTypography} changes)</summary>\n\n`;
+
+    // Modified with property details
+    if (typography.modified.length > 0) {
+      md += `**Modified (${typography.modified.length}):**\n\n`;
+      md += '| Style | Changed Properties |\n';
+      md += '|-------|--------------------|\n';
+
+      for (const style of typography.modified.slice(0, maxTokens)) {
+        const propChanges = (style.changedProperties || [])
+          .map(p => `${p.property}: ${truncate(String(p.oldValue), 10)} → ${truncate(String(p.newValue), 10)}`)
+          .join(', ');
+        const renamed = style.wasRenamed ? ' 🔄' : '';
+        md += `| \`${truncate(style.name, 25)}\`${renamed} | ${truncate(propChanges, 50)} |\n`;
+      }
+      md += '\n';
+    }
+
+    // Added
+    if (typography.added.length > 0) {
+      md += `**Added (${typography.added.length}):** `;
+      md += typography.added.slice(0, 5).map(s => `\`${truncate(s.name, 20)}\``).join(', ');
+      if (typography.added.length > 5) md += `, +${typography.added.length - 5} more`;
+      md += '\n\n';
+    }
+
+    // Removed
+    if (typography.removed.length > 0) {
+      md += `**Removed (${typography.removed.length}):** `;
+      md += typography.removed.slice(0, 5).map(s => `\`${truncate(s.name, 20)}\``).join(', ');
+      if (typography.removed.length > 5) md += `, +${typography.removed.length - 5} more`;
+      md += '\n\n';
+    }
+
+    md += '</details>\n\n';
   }
-  if (renames.length > 5) {
-    md += `# ... and ${renames.length - 5} more\n`;
+
+  // Effects changes
+  if (totalEffects > 0) {
+    md += `<details>\n<summary>✨ Effects (${totalEffects} changes)</summary>\n\n`;
+
+    // Modified with property details
+    if (effects.modified.length > 0) {
+      md += `**Modified (${effects.modified.length}):**\n\n`;
+      md += '| Style | Changed Properties |\n';
+      md += '|-------|--------------------|\n';
+
+      for (const style of effects.modified.slice(0, maxTokens)) {
+        const propChanges = (style.changedProperties || [])
+          .map(p => p.property)
+          .join(', ');
+        const renamed = style.wasRenamed ? ' 🔄' : '';
+        md += `| \`${truncate(style.name, 25)}\`${renamed} | ${truncate(propChanges, 50)} |\n`;
+      }
+      md += '\n';
+    }
+
+    // Added
+    if (effects.added.length > 0) {
+      md += `**Added (${effects.added.length}):** `;
+      md += effects.added.slice(0, 5).map(s => `\`${truncate(s.name, 20)}\``).join(', ');
+      if (effects.added.length > 5) md += `, +${effects.added.length - 5} more`;
+      md += '\n\n';
+    }
+
+    // Removed
+    if (effects.removed.length > 0) {
+      md += `**Removed (${effects.removed.length}):** `;
+      md += effects.removed.slice(0, 5).map(s => `\`${truncate(s.name, 20)}\``).join(', ');
+      if (effects.removed.length > 5) md += `, +${effects.removed.length - 5} more`;
+      md += '\n\n';
+    }
+
+    md += '</details>\n\n';
   }
-  md += '```\n\n</details>\n\n';
 
   md += '---\n\n';
   return md;
@@ -998,22 +1166,25 @@ function generatePRComment(diff, options = {}) {
   // 1. Executive Summary (always)
   md += generateExecutiveSummary(diff, options);
 
-  // 2. Renamed Tokens (if any - high priority)
+  // 2. Breaking Renames (highest priority - requires code changes)
   md += generateRenamesSection(diff, { maxTokens: 10 });
 
-  // 3. Categorized Changes (consumption layer: semantic + component)
+  // 3. Combined Token Changes (Typography/Effects property changes)
+  md += generateStyleChangesSection(diff, { maxTokens: 8 });
+
+  // 4. Categorized Changes (consumption layer: semantic + component)
   md += generateCategorizedChangesSection(diff, { maxTokensPerCategory: 8 });
 
-  // 4. Affected Components
+  // 5. Affected Components
   md += generateAffectedComponentsSection(diff, { maxComponents: 8 });
 
-  // 5. Source Changes (primitive layer - collapsible, for advanced users)
+  // 6. Source Changes (primitive layer - collapsible, for advanced users)
   md += generateSourceChangesSection(diff, { maxTokens: 8 });
 
-  // 6. Dynamic Review Checklist
+  // 7. Dynamic Review Checklist
   md += generateDynamicChecklist(diff);
 
-  // 7. Technical Details (collapsible)
+  // 8. Technical Details (collapsible)
   md += generateTechnicalDetails(diff, options);
 
   // Footer

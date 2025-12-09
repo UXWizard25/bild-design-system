@@ -256,64 +256,156 @@ function normalizeTokenName(name) {
 // SOURCE FILE PARSING (for Rename Detection)
 // =============================================================================
 
+// Consumption layers where renames are breaking changes
+const CONSUMPTION_LAYERS = ['semantic', 'component'];
+
 /**
  * Parse Figma source file and extract variable metadata
  * @param {string} sourcePath - Path to bild-design-system-raw-data.json
- * @returns {Map} - Map of variableId -> { id, name, resolvedType, scopes, collectionId, collectionName }
+ * @returns {Object} - { variables: Map, styles: Map }
  */
 function parseSourceFile(sourcePath) {
   if (!fs.existsSync(sourcePath)) {
     console.log(`⚠️  Source file not found: ${sourcePath}`);
-    return new Map();
+    return { variables: new Map(), styles: new Map() };
   }
 
   try {
     const data = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
     const variables = new Map();
+    const styles = new Map();
 
-    if (!data.collections || !Array.isArray(data.collections)) {
-      console.log(`⚠️  Invalid source file format: missing collections`);
-      return variables;
-    }
+    // Parse variables from collections
+    if (data.collections && Array.isArray(data.collections)) {
+      data.collections.forEach(collection => {
+        if (!collection.variables) return;
 
-    data.collections.forEach(collection => {
-      if (!collection.variables) return;
-
-      collection.variables.forEach(variable => {
-        variables.set(variable.id, {
-          id: variable.id,
-          name: variable.name,
-          resolvedType: variable.resolvedType,
-          scopes: variable.scopes || [],
-          collectionId: collection.id,
-          collectionName: collection.name,
-          description: variable.description || ''
+        collection.variables.forEach(variable => {
+          const layer = detectLayerFromCollection(collection.name);
+          variables.set(variable.id, {
+            id: variable.id,
+            name: variable.name,
+            resolvedType: variable.resolvedType,
+            scopes: variable.scopes || [],
+            collectionId: collection.id,
+            collectionName: collection.name,
+            description: variable.description || '',
+            layer,
+            isBreaking: CONSUMPTION_LAYERS.includes(layer)
+          });
         });
       });
-    });
+    }
 
-    console.log(`   Parsed ${variables.size} variables from source file`);
-    return variables;
+    // Parse textStyles (Typography)
+    if (data.textStyles && Array.isArray(data.textStyles)) {
+      data.textStyles.forEach(style => {
+        const layer = style.name.startsWith('Component/') ? 'component' : 'semantic';
+        styles.set(style.id, {
+          id: style.id,
+          name: style.name,
+          type: 'typography',
+          layer,
+          isBreaking: CONSUMPTION_LAYERS.includes(layer),
+          description: style.description || '',
+          // Store style properties for comparison
+          properties: extractTypographyProperties(style)
+        });
+      });
+    }
+
+    // Parse effectStyles (Effects/Shadows)
+    if (data.effectStyles && Array.isArray(data.effectStyles)) {
+      data.effectStyles.forEach(style => {
+        const layer = style.name.startsWith('Component/') ? 'component' : 'semantic';
+        styles.set(style.id, {
+          id: style.id,
+          name: style.name,
+          type: 'effect',
+          layer,
+          isBreaking: CONSUMPTION_LAYERS.includes(layer),
+          description: style.description || '',
+          // Store effect properties for comparison
+          properties: extractEffectProperties(style)
+        });
+      });
+    }
+
+    console.log(`   Parsed ${variables.size} variables, ${styles.size} styles from source file`);
+    return { variables, styles };
   } catch (e) {
     console.log(`⚠️  Error parsing source file: ${e.message}`);
-    return new Map();
+    return { variables: new Map(), styles: new Map() };
   }
 }
 
 /**
+ * Extract typography properties for comparison
+ */
+function extractTypographyProperties(style) {
+  const props = {};
+
+  if (style.fontName) {
+    props.fontFamily = style.fontName.family;
+    props.fontStyle = style.fontName.style;
+  }
+  if (style.fontSize !== undefined) props.fontSize = style.fontSize;
+  if (style.lineHeight !== undefined) {
+    props.lineHeight = style.lineHeight.value !== undefined
+      ? style.lineHeight.value
+      : style.lineHeight;
+  }
+  if (style.letterSpacing !== undefined) {
+    props.letterSpacing = style.letterSpacing.value !== undefined
+      ? style.letterSpacing.value
+      : style.letterSpacing;
+  }
+  if (style.textCase) props.textCase = style.textCase;
+  if (style.textDecoration) props.textDecoration = style.textDecoration;
+
+  // Track bound variables (references)
+  if (style.boundVariables) {
+    props.boundVariables = style.boundVariables;
+  }
+
+  return props;
+}
+
+/**
+ * Extract effect properties for comparison
+ */
+function extractEffectProperties(style) {
+  if (!style.effects || !Array.isArray(style.effects)) {
+    return [];
+  }
+
+  return style.effects.map(effect => ({
+    type: effect.type,
+    visible: effect.visible,
+    color: effect.color,
+    offset: effect.offset,
+    radius: effect.radius,
+    spread: effect.spread,
+    blendMode: effect.blendMode,
+    // Track bound variables (references)
+    boundVariables: effect.boundVariables
+  }));
+}
+
+/**
  * Detect token renames by comparing Variable IDs between old and new source
- * @param {Map} oldSource - Variables from old source file
- * @param {Map} newSource - Variables from new source file
- * @returns {Object} - { renames, actuallyRemoved, actuallyAdded }
+ * @param {Object} oldSource - { variables: Map, styles: Map } from old source file
+ * @param {Object} newSource - { variables: Map, styles: Map } from new source file
+ * @returns {Object} - { renames, styleRenames, actuallyRemoved, actuallyAdded, styleChanges }
  */
 function detectRenames(oldSource, newSource) {
   const renames = [];
   const actuallyRemoved = [];
   const actuallyAdded = [];
 
-  // Find renames and true removals
-  for (const [id, oldVar] of oldSource) {
-    const newVar = newSource.get(id);
+  // --- Variable Renames ---
+  for (const [id, oldVar] of oldSource.variables) {
+    const newVar = newSource.variables.get(id);
     if (!newVar) {
       // Variable ID doesn't exist in new → truly removed
       actuallyRemoved.push({
@@ -321,7 +413,9 @@ function detectRenames(oldSource, newSource) {
         name: oldVar.name,
         resolvedType: oldVar.resolvedType,
         collectionName: oldVar.collectionName,
-        category: categorizeTokenFromSource(oldVar)
+        category: categorizeTokenFromSource(oldVar),
+        layer: oldVar.layer,
+        isBreaking: oldVar.isBreaking
       });
     } else if (oldVar.name !== newVar.name) {
       // Same ID, different name → renamed
@@ -332,25 +426,165 @@ function detectRenames(oldSource, newSource) {
         resolvedType: oldVar.resolvedType,
         collectionName: oldVar.collectionName,
         category: categorizeTokenFromSource(oldVar),
+        layer: oldVar.layer,
+        isBreaking: oldVar.isBreaking,
+        tokenType: 'variable',
         confidence: 1.0 // 100% confidence because same Variable ID
       });
     }
   }
 
   // Find true additions (new Variable IDs)
-  for (const [id, newVar] of newSource) {
-    if (!oldSource.has(id)) {
+  for (const [id, newVar] of newSource.variables) {
+    if (!oldSource.variables.has(id)) {
       actuallyAdded.push({
         variableId: id,
         name: newVar.name,
         resolvedType: newVar.resolvedType,
         collectionName: newVar.collectionName,
-        category: categorizeTokenFromSource(newVar)
+        category: categorizeTokenFromSource(newVar),
+        layer: newVar.layer,
+        isBreaking: newVar.isBreaking
       });
     }
   }
 
-  return { renames, actuallyRemoved, actuallyAdded };
+  // --- Style Renames (Typography & Effects) ---
+  const styleRenames = [];
+  const styleChanges = {
+    typography: { added: [], modified: [], removed: [] },
+    effects: { added: [], modified: [], removed: [] }
+  };
+
+  for (const [id, oldStyle] of oldSource.styles) {
+    const newStyle = newSource.styles.get(id);
+    const changeType = oldStyle.type === 'typography' ? 'typography' : 'effects';
+
+    if (!newStyle) {
+      // Style ID doesn't exist in new → truly removed
+      styleChanges[changeType].removed.push({
+        styleId: id,
+        name: oldStyle.name,
+        type: oldStyle.type,
+        layer: oldStyle.layer,
+        isBreaking: oldStyle.isBreaking,
+        properties: oldStyle.properties
+      });
+    } else if (oldStyle.name !== newStyle.name) {
+      // Same ID, different name → renamed (ALWAYS breaking in consumption layer)
+      styleRenames.push({
+        styleId: id,
+        oldName: oldStyle.name,
+        newName: newStyle.name,
+        type: oldStyle.type,
+        layer: oldStyle.layer,
+        isBreaking: oldStyle.isBreaking, // Typography/Effects are always semantic or component
+        tokenType: oldStyle.type,
+        category: oldStyle.type === 'typography' ? 'typography' : 'effects',
+        confidence: 1.0
+      });
+
+      // Also check if properties changed
+      const propChanges = compareStyleProperties(oldStyle, newStyle);
+      if (propChanges.length > 0) {
+        styleChanges[changeType].modified.push({
+          styleId: id,
+          name: newStyle.name,
+          oldName: oldStyle.name,
+          type: oldStyle.type,
+          layer: oldStyle.layer,
+          isBreaking: oldStyle.isBreaking,
+          changedProperties: propChanges,
+          wasRenamed: true
+        });
+      }
+    } else {
+      // Same name, check if properties changed
+      const propChanges = compareStyleProperties(oldStyle, newStyle);
+      if (propChanges.length > 0) {
+        styleChanges[changeType].modified.push({
+          styleId: id,
+          name: oldStyle.name,
+          type: oldStyle.type,
+          layer: oldStyle.layer,
+          isBreaking: false, // Property changes are not breaking
+          changedProperties: propChanges,
+          wasRenamed: false
+        });
+      }
+    }
+  }
+
+  // Find truly added styles
+  for (const [id, newStyle] of newSource.styles) {
+    if (!oldSource.styles.has(id)) {
+      const changeType = newStyle.type === 'typography' ? 'typography' : 'effects';
+      styleChanges[changeType].added.push({
+        styleId: id,
+        name: newStyle.name,
+        type: newStyle.type,
+        layer: newStyle.layer,
+        isBreaking: false, // Additions are not breaking
+        properties: newStyle.properties
+      });
+    }
+  }
+
+  return { renames, styleRenames, actuallyRemoved, actuallyAdded, styleChanges };
+}
+
+/**
+ * Compare style properties and return changed properties
+ */
+function compareStyleProperties(oldStyle, newStyle) {
+  const changes = [];
+  const oldProps = oldStyle.properties || {};
+  const newProps = newStyle.properties || {};
+
+  // For typography
+  if (oldStyle.type === 'typography') {
+    const propsToCompare = ['fontFamily', 'fontStyle', 'fontSize', 'lineHeight', 'letterSpacing', 'textCase', 'textDecoration'];
+    for (const prop of propsToCompare) {
+      if (JSON.stringify(oldProps[prop]) !== JSON.stringify(newProps[prop])) {
+        changes.push({
+          property: prop,
+          oldValue: oldProps[prop],
+          newValue: newProps[prop]
+        });
+      }
+    }
+  }
+
+  // For effects (compare array of shadow layers)
+  if (oldStyle.type === 'effect') {
+    const oldEffects = Array.isArray(oldProps) ? oldProps : [];
+    const newEffects = Array.isArray(newProps) ? newProps : [];
+
+    if (oldEffects.length !== newEffects.length) {
+      changes.push({
+        property: 'layerCount',
+        oldValue: oldEffects.length,
+        newValue: newEffects.length
+      });
+    } else {
+      for (let i = 0; i < oldEffects.length; i++) {
+        const oldEffect = oldEffects[i];
+        const newEffect = newEffects[i];
+        const effectProps = ['type', 'color', 'offset', 'radius', 'spread', 'blendMode'];
+        for (const prop of effectProps) {
+          if (JSON.stringify(oldEffect[prop]) !== JSON.stringify(newEffect[prop])) {
+            changes.push({
+              property: `layer${i}.${prop}`,
+              oldValue: oldEffect[prop],
+              newValue: newEffect[prop]
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return changes;
 }
 
 // =============================================================================
@@ -1013,9 +1247,15 @@ function compareDistBuilds(oldDir, newDir) {
 
 /**
  * Calculate overall impact level
+ * Breaking = Removed tokens OR Breaking renames (consumption layer)
  */
 function calculateImpactLevel(results) {
-  if (results.summary.tokensRemoved > 0 || results.summary.filesRemoved > 0) {
+  // Check for breaking renames (consumption layer renames)
+  const hasBreakingRenames = (results.renames || []).some(r => r.isBreaking);
+  const hasBreakingStyleRenames = (results.styleRenames || []).some(r => r.isBreaking);
+
+  if (results.summary.tokensRemoved > 0 || results.summary.filesRemoved > 0 ||
+      hasBreakingRenames || hasBreakingStyleRenames) {
     return 'breaking';
   }
   if (results.summary.tokensModified > 0) {
@@ -1095,36 +1335,67 @@ Example:
     const oldSource = parseSourceFile(options.sourceOld);
     const newSource = parseSourceFile(options.sourceNew);
 
-    if (oldSource.size > 0 && newSource.size > 0) {
+    const hasVariables = oldSource.variables.size > 0 && newSource.variables.size > 0;
+    const hasStyles = oldSource.styles.size > 0 || newSource.styles.size > 0;
+
+    if (hasVariables || hasStyles) {
       const renameResults = detectRenames(oldSource, newSource);
 
-      // Add rename detection results
+      // Add variable rename detection results
       results.renames = renameResults.renames;
       results.sourceBasedChanges = {
         actuallyRemoved: renameResults.actuallyRemoved,
         actuallyAdded: renameResults.actuallyAdded
       };
-      results.summary.uniqueTokensRenamed = renameResults.renames.length;
 
-      // Adjust removed count - subtract renames from removed (they're not truly removed)
-      // Note: This is approximate since dist-based and source-based detection may differ
-      const renamedNormalizedNames = new Set(
-        renameResults.renames.map(r => normalizeTokenName(r.oldName))
-      );
+      // Add style rename detection results (Typography & Effects)
+      results.styleRenames = renameResults.styleRenames;
+      results.styleChanges = renameResults.styleChanges;
+
+      // Count breaking vs non-breaking renames
+      const breakingVariableRenames = renameResults.renames.filter(r => r.isBreaking);
+      const nonBreakingVariableRenames = renameResults.renames.filter(r => !r.isBreaking);
+      const breakingStyleRenames = renameResults.styleRenames.filter(r => r.isBreaking);
+
+      results.summary.uniqueTokensRenamed = renameResults.renames.length;
+      results.summary.uniqueStylesRenamed = renameResults.styleRenames.length;
+      results.summary.breakingRenames = breakingVariableRenames.length + breakingStyleRenames.length;
 
       console.log(`\n   ✅ Rename detection complete:`);
-      console.log(`      🔄 Renamed: ${renameResults.renames.length}`);
-      console.log(`      🔴 Actually removed: ${renameResults.actuallyRemoved.length}`);
-      console.log(`      🟢 Actually added: ${renameResults.actuallyAdded.length}`);
+      console.log(`      🔄 Variable Renames: ${renameResults.renames.length} (${breakingVariableRenames.length} breaking)`);
+      console.log(`      🔄 Style Renames: ${renameResults.styleRenames.length} (${breakingStyleRenames.length} breaking)`);
+      console.log(`      🔴 Actually removed: ${renameResults.actuallyRemoved.length} variables`);
+      console.log(`      🟢 Actually added: ${renameResults.actuallyAdded.length} variables`);
+
+      // Log style changes
+      const typographyChanges = renameResults.styleChanges.typography;
+      const effectChanges = renameResults.styleChanges.effects;
+      if (typographyChanges.modified.length + typographyChanges.added.length + typographyChanges.removed.length > 0) {
+        console.log(`      📝 Typography: +${typographyChanges.added.length} / ~${typographyChanges.modified.length} / -${typographyChanges.removed.length}`);
+      }
+      if (effectChanges.modified.length + effectChanges.added.length + effectChanges.removed.length > 0) {
+        console.log(`      ✨ Effects: +${effectChanges.added.length} / ~${effectChanges.modified.length} / -${effectChanges.removed.length}`);
+      }
     } else {
       console.log(`   ⚠️  Could not perform rename detection (empty source files)`);
       results.renames = [];
+      results.styleRenames = [];
+      results.styleChanges = { typography: { added: [], modified: [], removed: [] }, effects: { added: [], modified: [], removed: [] } };
       results.summary.uniqueTokensRenamed = 0;
+      results.summary.uniqueStylesRenamed = 0;
+      results.summary.breakingRenames = 0;
     }
   } else {
     results.renames = [];
+    results.styleRenames = [];
+    results.styleChanges = { typography: { added: [], modified: [], removed: [] }, effects: { added: [], modified: [], removed: [] } };
     results.summary.uniqueTokensRenamed = 0;
+    results.summary.uniqueStylesRenamed = 0;
+    results.summary.breakingRenames = 0;
   }
+
+  // Recalculate impact level now that we have rename info
+  results.summary.impactLevel = calculateImpactLevel(results);
 
   // Add category groupings
   results.byCategory = groupByCategory(results);
@@ -1218,10 +1489,12 @@ module.exports = {
   platformParsers,
   parseSourceFile,
   detectRenames,
+  compareStyleProperties,
   categorizeTokenFromDist,
   categorizeTokenFromSource,
   detectLayerFromPath,
   groupByLayer,
   TOKEN_CATEGORIES,
-  TOKEN_LAYERS
+  TOKEN_LAYERS,
+  CONSUMPTION_LAYERS
 };
