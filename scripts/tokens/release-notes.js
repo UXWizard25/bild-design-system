@@ -228,7 +228,6 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
   let md = `## ${impactEmoji} Token Update\n\n`;
 
   // Collect counts
-  const uniqueRemoved = summary.uniqueTokensRemoved ?? summary.tokensRemoved ?? 0;
   const uniqueModified = summary.uniqueTokensModified ?? summary.tokensModified ?? 0;
   const uniqueAdded = summary.uniqueTokensAdded ?? summary.tokensAdded ?? 0;
   const uniqueRenamed = summary.uniqueTokensRenamed ?? 0;
@@ -237,23 +236,32 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
   const totalRenames = uniqueRenamed + uniqueStylesRenamed;
   const nonBreakingRenames = totalRenames - breakingRenames;
 
+  // Calculate removed counts by layer (consumption vs primitive)
+  const removedTokens = diff?.byUniqueToken?.removed || [];
+  const breakingRemoved = removedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer)).length;
+  const internalRemoved = removedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer)).length;
+  const totalRemoved = removedTokens.length;
+
   // Summary table with Impact classification
-  const hasChanges = uniqueAdded > 0 || uniqueModified > 0 || uniqueRemoved > 0 || totalRenames > 0;
+  const hasChanges = uniqueAdded > 0 || uniqueModified > 0 || totalRemoved > 0 || totalRenames > 0;
 
   if (hasChanges) {
     md += '### 📊 Summary\n\n';
     md += '| Change Type | Count | Impact |\n';
     md += '|-------------|------:|--------|\n';
 
-    // Order: Safe (Added) -> Visual (Modified) -> Breaking (Removed + Renamed)
+    // Order: Safe (Added, Internal) -> Visual (Modified) -> Breaking (Removed consumption, Renamed breaking)
     if (uniqueAdded > 0) {
       md += `| ➕ Added | ${uniqueAdded} | 🟢 Safe |\n`;
     }
     if (uniqueModified > 0) {
       md += `| ✏️ Modified | ${uniqueModified} | 🟡 Visual |\n`;
     }
-    if (uniqueRemoved > 0) {
-      md += `| ➖ Removed | ${uniqueRemoved} | 🔴 Breaking |\n`;
+    if (breakingRemoved > 0) {
+      md += `| ➖ Removed (breaking) | ${breakingRemoved} | 🔴 Breaking |\n`;
+    }
+    if (internalRemoved > 0) {
+      md += `| ➖ Removed (internal) | ${internalRemoved} | 🟢 Safe |\n`;
     }
     if (breakingRenames > 0) {
       md += `| 🔄 Renamed (breaking) | ${breakingRenames} | 🔴 Breaking |\n`;
@@ -264,8 +272,8 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
 
     md += '\n';
 
-    // Overall risk indicator
-    const hasBreaking = uniqueRemoved > 0 || breakingRenames > 0;
+    // Overall risk indicator - only consumption layer changes are breaking
+    const hasBreaking = breakingRemoved > 0 || breakingRenames > 0;
     const hasVisual = uniqueModified > 0;
     if (hasBreaking) {
       md += '**Overall Risk:** 🔴 Breaking Changes Detected\n\n';
@@ -414,12 +422,15 @@ function generateUnifiedTokenChanges(diff, options = {}) {
  * Generate breaking changes section - combines removed AND renamed tokens
  * This is the highest-priority section for code migrations
  * Breaking = Removed OR Renamed in consumption layer (semantic + component)
+ * Primitive layer removed/renamed tokens are shown separately as "internal" (safe)
  */
 function generateBreakingChangesSection(diff, options = {}) {
   const { maxTokens = 15 } = options;
 
-  // Collect removed tokens from byUniqueToken
-  const removedTokens = diff?.byUniqueToken?.removed || [];
+  // Collect removed tokens from byUniqueToken and separate by layer
+  const allRemovedTokens = diff?.byUniqueToken?.removed || [];
+  const breakingRemovedTokens = allRemovedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer));
+  const internalRemovedTokens = allRemovedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
 
   // Collect all renames
   const variableRenames = diff?.renames || [];
@@ -432,9 +443,10 @@ function generateBreakingChangesSection(diff, options = {}) {
 
   const totalBreakingRenames = breakingVariableRenames.length + breakingStyleRenames.length;
   const totalNonBreakingRenames = nonBreakingVariableRenames.length;
-  const hasBreakingChanges = removedTokens.length > 0 || totalBreakingRenames > 0;
+  const hasBreakingChanges = breakingRemovedTokens.length > 0 || totalBreakingRenames > 0;
+  const hasInternalChanges = internalRemovedTokens.length > 0 || totalNonBreakingRenames > 0;
 
-  if (!hasBreakingChanges && totalNonBreakingRenames === 0) return '';
+  if (!hasBreakingChanges && !hasInternalChanges) return '';
 
   let md = '';
 
@@ -443,19 +455,20 @@ function generateBreakingChangesSection(diff, options = {}) {
     md += '## 🔴 Breaking Changes\n\n';
     md += '> ⚠️ **These changes require code updates**\n\n';
 
-    // --- Removed Tokens ---
-    if (removedTokens.length > 0) {
-      md += `### ➖ Removed Tokens (${removedTokens.length})\n\n`;
-      md += '| Token | Previous Value | Category |\n';
-      md += '|-------|----------------|----------|\n';
+    // --- Removed Tokens (Consumption Layer Only) ---
+    if (breakingRemovedTokens.length > 0) {
+      md += `### ➖ Removed Tokens (${breakingRemovedTokens.length})\n\n`;
+      md += '| Token | Previous Value | Layer | Category |\n';
+      md += '|-------|----------------|-------|----------|\n';
 
-      for (const token of removedTokens.slice(0, maxTokens)) {
+      for (const token of breakingRemovedTokens.slice(0, maxTokens)) {
         const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
-        md += `| \`${truncate(token.displayName, 35)}\` | \`${truncate(token.value, 20)}\` | ${cat.icon} |\n`;
+        const layerConfig = LAYER_CONFIG[token.layer] || LAYER_CONFIG.semantic;
+        md += `| \`${truncate(token.displayName, 32)}\` | \`${truncate(token.value, 18)}\` | ${layerConfig.icon} | ${cat.icon} |\n`;
       }
 
-      if (removedTokens.length > maxTokens) {
-        md += `| ... | *${removedTokens.length - maxTokens} more* | |\n`;
+      if (breakingRemovedTokens.length > maxTokens) {
+        md += `| ... | *${breakingRemovedTokens.length - maxTokens} more* | | |\n`;
       }
       md += '\n';
     }
@@ -519,25 +532,48 @@ function generateBreakingChangesSection(diff, options = {}) {
     md += '---\n\n';
   }
 
-  // === Non-Breaking Renames (Primitive Layer) - Collapsible ===
-  if (totalNonBreakingRenames > 0) {
+  // === Internal Changes (Primitive Layer) - Collapsible ===
+  if (hasInternalChanges) {
+    const totalInternalChanges = internalRemovedTokens.length + totalNonBreakingRenames;
     md += '<details>\n';
-    md += `<summary>🔄 Internal Renames (${totalNonBreakingRenames} - no consumer impact)</summary>\n\n`;
-    md += '> ℹ️ Primitive layer renames, no code changes needed\n\n';
+    md += `<summary>🔧 Internal Changes (${totalInternalChanges} - no consumer impact)</summary>\n\n`;
+    md += '> ℹ️ Primitive layer changes, no code changes needed\n\n';
 
-    md += '| Old Name | → | New Name | Category |\n';
-    md += '|----------|:---:|----------|----------|\n';
+    // Internal Removed Tokens
+    if (internalRemovedTokens.length > 0) {
+      md += `**Removed (${internalRemovedTokens.length}):**\n\n`;
+      md += '| Token | Previous Value | Category |\n';
+      md += '|-------|----------------|----------|\n';
 
-    for (const rename of nonBreakingVariableRenames.slice(0, maxTokens)) {
-      const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
-      md += `| \`${truncate(rename.oldName, 30)}\` | → | \`${truncate(rename.newName, 30)}\` | ${catConfig.icon} |\n`;
+      for (const token of internalRemovedTokens.slice(0, maxTokens)) {
+        const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
+        md += `| \`${truncate(token.displayName, 35)}\` | \`${truncate(token.value, 20)}\` | ${cat.icon} |\n`;
+      }
+
+      if (internalRemovedTokens.length > maxTokens) {
+        md += `| ... | *${internalRemovedTokens.length - maxTokens} more* | |\n`;
+      }
+      md += '\n';
     }
 
-    if (nonBreakingVariableRenames.length > maxTokens) {
-      md += `| ... | | *${nonBreakingVariableRenames.length - maxTokens} more* | |\n`;
+    // Internal Renamed Tokens
+    if (totalNonBreakingRenames > 0) {
+      md += `**Renamed (${totalNonBreakingRenames}):**\n\n`;
+      md += '| Old Name | → | New Name | Category |\n';
+      md += '|----------|:---:|----------|----------|\n';
+
+      for (const rename of nonBreakingVariableRenames.slice(0, maxTokens)) {
+        const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
+        md += `| \`${truncate(rename.oldName, 30)}\` | → | \`${truncate(rename.newName, 30)}\` | ${catConfig.icon} |\n`;
+      }
+
+      if (nonBreakingVariableRenames.length > maxTokens) {
+        md += `| ... | | *${nonBreakingVariableRenames.length - maxTokens} more* | |\n`;
+      }
+      md += '\n';
     }
 
-    md += '\n</details>\n\n';
+    md += '</details>\n\n';
   }
 
   return md;

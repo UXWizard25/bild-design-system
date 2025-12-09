@@ -1247,15 +1247,19 @@ function compareDistBuilds(oldDir, newDir) {
 
 /**
  * Calculate overall impact level
- * Breaking = Removed tokens OR Breaking renames (consumption layer)
+ * Breaking = Removed OR Renamed in consumption layer (semantic + component)
+ * Primitive layer removed/renamed = Safe (internal cleanup)
  */
 function calculateImpactLevel(results) {
   // Check for breaking renames (consumption layer renames)
   const hasBreakingRenames = (results.renames || []).some(r => r.isBreaking);
   const hasBreakingStyleRenames = (results.styleRenames || []).some(r => r.isBreaking);
 
-  if (results.summary.tokensRemoved > 0 || results.summary.filesRemoved > 0 ||
-      hasBreakingRenames || hasBreakingStyleRenames) {
+  // Check for breaking removed tokens (consumption layer only)
+  const removedTokens = results.byUniqueToken?.removed || [];
+  const hasBreakingRemoved = removedTokens.some(t => CONSUMPTION_LAYERS.includes(t.layer));
+
+  if (hasBreakingRemoved || hasBreakingRenames || hasBreakingStyleRenames) {
     return 'breaking';
   }
   if (results.summary.tokensModified > 0) {
