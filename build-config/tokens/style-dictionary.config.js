@@ -6,7 +6,7 @@
  */
 
 const path = require('path');
-const packageJson = require('../../packages/tokens/package.json');
+const tokensPackageJson = require('../../packages/tokens/package.json');
 const rootPackageJson = require('../../package.json');
 
 // ============================================================================
@@ -31,7 +31,7 @@ function getStyleDictionaryVersion() {
  * @returns {String} - Documentation URL
  */
 function getDocumentationUrl(platform) {
-  const repoUrl = packageJson.repository?.url?.replace(/^git\+/, '').replace(/\.git$/, '')
+  const repoUrl = tokensPackageJson.repository?.url?.replace(/^git\+/, '').replace(/\.git$/, '')
     || 'https://github.com/user/design-system-tokens';
   const baseDocsUrl = `${repoUrl}/blob/main/packages/tokens`;
 
@@ -58,7 +58,7 @@ function getDocumentationUrl(platform) {
  * @returns {String} - Formatted header string
  */
 function generateFileHeader({ fileName, commentStyle, platform, brand, context }) {
-  const version = packageJson.version;
+  const version = tokensPackageJson.version;
   const sdVersion = getStyleDictionaryVersion();
   const docsUrl = getDocumentationUrl(platform);
   const currentYear = new Date().getFullYear();
@@ -90,16 +90,16 @@ function generateFileHeader({ fileName, commentStyle, platform, brand, context }
     `Documentation: ${docsUrl}`
   );
 
-  // Format based on comment style
+  // Format based on comment style (use trimEnd to avoid trailing whitespace on empty lines)
   switch (commentStyle) {
-    case 'block': // CSS, JS
-      return '/**\n * ' + lines.join('\n * ') + '\n */\n\n';
+    case 'block': // CSS, JS, Kotlin
+      return '/**\n' + lines.map(line => ` * ${line}`.trimEnd()).join('\n') + '\n */\n';
 
-    case 'line': // SCSS, Swift, Kotlin
-      return '//\n// ' + lines.join('\n// ') + '\n//\n\n';
+    case 'line': // Swift
+      return lines.map(line => `// ${line}`.trimEnd()).join('\n') + '\n';
 
     default:
-      return '/**\n * ' + lines.join('\n * ') + '\n */\n\n';
+      return '/**\n' + lines.map(line => ` * ${line}`.trimEnd()).join('\n') + '\n */\n';
   }
 }
 
@@ -4247,7 +4247,6 @@ object ${className} {
  */
 const composeEffectsFormat = ({ dictionary, options, file }) => {
   const { colorMode } = options;
-  const version = packageJson.version;
   const isLight = colorMode === 'light';
   const className = isLight ? 'EffectsLight' : 'EffectsDark';
 
@@ -4338,7 +4337,6 @@ object ${className} : DesignEffectsScheme {
  */
 const composeComponentEffectsFormat = ({ dictionary, options, file }) => {
   const { colorMode, componentName, brand } = options;
-  const version = packageJson.version;
   const isLight = colorMode === 'light';
   const className = `${componentName}Effects${isLight ? 'Light' : 'Dark'}`;
 
