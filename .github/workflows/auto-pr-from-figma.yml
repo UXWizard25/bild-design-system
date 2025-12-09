@@ -74,8 +74,11 @@ jobs:
 
           # Hole Source von main Branch
           git fetch origin main
-          if git show origin/main:packages/tokens/src/bild-design-system-raw-data.json > packages/tokens/src/bild-design-system-raw-data.json 2>/dev/null; then
+          if git show origin/main:packages/tokens/src/bild-design-system-raw-data.json > /tmp/old-source.json 2>/dev/null; then
             echo "✅ Main branch source loaded"
+
+            # Kopiere main source für Build
+            cp /tmp/old-source.json packages/tokens/src/bild-design-system-raw-data.json
 
             # Build mit main Source
             npm run build:tokens 2>&1 || echo "Baseline build completed"
@@ -84,9 +87,11 @@ jobs:
             if [ -d "packages/tokens/dist" ]; then
               mv packages/tokens/dist/ dist-old/
               echo "baseline_available=true" >> $GITHUB_OUTPUT
+              echo "source_available=true" >> $GITHUB_OUTPUT
             else
               mkdir -p dist-old
               echo "baseline_available=false" >> $GITHUB_OUTPUT
+              echo "source_available=false" >> $GITHUB_OUTPUT
             fi
 
             # Aufräumen
@@ -95,6 +100,7 @@ jobs:
             echo "⚠️ No main branch source found (first PR?)"
             mkdir -p dist-old
             echo "baseline_available=false" >> $GITHUB_OUTPUT
+            echo "source_available=false" >> $GITHUB_OUTPUT
           fi
 
           # Stelle neue Source und Builds wieder her
@@ -122,10 +128,20 @@ jobs:
             echo ""
           fi
 
-          node scripts/tokens/compare-builds.js \
-            --old dist-old/ \
-            --new packages/tokens/dist/ \
-            --output dist-diff.json
+          # Führe Vergleich mit Source-Dateien für Rename-Erkennung durch
+          if [ "${{ steps.baseline.outputs.source_available }}" == "true" ]; then
+            node scripts/tokens/compare-builds.js \
+              --old dist-old/ \
+              --new packages/tokens/dist/ \
+              --source-old /tmp/old-source.json \
+              --source-new packages/tokens/src/bild-design-system-raw-data.json \
+              --output dist-diff.json
+          else
+            node scripts/tokens/compare-builds.js \
+              --old dist-old/ \
+              --new packages/tokens/dist/ \
+              --output dist-diff.json
+          fi
 
           # Extrahiere Summary für Output
           if [ -f "dist-diff.json" ]; then
@@ -180,6 +196,16 @@ jobs:
         run: |
           echo "📝 Generating platform-specific release notes..."
 
+          # Debug: Zeige diff.json Summary
+          if [ -f "dist-diff.json" ]; then
+            echo "📊 Diff Summary from JSON:"
+            cat dist-diff.json | jq -r '.summary | "  Added: \(.tokensAdded // 0), Modified: \(.tokensModified // 0), Removed: \(.tokensRemoved // 0), Impact: \(.impactLevel // "unknown")"'
+            echo "  Renames: $(cat dist-diff.json | jq -r '.renames | length // 0')"
+            echo "  Style Renames: $(cat dist-diff.json | jq -r '.styleRenames | length // 0')"
+          else
+            echo "⚠️ dist-diff.json not found!"
+          fi
+
           # Generate release notes mit Dist-Diff-Datei
           node scripts/tokens/release-notes.js \
             --diff-file "dist-diff.json" \
@@ -190,6 +216,9 @@ jobs:
             --total-builds "${{ steps.build.outputs.total_builds }}" \
             --run-id "${{ github.run_id }}" \
             --no-baseline "${{ steps.baseline.outputs.baseline_available == 'false' }}" > release-notes.md
+
+          # Debug: Zeige Release Notes Länge
+          echo "📝 Release notes generated: $(wc -l < release-notes.md) lines, $(wc -c < release-notes.md) bytes"
 
           echo "✅ Release notes generated successfully"
 

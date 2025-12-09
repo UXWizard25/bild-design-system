@@ -574,6 +574,11 @@ function generateBreakingChangesSection(diff, options = {}) {
   const allRemovedTokens = diff?.byUniqueToken?.removed || [];
   const breakingRemovedTokens = allRemovedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer));
 
+  // Collect removed combined tokens (Typography + Effects styles)
+  const removedTypography = diff?.styleChanges?.typography?.removed || [];
+  const removedEffects = diff?.styleChanges?.effects?.removed || [];
+  const totalRemovedStyles = removedTypography.length + removedEffects.length;
+
   // Collect breaking renames - only consumption layer
   const variableRenames = diff?.renames || [];
   const styleRenames = diff?.styleRenames || [];
@@ -581,7 +586,7 @@ function generateBreakingChangesSection(diff, options = {}) {
   const breakingStyleRenames = styleRenames.filter(r => CONSUMPTION_LAYERS.includes(r.layer));
 
   const totalBreakingRenames = breakingVariableRenames.length + breakingStyleRenames.length;
-  const hasBreakingChanges = breakingRemovedTokens.length > 0 || totalBreakingRenames > 0;
+  const hasBreakingChanges = breakingRemovedTokens.length > 0 || totalRemovedStyles > 0 || totalBreakingRenames > 0;
 
   if (!hasBreakingChanges) return '';
 
@@ -606,6 +611,26 @@ function generateBreakingChangesSection(diff, options = {}) {
 
       if (breakingRemovedTokens.length > maxTokens) {
         md += `| ... | *${breakingRemovedTokens.length - maxTokens} more* | | |\n`;
+      }
+      md += '\n';
+    }
+
+    // --- Removed Combined Tokens (Typography + Effects Styles) ---
+    if (totalRemovedStyles > 0) {
+      md += `### 🗑️ Removed Styles (${totalRemovedStyles})\n\n`;
+      md += '> Combined tokens (Typography/Effects) that were removed\n\n';
+      md += '| Style Name | Type |\n';
+      md += '|------------|------|\n';
+
+      for (const style of removedTypography.slice(0, maxTokens)) {
+        md += `| \`${truncate(style.name, 40)}\` | 📝 Typography |\n`;
+      }
+      for (const style of removedEffects.slice(0, maxTokens)) {
+        md += `| \`${truncate(style.name, 40)}\` | ✨ Effect |\n`;
+      }
+
+      if (totalRemovedStyles > maxTokens) {
+        md += `| ... | *${totalRemovedStyles - maxTokens} more* |\n`;
       }
       md += '\n';
     }
