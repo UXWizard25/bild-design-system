@@ -14,6 +14,12 @@ permissions:
   packages: write
   id-token: write
 
+# Prevent race conditions: only one publish workflow runs at a time
+# If a second merge happens while publishing, it waits until the first completes
+concurrency:
+  group: publish-main
+  cancel-in-progress: false
+
 jobs:
   publish:
     name: Build & Publish Package
