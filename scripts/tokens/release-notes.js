@@ -57,6 +57,149 @@ const CONSUMPTION_LAYERS = ['semantic', 'component'];
 const DIST_DIR = path.join(__dirname, '../../packages/tokens/dist');
 
 // =============================================================================
+// VISUAL DIFF UTILITIES
+// =============================================================================
+
+/**
+ * Parse hex color to RGB
+ */
+function hexToRgb(hex) {
+  if (!hex || typeof hex !== 'string') return null;
+  hex = hex.replace('#', '');
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+  if (hex.length !== 6) return null;
+  const num = parseInt(hex, 16);
+  return {
+    r: (num >> 16) & 255,
+    g: (num >> 8) & 255,
+    b: num & 255
+  };
+}
+
+/**
+ * Convert RGB to LAB color space (for Delta E calculation)
+ */
+function rgbToLab(rgb) {
+  if (!rgb) return null;
+
+  // RGB to XYZ
+  let r = rgb.r / 255, g = rgb.g / 255, b = rgb.b / 255;
+  r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+  g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+  b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+  const x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+  const y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+  const z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+
+  // XYZ to LAB
+  const fx = x > 0.008856 ? Math.pow(x, 1/3) : (7.787 * x) + 16/116;
+  const fy = y > 0.008856 ? Math.pow(y, 1/3) : (7.787 * y) + 16/116;
+  const fz = z > 0.008856 ? Math.pow(z, 1/3) : (7.787 * z) + 16/116;
+
+  return {
+    L: (116 * fy) - 16,
+    a: 500 * (fx - fy),
+    b: 200 * (fy - fz)
+  };
+}
+
+/**
+ * Calculate Delta E (CIE76) between two colors
+ * Returns: { deltaE, perception }
+ * Perception levels:
+ * - < 1: Not perceptible
+ * - 1-2: Perceptible through close observation
+ * - 2-10: Perceptible at a glance
+ * - 11-49: Colors are more similar than opposite
+ * - 100: Colors are exact opposite
+ */
+function calculateDeltaE(color1, color2) {
+  const rgb1 = hexToRgb(color1);
+  const rgb2 = hexToRgb(color2);
+  if (!rgb1 || !rgb2) return null;
+
+  const lab1 = rgbToLab(rgb1);
+  const lab2 = rgbToLab(rgb2);
+  if (!lab1 || !lab2) return null;
+
+  const deltaE = Math.sqrt(
+    Math.pow(lab2.L - lab1.L, 2) +
+    Math.pow(lab2.a - lab1.a, 2) +
+    Math.pow(lab2.b - lab1.b, 2)
+  );
+
+  let perception, icon;
+  if (deltaE < 1) {
+    perception = 'nicht sichtbar';
+    icon = '⚪';
+  } else if (deltaE < 2) {
+    perception = 'kaum sichtbar';
+    icon = '🟢';
+  } else if (deltaE < 5) {
+    perception = 'subtil';
+    icon = '🟡';
+  } else if (deltaE < 10) {
+    perception = 'deutlich';
+    icon = '🟠';
+  } else {
+    perception = 'stark';
+    icon = '🔴';
+  }
+
+  return { deltaE: Math.round(deltaE * 10) / 10, perception, icon };
+}
+
+/**
+ * Calculate percentage change for dimensions
+ */
+function calculateDimensionDiff(oldValue, newValue) {
+  // Extract numeric values
+  const oldNum = parseFloat(oldValue);
+  const newNum = parseFloat(newValue);
+
+  if (isNaN(oldNum) || isNaN(newNum) || oldNum === 0) return null;
+
+  const percentChange = ((newNum - oldNum) / oldNum) * 100;
+  const rounded = Math.round(percentChange);
+
+  let icon;
+  const absChange = Math.abs(rounded);
+  if (absChange === 0) {
+    icon = '⚪';
+  } else if (absChange <= 10) {
+    icon = '🟢';
+  } else if (absChange <= 25) {
+    icon = '🟡';
+  } else if (absChange <= 50) {
+    icon = '🟠';
+  } else {
+    icon = '🔴';
+  }
+
+  const sign = rounded > 0 ? '+' : '';
+  return { percent: rounded, display: `${sign}${rounded}%`, icon };
+}
+
+/**
+ * Detect if a value is a color
+ */
+function isColorValue(value) {
+  if (!value || typeof value !== 'string') return false;
+  return value.startsWith('#') || value.startsWith('rgb');
+}
+
+/**
+ * Detect if a value is a dimension (px, rem, em, etc.)
+ */
+function isDimensionValue(value) {
+  if (!value || typeof value !== 'string') return false;
+  return /^-?\d+(\.\d+)?(px|rem|em|%|pt|vw|vh)?$/i.test(value.trim());
+}
+
+// =============================================================================
 // UTILITIES
 // =============================================================================
 
@@ -419,34 +562,27 @@ function generateUnifiedTokenChanges(diff, options = {}) {
 // =============================================================================
 
 /**
- * Generate breaking changes section - combines removed AND renamed tokens
- * This is the highest-priority section for code migrations
+ * Generate breaking changes section - shows ONLY breaking changes
  * Breaking = Removed OR Renamed in consumption layer (semantic + component)
- * Primitive layer removed/renamed tokens are shown separately as "internal" (safe)
+ * Internal (primitive) changes are shown in Safe Changes section
  */
 function generateBreakingChangesSection(diff, options = {}) {
   const { maxTokens = 15 } = options;
 
-  // Collect removed tokens from byUniqueToken and separate by layer
+  // Collect removed tokens - only consumption layer
   const allRemovedTokens = diff?.byUniqueToken?.removed || [];
   const breakingRemovedTokens = allRemovedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer));
-  const internalRemovedTokens = allRemovedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
 
-  // Collect all renames
+  // Collect breaking renames only
   const variableRenames = diff?.renames || [];
   const styleRenames = diff?.styleRenames || [];
-
-  // Separate breaking from non-breaking renames
   const breakingVariableRenames = variableRenames.filter(r => r.isBreaking);
-  const nonBreakingVariableRenames = variableRenames.filter(r => !r.isBreaking);
   const breakingStyleRenames = styleRenames.filter(r => r.isBreaking);
 
   const totalBreakingRenames = breakingVariableRenames.length + breakingStyleRenames.length;
-  const totalNonBreakingRenames = nonBreakingVariableRenames.length;
   const hasBreakingChanges = breakingRemovedTokens.length > 0 || totalBreakingRenames > 0;
-  const hasInternalChanges = internalRemovedTokens.length > 0 || totalNonBreakingRenames > 0;
 
-  if (!hasBreakingChanges && !hasInternalChanges) return '';
+  if (!hasBreakingChanges) return '';
 
   let md = '';
 
@@ -532,43 +668,290 @@ function generateBreakingChangesSection(diff, options = {}) {
     md += '---\n\n';
   }
 
-  // === Internal Changes (Primitive Layer) - Collapsible ===
-  if (hasInternalChanges) {
-    const totalInternalChanges = internalRemovedTokens.length + totalNonBreakingRenames;
-    md += '<details>\n';
-    md += `<summary>🔧 Internal Changes (${totalInternalChanges} - no consumer impact)</summary>\n\n`;
-    md += '> ℹ️ Primitive layer changes, no code changes needed\n\n';
+  return md;
+}
 
-    // Internal Removed Tokens
-    if (internalRemovedTokens.length > 0) {
-      md += `**Removed (${internalRemovedTokens.length}):**\n\n`;
-      md += '| Token | Previous Value | Category |\n';
-      md += '|-------|----------------|----------|\n';
+// =============================================================================
+// LAYER 3: VISUAL CHANGES (Modified Tokens with Diff Metrics)
+// =============================================================================
 
-      for (const token of internalRemovedTokens.slice(0, maxTokens)) {
-        const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
-        md += `| \`${truncate(token.displayName, 35)}\` | \`${truncate(token.value, 20)}\` | ${cat.icon} |\n`;
+/**
+ * Generate visual changes section - shows modified tokens grouped by category
+ * with visual diff calculations (Delta E for colors, % for dimensions)
+ */
+function generateVisualChangesSection(diff, options = {}) {
+  const { maxTokens = 12 } = options;
+
+  // Get modified tokens
+  const modifiedTokens = diff?.byUniqueToken?.modified || [];
+  if (modifiedTokens.length === 0) return '';
+
+  // Group by category
+  const byCategory = {
+    colors: [],
+    typography: [],
+    spacing: [],
+    sizing: [],
+    effects: [],
+    other: []
+  };
+
+  for (const token of modifiedTokens) {
+    const category = categorizeTokenForDisplay(token.displayName, token.oldValue);
+    if (byCategory[category]) {
+      byCategory[category].push(token);
+    } else {
+      byCategory.other.push(token);
+    }
+  }
+
+  let md = '## 🟡 Visual Changes\n\n';
+  md += '> Modified tokens with visual impact analysis\n\n';
+
+  // Colors with Delta E
+  if (byCategory.colors.length > 0) {
+    md += `### 🎨 Colors (${byCategory.colors.length})\n\n`;
+    md += '| Token | Change | Visual Diff |\n';
+    md += '|-------|--------|-------------|\n';
+
+    for (const token of byCategory.colors.slice(0, maxTokens)) {
+      const deltaE = calculateDeltaE(token.oldValue, token.newValue);
+      let diffInfo = '';
+      if (deltaE) {
+        diffInfo = `${deltaE.icon} ΔE=${deltaE.deltaE} (${deltaE.perception})`;
       }
+      md += `| \`${truncate(token.displayName, 28)}\` | \`${truncate(token.oldValue, 9)}\` → \`${truncate(token.newValue, 9)}\` | ${diffInfo} |\n`;
+    }
 
-      if (internalRemovedTokens.length > maxTokens) {
-        md += `| ... | *${internalRemovedTokens.length - maxTokens} more* | |\n`;
+    if (byCategory.colors.length > maxTokens) {
+      md += `| ... | *${byCategory.colors.length - maxTokens} more* | |\n`;
+    }
+    md += '\n';
+  }
+
+  // Typography (combined token changes)
+  const typographyTokens = byCategory.typography;
+  const styleChanges = diff?.styleChanges?.typography?.modified || [];
+  if (typographyTokens.length > 0 || styleChanges.length > 0) {
+    const totalTypo = typographyTokens.length + styleChanges.length;
+    md += `### 📝 Typography (${totalTypo})\n\n`;
+
+    // Style changes (combined tokens with property-level diff)
+    if (styleChanges.length > 0) {
+      md += '| Style | Property | Change | Diff |\n';
+      md += '|-------|----------|--------|------|\n';
+
+      for (const style of styleChanges.slice(0, maxTokens)) {
+        const props = style.changedProperties || [];
+        for (const prop of props.slice(0, 3)) {
+          const dimDiff = calculateDimensionDiff(String(prop.oldValue), String(prop.newValue));
+          const diffDisplay = dimDiff ? `${dimDiff.icon} ${dimDiff.display}` : '';
+          md += `| \`${truncate(style.name, 18)}\` | ${prop.property} | \`${truncate(String(prop.oldValue), 8)}\` → \`${truncate(String(prop.newValue), 8)}\` | ${diffDisplay} |\n`;
+        }
       }
       md += '\n';
     }
 
-    // Internal Renamed Tokens
-    if (totalNonBreakingRenames > 0) {
-      md += `**Renamed (${totalNonBreakingRenames}):**\n\n`;
-      md += '| Old Name | → | New Name | Category |\n';
-      md += '|----------|:---:|----------|----------|\n';
+    // Simple typography tokens
+    if (typographyTokens.length > 0) {
+      md += '| Token | Change | Diff |\n';
+      md += '|-------|--------|------|\n';
 
-      for (const rename of nonBreakingVariableRenames.slice(0, maxTokens)) {
-        const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
-        md += `| \`${truncate(rename.oldName, 30)}\` | → | \`${truncate(rename.newName, 30)}\` | ${catConfig.icon} |\n`;
+      for (const token of typographyTokens.slice(0, maxTokens)) {
+        const dimDiff = calculateDimensionDiff(token.oldValue, token.newValue);
+        const diffDisplay = dimDiff ? `${dimDiff.icon} ${dimDiff.display}` : '';
+        md += `| \`${truncate(token.displayName, 30)}\` | \`${truncate(token.oldValue, 10)}\` → \`${truncate(token.newValue, 10)}\` | ${diffDisplay} |\n`;
       }
 
-      if (nonBreakingVariableRenames.length > maxTokens) {
-        md += `| ... | | *${nonBreakingVariableRenames.length - maxTokens} more* | |\n`;
+      if (typographyTokens.length > maxTokens) {
+        md += `| ... | *${typographyTokens.length - maxTokens} more* | |\n`;
+      }
+      md += '\n';
+    }
+  }
+
+  // Spacing with percentage diff
+  if (byCategory.spacing.length > 0) {
+    md += `### 📏 Spacing (${byCategory.spacing.length})\n\n`;
+    md += '| Token | Change | Diff |\n';
+    md += '|-------|--------|------|\n';
+
+    for (const token of byCategory.spacing.slice(0, maxTokens)) {
+      const dimDiff = calculateDimensionDiff(token.oldValue, token.newValue);
+      const diffDisplay = dimDiff ? `${dimDiff.icon} ${dimDiff.display}` : '';
+      md += `| \`${truncate(token.displayName, 32)}\` | \`${token.oldValue}\` → \`${token.newValue}\` | ${diffDisplay} |\n`;
+    }
+
+    if (byCategory.spacing.length > maxTokens) {
+      md += `| ... | *${byCategory.spacing.length - maxTokens} more* | |\n`;
+    }
+    md += '\n';
+  }
+
+  // Sizing with percentage diff
+  if (byCategory.sizing.length > 0) {
+    md += `### 📐 Sizing (${byCategory.sizing.length})\n\n`;
+    md += '| Token | Change | Diff |\n';
+    md += '|-------|--------|------|\n';
+
+    for (const token of byCategory.sizing.slice(0, maxTokens)) {
+      const dimDiff = calculateDimensionDiff(token.oldValue, token.newValue);
+      const diffDisplay = dimDiff ? `${dimDiff.icon} ${dimDiff.display}` : '';
+      md += `| \`${truncate(token.displayName, 32)}\` | \`${token.oldValue}\` → \`${token.newValue}\` | ${diffDisplay} |\n`;
+    }
+
+    if (byCategory.sizing.length > maxTokens) {
+      md += `| ... | *${byCategory.sizing.length - maxTokens} more* | |\n`;
+    }
+    md += '\n';
+  }
+
+  // Effects
+  const effectChanges = diff?.styleChanges?.effects?.modified || [];
+  if (byCategory.effects.length > 0 || effectChanges.length > 0) {
+    const totalEffects = byCategory.effects.length + effectChanges.length;
+    md += `### ✨ Effects (${totalEffects})\n\n`;
+
+    if (effectChanges.length > 0) {
+      md += '| Style | Changed Properties |\n';
+      md += '|-------|--------------------|\n';
+
+      for (const style of effectChanges.slice(0, maxTokens)) {
+        const props = (style.changedProperties || []).map(p => p.property).join(', ');
+        md += `| \`${truncate(style.name, 25)}\` | ${truncate(props, 35)} |\n`;
+      }
+      md += '\n';
+    }
+
+    if (byCategory.effects.length > 0) {
+      md += '| Token | Change |\n';
+      md += '|-------|--------|\n';
+
+      for (const token of byCategory.effects.slice(0, maxTokens)) {
+        md += `| \`${truncate(token.displayName, 32)}\` | \`${truncate(token.oldValue, 20)}\` → \`${truncate(token.newValue, 20)}\` |\n`;
+      }
+      md += '\n';
+    }
+  }
+
+  // Other
+  if (byCategory.other.length > 0) {
+    md += `<details>\n<summary>📦 Other (${byCategory.other.length})</summary>\n\n`;
+    md += '| Token | Change |\n';
+    md += '|-------|--------|\n';
+
+    for (const token of byCategory.other.slice(0, maxTokens)) {
+      md += `| \`${truncate(token.displayName, 35)}\` | \`${truncate(token.oldValue, 15)}\` → \`${truncate(token.newValue, 15)}\` |\n`;
+    }
+    md += '\n</details>\n\n';
+  }
+
+  md += '---\n\n';
+  return md;
+}
+
+// =============================================================================
+// LAYER 4: SAFE CHANGES (Added + Internal)
+// =============================================================================
+
+/**
+ * Generate safe changes section - combines added tokens and internal (primitive) changes
+ */
+function generateSafeChangesSection(diff, options = {}) {
+  const { maxTokens = 10 } = options;
+
+  // Get added tokens
+  const addedTokens = diff?.byUniqueToken?.added || [];
+
+  // Get internal changes (from breaking changes section data)
+  const allRemovedTokens = diff?.byUniqueToken?.removed || [];
+  const internalRemovedTokens = allRemovedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
+
+  const variableRenames = diff?.renames || [];
+  const nonBreakingRenames = variableRenames.filter(r => !r.isBreaking);
+
+  const hasAdded = addedTokens.length > 0;
+  const hasInternal = internalRemovedTokens.length > 0 || nonBreakingRenames.length > 0;
+
+  if (!hasAdded && !hasInternal) return '';
+
+  let md = '## 🟢 Safe Changes\n\n';
+
+  // Added Tokens grouped by category
+  if (hasAdded) {
+    md += `### ➕ Added Tokens (${addedTokens.length})\n\n`;
+
+    // Group by category
+    const byCategory = {
+      colors: [],
+      typography: [],
+      spacing: [],
+      sizing: [],
+      effects: [],
+      other: []
+    };
+
+    for (const token of addedTokens) {
+      const category = categorizeTokenForDisplay(token.displayName, token.value);
+      if (byCategory[category]) {
+        byCategory[category].push(token);
+      } else {
+        byCategory.other.push(token);
+      }
+    }
+
+    for (const [category, tokens] of Object.entries(byCategory)) {
+      if (tokens.length === 0) continue;
+
+      const config = CATEGORY_CONFIG[category] || CATEGORY_CONFIG.other;
+      md += `<details>\n<summary>${config.icon} ${config.label} (${tokens.length})</summary>\n\n`;
+      md += '| Token | Value |\n';
+      md += '|-------|-------|\n';
+
+      for (const token of tokens.slice(0, maxTokens)) {
+        md += `| \`${truncate(token.displayName, 35)}\` | \`${truncate(token.value, 25)}\` |\n`;
+      }
+
+      if (tokens.length > maxTokens) {
+        md += `| ... | *${tokens.length - maxTokens} more* |\n`;
+      }
+
+      md += '\n</details>\n\n';
+    }
+  }
+
+  // Internal Changes (Primitive Layer)
+  if (hasInternal) {
+    const totalInternal = internalRemovedTokens.length + nonBreakingRenames.length;
+    md += `### 🔧 Internal Changes (${totalInternal})\n\n`;
+    md += '<details>\n<summary>Primitive layer cleanup (no consumer impact)</summary>\n\n';
+
+    if (internalRemovedTokens.length > 0) {
+      md += `**Removed (${internalRemovedTokens.length}):**\n\n`;
+      md += '| Token | Previous Value |\n';
+      md += '|-------|----------------|\n';
+
+      for (const token of internalRemovedTokens.slice(0, maxTokens)) {
+        md += `| \`${truncate(token.displayName, 35)}\` | \`${truncate(token.value, 25)}\` |\n`;
+      }
+
+      if (internalRemovedTokens.length > maxTokens) {
+        md += `| ... | *${internalRemovedTokens.length - maxTokens} more* |\n`;
+      }
+      md += '\n';
+    }
+
+    if (nonBreakingRenames.length > 0) {
+      md += `**Renamed (${nonBreakingRenames.length}):**\n\n`;
+      md += '| Old Name | → | New Name |\n';
+      md += '|----------|:---:|----------|\n';
+
+      for (const rename of nonBreakingRenames.slice(0, maxTokens)) {
+        md += `| \`${truncate(rename.oldName, 28)}\` | → | \`${truncate(rename.newName, 28)}\` |\n`;
+      }
+
+      if (nonBreakingRenames.length > maxTokens) {
+        md += `| ... | | *${nonBreakingRenames.length - maxTokens} more* |\n`;
       }
       md += '\n';
     }
@@ -576,6 +959,7 @@ function generateBreakingChangesSection(diff, options = {}) {
     md += '</details>\n\n';
   }
 
+  md += '---\n\n';
   return md;
 }
 
@@ -1238,22 +1622,19 @@ function generatePRComment(diff, options = {}) {
   // 2. Breaking Changes (Removed + Renamed in consumption layer - highest priority)
   md += generateBreakingChangesSection(diff, { maxTokens: 10 });
 
-  // 3. Combined Token Changes (Typography/Effects property changes)
-  md += generateStyleChangesSection(diff, { maxTokens: 8 });
+  // 3. Visual Changes (Modified tokens with diff metrics - colors, dimensions)
+  md += generateVisualChangesSection(diff, { maxTokens: 10 });
 
-  // 4. Categorized Changes (consumption layer: semantic + component)
-  md += generateCategorizedChangesSection(diff, { maxTokensPerCategory: 8 });
+  // 4. Safe Changes (Added + Internal/Primitive changes)
+  md += generateSafeChangesSection(diff, { maxTokens: 10 });
 
   // 5. Affected Components
   md += generateAffectedComponentsSection(diff, { maxComponents: 8 });
 
-  // 6. Source Changes (primitive layer - collapsible, for advanced users)
-  md += generateSourceChangesSection(diff, { maxTokens: 8 });
-
-  // 7. Dynamic Review Checklist
+  // 6. Dynamic Review Checklist
   md += generateDynamicChecklist(diff);
 
-  // 8. Technical Details (collapsible)
+  // 7. Technical Details (collapsible)
   md += generateTechnicalDetails(diff, options);
 
   // Footer
