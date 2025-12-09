@@ -784,6 +784,7 @@ const KNOWN_BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 
 /**
  * Generate a color matrix table for a single token
+ * Shows actual values with change arrows, compact delta summary below
  * Rows: modes (light/dark), Columns: brands
  */
 function generateColorMatrix(token) {
@@ -809,15 +810,23 @@ function generateColorMatrix(token) {
   // If we only have modes (no brand differentiation)
   if (brandList.length === 0 && modeList.length > 1) {
     let md = `**\`${token.displayName}\`**\n\n`;
-    md += '| Mode | Change | ΔE |\n';
-    md += '|------|--------|----|\n';
+    md += '| Mode | Change |\n';
+    md += '|------|--------|\n';
+
+    const deltaInfos = [];
     for (const mode of modeList) {
       const ctx = contexts[mode] || contexts[`/${mode}`];
       if (ctx) {
         const deltaE = calculateDeltaE(ctx.old, ctx.new);
-        const diffInfo = deltaE ? `${deltaE.icon} ${deltaE.deltaE}` : '–';
-        md += `| ${mode} | \`${ctx.old}\` → \`${ctx.new}\` | ${diffInfo} |\n`;
+        if (deltaE) deltaInfos.push({ mode, ...deltaE });
+        md += `| ${mode} | \`${ctx.old}\` → \`${ctx.new}\` |\n`;
       }
+    }
+
+    // Compact delta summary
+    if (deltaInfos.length > 0) {
+      const deltaStr = deltaInfos.map(d => `${d.mode}: ${d.icon} ΔE ${d.deltaE}`).join(' · ');
+      md += `\n> ${deltaStr}\n`;
     }
     return md + '\n';
   }
@@ -828,17 +837,33 @@ function generateColorMatrix(token) {
     md += '| | ' + brandList.map(b => b.charAt(0).toUpperCase() + b.slice(1)).join(' | ') + ' |\n';
     md += '|---' + brandList.map(() => '|---').join('') + '|\n';
 
+    const deltaInfos = [];
+
     for (const mode of modeList) {
-      const modeLabel = mode === 'light' ? '🌞 Light' : '🌙 Dark';
+      const modeLabel = mode === 'light' ? '☀️' : '🌙';
       const cells = brandList.map(brand => {
         const key = `${brand}/${mode}`;
         const ctx = contexts[key];
         if (!ctx) return '–';
+
         const deltaE = calculateDeltaE(ctx.old, ctx.new);
-        return deltaE ? `${deltaE.icon} ΔE=${deltaE.deltaE}` : '–';
+        if (deltaE) {
+          deltaInfos.push({ brand, mode, ...deltaE });
+        }
+        // Show values with icon prefix
+        return `${deltaE?.icon || '🟡'} \`${ctx.old}\` → \`${ctx.new}\``;
       });
-      md += `| ${modeLabel} | ${cells.join(' | ')} |\n`;
+      md += `| ${modeLabel} ${mode} | ${cells.join(' | ')} |\n`;
     }
+
+    // Compact delta summary line
+    if (deltaInfos.length > 0) {
+      const deltaStr = deltaInfos
+        .map(d => `${d.brand}/${d.mode}: ΔE ${d.deltaE} (${d.perception})`)
+        .join(' · ');
+      md += `\n> 📊 ${deltaStr}\n`;
+    }
+
     return md + '\n';
   }
 
@@ -847,6 +872,7 @@ function generateColorMatrix(token) {
 
 /**
  * Generate a breakpoint matrix table for a single token (typography/sizing/spacing)
+ * Shows actual values with change arrows, compact diff summary below
  * Rows: breakpoints (xs/sm/md/lg), Columns: brands
  */
 function generateBreakpointMatrix(token) {
@@ -868,18 +894,29 @@ function generateBreakpointMatrix(token) {
   const brandList = KNOWN_BRANDS.filter(b => brands.has(b));
   const bpList = KNOWN_BREAKPOINTS.filter(bp => breakpoints.has(bp));
 
+  // Breakpoint labels with icons
+  const bpLabels = { xs: '📱', sm: '📱', md: '💻', lg: '🖥️' };
+
   // If we only have breakpoints (no brand differentiation)
   if (brandList.length === 0 && bpList.length > 1) {
     let md = `**\`${token.displayName}\`**\n\n`;
-    md += '| BP | Change | Diff |\n';
-    md += '|----|--------|------|\n';
+    md += '| BP | Change |\n';
+    md += '|----|--------|\n';
+
+    const diffInfos = [];
     for (const bp of bpList) {
       const ctx = contexts[bp] || contexts[`/${bp}`];
       if (ctx) {
         const dimDiff = calculateDimensionDiff(ctx.old, ctx.new);
-        const diffInfo = dimDiff ? `${dimDiff.icon} ${dimDiff.display}` : '–';
-        md += `| ${bp} | \`${ctx.old}\` → \`${ctx.new}\` | ${diffInfo} |\n`;
+        if (dimDiff) diffInfos.push({ bp, ...dimDiff });
+        md += `| ${bpLabels[bp] || ''} ${bp} | \`${ctx.old}\` → \`${ctx.new}\` |\n`;
       }
+    }
+
+    // Compact diff summary
+    if (diffInfos.length > 0) {
+      const diffStr = diffInfos.map(d => `${d.bp}: ${d.icon} ${d.display}`).join(' · ');
+      md += `\n> ${diffStr}\n`;
     }
     return md + '\n';
   }
@@ -890,16 +927,32 @@ function generateBreakpointMatrix(token) {
     md += '| | ' + brandList.map(b => b.charAt(0).toUpperCase() + b.slice(1)).join(' | ') + ' |\n';
     md += '|---' + brandList.map(() => '|---').join('') + '|\n';
 
+    const diffInfos = [];
+
     for (const bp of bpList) {
       const cells = brandList.map(brand => {
         const key = `${brand}/${bp}`;
         const ctx = contexts[key];
         if (!ctx) return '–';
+
         const dimDiff = calculateDimensionDiff(ctx.old, ctx.new);
-        return dimDiff ? `${dimDiff.icon} ${dimDiff.display}` : '–';
+        if (dimDiff) {
+          diffInfos.push({ brand, bp, ...dimDiff, old: ctx.old, new: ctx.new });
+        }
+        // Show values with icon prefix
+        return `${dimDiff?.icon || '🟡'} \`${ctx.old}\` → \`${ctx.new}\``;
       });
-      md += `| ${bp} | ${cells.join(' | ')} |\n`;
+      md += `| ${bpLabels[bp] || ''} ${bp} | ${cells.join(' | ')} |\n`;
     }
+
+    // Compact diff summary line
+    if (diffInfos.length > 0) {
+      const diffStr = diffInfos
+        .map(d => `${d.brand}/${d.bp}: ${d.display}`)
+        .join(' · ');
+      md += `\n> 📊 ${diffStr}\n`;
+    }
+
     return md + '\n';
   }
 
