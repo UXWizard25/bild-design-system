@@ -350,6 +350,44 @@ function generatePlatformNamesTable(groupedTokens) {
 // LAYER 1: EXECUTIVE SUMMARY
 // =============================================================================
 
+/**
+ * Generate a preview string showing first few token names
+ */
+function generatePreview(tokens, max = 2) {
+  if (!tokens || tokens.length === 0) return '';
+  const names = tokens.slice(0, max).map(t => `\`${t.displayName || t.name || t.oldName}\``);
+  if (tokens.length > max) {
+    return names.join(', ') + `, ...`;
+  }
+  return names.join(', ');
+}
+
+/**
+ * Generate type breakdown string (e.g., "Variables (5), Typography (2)")
+ */
+function generateTypeBreakdown(counts) {
+  const parts = [];
+  if (counts.variables > 0) parts.push(`Variables (${counts.variables})`);
+  if (counts.typography > 0) parts.push(`Typography (${counts.typography})`);
+  if (counts.effects > 0) parts.push(`Effects (${counts.effects})`);
+  return parts.join(', ') || '–';
+}
+
+/**
+ * Generate category breakdown string for visual changes
+ */
+function generateCategoryBreakdown(grouped) {
+  const parts = [];
+  if (grouped.visual.colors.length > 0) parts.push(`Colors (${grouped.visual.colors.length})`);
+  if (grouped.visual.spacing.length > 0) parts.push(`Spacing (${grouped.visual.spacing.length})`);
+  if (grouped.visual.sizing.length > 0) parts.push(`Sizing (${grouped.visual.sizing.length})`);
+  const typoCount = grouped.visual.typography.variables.length + grouped.visual.typography.styles.length;
+  if (typoCount > 0) parts.push(`Typography (${typoCount})`);
+  const effectsCount = grouped.visual.effects.variables.length + grouped.visual.effects.styles.length;
+  if (effectsCount > 0) parts.push(`Effects (${effectsCount})`);
+  return parts.join(', ') || '–';
+}
+
 function generateExecutiveSummary(diff, options = {}) {
   const { commitSha = '', buildSuccess = true, successfulBuilds = 0, totalBuilds = 0, noBaseline = false } = options;
 
@@ -370,64 +408,96 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
 
   let md = `## ${impactEmoji} Token Update\n\n`;
 
-  // Collect counts
-  const uniqueModified = summary.uniqueTokensModified ?? summary.tokensModified ?? 0;
-  const uniqueAdded = summary.uniqueTokensAdded ?? summary.tokensAdded ?? 0;
-  const uniqueStylesRenamed = summary.uniqueStylesRenamed ?? 0;
+  // Use pre-grouped results if available, otherwise fall back to old logic
+  const grouped = diff.grouped;
 
-  // Calculate removed counts by layer (consumption vs primitive)
-  const removedTokens = diff?.byUniqueToken?.removed || [];
-  const breakingRemoved = removedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer)).length;
-  const internalRemoved = removedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer)).length;
+  if (grouped) {
+    // New optimized summary using pre-grouped data
+    const { counts } = grouped;
+    const hasChanges = counts.breakingRemoved > 0 || counts.breakingRenamed > 0 ||
+                       counts.visualModified > 0 || counts.safeAdded > 0 || counts.internalChanges > 0;
 
-  // Calculate renamed counts by layer (consumption vs primitive)
-  const variableRenames = diff?.renames || [];
-  const breakingRenames = variableRenames.filter(r => CONSUMPTION_LAYERS.includes(r.layer)).length;
-  const internalRenames = variableRenames.filter(r => !CONSUMPTION_LAYERS.includes(r.layer)).length;
-  const totalRenames = variableRenames.length + uniqueStylesRenamed;
+    if (hasChanges) {
+      md += '### 📊 Summary\n\n';
+      md += '| Impact | Type | Count | Preview |\n';
+      md += '|--------|------|------:|--------|\n';
 
-  // Summary table with Impact classification
-  const hasChanges = uniqueAdded > 0 || uniqueModified > 0 || removedTokens.length > 0 || totalRenames > 0;
+      // Breaking: Removed
+      if (counts.breakingRemoved > 0) {
+        const removedCounts = {
+          variables: grouped.breaking.removed.variables.length,
+          typography: grouped.breaking.removed.typography.length,
+          effects: grouped.breaking.removed.effects.length
+        };
+        const allRemoved = [
+          ...grouped.breaking.removed.variables,
+          ...grouped.breaking.removed.typography,
+          ...grouped.breaking.removed.effects
+        ];
+        md += `| 🔴 Breaking | Removed | ${counts.breakingRemoved} | ${generatePreview(allRemoved)} |\n`;
+      }
 
-  if (hasChanges) {
-    md += '### 📊 Summary\n\n';
-    md += '| Change Type | Count | Impact |\n';
-    md += '|-------------|------:|--------|\n';
+      // Breaking: Renamed
+      if (counts.breakingRenamed > 0) {
+        const renamedCounts = {
+          variables: grouped.breaking.renamed.variables.length,
+          typography: grouped.breaking.renamed.typography.length,
+          effects: grouped.breaking.renamed.effects.length
+        };
+        md += `| 🔴 Breaking | Renamed | ${counts.breakingRenamed} | ${generateTypeBreakdown(renamedCounts)} |\n`;
+      }
 
-    // Order: Safe (Added, Internal) -> Visual (Modified) -> Breaking (Removed consumption, Renamed breaking)
-    if (uniqueAdded > 0) {
-      md += `| ➕ Added | ${uniqueAdded} | 🟢 Safe |\n`;
-    }
-    if (uniqueModified > 0) {
-      md += `| ✏️ Modified | ${uniqueModified} | 🟡 Visual |\n`;
-    }
-    if (breakingRemoved > 0) {
-      md += `| ➖ Removed (breaking) | ${breakingRemoved} | 🔴 Breaking |\n`;
-    }
-    if (internalRemoved > 0) {
-      md += `| ➖ Removed (internal) | ${internalRemoved} | 🟢 Safe |\n`;
-    }
-    if (breakingRenames > 0) {
-      md += `| 🔄 Renamed (breaking) | ${breakingRenames} | 🔴 Breaking |\n`;
-    }
-    if (internalRenames > 0) {
-      md += `| 🔄 Renamed (internal) | ${internalRenames} | 🟢 Safe |\n`;
-    }
+      // Visual: Modified
+      if (counts.visualModified > 0) {
+        md += `| 🟡 Visual | Modified | ${counts.visualModified} | ${generateCategoryBreakdown(grouped)} |\n`;
+      }
 
-    md += '\n';
+      // Safe: Added
+      if (counts.safeAdded > 0) {
+        const addedCounts = {
+          variables: grouped.safe.added.variables.length,
+          typography: grouped.safe.added.typography.length,
+          effects: grouped.safe.added.effects.length
+        };
+        md += `| 🟢 Safe | Added | ${counts.safeAdded} | ${generateTypeBreakdown(addedCounts)} |\n`;
+      }
 
-    // Overall risk indicator - only consumption layer changes are breaking
-    const hasBreaking = breakingRemoved > 0 || breakingRenames > 0;
-    const hasVisual = uniqueModified > 0;
-    if (hasBreaking) {
-      md += '**Overall Risk:** 🔴 Breaking Changes Detected\n\n';
-    } else if (hasVisual) {
-      md += '**Overall Risk:** 🟡 Visual Changes\n\n';
+      // Internal: Cleanup
+      if (counts.internalChanges > 0) {
+        md += `| ⚙️ Internal | Cleanup | ${counts.internalChanges} | Primitive layer only |\n`;
+      }
+
+      md += '\n';
+
+      // Overall risk indicator
+      if (counts.breakingRemoved > 0 || counts.breakingRenamed > 0) {
+        md += '**Overall Risk:** 🔴 Breaking Changes Detected\n\n';
+      } else if (counts.visualModified > 0) {
+        md += '**Overall Risk:** 🟡 Visual Changes\n\n';
+      } else {
+        md += '**Overall Risk:** 🟢 Safe (Additions Only)\n\n';
+      }
     } else {
-      md += '**Overall Risk:** 🟢 Safe (Additions Only)\n\n';
+      md += '⚪ **No token changes detected**\n\n';
     }
   } else {
-    md += '⚪ **No token changes detected**\n\n';
+    // Fallback to old logic if grouped is not available
+    const uniqueModified = summary.uniqueTokensModified ?? summary.tokensModified ?? 0;
+    const uniqueAdded = summary.uniqueTokensAdded ?? summary.tokensAdded ?? 0;
+    const uniqueRemoved = summary.uniqueTokensRemoved ?? summary.tokensRemoved ?? 0;
+    const hasChanges = uniqueAdded > 0 || uniqueModified > 0 || uniqueRemoved > 0;
+
+    if (hasChanges) {
+      md += '### 📊 Summary\n\n';
+      md += '| Type | Count |\n';
+      md += '|------|------:|\n';
+      if (uniqueRemoved > 0) md += `| 🔴 Removed | ${uniqueRemoved} |\n`;
+      if (uniqueModified > 0) md += `| 🟡 Modified | ${uniqueModified} |\n`;
+      if (uniqueAdded > 0) md += `| 🟢 Added | ${uniqueAdded} |\n`;
+      md += '\n';
+    } else {
+      md += '⚪ **No token changes detected**\n\n';
+    }
   }
 
   // Warning if no baseline available
@@ -438,25 +508,24 @@ ${commitSha ? `**Commit**: \`${commitSha}\`` : ''}
     md += '> - Source-Datei wurde in main gelöscht\n\n';
   }
 
-  // Build status
+  // Build status line
+  const statusParts = [];
   if (totalBuilds > 0) {
-    md += `**Build:** ${buildSuccess ? '✅' : '❌'} (${successfulBuilds}/${totalBuilds})`;
-    if (commitSha) md += ` | **Commit:** \`${commitSha}\``;
-    md += '\n';
+    statusParts.push(`**Build:** ${buildSuccess ? '✅' : '❌'} ${successfulBuilds}/${totalBuilds}`);
   }
 
   // Affected brands
   const brands = Object.keys(diff.byBrand || {});
   if (brands.length > 0) {
-    md += `**Brands:** ${brands.map(b => b.charAt(0).toUpperCase() + b.slice(1)).join(', ')}\n`;
+    statusParts.push(`**Brands:** ${brands.map(b => b.charAt(0).toUpperCase() + b.slice(1)).join(', ')}`);
   }
 
-  // Affected components
-  const components = Object.keys(diff.byComponent || {});
-  if (components.length > 0) {
-    const displayComponents = components.slice(0, 5);
-    const more = components.length > 5 ? ` +${components.length - 5} more` : '';
-    md += `**Components:** ${displayComponents.join(', ')}${more}\n`;
+  if (statusParts.length > 0) {
+    md += statusParts.join(' · ') + '\n';
+  }
+
+  if (commitSha) {
+    md += `**Commit:** \`${commitSha}\`\n`;
   }
 
   md += '\n---\n\n';
@@ -607,169 +676,147 @@ function generateRenamePlatformTable(renames, diff) {
 }
 
 /**
- * Generate breaking changes section - shows ONLY breaking changes
+ * Generate Breaking Changes section
+ * Uses pre-grouped data from compare-builds.js for efficiency
  * Breaking = Removed OR Renamed in consumption layer (semantic + component)
- * Internal (primitive) changes are shown in Safe Changes section
  *
- * Structure: Split by layer (Semantic, Component, Typography, Effects)
- * No table limits for breaking changes - all must be visible!
+ * Optimized structure:
+ * - Removed: Variables + Typography + Effects (no value column - tokens have multiple values)
+ * - Renamed: Variables + Typography + Effects with migration help
  */
 function generateBreakingChangesSection(diff, options = {}) {
-  // Collect removed tokens - only consumption layer
+  const grouped = diff?.grouped;
+
+  // Use pre-grouped data if available
+  if (grouped) {
+    const { breaking } = grouped;
+    const totalRemoved = breaking.removed.variables.length +
+                         breaking.removed.typography.length +
+                         breaking.removed.effects.length;
+    const totalRenamed = breaking.renamed.variables.length +
+                         breaking.renamed.typography.length +
+                         breaking.renamed.effects.length;
+
+    if (totalRemoved === 0 && totalRenamed === 0) return '';
+
+    let md = '## 🔴 Breaking Changes\n\n';
+
+    // === REMOVED SECTION ===
+    if (totalRemoved > 0) {
+      // Count by type for header
+      const typeCounts = [];
+      if (breaking.removed.variables.length > 0) typeCounts.push(`${breaking.removed.variables.length} Variables`);
+      if (breaking.removed.typography.length > 0) typeCounts.push(`${breaking.removed.typography.length} Typography`);
+      if (breaking.removed.effects.length > 0) typeCounts.push(`${breaking.removed.effects.length} Effects`);
+
+      md += `### Removed (${typeCounts.join(', ')})\n\n`;
+      md += '| Token | Layer | Category |\n';
+      md += '|-------|-------|----------|\n';
+
+      // Variables
+      for (const token of breaking.removed.variables) {
+        const layer = LAYER_CONFIG[token.layer] || LAYER_CONFIG.semantic;
+        const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
+        md += `| \`${token.displayName}\` | ${layer.icon} ${layer.label} | ${cat.icon} ${cat.label} |\n`;
+      }
+
+      // Typography styles
+      for (const style of breaking.removed.typography) {
+        md += `| \`${style.name}\` | 🎯 Semantic | 📝 Typography |\n`;
+      }
+
+      // Effect styles
+      for (const style of breaking.removed.effects) {
+        md += `| \`${style.name}\` | 🎯 Semantic | ✨ Effects |\n`;
+      }
+
+      md += '\n';
+    }
+
+    // === RENAMED SECTION ===
+    if (totalRenamed > 0) {
+      // Count by type for header
+      const typeCounts = [];
+      if (breaking.renamed.variables.length > 0) typeCounts.push(`${breaking.renamed.variables.length} Variables`);
+      if (breaking.renamed.typography.length > 0) typeCounts.push(`${breaking.renamed.typography.length} Typography`);
+      if (breaking.renamed.effects.length > 0) typeCounts.push(`${breaking.renamed.effects.length} Effects`);
+
+      md += `### Renamed (${typeCounts.join(', ')})\n\n`;
+      md += '| Old Name | → | New Name | Type |\n';
+      md += '|----------|:-:|----------|------|\n';
+
+      // Variables
+      for (const rename of breaking.renamed.variables) {
+        md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` | 🎨 Variable |\n`;
+      }
+
+      // Typography styles
+      for (const rename of breaking.renamed.typography) {
+        md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` | 📝 Typography |\n`;
+      }
+
+      // Effect styles
+      for (const rename of breaking.renamed.effects) {
+        md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` | ✨ Effect |\n`;
+      }
+
+      md += '\n';
+
+      // Migration commands
+      const allRenames = [
+        ...breaking.renamed.variables,
+        ...breaking.renamed.typography,
+        ...breaking.renamed.effects
+      ];
+
+      md += '<details>\n<summary>📋 Migration Commands</summary>\n\n';
+      md += '```bash\n# Find & Replace:\n';
+      for (const rename of allRenames.slice(0, 15)) {
+        md += `${rename.oldName} → ${rename.newName}\n`;
+      }
+      if (allRenames.length > 15) {
+        md += `# ... and ${allRenames.length - 15} more\n`;
+      }
+      md += '```\n\n</details>\n\n';
+    }
+
+    md += '---\n\n';
+    return md;
+  }
+
+  // Fallback to old logic if grouped is not available
   const allRemovedTokens = diff?.byUniqueToken?.removed || [];
   const breakingRemovedTokens = allRemovedTokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer));
-
-  // Split removed by layer
-  const removedSemantic = breakingRemovedTokens.filter(t => t.layer === 'semantic');
-  const removedComponent = breakingRemovedTokens.filter(t => t.layer === 'component');
-
-  // Collect removed combined tokens (Typography + Effects styles)
-  const removedTypography = diff?.styleChanges?.typography?.removed || [];
-  const removedEffects = diff?.styleChanges?.effects?.removed || [];
-
-  // Collect breaking renames - only consumption layer
   const variableRenames = diff?.renames || [];
-  const styleRenames = diff?.styleRenames || [];
   const breakingVariableRenames = variableRenames.filter(r => CONSUMPTION_LAYERS.includes(r.layer));
-  const breakingStyleRenames = styleRenames.filter(r => CONSUMPTION_LAYERS.includes(r.layer));
 
-  // Split renames by layer
-  const renamesSemantic = breakingVariableRenames.filter(r => r.layer === 'semantic');
-  const renamesComponent = breakingVariableRenames.filter(r => r.layer === 'component');
-
-  const totalBreakingRenames = breakingVariableRenames.length + breakingStyleRenames.length;
-  const hasBreakingChanges = breakingRemovedTokens.length > 0 ||
-    removedTypography.length > 0 || removedEffects.length > 0 || totalBreakingRenames > 0;
-
-  if (!hasBreakingChanges) return '';
+  if (breakingRemovedTokens.length === 0 && breakingVariableRenames.length === 0) return '';
 
   let md = '## 🔴 Breaking Changes\n\n';
-  md += '> ⚠️ **These changes require code updates**\n\n';
 
-  // === REMOVED TOKENS BY LAYER ===
   if (breakingRemovedTokens.length > 0) {
-    md += `### ➖ Removed Tokens (${breakingRemovedTokens.length})\n\n`;
-
-    // Semantic Layer
-    if (removedSemantic.length > 0) {
-      md += `#### 🎯 Semantic (${removedSemantic.length})\n\n`;
-      md += '| Token | Previous Value | Category |\n';
-      md += '|-------|----------------|----------|\n';
-      for (const token of removedSemantic) {
-        const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
-        md += `| \`${token.displayName}\` | \`${token.value}\` | ${cat.icon} ${cat.label} |\n`;
-      }
-      md += '\n';
-    }
-
-    // Component Layer
-    if (removedComponent.length > 0) {
-      md += `#### 🧩 Component (${removedComponent.length})\n\n`;
-      md += '| Token | Previous Value | Category |\n';
-      md += '|-------|----------------|----------|\n';
-      for (const token of removedComponent) {
-        const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
-        md += `| \`${token.displayName}\` | \`${token.value}\` | ${cat.icon} ${cat.label} |\n`;
-      }
-      md += '\n';
-    }
-  }
-
-  // === REMOVED TYPOGRAPHY STYLES ===
-  if (removedTypography.length > 0) {
-    md += `#### 📝 Typography Styles (${removedTypography.length})\n\n`;
-    md += '| Style Name |\n';
-    md += '|------------|\n';
-    for (const style of removedTypography) {
-      md += `| \`${style.name}\` |\n`;
+    md += `### Removed (${breakingRemovedTokens.length})\n\n`;
+    md += '| Token | Layer | Category |\n';
+    md += '|-------|-------|----------|\n';
+    for (const token of breakingRemovedTokens) {
+      const layer = LAYER_CONFIG[token.layer] || LAYER_CONFIG.semantic;
+      const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
+      md += `| \`${token.displayName}\` | ${layer.icon} ${layer.label} | ${cat.icon} ${cat.label} |\n`;
     }
     md += '\n';
   }
 
-  // === REMOVED EFFECTS ===
-  if (removedEffects.length > 0) {
-    md += `#### ✨ Effects (${removedEffects.length})\n\n`;
-    md += '| Style Name |\n';
-    md += '|------------|\n';
-    for (const style of removedEffects) {
-      md += `| \`${style.name}\` |\n`;
+  if (breakingVariableRenames.length > 0) {
+    md += `### Renamed (${breakingVariableRenames.length})\n\n`;
+    md += '| Old Name | → | New Name |\n';
+    md += '|----------|:-:|----------|\n';
+    for (const rename of breakingVariableRenames) {
+      md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` |\n`;
     }
     md += '\n';
-  }
-
-  // === RENAMED TOKENS BY LAYER ===
-  if (totalBreakingRenames > 0) {
-    md += `### 🔄 Renamed Tokens (${totalBreakingRenames})\n\n`;
-
-    // Semantic Layer Renames
-    if (renamesSemantic.length > 0) {
-      md += `#### 🎯 Semantic (${renamesSemantic.length})\n\n`;
-      md += '| Old Name | → | New Name | Category |\n';
-      md += '|----------|:-:|----------|----------|\n';
-      for (const rename of renamesSemantic) {
-        const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
-        md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` | ${catConfig.icon} |\n`;
-      }
-      md += generateRenamePlatformTable(renamesSemantic, diff);
-      md += '\n';
-    }
-
-    // Component Layer Renames
-    if (renamesComponent.length > 0) {
-      md += `#### 🧩 Component (${renamesComponent.length})\n\n`;
-      md += '| Old Name | → | New Name | Category |\n';
-      md += '|----------|:-:|----------|----------|\n';
-      for (const rename of renamesComponent) {
-        const catConfig = CATEGORY_CONFIG[rename.category] || CATEGORY_CONFIG.other;
-        md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` | ${catConfig.icon} |\n`;
-      }
-      md += generateRenamePlatformTable(renamesComponent, diff);
-      md += '\n';
-    }
-
-    // Style Renames (Typography + Effects)
-    if (breakingStyleRenames.length > 0) {
-      const typoRenames = breakingStyleRenames.filter(r => r.type === 'typography');
-      const effectRenames = breakingStyleRenames.filter(r => r.type === 'effects');
-
-      if (typoRenames.length > 0) {
-        md += `#### 📝 Typography Styles (${typoRenames.length})\n\n`;
-        md += '| Old Name | → | New Name |\n';
-        md += '|----------|:-:|----------|\n';
-        for (const rename of typoRenames) {
-          md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` |\n`;
-        }
-        md += '\n';
-      }
-
-      if (effectRenames.length > 0) {
-        md += `#### ✨ Effects (${effectRenames.length})\n\n`;
-        md += '| Old Name | → | New Name |\n';
-        md += '|----------|:-:|----------|\n';
-        for (const rename of effectRenames) {
-          md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` |\n`;
-        }
-        md += '\n';
-      }
-    }
-  }
-
-  // Migration help for all breaking changes
-  const allBreakingRenames = [...breakingVariableRenames, ...breakingStyleRenames];
-  if (allBreakingRenames.length > 0) {
-    md += '<details>\n<summary>📋 Migration Commands</summary>\n\n';
-    md += '```bash\n# Find & Replace suggestions:\n';
-    for (const rename of allBreakingRenames.slice(0, 15)) {
-      md += `# ${rename.oldName} → ${rename.newName}\n`;
-    }
-    if (allBreakingRenames.length > 15) {
-      md += `# ... and ${allBreakingRenames.length - 15} more\n`;
-    }
-    md += '```\n\n</details>\n\n';
   }
 
   md += '---\n\n';
-
   return md;
 }
 
