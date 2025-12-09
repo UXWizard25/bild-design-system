@@ -830,8 +830,28 @@ const KNOWN_MODES = ['light', 'dark'];
 const KNOWN_BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 
 /**
+ * Format a color change with inline delta
+ * Output: `#232629`→`#1a1c1e` 🟡4.9
+ */
+function formatColorChangeInline(oldVal, newVal) {
+  const deltaE = calculateDeltaE(oldVal, newVal);
+  const deltaStr = deltaE ? ` ${deltaE.icon}${deltaE.deltaE}` : '';
+  return `\`${oldVal}\`→\`${newVal}\`${deltaStr}`;
+}
+
+/**
+ * Format a dimension change with inline delta
+ * Output: `8px`→`12px` 🟠+50%
+ */
+function formatDimensionChangeInline(oldVal, newVal) {
+  const dimDiff = calculateDimensionDiff(oldVal, newVal);
+  const diffStr = dimDiff ? ` ${dimDiff.icon}${dimDiff.display}` : '';
+  return `\`${oldVal}\`→\`${newVal}\`${diffStr}`;
+}
+
+/**
  * Generate a color matrix table for a single token
- * Shows actual values with change arrows, compact delta summary below
+ * Shows actual values with inline delta (no separate summary line)
  * Rows: modes (light/dark), Columns: brands
  */
 function generateColorMatrix(token) {
@@ -860,20 +880,12 @@ function generateColorMatrix(token) {
     md += '| Mode | Change |\n';
     md += '|------|--------|\n';
 
-    const deltaInfos = [];
     for (const mode of modeList) {
       const ctx = contexts[mode] || contexts[`/${mode}`];
       if (ctx) {
-        const deltaE = calculateDeltaE(ctx.old, ctx.new);
-        if (deltaE) deltaInfos.push({ mode, ...deltaE });
-        md += `| ${mode} | \`${ctx.old}\` → \`${ctx.new}\` |\n`;
+        const modeLabel = mode === 'light' ? '☀️' : '🌙';
+        md += `| ${modeLabel} ${mode} | ${formatColorChangeInline(ctx.old, ctx.new)} |\n`;
       }
-    }
-
-    // Compact delta summary
-    if (deltaInfos.length > 0) {
-      const deltaStr = deltaInfos.map(d => `${d.mode}: ${d.icon} ΔE ${d.deltaE}`).join(' · ');
-      md += `\n> ${deltaStr}\n`;
     }
     return md + '\n';
   }
@@ -881,34 +893,24 @@ function generateColorMatrix(token) {
   // Full matrix: brands × modes
   if (brandList.length > 0 && modeList.length > 0) {
     let md = `**\`${token.displayName}\`**\n\n`;
-    md += '| | ' + brandList.map(b => b.charAt(0).toUpperCase() + b.slice(1)).join(' | ') + ' |\n';
-    md += '|---' + brandList.map(() => '|---').join('') + '|\n';
+    md += '| Brand | ' + modeList.map(m => m === 'light' ? '☀️ Light' : '🌙 Dark').join(' | ') + ' |\n';
+    md += '|---' + modeList.map(() => '|---').join('') + '|\n';
 
-    const deltaInfos = [];
-
-    for (const mode of modeList) {
-      const modeLabel = mode === 'light' ? '☀️' : '🌙';
-      const cells = brandList.map(brand => {
+    // Rows are now brands, columns are modes (more compact when brands differ)
+    for (const brand of brandList) {
+      const cells = modeList.map(mode => {
         const key = `${brand}/${mode}`;
         const ctx = contexts[key];
         if (!ctx) return '–';
-
-        const deltaE = calculateDeltaE(ctx.old, ctx.new);
-        if (deltaE) {
-          deltaInfos.push({ brand, mode, ...deltaE });
-        }
-        // Show values with icon prefix
-        return `${deltaE?.icon || '🟡'} \`${ctx.old}\` → \`${ctx.new}\``;
+        return formatColorChangeInline(ctx.old, ctx.new);
       });
-      md += `| ${modeLabel} ${mode} | ${cells.join(' | ')} |\n`;
-    }
 
-    // Compact delta summary line
-    if (deltaInfos.length > 0) {
-      const deltaStr = deltaInfos
-        .map(d => `${d.brand}/${d.mode}: ΔE ${d.deltaE} (${d.perception})`)
-        .join(' · ');
-      md += `\n> 📊 ${deltaStr}\n`;
+      // Only show row if at least one cell has a change
+      const hasChange = cells.some(c => c !== '–');
+      if (hasChange) {
+        const brandLabel = brand.charAt(0).toUpperCase() + brand.slice(1);
+        md += `| ${brandLabel} | ${cells.join(' | ')} |\n`;
+      }
     }
 
     return md + '\n';
@@ -950,31 +952,27 @@ function generateBreakpointMatrix(token) {
     md += '| BP | Change |\n';
     md += '|----|--------|\n';
 
-    const diffInfos = [];
+    let hasChanges = false;
     for (const bp of bpList) {
       const ctx = contexts[bp] || contexts[`/${bp}`];
       if (ctx) {
-        const dimDiff = calculateDimensionDiff(ctx.old, ctx.new);
-        if (dimDiff) diffInfos.push({ bp, ...dimDiff });
-        md += `| ${bpLabels[bp] || ''} ${bp} | \`${ctx.old}\` → \`${ctx.new}\` |\n`;
+        hasChanges = true;
+        // Inline delta format
+        md += `| ${bpLabels[bp] || ''} ${bp} | ${formatDimensionChangeInline(ctx.old, ctx.new)} |\n`;
       }
     }
 
-    // Compact diff summary
-    if (diffInfos.length > 0) {
-      const diffStr = diffInfos.map(d => `${d.bp}: ${d.icon} ${d.display}`).join(' · ');
-      md += `\n> ${diffStr}\n`;
-    }
+    if (!hasChanges) return null;
     return md + '\n';
   }
 
-  // Full matrix: brands × breakpoints
+  // Full matrix: brands × breakpoints (supports bild, sportbild, advertorial)
   if (brandList.length > 0 && bpList.length > 1) {
     let md = `**\`${token.displayName}\`**\n\n`;
     md += '| | ' + brandList.map(b => b.charAt(0).toUpperCase() + b.slice(1)).join(' | ') + ' |\n';
     md += '|---' + brandList.map(() => '|---').join('') + '|\n';
 
-    const diffInfos = [];
+    let rowsWithChanges = 0;
 
     for (const bp of bpList) {
       const cells = brandList.map(brand => {
@@ -982,24 +980,19 @@ function generateBreakpointMatrix(token) {
         const ctx = contexts[key];
         if (!ctx) return '–';
 
-        const dimDiff = calculateDimensionDiff(ctx.old, ctx.new);
-        if (dimDiff) {
-          diffInfos.push({ brand, bp, ...dimDiff, old: ctx.old, new: ctx.new });
-        }
-        // Show values with icon prefix
-        return `${dimDiff?.icon || '🟡'} \`${ctx.old}\` → \`${ctx.new}\``;
+        // Inline delta format: `12px`→`16px` 🟠+33%
+        return formatDimensionChangeInline(ctx.old, ctx.new);
       });
-      md += `| ${bpLabels[bp] || ''} ${bp} | ${cells.join(' | ')} |\n`;
+
+      // Only add row if at least one cell has a change
+      const hasChange = cells.some(c => c !== '–');
+      if (hasChange) {
+        md += `| ${bpLabels[bp] || ''} ${bp} | ${cells.join(' | ')} |\n`;
+        rowsWithChanges++;
+      }
     }
 
-    // Compact diff summary line
-    if (diffInfos.length > 0) {
-      const diffStr = diffInfos
-        .map(d => `${d.brand}/${d.bp}: ${d.display}`)
-        .join(' · ');
-      md += `\n> 📊 ${diffStr}\n`;
-    }
-
+    if (rowsWithChanges === 0) return null;
     return md + '\n';
   }
 
@@ -1008,17 +1001,14 @@ function generateBreakpointMatrix(token) {
 
 /**
  * Generate simple row for token without multiple contexts
+ * Uses inline delta format for consistency
  */
 function generateSimpleColorRow(token) {
-  const deltaE = calculateDeltaE(token.oldValue, token.newValue);
-  const diffInfo = deltaE ? `${deltaE.icon} ΔE=${deltaE.deltaE} (${deltaE.perception})` : '';
-  return `| \`${token.displayName}\` | \`${token.oldValue}\` → \`${token.newValue}\` | ${diffInfo} |\n`;
+  return `| \`${token.displayName}\` | ${formatColorChangeInline(token.oldValue, token.newValue)} |\n`;
 }
 
 function generateSimpleDimensionRow(token) {
-  const dimDiff = calculateDimensionDiff(token.oldValue, token.newValue);
-  const diffDisplay = dimDiff ? `${dimDiff.icon} ${dimDiff.display}` : '';
-  return `| \`${token.displayName}\` | \`${token.oldValue}\` → \`${token.newValue}\` | ${diffDisplay} |\n`;
+  return `| \`${token.displayName}\` | ${formatDimensionChangeInline(token.oldValue, token.newValue)} |\n`;
 }
 
 /**
@@ -1074,15 +1064,15 @@ function generateVisualChangesSection(diff, options = {}) {
       }
     }
 
-    // Simple tokens in table
+    // Simple tokens in table (2-column with inline delta)
     if (byCategory.colors.simple.length > 0) {
-      md += '| Token | Change | Visual Diff |\n';
-      md += '|-------|--------|-------------|\n';
+      md += '| Token | Change |\n';
+      md += '|-------|--------|\n';
       for (const token of byCategory.colors.simple.slice(0, maxTokens)) {
         md += generateSimpleColorRow(token);
       }
       if (byCategory.colors.simple.length > maxTokens) {
-        md += `| ... | *${byCategory.colors.simple.length - maxTokens} more* | |\n`;
+        md += `| ... | *${byCategory.colors.simple.length - maxTokens} more* |\n`;
       }
       md += '\n';
     }
@@ -1101,13 +1091,13 @@ function generateVisualChangesSection(diff, options = {}) {
     }
 
     if (byCategory.typography.simple.length > 0) {
-      md += '| Token | Change | Diff |\n';
-      md += '|-------|--------|------|\n';
+      md += '| Token | Change |\n';
+      md += '|-------|--------|\n';
       for (const token of byCategory.typography.simple.slice(0, maxTokens)) {
         md += generateSimpleDimensionRow(token);
       }
       if (byCategory.typography.simple.length > maxTokens) {
-        md += `| ... | *${byCategory.typography.simple.length - maxTokens} more* | |\n`;
+        md += `| ... | *${byCategory.typography.simple.length - maxTokens} more* |\n`;
       }
       md += '\n';
     }
@@ -1126,13 +1116,13 @@ function generateVisualChangesSection(diff, options = {}) {
     }
 
     if (byCategory.spacing.simple.length > 0) {
-      md += '| Token | Change | Diff |\n';
-      md += '|-------|--------|------|\n';
+      md += '| Token | Change |\n';
+      md += '|-------|--------|\n';
       for (const token of byCategory.spacing.simple.slice(0, maxTokens)) {
         md += generateSimpleDimensionRow(token);
       }
       if (byCategory.spacing.simple.length > maxTokens) {
-        md += `| ... | *${byCategory.spacing.simple.length - maxTokens} more* | |\n`;
+        md += `| ... | *${byCategory.spacing.simple.length - maxTokens} more* |\n`;
       }
       md += '\n';
     }
@@ -1151,13 +1141,13 @@ function generateVisualChangesSection(diff, options = {}) {
     }
 
     if (byCategory.sizing.simple.length > 0) {
-      md += '| Token | Change | Diff |\n';
-      md += '|-------|--------|------|\n';
+      md += '| Token | Change |\n';
+      md += '|-------|--------|\n';
       for (const token of byCategory.sizing.simple.slice(0, maxTokens)) {
         md += generateSimpleDimensionRow(token);
       }
       if (byCategory.sizing.simple.length > maxTokens) {
-        md += `| ... | *${byCategory.sizing.simple.length - maxTokens} more* | |\n`;
+        md += `| ... | *${byCategory.sizing.simple.length - maxTokens} more* |\n`;
       }
       md += '\n';
     }
@@ -1202,32 +1192,42 @@ function generateVisualChangesSection(diff, options = {}) {
 
 /**
  * Generate safe changes section - combines added tokens and internal (primitive) changes
+ * Includes Combined Tokens (Typography Styles, Effects Styles)
  */
 function generateSafeChangesSection(diff, options = {}) {
   const { maxTokens = 10 } = options;
 
-  // Get added tokens
-  const addedTokens = diff?.byUniqueToken?.added || [];
+  // Use pre-grouped data if available, otherwise fallback
+  const grouped = diff?.grouped?.safe;
+
+  // Get added tokens (variables)
+  const addedTokens = grouped?.added?.variables || diff?.byUniqueToken?.added || [];
+
+  // Get added combined tokens
+  const addedTypography = grouped?.added?.typography || [];
+  const addedEffects = grouped?.added?.effects || [];
 
   // Get internal changes (from breaking changes section data)
   const allRemovedTokens = diff?.byUniqueToken?.removed || [];
-  const internalRemovedTokens = allRemovedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
+  const internalRemovedTokens = grouped?.internal?.removed ||
+    allRemovedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
 
   const variableRenames = diff?.renames || [];
   const nonBreakingRenames = variableRenames.filter(r => !CONSUMPTION_LAYERS.includes(r.layer));
 
-  const hasAdded = addedTokens.length > 0;
+  const totalAdded = addedTokens.length + addedTypography.length + addedEffects.length;
+  const hasAdded = totalAdded > 0;
   const hasInternal = internalRemovedTokens.length > 0 || nonBreakingRenames.length > 0;
 
   if (!hasAdded && !hasInternal) return '';
 
   let md = '## 🟢 Safe Changes\n\n';
 
-  // Added Tokens grouped by category
+  // Added Tokens section
   if (hasAdded) {
-    md += `### ➕ Added Tokens (${addedTokens.length})\n\n`;
+    md += `### ➕ Added Tokens (${totalAdded})\n\n`;
 
-    // Group by category
+    // Group variable tokens by category
     const byCategory = {
       colors: [],
       typography: [],
@@ -1246,6 +1246,7 @@ function generateSafeChangesSection(diff, options = {}) {
       }
     }
 
+    // Variable tokens by category
     for (const [category, tokens] of Object.entries(byCategory)) {
       if (tokens.length === 0) continue;
 
@@ -1260,6 +1261,44 @@ function generateSafeChangesSection(diff, options = {}) {
 
       if (tokens.length > maxTokens) {
         md += `| ... | *${tokens.length - maxTokens} more* |\n`;
+      }
+
+      md += '\n</details>\n\n';
+    }
+
+    // Added Typography Styles (Combined Tokens)
+    if (addedTypography.length > 0) {
+      md += `<details>\n<summary>📝 Typography Styles (${addedTypography.length})</summary>\n\n`;
+      md += '| Style Name | Properties |\n';
+      md += '|------------|------------|\n';
+
+      for (const style of addedTypography.slice(0, maxTokens)) {
+        const styleName = style.newName || style.name || 'Unknown';
+        const props = style.properties ? Object.keys(style.properties).join(', ') : '–';
+        md += `| \`${styleName}\` | ${props} |\n`;
+      }
+
+      if (addedTypography.length > maxTokens) {
+        md += `| ... | *${addedTypography.length - maxTokens} more* |\n`;
+      }
+
+      md += '\n</details>\n\n';
+    }
+
+    // Added Effects Styles (Combined Tokens)
+    if (addedEffects.length > 0) {
+      md += `<details>\n<summary>✨ Effects Styles (${addedEffects.length})</summary>\n\n`;
+      md += '| Style Name | Type |\n';
+      md += '|------------|------|\n';
+
+      for (const style of addedEffects.slice(0, maxTokens)) {
+        const styleName = style.newName || style.name || 'Unknown';
+        const effectType = style.effectType || '–';
+        md += `| \`${styleName}\` | ${effectType} |\n`;
+      }
+
+      if (addedEffects.length > maxTokens) {
+        md += `| ... | *${addedEffects.length - maxTokens} more* |\n`;
       }
 
       md += '\n</details>\n\n';
@@ -1440,157 +1479,6 @@ function generateStyleChangesSection(diff, options = {}) {
 }
 
 // =============================================================================
-// LAYER 2c: CATEGORIZED CHANGES (Consumption Layer Only)
-// =============================================================================
-
-/**
- * Filter tokens to only include consumption layer (semantic + component)
- */
-function filterConsumptionLayer(tokens) {
-  if (!tokens) return [];
-  return tokens.filter(t => CONSUMPTION_LAYERS.includes(t.layer) || !t.layer);
-}
-
-/**
- * Generate categorized changes section - groups changes by token category
- * Only shows consumption layer tokens (semantic + component), not primitives
- */
-function generateCategorizedChangesSection(diff, options = {}) {
-  if (!diff || !diff.byCategory) return '';
-
-  const { maxTokensPerCategory = 10 } = options;
-  let md = '## 📊 Changes by Category\n\n';
-  md += '> 🎯 Showing Modified & Added tokens (Removed tokens are in Breaking Changes above)\n\n';
-  let hasChanges = false;
-
-  for (const category of CATEGORY_ORDER) {
-    const catData = diff.byCategory[category];
-    if (!catData) continue;
-
-    // Filter to only consumption layer tokens
-    // Note: Removed tokens are shown in Breaking Changes section, not here
-    const modified = filterConsumptionLayer(catData.modified || []);
-    const added = filterConsumptionLayer(catData.added || []);
-    const total = modified.length + added.length;
-
-    if (total === 0) continue;
-    hasChanges = true;
-
-    const config = CATEGORY_CONFIG[category];
-    md += `<details>\n<summary>${config.icon} <b>${config.label}</b> (${total} changes)</summary>\n\n`;
-
-    // Modified
-    if (modified.length > 0) {
-      md += `**Modified (${modified.length}):**\n\n`;
-      md += '| Token | Old | New |\n|-------|-----|-----|\n';
-      for (const token of modified.slice(0, maxTokensPerCategory)) {
-        md += `| \`${token.displayName}\` | \`${token.oldValue}\` | \`${token.newValue}\` |\n`;
-      }
-      if (modified.length > maxTokensPerCategory) {
-        md += `| ... | *${modified.length - maxTokensPerCategory} more* | |\n`;
-      }
-      md += '\n';
-    }
-
-    // Added
-    if (added.length > 0) {
-      md += `**Added (${added.length}):**\n\n`;
-      md += '| Token | Value |\n|-------|-------|\n';
-      for (const token of added.slice(0, maxTokensPerCategory)) {
-        md += `| \`${token.displayName}\` | \`${token.value}\` |\n`;
-      }
-      if (added.length > maxTokensPerCategory) {
-        md += `| ... | *${added.length - maxTokensPerCategory} more* |\n`;
-      }
-      md += '\n';
-    }
-
-    md += '</details>\n\n';
-  }
-
-  if (!hasChanges) return '';
-
-  md += '---\n\n';
-  return md;
-}
-
-// =============================================================================
-// LAYER 2e: SOURCE CHANGES (Primitives)
-// =============================================================================
-
-/**
- * Generate source changes section for primitive tokens
- * Shows low-level token changes that affect semantic/component layers
- */
-function generateSourceChangesSection(diff, options = {}) {
-  if (!diff || !diff.byLayer || !diff.byLayer.primitive) return '';
-
-  const { maxTokens = 10 } = options;
-  const primitives = diff.byLayer.primitive;
-
-  const modified = primitives.modified || [];
-  const added = primitives.added || [];
-  const removed = primitives.removed || [];
-  const total = modified.length + added.length + removed.length;
-
-  if (total === 0) return '';
-
-  let md = '## ⚙️ Source Changes\n\n';
-  md += '<details>\n';
-  md += `<summary>Primitive Token Updates (${total} changes)</summary>\n\n`;
-  md += '> ℹ️ Low-level tokens that may affect semantic/component values\n\n';
-
-  // Modified primitives
-  if (modified.length > 0) {
-    md += `**Modified (${modified.length}):**\n\n`;
-    md += '| Token | Change | Category |\n';
-    md += '|-------|--------|----------|\n';
-    for (const token of modified.slice(0, maxTokens)) {
-      const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.oldValue)] || CATEGORY_CONFIG.other;
-      const changeDisplay = `\`${token.oldValue}\` → \`${token.newValue}\``;
-      md += `| \`${token.displayName}\` | ${changeDisplay} | ${cat.icon} |\n`;
-    }
-    if (modified.length > maxTokens) {
-      md += `| ... | *${modified.length - maxTokens} more* | |\n`;
-    }
-    md += '\n';
-  }
-
-  // Added primitives
-  if (added.length > 0) {
-    md += `**Added (${added.length}):**\n\n`;
-    md += '| Token | Value | Category |\n';
-    md += '|-------|-------|----------|\n';
-    for (const token of added.slice(0, maxTokens)) {
-      const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
-      md += `| \`${token.displayName}\` | \`${token.value}\` | ${cat.icon} |\n`;
-    }
-    if (added.length > maxTokens) {
-      md += `| ... | *${added.length - maxTokens} more* | |\n`;
-    }
-    md += '\n';
-  }
-
-  // Removed primitives
-  if (removed.length > 0) {
-    md += `**Removed (${removed.length}):**\n\n`;
-    md += '| Token | Previous Value | Category |\n';
-    md += '|-------|----------------|----------|\n';
-    for (const token of removed.slice(0, maxTokens)) {
-      const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
-      md += `| \`${token.displayName}\` | \`${token.value}\` | ${cat.icon} |\n`;
-    }
-    if (removed.length > maxTokens) {
-      md += `| ... | *${removed.length - maxTokens} more* | |\n`;
-    }
-    md += '\n';
-  }
-
-  md += '</details>\n\n';
-  md += '---\n\n';
-  return md;
-}
-// =============================================================================
 // LAYER 2d: AFFECTED COMPONENTS
 // =============================================================================
 
@@ -1699,139 +1587,6 @@ function generateDynamicChecklist(diff, options = {}) {
 }
 
 // =============================================================================
-// LAYER 3: PLATFORM DETAILS
-// =============================================================================
-
-function generatePlatformDetails(diff, options = {}) {
-  if (!diff || !diff.platforms) return '';
-
-  const { maxTokensPerSection = 15 } = options;
-
-  let md = '## 📝 Platform Details\n\n';
-
-  for (const platformKey of PLATFORM_ORDER) {
-    const platform = diff.platforms[platformKey];
-    if (!platform) continue;
-
-    const totalChanges = platform.tokensAdded + platform.tokensModified + platform.tokensRemoved;
-    if (totalChanges === 0 && platform.changes.length === 0) {
-      continue;
-    }
-
-    // Platform header as collapsible section
-    md += `<details>\n`;
-    md += `<summary>${platform.icon} <b>${platform.name}</b> — `;
-    md += `+${platform.tokensAdded} / ~${platform.tokensModified} / -${platform.tokensRemoved} tokens`;
-    md += `</summary>\n\n`;
-
-    // Group changes by type
-    const removedFiles = platform.changes.filter(c => c.type === 'removed');
-    const modifiedFiles = platform.changes.filter(c => c.type === 'modified');
-    const addedFiles = platform.changes.filter(c => c.type === 'added');
-
-    // Breaking changes (removed)
-    const hasRemovedTokens = removedFiles.length > 0 || modifiedFiles.some(f => f.changes?.removed?.length > 0);
-    if (hasRemovedTokens) {
-      md += '#### 🔴 Breaking Changes (Removed)\n\n';
-      md += '| Token | Previous Value | File |\n';
-      md += '|-------|----------------|------|\n';
-
-      let count = 0;
-
-      for (const file of removedFiles) {
-        for (const token of file.tokens.slice(0, 5)) {
-          if (count >= maxTokensPerSection) break;
-          md += `| \`${token.name}\` | \`${token.value}\` | \`${path.basename(file.file)}\` |\n`;
-          count++;
-        }
-        if (file.tokens.length > 5 && count < maxTokensPerSection) {
-          md += `| ... | *${file.tokens.length - 5} more in file* | |\n`;
-        }
-      }
-
-      for (const file of modifiedFiles) {
-        if (!file.changes?.removed) continue;
-        for (const token of file.changes.removed.slice(0, 3)) {
-          if (count >= maxTokensPerSection) break;
-          md += `| \`${token.name}\` | \`${token.value}\` | \`${path.basename(file.file)}\` |\n`;
-          count++;
-        }
-      }
-
-      if (count >= maxTokensPerSection) {
-        const totalRemoved = removedFiles.reduce((sum, f) => sum + f.tokens.length, 0) +
-          modifiedFiles.reduce((sum, f) => sum + (f.changes?.removed?.length || 0), 0);
-        md += `| ... | *${totalRemoved - count} more* | |\n`;
-      }
-
-      md += '\n';
-    }
-
-    // Modified tokens
-    const allModified = modifiedFiles.filter(f => f.changes?.modified?.length > 0);
-    if (allModified.length > 0) {
-      md += '#### 🟡 Modified\n\n';
-      md += '| Token | Old | New | File |\n';
-      md += '|-------|-----|-----|------|\n';
-
-      let count = 0;
-      for (const file of allModified) {
-        for (const token of file.changes.modified) {
-          if (count >= maxTokensPerSection) break;
-          md += `| \`${token.name}\` | \`${token.oldValue}\` | \`${token.newValue}\` | \`${path.basename(file.file)}\` |\n`;
-          count++;
-        }
-        if (count >= maxTokensPerSection) break;
-      }
-
-      if (count >= maxTokensPerSection) {
-        const totalModified = allModified.reduce((sum, f) => sum + f.changes.modified.length, 0);
-        md += `| ... | | *${totalModified - count} more* | |\n`;
-      }
-
-      md += '\n';
-    }
-
-    // Added tokens
-    const hasAddedTokens = addedFiles.length > 0 || modifiedFiles.some(f => f.changes?.added?.length > 0);
-    if (hasAddedTokens) {
-      md += '#### 🟢 Added\n\n';
-      md += '| Token | Value | File |\n';
-      md += '|-------|-------|------|\n';
-
-      let count = 0;
-
-      for (const file of addedFiles) {
-        for (const token of file.tokens.slice(0, 5)) {
-          if (count >= maxTokensPerSection) break;
-          md += `| \`${token.name}\` | \`${token.value}\` | \`${path.basename(file.file)}\` |\n`;
-          count++;
-        }
-      }
-
-      for (const file of modifiedFiles) {
-        if (!file.changes?.added) continue;
-        for (const token of file.changes.added.slice(0, 3)) {
-          if (count >= maxTokensPerSection) break;
-          md += `| \`${token.name}\` | \`${token.value}\` | \`${path.basename(file.file)}\` |\n`;
-          count++;
-        }
-      }
-
-      if (count >= maxTokensPerSection) {
-        md += `| ... | *more tokens* | |\n`;
-      }
-
-      md += '\n';
-    }
-
-    md += '</details>\n\n';
-  }
-
-  return md;
-}
-
-// =============================================================================
 // LAYER 4: TECHNICAL DETAILS
 // =============================================================================
 
@@ -1841,63 +1596,29 @@ function generateTechnicalDetails(diff, options = {}) {
 
   let md = '## ⚙️ Technical Details\n\n';
 
-  // Changed files by platform
-  md += '<details>\n';
-  md += '<summary>📁 <b>All Changed Files</b></summary>\n\n';
-
-  if (diff && diff.platforms) {
-    for (const platformKey of PLATFORM_ORDER) {
-      const platform = diff.platforms[platformKey];
-      if (!platform || platform.changes.length === 0) continue;
-
-      md += `#### ${platform.icon} ${platform.name}\n\n`;
-
-      const files = platform.changes.map(c => c.file).slice(0, 15);
-      for (const file of files) {
-        md += `- \`${file}\`\n`;
-      }
-
-      if (platform.changes.length > 15) {
-        md += `- *... and ${platform.changes.length - 15} more files*\n`;
-      }
-
-      md += '\n';
-    }
-  }
-
-  md += '</details>\n\n';
-
-  // Statistics
-  md += '<details>\n';
-  md += '<summary>📊 <b>Build Statistics</b></summary>\n\n';
-
+  // Compact statistics only (no file list - all platforms change together)
   if (diff && diff.summary) {
     const s = diff.summary;
     const uniqueAdded = s.uniqueTokensAdded ?? s.tokensAdded;
     const uniqueModified = s.uniqueTokensModified ?? s.tokensModified;
     const uniqueRemoved = s.uniqueTokensRemoved ?? s.tokensRemoved;
+    const filesChanged = s.filesAdded + s.filesModified + s.filesRemoved;
+    const totalUnique = uniqueAdded + uniqueModified + uniqueRemoved;
+    const platformOccurrences = s.tokensAdded + s.tokensModified + s.tokensRemoved;
 
-    md += '```\n';
-    md += `Files Changed:  ${s.filesAdded + s.filesModified + s.filesRemoved}\n`;
-    md += `  - Added:      ${s.filesAdded}\n`;
-    md += `  - Modified:   ${s.filesModified}\n`;
-    md += `  - Removed:    ${s.filesRemoved}\n`;
-    md += `\n`;
-    md += `Unique Tokens Changed: ${uniqueAdded + uniqueModified + uniqueRemoved}\n`;
-    md += `  - Added:      ${uniqueAdded}\n`;
-    md += `  - Modified:   ${uniqueModified}\n`;
-    md += `  - Removed:    ${uniqueRemoved}\n`;
-    md += `\n`;
-    md += `Platform Occurrences: ${s.tokensAdded + s.tokensModified + s.tokensRemoved}\n`;
-    md += `  - Added:      ${s.tokensAdded}\n`;
-    md += `  - Modified:   ${s.tokensModified}\n`;
-    md += `  - Removed:    ${s.tokensRemoved}\n`;
-    md += `\n`;
-    md += `Impact Level:   ${s.impactLevel}\n`;
-    md += '```\n\n';
+    // Compact one-line summary
+    md += `**Stats:** ${filesChanged} files · ${totalUnique} unique tokens · ${platformOccurrences} platform occurrences · Impact: **${s.impactLevel}**\n\n`;
+
+    // Detailed breakdown in collapsible
+    md += '<details>\n';
+    md += '<summary>📊 Detailed Statistics</summary>\n\n';
+    md += `| Metric | +Added | ~Modified | -Removed | Total |\n`;
+    md += `|--------|--------|-----------|----------|-------|\n`;
+    md += `| Unique Tokens | ${uniqueAdded} | ${uniqueModified} | ${uniqueRemoved} | ${totalUnique} |\n`;
+    md += `| Platform Occurrences | ${s.tokensAdded} | ${s.tokensModified} | ${s.tokensRemoved} | ${platformOccurrences} |\n`;
+    md += `| Files | ${s.filesAdded} | ${s.filesModified} | ${s.filesRemoved} | ${filesChanged} |\n`;
+    md += '\n</details>\n\n';
   }
-
-  md += '</details>\n\n';
 
   // Downloads
   if (runId) {
