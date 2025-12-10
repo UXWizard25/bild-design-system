@@ -291,6 +291,27 @@ function normalizeTokenName(name) {
  *   Swift:     ButtonPrimaryBg          → button.primary.bg
  *   Kotlin:    button_primary_bg        → button.primary.bg
  */
+/**
+ * Extract token name from Figma path and convert to dot notation
+ * Figma paths include collection/folder structure, we only need the last segment
+ *
+ * Examples:
+ *   Semantic/Text/textColorPrimary     → text.color.primary
+ *   BILD/TextLabels/BILDOrange         → bild.orange
+ *   Global/Display/display1            → display.1
+ *   Component/Button/buttonPrimaryBg   → button.primary.bg
+ */
+function figmaPathToTokenName(figmaPath) {
+  if (!figmaPath) return figmaPath;
+
+  // Extract the last segment (actual token name)
+  const segments = figmaPath.split('/');
+  const tokenName = segments[segments.length - 1];
+
+  // Convert to dot notation
+  return toDotNotation(tokenName);
+}
+
 function toDotNotation(tokenName) {
   if (!tokenName) return tokenName;
 
@@ -497,6 +518,9 @@ function detectRenames(oldSource, newSource) {
         variableId: id,
         oldName: oldVar.name,
         newName: newVar.name,
+        // Converted token names (from Figma path to dot notation)
+        oldTokenName: figmaPathToTokenName(oldVar.name),
+        newTokenName: figmaPathToTokenName(newVar.name),
         resolvedType: oldVar.resolvedType,
         collectionName: oldVar.collectionName,
         category: categorizeTokenFromSource(oldVar),
@@ -550,6 +574,9 @@ function detectRenames(oldSource, newSource) {
         styleId: id,
         oldName: oldStyle.name,
         newName: newStyle.name,
+        // Converted token names (from Figma path to dot notation)
+        oldTokenName: figmaPathToTokenName(oldStyle.name),
+        newTokenName: figmaPathToTokenName(newStyle.name),
         type: oldStyle.type,
         layer: oldStyle.layer,
         isBreaking: oldStyle.isBreaking, // Typography/Effects are always semantic or component
@@ -1990,6 +2017,7 @@ module.exports = {
   detectLayerFromPath,
   extractFileMetadata,
   toDotNotation,
+  figmaPathToTokenName,
   groupByLayer,
   groupByCategory,
   createGroupedResults,
