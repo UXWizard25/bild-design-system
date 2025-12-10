@@ -668,10 +668,8 @@ Tokens that vary by brand/mode/breakpoint are displayed in a matrix format:
 
 | | Bild | Sportbild |
 |---|---|---|
-| ☀️ light | 🟡 `#232629` → `#1a1c1e` | 🟡 `#232629` → `#1a1c1e` |
-| 🌙 dark | 🟡 `#f2f4f5` → `#ffffff` | – |
-
-> 📊 bild/light: ΔE 4.9 (subtil) · bild/dark: ΔE 4 (subtil)
+| ☀️ light | `#232629` → `#1a1c1e` · Δ 4.9 🟡 | `#232629` → `#1a1c1e` · Δ 4.9 🟡 |
+| 🌙 dark | `#f2f4f5` → `#ffffff` · Δ 4 🟡 | – |
 ```
 
 **Breakpoint Matrix (Brand × Breakpoint):**
@@ -680,12 +678,10 @@ Tokens that vary by brand/mode/breakpoint are displayed in a matrix format:
 
 | | Bild | Sportbild |
 |---|---|---|
-| 📱 xs | 🟠 `12px` → `16px` | 🟠 `12px` → `16px` |
-| 📱 sm | 🟡 `16px` → `20px` | – |
-| 💻 md | 🟡 `20px` → `24px` | 🟡 `20px` → `24px` |
-| 🖥️ lg | 🟠 `24px` → `32px` | – |
-
-> 📊 bild/xs: +33% · bild/sm: +25% · bild/md: +20% · bild/lg: +33%
+| 📱 xs | `12px` → `16px` · +33% 🟠 | `12px` → `16px` · +33% 🟠 |
+| 📱 sm | `16px` → `20px` · +25% 🟡 | – |
+| 💻 md | `20px` → `24px` · +20% 🟡 | `20px` → `24px` · +20% 🟡 |
+| 🖥️ lg | `24px` → `32px` · +33% 🟠 | – |
 ```
 
 #### Visual Diff Indicators
@@ -717,6 +713,39 @@ Tokens that vary by brand/mode/breakpoint are displayed in a matrix format:
 | 📱 | xs, sm | Mobile |
 | 💻 | md | Tablet |
 | 🖥️ | lg | Desktop |
+
+#### Migration Guide Table
+
+For renamed tokens, a platform-specific migration guide is generated:
+
+```markdown
+| | CSS | SCSS | JS / JSON / Native |
+|---|---|---|---|
+| **Old** | `--button-primary-bg` | `$button-primary-bg` | `buttonPrimaryBg` |
+| **New** | `--button-accent-bg` | `$button-accent-bg` | `buttonAccentBg` |
+```
+
+**Platform Naming Conventions:**
+
+| Platform | Prefix | Case | Example |
+|----------|--------|------|---------|
+| CSS | `--` | kebab | `--button-primary-bg` |
+| SCSS | `$` | kebab | `$button-primary-bg` |
+| JS/JSON | – | camelCase | `buttonPrimaryBg` |
+| Swift/Kotlin | – | camelCase | `buttonPrimaryBg` |
+
+#### Token Name Normalization
+
+The `toDotNotation()` function normalizes token names to platform-agnostic dot notation:
+
+```
+Input                          → Output
+--button-primary-bg            → button.primary.bg
+$button-primary-bg             → button.primary.bg
+buttonPrimaryBg                → button.primary.bg
+space1x                        → space.1.x
+gapSpaceConst3xl               → gap.space.const.3.xl
+```
 
 ---
 
@@ -867,6 +896,9 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify color matrix display | `scripts/tokens/release-notes.js` → `generateColorMatrix()` |
 | Modify breakpoint matrix display | `scripts/tokens/release-notes.js` → `generateBreakpointMatrix()` |
 | Change visual diff indicators | `scripts/tokens/release-notes.js` → `calculateDeltaE()`, `calculateDimensionDiff()` |
+| Modify migration guide table | `scripts/tokens/release-notes.js` → `generateRenamePlatformTable()` |
+| Change token name normalization | `scripts/tokens/compare-builds.js` → `toDotNotation()`, `figmaPathToTokenName()` |
+| Modify platform name transforms | `scripts/tokens/release-notes.js` → `toKebabCase()`, `toCamelCasePlatform()` |
 
 ---
 

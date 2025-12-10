@@ -303,7 +303,7 @@ The release notes include structured sections with visual diff information:
 
 | Section | Content |
 |---------|---------|
-| 🔴 Breaking Changes | Removed tokens grouped by layer |
+| 🔴 Breaking Changes | Removed tokens grouped by layer, migration guide for renames |
 | 🟡 Visual Changes | Modified tokens with matrix display |
 | 🟢 Safe Changes | Added tokens and internal changes |
 | ⚙️ Technical Details | File lists and build stats |
@@ -314,21 +314,32 @@ Color tokens (brand × mode):
 ```
 | | Bild | Sportbild |
 |---|---|---|
-| ☀️ light | 🟡 `#232629` → `#1a1c1e` | – |
-| 🌙 dark | 🟠 `#f2f4f5` → `#ffffff` | – |
-
-> 📊 bild/light: ΔE 4.9 (subtil)
+| ☀️ light | `#232629` → `#1a1c1e` · Δ 4.9 🟡 | – |
+| 🌙 dark | `#f2f4f5` → `#ffffff` · Δ 4 🟡 | – |
 ```
 
 Spacing tokens (brand × breakpoint):
 ```
 | | Bild | Sportbild |
 |---|---|---|
-| 📱 xs | 🟠 `12px` → `16px` | – |
-| 💻 md | 🟡 `20px` → `24px` | – |
-
-> 📊 bild/xs: +33% · bild/md: +20%
+| 📱 xs | `12px` → `16px` · +33% 🟠 | – |
+| 💻 md | `20px` → `24px` · +20% 🟡 | – |
 ```
+
+**Migration Guide Table (for renamed tokens):**
+```
+| | CSS | SCSS | JS / JSON / Native |
+|---|---|---|---|
+| **Old** | `--button-primary-bg` | `$button-primary-bg` | `buttonPrimaryBg` |
+| **New** | `--button-accent-bg` | `$button-accent-bg` | `buttonAccentBg` |
+```
+
+**Platform Naming Conventions:**
+| Platform | Prefix | Example |
+|----------|--------|---------|
+| CSS | `--` | `--button-primary-bg` |
+| SCSS | `$` | `$button-primary-bg` |
+| JS/JSON/Swift/Kotlin | – | `buttonPrimaryBg` |
 
 **Visual Indicators:**
 - ⚪ keine Änderung / ΔE < 1
@@ -362,4 +373,4 @@ The workflow requires:
 
 ---
 
-**Last updated**: 2025-12-09
+**Last updated**: 2025-12-10
