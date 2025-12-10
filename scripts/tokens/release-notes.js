@@ -2005,19 +2005,19 @@ function generateGitHubRelease(diff, options = {}) {
       if (tokens.length === 0) continue;
 
       const config = CATEGORY_CONFIG[category];
-      const names = tokens.slice(0, 5).map(t => `\`${t.displayName}\``).join(', ');
+      const names = tokens.slice(0, 5).map(t => `\`${getTokenName(t)}\``).join(', ');
       const more = tokens.length > 5 ? `, ... (+${tokens.length - 5} more)` : '';
       md += `**${config.icon} ${config.label}:** ${names}${more}\n\n`;
     }
 
     if (addedTypography.length > 0) {
-      const names = addedTypography.slice(0, 3).map(t => `\`${t.newName || t.name}\``).join(', ');
+      const names = addedTypography.slice(0, 3).map(t => `\`${toDotNotation(t.newName || t.name)}\``).join(', ');
       const more = addedTypography.length > 3 ? `, ... (+${addedTypography.length - 3} more)` : '';
       md += `**📝 Typography Styles:** ${names}${more}\n\n`;
     }
 
     if (addedEffects.length > 0) {
-      const names = addedEffects.slice(0, 3).map(t => `\`${t.newName || t.name}\``).join(', ');
+      const names = addedEffects.slice(0, 3).map(t => `\`${toDotNotation(t.newName || t.name)}\``).join(', ');
       const more = addedEffects.length > 3 ? `, ... (+${addedEffects.length - 3} more)` : '';
       md += `**✨ Effects Styles:** ${names}${more}\n\n`;
     }
