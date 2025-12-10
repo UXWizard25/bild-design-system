@@ -13,7 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { toDotNotation } = require('./compare-builds');
+const { toDotNotation, figmaPathToTokenName } = require('./compare-builds');
 
 // =============================================================================
 // CONSTANTS
@@ -73,6 +73,64 @@ function getTokenName(token) {
   if (!token) return '';
   // Prefer canonical dot notation, fallback to CSS displayName
   return token.canonicalName || token.displayName || token.name || token.oldName || '';
+}
+
+/**
+ * Get the old token name from a rename object
+ * Prefers pre-computed oldTokenName, falls back to figmaPathToTokenName
+ */
+function getOldTokenName(rename) {
+  if (!rename) return '';
+  return rename.oldTokenName || figmaPathToTokenName(rename.oldName) || '';
+}
+
+/**
+ * Get the new token name from a rename object
+ * Prefers pre-computed newTokenName, falls back to figmaPathToTokenName
+ */
+function getNewTokenName(rename) {
+  if (!rename) return '';
+  return rename.newTokenName || figmaPathToTokenName(rename.newName) || '';
+}
+
+// =============================================================================
+// ALIAS DETECTION UTILITIES
+// =============================================================================
+
+/**
+ * Check if a value is a CSS variable reference (alias)
+ * Examples: "var(--text-color-primary)", "var(--color-neutral-100, #FFFFFF)"
+ */
+function isAliasValue(value) {
+  if (!value || typeof value !== 'string') return false;
+  return value.trim().startsWith('var(--');
+}
+
+/**
+ * Check if a token change is an alias change (references another token)
+ * An alias change is when both old and new values are CSS variable references
+ */
+function isAliasChange(token) {
+  if (!token) return false;
+  return isAliasValue(token.oldValue) && isAliasValue(token.newValue);
+}
+
+/**
+ * Split modified tokens into alias changes and value changes
+ */
+function splitByChangeType(modifiedTokens) {
+  const aliasChanges = [];
+  const valueChanges = [];
+
+  for (const token of modifiedTokens) {
+    if (isAliasChange(token)) {
+      aliasChanges.push(token);
+    } else {
+      valueChanges.push(token);
+    }
+  }
+
+  return { aliasChanges, valueChanges };
 }
 
 // =============================================================================
@@ -367,11 +425,11 @@ function generatePreview(tokens, max = 2) {
 }
 
 /**
- * Generate type breakdown string (e.g., "Variables (5), Typography (2)")
+ * Generate type breakdown string (e.g., "Tokens (5), Typography (2)")
  */
 function generateTypeBreakdown(counts) {
   const parts = [];
-  if (counts.variables > 0) parts.push(`Variables (${counts.variables})`);
+  if (counts.variables > 0) parts.push(`Tokens (${counts.variables})`);
   if (counts.typography > 0) parts.push(`Typography (${counts.typography})`);
   if (counts.effects > 0) parts.push(`Effects (${counts.effects})`);
   return parts.join(', ') || '–';
@@ -579,25 +637,52 @@ function generateUnifiedTokenChanges(diff, options = {}) {
     md += '\n';
   }
 
-  // Modified tokens
+  // Modified tokens - split by change type
   if (modified.length > 0) {
-    md += `### 🟡 Modified (${modified.length})\n\n`;
-    md += '> ℹ️ Values may vary by brand/mode.\n\n';
-    md += '| Token | Change |\n';
-    md += '|-------|--------|\n';
+    const { aliasChanges, valueChanges } = splitByChangeType(modified);
 
-    const displayTokens = modified.slice(0, maxTokensPerSection);
-    for (const token of displayTokens) {
-      const changeDisplay = formatValueChange(token.oldValue, token.newValue);
-      md += `| \`${getTokenName(token)}\` | ${changeDisplay} |\n`;
+    // Value changes (actual color/dimension changes)
+    if (valueChanges.length > 0) {
+      md += `### 🟡 Value Changes (${valueChanges.length})\n\n`;
+      md += '> Actual token values have changed.\n\n';
+      md += '| Token | Change |\n';
+      md += '|-------|--------|\n';
+
+      const displayTokens = valueChanges.slice(0, maxTokensPerSection);
+      for (const token of displayTokens) {
+        const changeDisplay = formatValueChange(token.oldValue, token.newValue);
+        md += `| \`${getTokenName(token)}\` | ${changeDisplay} |\n`;
+      }
+
+      if (valueChanges.length > maxTokensPerSection) {
+        md += `| ... | *${valueChanges.length - maxTokensPerSection} more* |\n`;
+      }
+
+      md += '\n';
     }
 
-    if (modified.length > maxTokensPerSection) {
-      md += `| ... | *${modified.length - maxTokensPerSection} more* |\n`;
+    // Alias changes (reference changes)
+    if (aliasChanges.length > 0) {
+      md += `### 🔗 Alias Changes (${aliasChanges.length})\n\n`;
+      md += '> Tokens now reference different semantic tokens.\n\n';
+      md += '| Token | Change |\n';
+      md += '|-------|--------|\n';
+
+      const displayTokens = aliasChanges.slice(0, maxTokensPerSection);
+      for (const token of displayTokens) {
+        const changeDisplay = formatValueChange(token.oldValue, token.newValue);
+        md += `| \`${getTokenName(token)}\` | ${changeDisplay} |\n`;
+      }
+
+      if (aliasChanges.length > maxTokensPerSection) {
+        md += `| ... | *${aliasChanges.length - maxTokensPerSection} more* |\n`;
+      }
+
+      md += '\n';
     }
 
     // Platform-specific names (collapsible) - horizontal table
-    const groupedTokens = getPlatformNamesGroupedByToken(displayTokens);
+    const groupedTokens = getPlatformNamesGroupedByToken(modified.slice(0, maxTokensPerSection));
     md += generatePlatformNamesTable(groupedTokens);
 
     md += '\n';
@@ -709,7 +794,7 @@ function generateBreakingChangesSection(diff, options = {}) {
     if (totalRemoved > 0) {
       // Count by type for header
       const typeCounts = [];
-      if (breaking.removed.variables.length > 0) typeCounts.push(`${breaking.removed.variables.length} Variables`);
+      if (breaking.removed.variables.length > 0) typeCounts.push(`${breaking.removed.variables.length} Tokens`);
       if (breaking.removed.typography.length > 0) typeCounts.push(`${breaking.removed.typography.length} Typography`);
       if (breaking.removed.effects.length > 0) typeCounts.push(`${breaking.removed.effects.length} Effects`);
 
@@ -741,7 +826,7 @@ function generateBreakingChangesSection(diff, options = {}) {
     if (totalRenamed > 0) {
       // Count by type for header
       const typeCounts = [];
-      if (breaking.renamed.variables.length > 0) typeCounts.push(`${breaking.renamed.variables.length} Variables`);
+      if (breaking.renamed.variables.length > 0) typeCounts.push(`${breaking.renamed.variables.length} Tokens`);
       if (breaking.renamed.typography.length > 0) typeCounts.push(`${breaking.renamed.typography.length} Typography`);
       if (breaking.renamed.effects.length > 0) typeCounts.push(`${breaking.renamed.effects.length} Effects`);
 
@@ -749,39 +834,55 @@ function generateBreakingChangesSection(diff, options = {}) {
       md += '| Old Name | → | New Name | Type |\n';
       md += '|----------|:-:|----------|------|\n';
 
-      // Variables
+      // Tokens (Variables)
       for (const rename of breaking.renamed.variables) {
-        md += `| \`${toDotNotation(rename.oldName)}\` | → | \`${toDotNotation(rename.newName)}\` | 🎨 Variable |\n`;
+        md += `| \`${getOldTokenName(rename)}\` | → | \`${getNewTokenName(rename)}\` | 🎨 Token |\n`;
       }
 
-      // Typography styles
+      // Typography styles (Combined Tokens)
       for (const rename of breaking.renamed.typography) {
-        md += `| \`${toDotNotation(rename.oldName)}\` | → | \`${toDotNotation(rename.newName)}\` | 📝 Typography |\n`;
+        md += `| \`${getOldTokenName(rename)}\` | → | \`${getNewTokenName(rename)}\` | 📝 Combined |\n`;
       }
 
-      // Effect styles
+      // Effect styles (Combined Tokens)
       for (const rename of breaking.renamed.effects) {
-        md += `| \`${toDotNotation(rename.oldName)}\` | → | \`${toDotNotation(rename.newName)}\` | ✨ Effect |\n`;
+        md += `| \`${getOldTokenName(rename)}\` | → | \`${getNewTokenName(rename)}\` | ✨ Combined |\n`;
       }
 
       md += '\n';
 
-      // Migration commands
+      // Migration Matrix - platform-specific token names
       const allRenames = [
         ...breaking.renamed.variables,
         ...breaking.renamed.typography,
         ...breaking.renamed.effects
       ];
 
-      md += '<details>\n<summary>📋 Migration Commands</summary>\n\n';
-      md += '```bash\n# Find & Replace:\n';
-      for (const rename of allRenames.slice(0, 15)) {
-        md += `${toDotNotation(rename.oldName)} → ${toDotNotation(rename.newName)}\n`;
+      md += '<details>\n<summary>📋 Migration Guide (Platform-Specific Names)</summary>\n\n';
+
+      // Generate matrix with token names per platform
+      md += '| Token (Canonical) | CSS | JavaScript | Swift/Kotlin |\n';
+      md += '|-------------------|-----|------------|---------------|\n';
+
+      for (const rename of allRenames.slice(0, 20)) {
+        const oldToken = getOldTokenName(rename);
+        const newToken = getNewTokenName(rename);
+        // Convert canonical dot notation to platform-specific formats
+        const cssOld = `--${oldToken.replace(/\./g, '-')}`;
+        const cssNew = `--${newToken.replace(/\./g, '-')}`;
+        const jsOld = oldToken.replace(/\./g, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase()).replace(/^([A-Z])/, c => c.toLowerCase());
+        const jsNew = newToken.replace(/\./g, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase()).replace(/^([A-Z])/, c => c.toLowerCase());
+        // For Swift/Kotlin, same as JS but more readable format
+        const nativeNew = jsNew;
+
+        md += `| \`${oldToken}\` → \`${newToken}\` | \`${cssOld}\` → \`${cssNew}\` | \`${jsOld}\` → \`${jsNew}\` | \`${nativeNew}\` |\n`;
       }
-      if (allRenames.length > 15) {
-        md += `# ... and ${allRenames.length - 15} more\n`;
+
+      if (allRenames.length > 20) {
+        md += `| ... | | | *${allRenames.length - 20} more* |\n`;
       }
-      md += '```\n\n</details>\n\n';
+
+      md += '\n</details>\n\n';
     }
 
     md += '---\n\n';
@@ -815,7 +916,7 @@ function generateBreakingChangesSection(diff, options = {}) {
     md += '| Old Name | → | New Name |\n';
     md += '|----------|:-:|----------|\n';
     for (const rename of breakingVariableRenames) {
-      md += `| \`${toDotNotation(rename.oldName)}\` | → | \`${toDotNotation(rename.newName)}\` |\n`;
+      md += `| \`${getOldTokenName(rename)}\` | → | \`${getNewTokenName(rename)}\` |\n`;
     }
     md += '\n';
   }
@@ -835,21 +936,21 @@ const KNOWN_BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 
 /**
  * Format a color change with inline delta
- * Output: `#232629`→`#1a1c1e` 🟡4.9
+ * Output: `#232629`→`#1a1c1e` · Δ 4.9 🟡
  */
 function formatColorChangeInline(oldVal, newVal) {
   const deltaE = calculateDeltaE(oldVal, newVal);
-  const deltaStr = deltaE ? ` ${deltaE.icon}${deltaE.deltaE}` : '';
+  const deltaStr = deltaE ? ` · Δ ${deltaE.deltaE} ${deltaE.icon}` : '';
   return `\`${oldVal}\`→\`${newVal}\`${deltaStr}`;
 }
 
 /**
  * Format a dimension change with inline delta
- * Output: `8px`→`12px` 🟠+50%
+ * Output: `8px`→`12px` · +50% 🟠
  */
 function formatDimensionChangeInline(oldVal, newVal) {
   const dimDiff = calculateDimensionDiff(oldVal, newVal);
-  const diffStr = dimDiff ? ` ${dimDiff.icon}${dimDiff.display}` : '';
+  const diffStr = dimDiff ? ` · ${dimDiff.display} ${dimDiff.icon}` : '';
   return `\`${oldVal}\`→\`${newVal}\`${diffStr}`;
 }
 
@@ -1213,18 +1314,31 @@ function generateSafeChangesSection(diff, options = {}) {
   const addedTypography = grouped?.added?.typography || [];
   const addedEffects = grouped?.added?.effects || [];
 
+  // Get renames first (needed to filter removed tokens)
+  const variableRenames = diff?.renames || [];
+  const nonBreakingRenames = variableRenames.filter(r => !CONSUMPTION_LAYERS.includes(r.layer));
+
+  // Create a Set of renamed old token names (to filter from removed)
+  // A renamed token should NOT also appear as removed
+  const renamedOldNames = new Set(
+    nonBreakingRenames.map(r => getOldTokenName(r).toLowerCase())
+  );
+
   // Get internal changes (primitive layer - no consumer impact)
   const allRemovedTokens = diff?.byUniqueToken?.removed || [];
-  const internalRemovedTokens = grouped?.internal?.removed ||
+  const internalRemovedTokensRaw = grouped?.internal?.removed ||
     allRemovedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
+
+  // Filter out tokens that were renamed (not truly removed)
+  const internalRemovedTokens = internalRemovedTokensRaw.filter(t => {
+    const tokenName = getTokenName(t).toLowerCase();
+    return !renamedOldNames.has(tokenName);
+  });
 
   // Get internal modified tokens (primitive layer modifications)
   const allModifiedTokens = diff?.byUniqueToken?.modified || [];
   const internalModifiedTokens = grouped?.internal?.modified ||
     allModifiedTokens.filter(t => !CONSUMPTION_LAYERS.includes(t.layer));
-
-  const variableRenames = diff?.renames || [];
-  const nonBreakingRenames = variableRenames.filter(r => !CONSUMPTION_LAYERS.includes(r.layer));
 
   const totalAdded = addedTokens.length + addedTypography.length + addedEffects.length;
   const hasAdded = totalAdded > 0;
@@ -1263,11 +1377,12 @@ function generateSafeChangesSection(diff, options = {}) {
 
       const config = CATEGORY_CONFIG[category] || CATEGORY_CONFIG.other;
       md += `<details>\n<summary>${config.icon} ${config.label} (${tokens.length})</summary>\n\n`;
-      md += '| Token | Value |\n';
+      md += '| Token | Layer |\n';
       md += '|-------|-------|\n';
 
       for (const token of tokens.slice(0, maxTokens)) {
-        md += `| \`${getTokenName(token)}\` | \`${token.value}\` |\n`;
+        const layerConfig = LAYER_CONFIG[token.layer] || LAYER_CONFIG.semantic;
+        md += `| \`${getTokenName(token)}\` | ${layerConfig.icon} ${layerConfig.label} |\n`;
       }
 
       if (tokens.length > maxTokens) {
@@ -1339,17 +1454,13 @@ function generateSafeChangesSection(diff, options = {}) {
 
     if (internalRemovedTokens.length > 0) {
       md += `**Removed (${internalRemovedTokens.length}):**\n\n`;
-      md += '| Token | Previous Value |\n';
-      md += '|-------|----------------|\n';
-
-      for (const token of internalRemovedTokens.slice(0, maxTokens)) {
-        md += `| \`${getTokenName(token)}\` | \`${token.value}\` |\n`;
-      }
-
+      // Simple list of token names (no values needed for removed tokens)
+      const tokenNames = internalRemovedTokens.slice(0, maxTokens).map(t => `\`${getTokenName(t)}\``);
+      md += tokenNames.join(', ');
       if (internalRemovedTokens.length > maxTokens) {
-        md += `| ... | *${internalRemovedTokens.length - maxTokens} more* |\n`;
+        md += `, ... (+${internalRemovedTokens.length - maxTokens} more)`;
       }
-      md += '\n';
+      md += '\n\n';
     }
 
     if (nonBreakingRenames.length > 0) {
@@ -1358,7 +1469,7 @@ function generateSafeChangesSection(diff, options = {}) {
       md += '|----------|:---:|----------|\n';
 
       for (const rename of nonBreakingRenames.slice(0, maxTokens)) {
-        md += `| \`${rename.oldName}\` | → | \`${rename.newName}\` |\n`;
+        md += `| \`${getOldTokenName(rename)}\` | → | \`${getNewTokenName(rename)}\` |\n`;
       }
 
       if (nonBreakingRenames.length > maxTokens) {
@@ -1763,9 +1874,7 @@ function generateConsoleOutput(diff) {
   if (diff.renames && diff.renames.length > 0) {
     output += '  Renamed Tokens:\n';
     for (const rename of diff.renames.slice(0, 5)) {
-      const oldSimple = rename.oldName.split('/').pop();
-      const newSimple = rename.newName.split('/').pop();
-      output += `    🔄 ${oldSimple} → ${newSimple}\n`;
+      output += `    🔄 ${getOldTokenName(rename)} → ${getNewTokenName(rename)}\n`;
     }
     if (diff.renames.length > 5) {
       output += `    ... and ${diff.renames.length - 5} more\n`;
@@ -1838,7 +1947,7 @@ function generateGitHubRelease(diff, options = {}) {
     // Removed tokens
     if (totalRemoved > 0) {
       const typeParts = [];
-      if (removedVars > 0) typeParts.push(`${removedVars} Variables`);
+      if (removedVars > 0) typeParts.push(`${removedVars} Tokens`);
       if (removedTypo > 0) typeParts.push(`${removedTypo} Typography`);
       if (removedEffects > 0) typeParts.push(`${removedEffects} Effects`);
 
@@ -1869,7 +1978,7 @@ function generateGitHubRelease(diff, options = {}) {
     // Renamed tokens
     if (totalRenamed > 0) {
       const typeParts = [];
-      if (renamedVars > 0) typeParts.push(`${renamedVars} Variables`);
+      if (renamedVars > 0) typeParts.push(`${renamedVars} Tokens`);
       if (renamedTypo > 0) typeParts.push(`${renamedTypo} Typography`);
       if (renamedEffects > 0) typeParts.push(`${renamedEffects} Effects`);
 
@@ -1879,32 +1988,42 @@ function generateGitHubRelease(diff, options = {}) {
 
       // Combine all renames
       const allRenames = [
-        ...(breakingRenamed?.variables || []).map(r => ({ ...r, type: '🎨 Variable' })),
-        ...(breakingRenamed?.typography || []).map(r => ({ ...r, type: '📝 Typography' })),
-        ...(breakingRenamed?.effects || []).map(r => ({ ...r, type: '✨ Effects' }))
+        ...(breakingRenamed?.variables || []).map(r => ({ ...r, type: '🎨 Token' })),
+        ...(breakingRenamed?.typography || []).map(r => ({ ...r, type: '📝 Combined' })),
+        ...(breakingRenamed?.effects || []).map(r => ({ ...r, type: '✨ Combined' }))
       ];
 
       for (const rename of allRenames.slice(0, 10)) {
-        md += `| \`${toDotNotation(rename.oldName)}\` | → | \`${toDotNotation(rename.newName)}\` | ${rename.type} |\n`;
+        md += `| \`${getOldTokenName(rename)}\` | → | \`${getNewTokenName(rename)}\` | ${rename.type} |\n`;
       }
       if (allRenames.length > 10) {
         md += `| ... | | | *${allRenames.length - 10} more* |\n`;
       }
       md += '\n';
 
-      // Migration commands (collapsible)
+      // Migration Matrix - platform-specific token names
       md += '<details>\n';
-      md += '<summary>📋 Migration Commands</summary>\n\n';
-      md += '```bash\n';
-      md += '# Find & Replace:\n';
-      for (const rename of allRenames.slice(0, 15)) {
-        md += `${toDotNotation(rename.oldName)} → ${toDotNotation(rename.newName)}\n`;
+      md += '<summary>📋 Migration Guide (Platform-Specific Names)</summary>\n\n';
+      md += '| Token (Canonical) | CSS | JavaScript | Swift/Kotlin |\n';
+      md += '|-------------------|-----|------------|---------------|\n';
+
+      for (const rename of allRenames.slice(0, 20)) {
+        const oldToken = getOldTokenName(rename);
+        const newToken = getNewTokenName(rename);
+        const cssOld = `--${oldToken.replace(/\./g, '-')}`;
+        const cssNew = `--${newToken.replace(/\./g, '-')}`;
+        const jsOld = oldToken.replace(/\./g, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase()).replace(/^([A-Z])/, c => c.toLowerCase());
+        const jsNew = newToken.replace(/\./g, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase()).replace(/^([A-Z])/, c => c.toLowerCase());
+        const nativeNew = jsNew;
+
+        md += `| \`${oldToken}\` → \`${newToken}\` | \`${cssOld}\` → \`${cssNew}\` | \`${jsOld}\` → \`${jsNew}\` | \`${nativeNew}\` |\n`;
       }
-      if (allRenames.length > 15) {
-        md += `# ... and ${allRenames.length - 15} more\n`;
+
+      if (allRenames.length > 20) {
+        md += `| ... | | | *${allRenames.length - 20} more* |\n`;
       }
-      md += '```\n\n';
-      md += '</details>\n\n';
+
+      md += '\n</details>\n\n';
     }
   }
 

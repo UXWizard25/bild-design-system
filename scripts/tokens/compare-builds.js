@@ -291,6 +291,27 @@ function normalizeTokenName(name) {
  *   Swift:     ButtonPrimaryBg          → button.primary.bg
  *   Kotlin:    button_primary_bg        → button.primary.bg
  */
+/**
+ * Extract token name from Figma path and convert to dot notation
+ * Figma paths include collection/folder structure, we only need the last segment
+ *
+ * Examples:
+ *   Semantic/Text/textColorPrimary     → text.color.primary
+ *   BILD/TextLabels/BILDOrange         → bild.orange
+ *   Global/Display/display1            → display.1
+ *   Component/Button/buttonPrimaryBg   → button.primary.bg
+ */
+function figmaPathToTokenName(figmaPath) {
+  if (!figmaPath) return figmaPath;
+
+  // Extract the last segment (actual token name)
+  const segments = figmaPath.split('/');
+  const tokenName = segments[segments.length - 1];
+
+  // Convert to dot notation
+  return toDotNotation(tokenName);
+}
+
 function toDotNotation(tokenName) {
   if (!tokenName) return tokenName;
 
@@ -314,9 +335,11 @@ function toDotNotation(tokenName) {
   // 3. camelCase (JS): buttonPrimaryBg → button.primary.bg
   // 4. PascalCase (Swift): ButtonPrimaryBg → button.primary.bg
 
-  // First, normalize camelCase/PascalCase to kebab-case
+  // Normalize to kebab-case (matching build system rules from style-dictionary.config.js)
   result = result
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')  // camelCase splits
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')  // camelCase splits: buttonPrimary → button-Primary
+    .replace(/([a-zA-Z])(\d)/g, '$1-$2')     // letter→number: red50 → red-50, const3 → const-3
+    .replace(/(\d)([a-zA-Z])/g, '$1-$2')     // number→letter: 1x → 1-x, 3xl → 3-xl
     .toLowerCase();
 
   // Then convert separators to dots
@@ -497,6 +520,9 @@ function detectRenames(oldSource, newSource) {
         variableId: id,
         oldName: oldVar.name,
         newName: newVar.name,
+        // Converted token names (from Figma path to dot notation)
+        oldTokenName: figmaPathToTokenName(oldVar.name),
+        newTokenName: figmaPathToTokenName(newVar.name),
         resolvedType: oldVar.resolvedType,
         collectionName: oldVar.collectionName,
         category: categorizeTokenFromSource(oldVar),
@@ -550,6 +576,9 @@ function detectRenames(oldSource, newSource) {
         styleId: id,
         oldName: oldStyle.name,
         newName: newStyle.name,
+        // Converted token names (from Figma path to dot notation)
+        oldTokenName: figmaPathToTokenName(oldStyle.name),
+        newTokenName: figmaPathToTokenName(newStyle.name),
         type: oldStyle.type,
         layer: oldStyle.layer,
         isBreaking: oldStyle.isBreaking, // Typography/Effects are always semantic or component
@@ -1830,9 +1859,42 @@ function createGroupedResults(results) {
     }
   };
 
+  // --- First, collect all renamed token names to filter from removed ---
+  // A renamed token should NOT also appear as removed
+  const renamedOldTokenNames = new Set();
+  if (results.renames) {
+    for (const rename of results.renames) {
+      // Use the converted token name (dot notation) for matching
+      const oldTokenName = figmaPathToTokenName(rename.oldName);
+      if (oldTokenName) {
+        renamedOldTokenNames.add(oldTokenName.toLowerCase());
+      }
+    }
+  }
+
+  const renamedOldStyleNames = new Set();
+  if (results.styleRenames) {
+    for (const rename of results.styleRenames) {
+      const oldTokenName = figmaPathToTokenName(rename.oldName);
+      if (oldTokenName) {
+        renamedOldStyleNames.add(oldTokenName.toLowerCase());
+      }
+    }
+  }
+
   // --- BREAKING: Removed tokens (consumption layer only) ---
+  // Filter out tokens that were renamed (they have the same ID, just new name)
   if (results.byUniqueToken?.removed) {
     for (const token of results.byUniqueToken.removed) {
+      // Check if this token was actually renamed
+      const tokenName = toDotNotation(token.displayName || token.normalizedName);
+      const wasRenamed = tokenName && renamedOldTokenNames.has(tokenName.toLowerCase());
+
+      if (wasRenamed) {
+        // Skip - this token was renamed, not removed
+        continue;
+      }
+
       if (CONSUMPTION_LAYERS.includes(token.layer)) {
         grouped.breaking.removed.variables.push(token);
       } else {
@@ -1842,15 +1904,26 @@ function createGroupedResults(results) {
   }
 
   // --- BREAKING: Removed combined styles ---
+  // Filter out styles that were renamed
   if (results.styleChanges) {
     // Typography removed
     for (const style of results.styleChanges.typography?.removed || []) {
+      const styleName = figmaPathToTokenName(style.name);
+      const wasRenamed = styleName && renamedOldStyleNames.has(styleName.toLowerCase());
+
+      if (wasRenamed) continue;
+
       if (CONSUMPTION_LAYERS.includes(style.layer || 'semantic')) {
         grouped.breaking.removed.typography.push(style);
       }
     }
     // Effects removed
     for (const style of results.styleChanges.effects?.removed || []) {
+      const styleName = figmaPathToTokenName(style.name);
+      const wasRenamed = styleName && renamedOldStyleNames.has(styleName.toLowerCase());
+
+      if (wasRenamed) continue;
+
       if (CONSUMPTION_LAYERS.includes(style.layer || 'semantic')) {
         grouped.breaking.removed.effects.push(style);
       }
@@ -1990,6 +2063,7 @@ module.exports = {
   detectLayerFromPath,
   extractFileMetadata,
   toDotNotation,
+  figmaPathToTokenName,
   groupByLayer,
   groupByCategory,
   createGroupedResults,
