@@ -335,9 +335,11 @@ function toDotNotation(tokenName) {
   // 3. camelCase (JS): buttonPrimaryBg → button.primary.bg
   // 4. PascalCase (Swift): ButtonPrimaryBg → button.primary.bg
 
-  // First, normalize camelCase/PascalCase to kebab-case
+  // Normalize to kebab-case (matching build system rules from style-dictionary.config.js)
   result = result
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')  // camelCase splits
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')  // camelCase splits: buttonPrimary → button-Primary
+    .replace(/([a-zA-Z])(\d)/g, '$1-$2')     // letter→number: red50 → red-50, const3 → const-3
+    .replace(/(\d)([a-zA-Z])/g, '$1-$2')     // number→letter: 1x → 1-x, 3xl → 3-xl
     .toLowerCase();
 
   // Then convert separators to dots
