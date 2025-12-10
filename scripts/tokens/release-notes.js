@@ -1707,12 +1707,18 @@ function generateAffectedComponentsSection(diff, options = {}) {
   // Find affected components
   const affected = findAffectedComponents(diff, componentMap);
 
+  let md = '## 🧩 Affected Stencil Components\n\n';
+
+  // Count total scanned components
+  const scannedCount = Object.keys(componentMap).length;
+
   if (affected.summary.total === 0) {
     // No components affected by token changes
-    return '';
+    md += `> ✅ None of the ${scannedCount} scanned Stencil components reference the changed tokens\n\n`;
+    md += '---\n\n';
+    return md;
   }
 
-  let md = '## 🧩 Affected Stencil Components\n\n';
   md += '> Components in the Stencil library that reference changed tokens\n\n';
 
   // Summary table
