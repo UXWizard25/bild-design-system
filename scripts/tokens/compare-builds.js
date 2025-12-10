@@ -515,22 +515,30 @@ function detectRenames(oldSource, newSource) {
         isBreaking: oldVar.isBreaking
       });
     } else if (oldVar.name !== newVar.name) {
-      // Same ID, different name → renamed
-      renames.push({
-        variableId: id,
-        oldName: oldVar.name,
-        newName: newVar.name,
-        // Converted token names (from Figma path to dot notation)
-        oldTokenName: figmaPathToTokenName(oldVar.name),
-        newTokenName: figmaPathToTokenName(newVar.name),
-        resolvedType: oldVar.resolvedType,
-        collectionName: oldVar.collectionName,
-        category: categorizeTokenFromSource(oldVar),
-        layer: oldVar.layer,
-        isBreaking: oldVar.isBreaking,
-        tokenType: 'variable',
-        confidence: 1.0 // 100% confidence because same Variable ID
-      });
+      // Same ID, different Figma path → check if actual token name changed
+      const oldTokenName = figmaPathToTokenName(oldVar.name);
+      const newTokenName = figmaPathToTokenName(newVar.name);
+
+      // Only count as rename if the output token name actually changed
+      // (Figma path changes that don't affect the final token name are not breaking)
+      if (oldTokenName !== newTokenName) {
+        renames.push({
+          variableId: id,
+          oldName: oldVar.name,
+          newName: newVar.name,
+          // Converted token names (from Figma path to dot notation)
+          oldTokenName: oldTokenName,
+          newTokenName: newTokenName,
+          resolvedType: oldVar.resolvedType,
+          collectionName: oldVar.collectionName,
+          category: categorizeTokenFromSource(oldVar),
+          layer: oldVar.layer,
+          isBreaking: oldVar.isBreaking,
+          tokenType: 'variable',
+          confidence: 1.0 // 100% confidence because same Variable ID
+        });
+      }
+      // If oldTokenName === newTokenName, it's just a Figma reorganization, not a breaking change
     }
   }
 
@@ -571,21 +579,28 @@ function detectRenames(oldSource, newSource) {
         properties: oldStyle.properties
       });
     } else if (oldStyle.name !== newStyle.name) {
-      // Same ID, different name → renamed (ALWAYS breaking in consumption layer)
-      styleRenames.push({
-        styleId: id,
-        oldName: oldStyle.name,
-        newName: newStyle.name,
-        // Converted token names (from Figma path to dot notation)
-        oldTokenName: figmaPathToTokenName(oldStyle.name),
-        newTokenName: figmaPathToTokenName(newStyle.name),
-        type: oldStyle.type,
-        layer: oldStyle.layer,
-        isBreaking: oldStyle.isBreaking, // Typography/Effects are always semantic or component
-        tokenType: oldStyle.type,
-        category: oldStyle.type === 'typography' ? 'typography' : 'effects',
-        confidence: 1.0
-      });
+      // Same ID, different Figma path → check if actual token name changed
+      const oldTokenName = figmaPathToTokenName(oldStyle.name);
+      const newTokenName = figmaPathToTokenName(newStyle.name);
+
+      // Only count as rename if the output token name actually changed
+      if (oldTokenName !== newTokenName) {
+        styleRenames.push({
+          styleId: id,
+          oldName: oldStyle.name,
+          newName: newStyle.name,
+          // Converted token names (from Figma path to dot notation)
+          oldTokenName: oldTokenName,
+          newTokenName: newTokenName,
+          type: oldStyle.type,
+          layer: oldStyle.layer,
+          isBreaking: oldStyle.isBreaking, // Typography/Effects are always semantic or component
+          tokenType: oldStyle.type,
+          category: oldStyle.type === 'typography' ? 'typography' : 'effects',
+          confidence: 1.0
+        });
+      }
+      // If oldTokenName === newTokenName, it's just a Figma reorganization, not a breaking change
 
       // Also check if properties changed
       const propChanges = compareStyleProperties(oldStyle, newStyle);
