@@ -277,6 +277,55 @@ function normalizeTokenName(name) {
   return normalized;
 }
 
+/**
+ * Convert platform-specific token name to canonical dot notation
+ *
+ * This provides a platform-agnostic representation following W3C DTCG conventions.
+ *
+ * Examples:
+ *   CSS var:   --button-primary-bg      → button.primary.bg
+ *   CSS class: .display-1               → display.1
+ *   CSS class: .shadow-soft-md          → shadow.soft.md
+ *   SCSS:      $button-primary-bg       → button.primary.bg
+ *   JS:        buttonPrimaryBg          → button.primary.bg
+ *   Swift:     ButtonPrimaryBg          → button.primary.bg
+ *   Kotlin:    button_primary_bg        → button.primary.bg
+ */
+function toDotNotation(tokenName) {
+  if (!tokenName) return tokenName;
+
+  let result = tokenName;
+
+  // Remove platform prefixes
+  if (result.startsWith('--')) {
+    // CSS variable: --token-name
+    result = result.slice(2);
+  } else if (result.startsWith('.')) {
+    // CSS class: .class-name
+    result = result.slice(1);
+  } else if (result.startsWith('$')) {
+    // SCSS variable: $token-name
+    result = result.slice(1);
+  }
+
+  // Handle different naming conventions
+  // 1. kebab-case (CSS/SCSS): button-primary-bg → button.primary.bg
+  // 2. snake_case (Kotlin/XML): button_primary_bg → button.primary.bg
+  // 3. camelCase (JS): buttonPrimaryBg → button.primary.bg
+  // 4. PascalCase (Swift): ButtonPrimaryBg → button.primary.bg
+
+  // First, normalize camelCase/PascalCase to kebab-case
+  result = result
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')  // camelCase splits
+    .toLowerCase();
+
+  // Then convert separators to dots
+  result = result
+    .replace(/[-_]+/g, '.');  // Replace - and _ with .
+
+  return result;
+}
+
 // =============================================================================
 // SOURCE FILE PARSING (for Rename Detection)
 // =============================================================================
@@ -1424,6 +1473,7 @@ function compareDistBuilds(oldDir, newDir) {
     results.byUniqueToken.added.push({
       normalizedName: normalized,
       displayName,
+      canonicalName: toDotNotation(displayName),  // Platform-agnostic dot notation
       value: details.value,
       layer: details.layer,
       category,
@@ -1442,6 +1492,7 @@ function compareDistBuilds(oldDir, newDir) {
     results.byUniqueToken.modified.push({
       normalizedName: normalized,
       displayName,
+      canonicalName: toDotNotation(displayName),  // Platform-agnostic dot notation
       oldValue: details.oldValue,
       newValue: details.newValue,
       layer: details.layer,
@@ -1457,6 +1508,7 @@ function compareDistBuilds(oldDir, newDir) {
     results.byUniqueToken.removed.push({
       normalizedName: normalized,
       displayName,
+      canonicalName: toDotNotation(displayName),  // Platform-agnostic dot notation
       value: details.value,
       layer: details.layer,
       category,
@@ -1937,6 +1989,7 @@ module.exports = {
   categorizeTokenFromSource,
   detectLayerFromPath,
   extractFileMetadata,
+  toDotNotation,
   groupByLayer,
   groupByCategory,
   createGroupedResults,
