@@ -987,21 +987,55 @@ function extractFileMetadata(filePath) {
     if (parts[compIndex + 1]) {
       metadata.component = parts[compIndex + 1];
     }
+    // Components have mixed categories - need name-based detection
+    metadata.category = null;
   } else if (parts.includes('semantic')) {
     metadata.layer = 'semantic';
     metadata.tokenLayer = 'semantic';
+    // Extract category from semantic subfolder path
+    // Patterns: /semantic/color/, /semantic/typography/, /semantic/effects/
+    const semanticIndex = parts.indexOf('semantic');
+    const subFolder = parts[semanticIndex + 1]?.toLowerCase();
+    if (subFolder === 'color' || subFolder === 'colormode') {
+      metadata.category = 'colors';
+    } else if (subFolder === 'typography') {
+      metadata.category = 'typography';
+    } else if (subFolder === 'effects') {
+      metadata.category = 'effects';
+    } else if (subFolder === 'breakpoints' || subFolder === 'breakpointmode') {
+      // Breakpoints contain mixed spacing/sizing - need name-based detection
+      metadata.category = null;
+    } else if (subFolder === 'density') {
+      // Density contains mixed spacing/sizing - need name-based detection
+      metadata.category = null;
+    }
   } else if (parts.includes('shared')) {
     metadata.layer = 'shared';
     metadata.tokenLayer = 'primitive';
+    // Shared/primitives - check filename for category hint
+    if (fileNameLower.includes('color')) {
+      metadata.category = 'colors';
+    } else if (fileNameLower.includes('space')) {
+      metadata.category = 'spacing';
+    } else if (fileNameLower.includes('size')) {
+      metadata.category = 'sizing';
+    } else if (fileNameLower.includes('font') || fileNameLower.includes('typography')) {
+      metadata.category = 'typography';
+    } else {
+      metadata.category = null;
+    }
   } else if (parts.includes('overrides')) {
     metadata.layer = 'overrides';
     metadata.tokenLayer = 'semantic';
+    metadata.category = null; // Overrides need name-based detection
   } else if (parts.includes('bundles')) {
     metadata.layer = 'bundles';
     metadata.tokenLayer = 'bundle'; // Skip in layer grouping
+    metadata.category = null; // Bundles are mixed
   } else {
     // Default based on path detection
     metadata.tokenLayer = detectLayerFromPath(filePath);
+    metadata.category = null;
   }
 
   return metadata;
@@ -1220,8 +1254,9 @@ function compareDistBuilds(oldDir, newDir) {
 
     const platformInfo = { key: platform, name: platformData.name, icon: platformData.icon };
 
-    // Get token layer from file metadata
+    // Get token layer and category from file metadata
     const tokenLayer = diff.metadata.tokenLayer || 'semantic';
+    const pathCategory = diff.metadata.category; // null if needs name-based detection
 
     if (diff.type === 'added') {
       results.summary.filesAdded++;
@@ -1233,7 +1268,12 @@ function compareDistBuilds(oldDir, newDir) {
         const normalized = normalizeTokenName(token.name);
         uniqueTokensAdded.add(normalized);
         if (!tokenDetailsAdded.has(normalized)) {
-          tokenDetailsAdded.set(normalized, { value: token.value, layer: tokenLayer, platforms: [] });
+          tokenDetailsAdded.set(normalized, {
+            value: token.value,
+            layer: tokenLayer,
+            pathCategory, // from file path, null if mixed
+            platforms: []
+          });
         }
         tokenDetailsAdded.get(normalized).platforms.push({
           ...platformInfo, tokenName: token.name, file: diff.file, layer: tokenLayer
@@ -1249,7 +1289,12 @@ function compareDistBuilds(oldDir, newDir) {
         const normalized = normalizeTokenName(token.name);
         uniqueTokensRemoved.add(normalized);
         if (!tokenDetailsRemoved.has(normalized)) {
-          tokenDetailsRemoved.set(normalized, { value: token.value, layer: tokenLayer, platforms: [] });
+          tokenDetailsRemoved.set(normalized, {
+            value: token.value,
+            layer: tokenLayer,
+            pathCategory, // from file path, null if mixed
+            platforms: []
+          });
         }
         tokenDetailsRemoved.get(normalized).platforms.push({
           ...platformInfo, tokenName: token.name, file: diff.file, layer: tokenLayer
@@ -1269,7 +1314,12 @@ function compareDistBuilds(oldDir, newDir) {
         const normalized = normalizeTokenName(token.name);
         uniqueTokensAdded.add(normalized);
         if (!tokenDetailsAdded.has(normalized)) {
-          tokenDetailsAdded.set(normalized, { value: token.value, layer: tokenLayer, platforms: [] });
+          tokenDetailsAdded.set(normalized, {
+            value: token.value,
+            layer: tokenLayer,
+            pathCategory,
+            platforms: []
+          });
         }
         tokenDetailsAdded.get(normalized).platforms.push({
           ...platformInfo, tokenName: token.name, file: diff.file, layer: tokenLayer
@@ -1283,6 +1333,7 @@ function compareDistBuilds(oldDir, newDir) {
             oldValue: token.oldValue,
             newValue: token.newValue,
             layer: tokenLayer,
+            pathCategory,
             platforms: [],
             valuesByContext: new Map() // brand/mode/breakpoint/density → { old, new }
           });
@@ -1317,7 +1368,12 @@ function compareDistBuilds(oldDir, newDir) {
         const normalized = normalizeTokenName(token.name);
         uniqueTokensRemoved.add(normalized);
         if (!tokenDetailsRemoved.has(normalized)) {
-          tokenDetailsRemoved.set(normalized, { value: token.value, layer: tokenLayer, platforms: [] });
+          tokenDetailsRemoved.set(normalized, {
+            value: token.value,
+            layer: tokenLayer,
+            pathCategory,
+            platforms: []
+          });
         }
         tokenDetailsRemoved.get(normalized).platforms.push({
           ...platformInfo, tokenName: token.name, file: diff.file, layer: tokenLayer
@@ -1361,14 +1417,16 @@ function compareDistBuilds(oldDir, newDir) {
   };
 
   // Convert token details Maps to arrays for byUniqueToken
+  // Use path-based category when available, fallback to name-based detection
   for (const [normalized, details] of tokenDetailsAdded) {
     const displayName = getDisplayName(details.platforms, normalized);
+    const category = details.pathCategory || categorizeTokenFromDist(displayName, details.value);
     results.byUniqueToken.added.push({
       normalizedName: normalized,
       displayName,
       value: details.value,
       layer: details.layer,
-      category: categorizeTokenFromDist(displayName, details.value),
+      category,
       platforms: details.platforms
     });
   }
@@ -1380,13 +1438,14 @@ function compareDistBuilds(oldDir, newDir) {
     }
 
     const displayName = getDisplayName(details.platforms, normalized);
+    const category = details.pathCategory || categorizeTokenFromDist(displayName, details.newValue);
     results.byUniqueToken.modified.push({
       normalizedName: normalized,
       displayName,
       oldValue: details.oldValue,
       newValue: details.newValue,
       layer: details.layer,
-      category: categorizeTokenFromDist(displayName, details.newValue),
+      category,
       platforms: details.platforms,
       valuesByContext: valuesByContext, // brand/mode/breakpoint context → { old, new }
       hasMultipleContexts: details.valuesByContext.size > 1
@@ -1394,12 +1453,13 @@ function compareDistBuilds(oldDir, newDir) {
   }
   for (const [normalized, details] of tokenDetailsRemoved) {
     const displayName = getDisplayName(details.platforms, normalized);
+    const category = details.pathCategory || categorizeTokenFromDist(displayName, details.value);
     results.byUniqueToken.removed.push({
       normalizedName: normalized,
       displayName,
       value: details.value,
       layer: details.layer,
-      category: categorizeTokenFromDist(displayName, details.value),
+      category,
       platforms: details.platforms
     });
   }
@@ -1876,6 +1936,7 @@ module.exports = {
   categorizeTokenFromDist,
   categorizeTokenFromSource,
   detectLayerFromPath,
+  extractFileMetadata,
   groupByLayer,
   groupByCategory,
   createGroupedResults,
