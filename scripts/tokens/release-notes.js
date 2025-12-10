@@ -936,21 +936,21 @@ const KNOWN_BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
 
 /**
  * Format a color change with inline delta
- * Output: `#232629`→`#1a1c1e` 🟡4.9
+ * Output: `#232629`→`#1a1c1e` · Δ 4.9 🟡
  */
 function formatColorChangeInline(oldVal, newVal) {
   const deltaE = calculateDeltaE(oldVal, newVal);
-  const deltaStr = deltaE ? ` ${deltaE.icon}${deltaE.deltaE}` : '';
+  const deltaStr = deltaE ? ` · Δ ${deltaE.deltaE} ${deltaE.icon}` : '';
   return `\`${oldVal}\`→\`${newVal}\`${deltaStr}`;
 }
 
 /**
  * Format a dimension change with inline delta
- * Output: `8px`→`12px` 🟠+50%
+ * Output: `8px`→`12px` · +50% 🟠
  */
 function formatDimensionChangeInline(oldVal, newVal) {
   const dimDiff = calculateDimensionDiff(oldVal, newVal);
-  const diffStr = dimDiff ? ` ${dimDiff.icon}${dimDiff.display}` : '';
+  const diffStr = dimDiff ? ` · ${dimDiff.display} ${dimDiff.icon}` : '';
   return `\`${oldVal}\`→\`${newVal}\`${diffStr}`;
 }
 
