@@ -1362,11 +1362,13 @@ function compareDistBuilds(oldDir, newDir) {
 
   // Convert token details Maps to arrays for byUniqueToken
   for (const [normalized, details] of tokenDetailsAdded) {
+    const displayName = getDisplayName(details.platforms, normalized);
     results.byUniqueToken.added.push({
       normalizedName: normalized,
-      displayName: getDisplayName(details.platforms, normalized),
+      displayName,
       value: details.value,
       layer: details.layer,
+      category: categorizeTokenFromDist(displayName, details.value),
       platforms: details.platforms
     });
   }
@@ -1377,23 +1379,27 @@ function compareDistBuilds(oldDir, newDir) {
       valuesByContext[key] = value;
     }
 
+    const displayName = getDisplayName(details.platforms, normalized);
     results.byUniqueToken.modified.push({
       normalizedName: normalized,
-      displayName: getDisplayName(details.platforms, normalized),
+      displayName,
       oldValue: details.oldValue,
       newValue: details.newValue,
       layer: details.layer,
+      category: categorizeTokenFromDist(displayName, details.newValue),
       platforms: details.platforms,
       valuesByContext: valuesByContext, // brand/mode/breakpoint context → { old, new }
       hasMultipleContexts: details.valuesByContext.size > 1
     });
   }
   for (const [normalized, details] of tokenDetailsRemoved) {
+    const displayName = getDisplayName(details.platforms, normalized);
     results.byUniqueToken.removed.push({
       normalizedName: normalized,
-      displayName: getDisplayName(details.platforms, normalized),
+      displayName,
       value: details.value,
       layer: details.layer,
+      category: categorizeTokenFromDist(displayName, details.value),
       platforms: details.platforms
     });
   }

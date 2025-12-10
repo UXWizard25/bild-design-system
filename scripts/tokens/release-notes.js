@@ -183,22 +183,6 @@ function calculateDimensionDiff(oldValue, newValue) {
   return { percent: rounded, display: `${sign}${rounded}%`, icon };
 }
 
-/**
- * Detect if a value is a color
- */
-function isColorValue(value) {
-  if (!value || typeof value !== 'string') return false;
-  return value.startsWith('#') || value.startsWith('rgb');
-}
-
-/**
- * Detect if a value is a dimension (px, rem, em, etc.)
- */
-function isDimensionValue(value) {
-  if (!value || typeof value !== 'string') return false;
-  return /^-?\d+(\.\d+)?(px|rem|em|%|pt|vw|vh)?$/i.test(value.trim());
-}
-
 // =============================================================================
 // UTILITIES
 // =============================================================================
@@ -716,7 +700,7 @@ function generateBreakingChangesSection(diff, options = {}) {
       // Variables
       for (const token of breaking.removed.variables) {
         const layer = LAYER_CONFIG[token.layer] || LAYER_CONFIG.semantic;
-        const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
+        const cat = CATEGORY_CONFIG[token.category] || CATEGORY_CONFIG.other;
         md += `| \`${token.displayName}\` | ${layer.icon} ${layer.label} | ${cat.icon} ${cat.label} |\n`;
       }
 
@@ -800,7 +784,7 @@ function generateBreakingChangesSection(diff, options = {}) {
     md += '|-------|-------|----------|\n';
     for (const token of breakingRemovedTokens) {
       const layer = LAYER_CONFIG[token.layer] || LAYER_CONFIG.semantic;
-      const cat = CATEGORY_CONFIG[categorizeTokenForDisplay(token.displayName, token.value)] || CATEGORY_CONFIG.other;
+      const cat = CATEGORY_CONFIG[token.category] || CATEGORY_CONFIG.other;
       md += `| \`${token.displayName}\` | ${layer.icon} ${layer.label} | ${cat.icon} ${cat.label} |\n`;
     }
     md += '\n';
@@ -1036,7 +1020,7 @@ function generateVisualChangesSection(diff, options = {}) {
   };
 
   for (const token of modifiedTokens) {
-    const category = categorizeTokenForDisplay(token.displayName, token.oldValue);
+    const category = token.category || 'other';
     const hasMultiple = token.hasMultipleContexts && Object.keys(token.valuesByContext || {}).length > 1;
 
     if (category === 'other') {
@@ -1245,7 +1229,7 @@ function generateSafeChangesSection(diff, options = {}) {
     };
 
     for (const token of addedTokens) {
-      const category = categorizeTokenForDisplay(token.displayName, token.value);
+      const category = token.category || 'other';
       if (byCategory[category]) {
         byCategory[category].push(token);
       } else {
@@ -1368,37 +1352,6 @@ function generateSafeChangesSection(diff, options = {}) {
 
   md += '---\n\n';
   return md;
-}
-
-/**
- * Helper to categorize token for display (used for removed tokens)
- */
-function categorizeTokenForDisplay(tokenName, value) {
-  const name = (tokenName || '').toLowerCase();
-
-  // Color detection by value
-  if (typeof value === 'string' && (value.startsWith('#') || value.startsWith('rgb'))) {
-    return 'colors';
-  }
-
-  // Name-based detection
-  if (/color|bg|background|foreground|fill|stroke|text-color|surface|accent/i.test(name)) {
-    return 'colors';
-  }
-  if (/font-?size|line-?height|letter-?spacing|font-?weight|font-?family|typography/i.test(name)) {
-    return 'typography';
-  }
-  if (/space|gap|inline|stack|inset|margin|padding/i.test(name)) {
-    return 'spacing';
-  }
-  if (/shadow|effect|elevation|blur/i.test(name)) {
-    return 'effects';
-  }
-  if (/size|width|height|radius|border-radius/i.test(name)) {
-    return 'sizing';
-  }
-
-  return 'other';
 }
 
 /**
