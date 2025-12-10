@@ -432,24 +432,27 @@ function getPlatformNamesGroupedByToken(tokens) {
 
 /**
  * Generate horizontal platform names table
- * Grouped by naming convention:
- * - CSS/SCSS: --kebab-case
+ * Platform-specific naming conventions:
+ * - CSS: --kebab-case
+ * - SCSS: $kebab-case
  * - JS/JSON/Swift/Kotlin: camelCase
  */
 function generatePlatformNamesTable(groupedTokens) {
   if (groupedTokens.length === 0) return '';
 
   let md = '\n<details>\n<summary>Platform-specific names</summary>\n\n';
-  md += '| Token | CSS / SCSS | JS / JSON / Swift / Kotlin |\n';
-  md += '|-------|------------|----------------------------|\n';
+  md += '| Token | CSS | SCSS | JS / JSON / Native |\n';
+  md += '|-------|-----|------|--------------------|\n';
 
   for (const entry of groupedTokens) {
     const p = entry.platforms;
-    // Use CSS for kebab group, JS for camel group (fallback chain)
-    const cssName = p.css || p.scss || '-';
+    // Get platform-specific names (with correct prefixes from dist)
+    const cssName = p.css || '-';
+    const scssName = p.scss || '-';
     const jsName = p.js || p.json || p.swift || p.kotlin || '-';
     md += `| \`${entry.canonicalName || entry.displayName}\` `;
     md += `| \`${cssName}\` `;
+    md += `| \`${scssName}\` `;
     md += `| \`${jsName}\` |\n`;
   }
 
@@ -771,8 +774,9 @@ function generateUnifiedTokenChanges(diff, options = {}) {
 
 /**
  * Generate platform names table for renamed tokens (collapsible)
- * Grouped by naming convention:
- * - CSS/SCSS: --kebab-case
+ * Platform-specific naming conventions:
+ * - CSS: --kebab-case
+ * - SCSS: $kebab-case
  * - JS/JSON/Swift/Kotlin: camelCase
  */
 function generateRenamePlatformTable(renames, diff) {
@@ -799,17 +803,19 @@ function generateRenamePlatformTable(renames, diff) {
   if (platformNames.length === 0) return '';
 
   let md = '\n<details>\n<summary>🔤 Platform-specific names</summary>\n\n';
-  md += '| Old Name | New Name | CSS / SCSS | JS / JSON / Swift / Kotlin |\n';
-  md += '|----------|----------|------------|----------------------------|\n';
+  md += '| Old Name | New Name | CSS | SCSS | JS / JSON / Native |\n';
+  md += '|----------|----------|-----|------|--------------------|\n';
 
   for (const entry of platformNames) {
     const p = entry.platforms;
-    // Use CSS for kebab group, JS for camel group (fallback chain)
-    const cssName = p.css || p.scss || '-';
+    // Get platform-specific names (with correct prefixes from dist)
+    const cssName = p.css || '-';
+    const scssName = p.scss || '-';
     const jsName = p.js || p.json || p.swift || p.kotlin || '-';
     md += `| \`${entry.oldName}\` `;
     md += `| \`${entry.newName}\` `;
     md += `| \`${cssName}\` `;
+    md += `| \`${scssName}\` `;
     md += `| \`${jsName}\` |\n`;
   }
 
@@ -913,28 +919,29 @@ function generateBreakingChangesSection(diff, options = {}) {
 
       md += '<details>\n<summary>📋 Migration Guide (Platform-Specific Names)</summary>\n\n';
 
-      // Platform groups with same naming conventions:
-      // - CSS/SCSS: --kebab-case
+      // Platform-specific naming conventions:
+      // - CSS: --kebab-case
+      // - SCSS: $kebab-case
       // - JS/JSON/Swift/Kotlin: camelCase
-      md += '| | CSS / SCSS | JS / JSON / Swift / Kotlin |\n';
-      md += '|---|---|---|\n';
+      md += '| | CSS | SCSS | JS / JSON / Native |\n';
+      md += '|---|---|---|---|\n';
 
       for (const rename of allRenames.slice(0, 20)) {
         const oldToken = getOldTokenName(rename);
         const newToken = getNewTokenName(rename);
         // Convert canonical dot notation to platform-specific formats
-        const cssOld = `--${toKebabCase(oldToken)}`;
-        const cssNew = `--${toKebabCase(newToken)}`;
+        const kebabOld = toKebabCase(oldToken);
+        const kebabNew = toKebabCase(newToken);
         const jsOld = toCamelCasePlatform(oldToken);
         const jsNew = toCamelCasePlatform(newToken);
 
-        md += `| **Old** | \`${cssOld}\` | \`${jsOld}\` |\n`;
-        md += `| **New** | \`${cssNew}\` | \`${jsNew}\` |\n`;
-        md += `| | | |\n`;
+        md += `| **Old** | \`--${kebabOld}\` | \`$${kebabOld}\` | \`${jsOld}\` |\n`;
+        md += `| **New** | \`--${kebabNew}\` | \`$${kebabNew}\` | \`${jsNew}\` |\n`;
+        md += `| | | | |\n`;
       }
 
       if (allRenames.length > 20) {
-        md += `| | *...${allRenames.length - 20} more* | |\n`;
+        md += `| | | *...${allRenames.length - 20} more* | |\n`;
       }
 
       md += '\n</details>\n\n';
@@ -2057,29 +2064,30 @@ function generateGitHubRelease(diff, options = {}) {
       md += '\n';
 
       // Migration Matrix - platform-specific token names
-      // Platform groups with same naming conventions:
-      // - CSS/SCSS: --kebab-case
+      // Platform-specific naming conventions:
+      // - CSS: --kebab-case
+      // - SCSS: $kebab-case
       // - JS/JSON/Swift/Kotlin: camelCase
       md += '<details>\n';
       md += '<summary>📋 Migration Guide (Platform-Specific Names)</summary>\n\n';
-      md += '| | CSS / SCSS | JS / JSON / Swift / Kotlin |\n';
-      md += '|---|---|---|\n';
+      md += '| | CSS | SCSS | JS / JSON / Native |\n';
+      md += '|---|---|---|---|\n';
 
       for (const rename of allRenames.slice(0, 20)) {
         const oldToken = getOldTokenName(rename);
         const newToken = getNewTokenName(rename);
-        const cssOld = `--${toKebabCase(oldToken)}`;
-        const cssNew = `--${toKebabCase(newToken)}`;
+        const kebabOld = toKebabCase(oldToken);
+        const kebabNew = toKebabCase(newToken);
         const jsOld = toCamelCasePlatform(oldToken);
         const jsNew = toCamelCasePlatform(newToken);
 
-        md += `| **Old** | \`${cssOld}\` | \`${jsOld}\` |\n`;
-        md += `| **New** | \`${cssNew}\` | \`${jsNew}\` |\n`;
-        md += `| | | |\n`;
+        md += `| **Old** | \`--${kebabOld}\` | \`$${kebabOld}\` | \`${jsOld}\` |\n`;
+        md += `| **New** | \`--${kebabNew}\` | \`$${kebabNew}\` | \`${jsNew}\` |\n`;
+        md += `| | | | |\n`;
       }
 
       if (allRenames.length > 20) {
-        md += `| | *...${allRenames.length - 20} more* | |\n`;
+        md += `| | | *...${allRenames.length - 20} more* | |\n`;
       }
 
       md += '\n</details>\n\n';
