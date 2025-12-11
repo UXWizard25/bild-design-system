@@ -103,7 +103,6 @@ This pipeline transforms SVG icons from Figma into optimized, production-ready a
 │  📤 OUTPUT: dist/icons/                                         │
 │                                                                 │
 │  ├── svg/           ← Optimized SVGs                           │
-│  ├── react-src/     ← TSX Source (intermediate)                │
 │  ├── react/         ← Compiled ESM + .d.ts + .js.map           │
 │  ├── android/       ← Vector Drawables + attrs                 │
 │  └── ios/           ← Asset Catalog + Swift extension          │
@@ -210,8 +209,8 @@ src/icons/
 scripts/icons/
 ├── build-icons.js         ← Main orchestrator
 ├── optimize-svg.js        ← SVGO optimization + SVG validation
-├── generate-react.js      ← React TSX generation → react-src/
-├── compile-react.js       ← TypeScript compilation → react/
+├── generate-react.js      ← React TSX generation (intermediate)
+├── compile-react.js       ← TypeScript compilation → react/ (cleans up intermediate files)
 ├── generate-android.js    ← Android XML generation
 ├── generate-ios.js        ← iOS asset generation
 ├── compare-icon-builds.js ← Diff detection for PRs
@@ -222,7 +221,6 @@ build-config/icons/
 
 packages/icons/dist/        ← Generated output (gitignored)
 ├── svg/                   ← Optimized SVGs
-├── react-src/             ← TSX source (intermediate)
 ├── react/                 ← Compiled ESM JavaScript
 │   ├── *.js               ← ESM modules
 │   ├── *.d.ts             ← TypeScript declarations
