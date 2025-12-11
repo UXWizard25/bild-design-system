@@ -116,6 +116,10 @@ async function main() {
 
     log.info(`Output: ${PATHS.output}`);
 
+    // Clean up intermediate react-src directory (not needed in final dist)
+    fs.rmSync(PATHS.src, { recursive: true, force: true });
+    log.success('Cleaned up intermediate react-src directory');
+
     return { success: true, count: outputFiles.length };
   } catch (error) {
     log.error('TypeScript compilation failed');
