@@ -66,6 +66,6 @@
     "svg2vectordrawable": "^2.9.1",
     "svgo": "^4.0.0",
     "typescript": "^5.9.3",
-    "vite": "^5.4.21"
+    "vite": "^7.2.7"
   }
 }
