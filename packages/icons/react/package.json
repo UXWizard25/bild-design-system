@@ -1,0 +1,59 @@
+{
+  "name": "@marioschmidt/design-system-icons-react",
+  "version": "1.0.0",
+  "description": "BILD Design System Icons - React Components",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "node ../../../scripts/icons/build-react.js",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": false
+    }
+  },
+  "keywords": [
+    "icons",
+    "react",
+    "components",
+    "design-system",
+    "bild",
+    "svg-icons"
+  ],
+  "author": "BILD Design System Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UXWizard25/vv-token-test-v3.git",
+    "directory": "packages/icons/react"
+  },
+  "homepage": "https://github.com/UXWizard25/vv-token-test-v3/tree/main/packages/icons/react#readme",
+  "bugs": {
+    "url": "https://github.com/UXWizard25/vv-token-test-v3/issues"
+  }
+}

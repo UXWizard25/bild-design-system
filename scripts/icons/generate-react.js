@@ -12,14 +12,15 @@
 
 const fs = require('fs');
 const path = require('path');
+const { PATHS: SHARED_PATHS } = require('./paths');
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const PATHS = {
-  input: path.resolve(__dirname, '../../packages/icons/dist/svg'),
-  output: path.resolve(__dirname, '../../packages/icons/dist/react-src'),
+  input: SHARED_PATHS.svg,
+  output: SHARED_PATHS.reactSrc,
   config: path.resolve(__dirname, '../../build-config/icons/svgr.config.js'),
 };
 
@@ -40,10 +41,13 @@ const log = {
 // ============================================================================
 
 /**
- * Convert kebab-case to PascalCase
- * add -> Add
- * arrow-left -> ArrowLeft
- * 2-liga-logo -> Icon2LigaLogo (prefix with Icon if starts with number)
+ * Convert kebab-case to PascalCase with Icon prefix
+ * add -> IconAdd
+ * arrow-left -> IconArrowLeft
+ * 2-liga-logo -> Icon2LigaLogo
+ *
+ * Following Heroicons naming convention (industry best practice)
+ * for clarity and to avoid naming collisions with other components.
  */
 function toPascalCase(str) {
   const pascalCase = str
@@ -51,12 +55,10 @@ function toPascalCase(str) {
     .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join('');
 
-  // If the name starts with a number, prefix with 'Icon' to make it a valid JS identifier
-  if (/^\d/.test(pascalCase)) {
-    return 'Icon' + pascalCase;
-  }
-
-  return pascalCase;
+  // Always prefix with 'Icon' for clarity and consistency
+  // This follows the Heroicons naming convention (e.g., ArrowLeftIcon)
+  // but uses prefix instead of suffix for better IDE autocomplete grouping
+  return 'Icon' + pascalCase;
 }
 
 /**
@@ -141,12 +143,18 @@ function generateComponentTemplate(componentName, svgContent) {
 
   return `import * as React from 'react';
 
-export interface ${componentName}Props extends React.SVGProps<SVGSVGElement> {
+export interface ${componentName}Props extends Omit<React.SVGProps<SVGSVGElement>, 'color'> {
   /**
    * Icon size (width and height)
    * @default 24
    */
   size?: number | string;
+  /**
+   * Icon color. Accepts any valid CSS color value.
+   * @default 'currentColor'
+   * @example 'red', '#DD0000', 'var(--primary-color)'
+   */
+  color?: string;
   /**
    * Accessible label for screen readers.
    * If provided, aria-hidden will be set to false.
@@ -167,6 +175,7 @@ const ${componentName} = React.forwardRef<SVGSVGElement, ${componentName}Props>(
   (
     {
       size = 24,
+      color = 'currentColor',
       'aria-label': ariaLabel,
       'aria-hidden': ariaHidden = true,
       title,
@@ -183,7 +192,7 @@ const ${componentName} = React.forwardRef<SVGSVGElement, ${componentName}Props>(
         viewBox="${viewBox}"
         width={size}
         height={size}
-        fill="currentColor"
+        fill={color}
         role="img"
         aria-hidden={isDecorative ? true : undefined}
         aria-label={ariaLabel || undefined}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BILD Design System Icons - Android Manifest
+
+  This is a resource-only library containing vector drawable icons.
+  No activities, services, or other components are defined.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Resource-only library - no components -->
+</manifest>

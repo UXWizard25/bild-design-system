@@ -1,0 +1,48 @@
+{
+  "name": "@marioschmidt/design-system-icons",
+  "version": "1.0.0",
+  "description": "BILD Design System Icons - Optimized SVG Assets",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/metadata.d.ts",
+      "import": "./dist/metadata.json",
+      "default": "./dist/metadata.json"
+    },
+    "./metadata": {
+      "types": "./dist/metadata.d.ts",
+      "import": "./dist/metadata.json",
+      "default": "./dist/metadata.json"
+    },
+    "./svg/*": "./dist/*.svg",
+    "./*.svg": "./dist/*.svg"
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "node ../../../scripts/icons/build-svg.js",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "icons",
+    "svg",
+    "design-system",
+    "bild",
+    "design-tokens"
+  ],
+  "author": "BILD Design System Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UXWizard25/vv-token-test-v3.git",
+    "directory": "packages/icons/svg"
+  },
+  "homepage": "https://github.com/UXWizard25/vv-token-test-v3/tree/main/packages/icons/svg#readme",
+  "bugs": {
+    "url": "https://github.com/UXWizard25/vv-token-test-v3/issues"
+  }
+}
