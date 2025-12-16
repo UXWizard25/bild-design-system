@@ -48,9 +48,17 @@ const log = {
  * Convert kebab-case to camelCase for iOS
  * add -> add
  * arrow-left -> arrowLeft
+ * 2-liga-logo -> _2LigaLogo (prefixed with underscore for Swift validity)
+ *
+ * Swift identifiers cannot start with numbers, so we prefix with underscore.
  */
 function toiOSName(str) {
-  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+  const camelCase = str.replace(/-([a-z0-9])/gi, (_, char) => char.toUpperCase());
+  // Swift identifiers cannot start with a number - prefix with underscore
+  if (/^[0-9]/.test(camelCase)) {
+    return '_' + camelCase;
+  }
+  return camelCase;
 }
 
 /**

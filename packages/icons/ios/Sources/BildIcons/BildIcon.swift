@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// Generated at: 2025-12-16T12:33:32.491Z
+// Generated at: 2025-12-16T12:38:22.643Z
 //
 // BILD Design System Icons - Swift Extension
 // To regenerate, run: npm run build:icons:ios
@@ -18,7 +18,7 @@ import SwiftUI
 ///     .foregroundColor(.primary)
 /// ```
 public enum BildIcon: String, CaseIterable {
-    case 2LigaLogo = "2LigaLogo"
+    case _2LigaLogo = "_2LigaLogo"
     case account = "account"
     case add = "add"
     case adjust = "adjust"
@@ -226,7 +226,7 @@ public enum BildIcon: String, CaseIterable {
     /// Human-readable name for preview/debugging
     public var displayName: String {
         switch self {
-        case .2LigaLogo: return "2-liga-logo"
+        case ._2LigaLogo: return "2-liga-logo"
         case .account: return "account"
         case .add: return "add"
         case .adjust: return "adjust"
