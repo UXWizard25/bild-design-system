@@ -19,15 +19,22 @@
 
 const fs = require('fs');
 const path = require('path');
+const { PATHS: SHARED_PATHS, cleanDir, ensureDir } = require('./paths');
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const PATHS = {
-  root: path.resolve(__dirname, '../..'),
-  input: path.resolve(__dirname, '../../packages/icons/src'),
-  output: path.resolve(__dirname, '../../packages/icons/dist'),
+  root: SHARED_PATHS.root,
+  iconsRoot: SHARED_PATHS.iconsRoot,
+  input: SHARED_PATHS.source,
+  // Output directories for each platform
+  svg: SHARED_PATHS.svg,
+  react: SHARED_PATHS.react,
+  reactSrc: SHARED_PATHS.reactSrc,
+  android: SHARED_PATHS.android,
+  ios: SHARED_PATHS.ios,
 };
 
 // ============================================================================
@@ -132,7 +139,12 @@ function generateManifest(results, startTime) {
     generatedAt: new Date().toISOString(),
     buildDuration: `${duration}s`,
     inputDirectory: PATHS.input,
-    outputDirectory: PATHS.output,
+    outputDirectories: {
+      svg: PATHS.svg,
+      react: PATHS.react,
+      android: PATHS.android,
+      ios: PATHS.ios,
+    },
     platforms: {},
   };
 
@@ -144,13 +156,9 @@ function generateManifest(results, startTime) {
     };
   }
 
-  const manifestPath = path.join(PATHS.output, 'manifest.json');
-
-  // Ensure output directory exists
-  if (!fs.existsSync(PATHS.output)) {
-    fs.mkdirSync(PATHS.output, { recursive: true });
-  }
-
+  // Write manifest to SVG package (primary npm package)
+  const manifestPath = path.join(PATHS.svg, 'manifest.json');
+  ensureDir(PATHS.svg);
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
 
   return manifest;
@@ -185,14 +193,18 @@ async function main() {
 
   log.success(`Found ${inputCount} SVG file(s) to process`);
 
-  // Clean output directory
-  log.step('Preparing output directory...');
-  if (fs.existsSync(PATHS.output)) {
-    fs.rmSync(PATHS.output, { recursive: true });
-    log.info('Cleaned previous build');
+  // Clean output directories for each platform
+  log.step('Preparing output directories...');
+
+  const outputDirs = [PATHS.svg, PATHS.react, PATHS.reactSrc, PATHS.android, PATHS.ios];
+  for (const dir of outputDirs) {
+    if (fs.existsSync(dir)) {
+      fs.rmSync(dir, { recursive: true });
+    }
+    fs.mkdirSync(dir, { recursive: true });
   }
-  fs.mkdirSync(PATHS.output, { recursive: true });
-  log.success('Output directory ready');
+  log.info('Cleaned previous builds');
+  log.success('Output directories ready');
 
   // Run all build steps
   const results = {};
@@ -228,7 +240,11 @@ async function main() {
 
   console.log('');
   log.info(`Input:    ${inputCount} SVG file(s)`);
-  log.info(`Output:   ${PATHS.output}`);
+  log.info(`Output:`);
+  log.info(`  - SVG:     ${PATHS.svg}`);
+  log.info(`  - React:   ${PATHS.react}`);
+  log.info(`  - Android: ${PATHS.android}`);
+  log.info(`  - iOS:     ${PATHS.ios}`);
   log.info(`Duration: ${manifest.buildDuration}`);
   console.log('');
 

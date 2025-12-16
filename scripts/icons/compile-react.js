@@ -13,14 +13,15 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { PATHS: SHARED_PATHS } = require('./paths');
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const PATHS = {
-  src: path.resolve(__dirname, '../../packages/icons/dist/react-src'),
-  output: path.resolve(__dirname, '../../packages/icons/dist/react'),
+  src: SHARED_PATHS.reactSrc,
+  output: SHARED_PATHS.react,
   tsconfig: path.resolve(__dirname, '../../build-config/icons/tsconfig.json'),
 };
 

@@ -12,14 +12,15 @@
 
 const fs = require('fs');
 const path = require('path');
+const { PATHS: SHARED_PATHS } = require('./paths');
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const PATHS = {
-  input: path.resolve(__dirname, '../../packages/icons/dist/svg'),
-  output: path.resolve(__dirname, '../../packages/icons/dist/android/drawable'),
+  input: SHARED_PATHS.svg,
+  output: SHARED_PATHS.android,
 };
 
 const ANDROID_CONFIG = {

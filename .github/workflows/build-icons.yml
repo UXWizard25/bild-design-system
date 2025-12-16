@@ -6,10 +6,10 @@
 # Triggers on push to main, develop, figma-icons, and claude/** branches.
 #
 # Outputs:
-#   - Optimized SVGs
-#   - React TSX components
-#   - Android Vector Drawables
-#   - iOS Asset Catalog
+#   - @marioschmidt/design-system-icons (SVG package)
+#   - @marioschmidt/design-system-icons-react (React package)
+#   - Android Vector Drawables (de.bild.design:icons)
+#   - iOS Asset Catalog (BildIcons SPM)
 #
 # ============================================================================
 
@@ -26,7 +26,8 @@ on:
       - 'packages/icons/src/**'
       - 'scripts/icons/**'
       - 'build-config/icons/**'
-      - 'packages/icons/package.json'
+      - 'packages/icons/svg/package.json'
+      - 'packages/icons/react/package.json'
       - '.github/workflows/build-icons.yml'
   pull_request:
     branches:
@@ -35,11 +36,12 @@ on:
       - 'packages/icons/src/**'
       - 'scripts/icons/**'
       - 'build-config/icons/**'
-      - 'packages/icons/package.json'
+      - 'packages/icons/svg/package.json'
+      - 'packages/icons/react/package.json'
   workflow_dispatch:
     inputs:
       clean_build:
-        description: 'Force clean build (delete dist/icons first)'
+        description: 'Force clean build (delete all icon dist folders)'
         required: false
         default: 'false'
         type: boolean
@@ -82,7 +84,12 @@ jobs:
 
       - name: Clean previous build
         if: ${{ github.event.inputs.clean_build == 'true' }}
-        run: rm -rf packages/icons/dist
+        run: |
+          rm -rf packages/icons/svg/dist
+          rm -rf packages/icons/react/dist
+          rm -rf packages/icons/react/.src
+          rm -rf packages/icons/android/src/main/res/drawable/*.xml
+          rm -rf packages/icons/ios/Sources/BildIcons/Resources/Assets.xcassets/Icons/*.imageset
 
       # ========================================
       # Build
@@ -95,14 +102,16 @@ jobs:
           node scripts/icons/build-icons.js
           echo "::endgroup::"
 
-          # Count generated files
-          SVG_COUNT=$(find packages/icons/dist/svg -name "*.svg" 2>/dev/null | wc -l || echo 0)
-          REACT_COUNT=$(find packages/icons/dist/react -name "*.tsx" 2>/dev/null | wc -l || echo 0)
-          ANDROID_COUNT=$(find packages/icons/dist/android -name "*.xml" 2>/dev/null | wc -l || echo 0)
+          # Count generated files from new package locations
+          SVG_COUNT=$(find packages/icons/svg/dist -name "*.svg" 2>/dev/null | wc -l || echo 0)
+          REACT_COUNT=$(find packages/icons/react/dist -name "*.js" 2>/dev/null | wc -l || echo 0)
+          ANDROID_COUNT=$(find packages/icons/android/src/main/res/drawable -name "*.xml" 2>/dev/null | wc -l || echo 0)
+          IOS_COUNT=$(find packages/icons/ios/Sources/BildIcons/Resources/Assets.xcassets/Icons -name "*.imageset" -type d 2>/dev/null | wc -l || echo 0)
 
           echo "svg_count=$SVG_COUNT" >> $GITHUB_OUTPUT
           echo "react_count=$REACT_COUNT" >> $GITHUB_OUTPUT
           echo "android_count=$ANDROID_COUNT" >> $GITHUB_OUTPUT
+          echo "ios_count=$IOS_COUNT" >> $GITHUB_OUTPUT
 
       # ========================================
       # Artifacts
@@ -112,7 +121,11 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: icon-assets
-          path: packages/icons/dist/
+          path: |
+            packages/icons/svg/dist/
+            packages/icons/react/dist/
+            packages/icons/android/src/main/res/
+            packages/icons/ios/Sources/BildIcons/
           retention-days: 30
           if-no-files-found: warn
 
@@ -124,11 +137,12 @@ jobs:
         run: |
           echo "## Icon Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Platform | Files Generated |" >> $GITHUB_STEP_SUMMARY
-          echo "|----------|-----------------|" >> $GITHUB_STEP_SUMMARY
-          echo "| SVG | ${{ steps.build.outputs.svg_count }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| React | ${{ steps.build.outputs.react_count }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Android | ${{ steps.build.outputs.android_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Package | Files |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| SVG | \`@marioschmidt/design-system-icons\` | ${{ steps.build.outputs.svg_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| React | \`@marioschmidt/design-system-icons-react\` | ${{ steps.build.outputs.react_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Android | \`de.bild.design:icons\` | ${{ steps.build.outputs.android_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| iOS | \`BildIcons\` (SPM) | ${{ steps.build.outputs.ios_count }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
@@ -145,14 +159,16 @@ jobs:
             const svgCount = '${{ steps.build.outputs.svg_count }}';
             const reactCount = '${{ steps.build.outputs.react_count }}';
             const androidCount = '${{ steps.build.outputs.android_count }}';
+            const iosCount = '${{ steps.build.outputs.ios_count }}';
 
             const body = `## 🎨 Icon Build Complete
 
-            | Platform | Files |
-            |----------|-------|
-            | 🌐 SVG | ${svgCount} |
-            | ⚛️ React | ${reactCount} |
-            | 🤖 Android | ${androidCount} |
+            | Platform | Package | Files |
+            |----------|---------|-------|
+            | 🌐 SVG | \`@marioschmidt/design-system-icons\` | ${svgCount} |
+            | ⚛️ React | \`@marioschmidt/design-system-icons-react\` | ${reactCount} |
+            | 🤖 Android | \`de.bild.design:icons\` | ${androidCount} |
+            | 🍎 iOS | \`BildIcons\` (SPM) | ${iosCount} |
 
             **Artifacts:** [Download](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `;

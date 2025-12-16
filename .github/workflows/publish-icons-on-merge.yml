@@ -2,14 +2,20 @@
 # Publish Icons on Merge
 # ============================================================================
 #
-# Publishes the icon package to npm when icon changes are merged to main.
+# Publishes icon packages when icon changes are merged to main.
+#
+# Packages published:
+#   - @marioschmidt/design-system-icons (SVG) → npm
+#   - @marioschmidt/design-system-icons-react (React) → npm
+#   - de.bild.design:icons (Android) → GitHub Packages (Maven)
+#   - BildIcons (iOS) → via git tag (SPM)
 #
 # Workflow:
 #   1. Detect icon changes in merge commit
-#   2. Bump version in packages/icons/package.json
-#   3. Build fresh icon assets
-#   4. Publish to npm via workspace
-#   5. Create GitHub release
+#   2. Bump version in both package.json files (synchronized)
+#   3. Build fresh icon assets for all platforms
+#   4. Publish npm packages
+#   5. Create GitHub release (triggers iOS SPM update)
 #
 # ============================================================================
 
@@ -33,7 +39,7 @@ permissions:
 
 jobs:
   publish:
-    name: Publish Icon Package
+    name: Publish Icon Packages
     runs-on: ubuntu-latest
 
     steps:
@@ -60,14 +66,14 @@ jobs:
           npm install svgo@^3.2.0 @svgr/core@^8.1.0 svg2vectordrawable@^2.9.1 typescript@^5.3.0 @types/react@^18.2.0
 
       # ========================================
-      # Version Bump
+      # Version Bump (synchronized across packages)
       # ========================================
 
       - name: Bump version
         id: version
         run: |
-          # Read current version from workspace package
-          CURRENT_VERSION=$(cat packages/icons/package.json | grep '"version"' | head -1 | sed 's/.*"version": "\(.*\)".*/\1/')
+          # Read current version from SVG package (source of truth)
+          CURRENT_VERSION=$(cat packages/icons/svg/package.json | grep '"version"' | head -1 | sed 's/.*"version": "\(.*\)".*/\1/')
           echo "Current version: $CURRENT_VERSION"
 
           # Bump patch version
@@ -87,8 +93,9 @@ jobs:
 
           echo "New version: $NEW_VERSION"
 
-          # Update packages/icons/package.json
-          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" packages/icons/package.json
+          # Update both package.json files (synchronized versions)
+          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" packages/icons/svg/package.json
+          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" packages/icons/react/package.json
 
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "previous_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
@@ -106,23 +113,33 @@ jobs:
       - name: Count icons
         id: count
         run: |
-          SVG_COUNT=$(find packages/icons/dist/svg -name "*.svg" 2>/dev/null | wc -l || echo 0)
+          SVG_COUNT=$(find packages/icons/svg/dist -name "*.svg" 2>/dev/null | wc -l || echo 0)
+          REACT_COUNT=$(find packages/icons/react/dist -name "*.js" 2>/dev/null | wc -l || echo 0)
+          ANDROID_COUNT=$(find packages/icons/android/src/main/res/drawable -name "*.xml" 2>/dev/null | wc -l || echo 0)
+          IOS_COUNT=$(find packages/icons/ios/Sources/BildIcons/Resources/Assets.xcassets/Icons -name "*.imageset" -type d 2>/dev/null | wc -l || echo 0)
+
+          echo "svg_count=$SVG_COUNT" >> $GITHUB_OUTPUT
+          echo "react_count=$REACT_COUNT" >> $GITHUB_OUTPUT
+          echo "android_count=$ANDROID_COUNT" >> $GITHUB_OUTPUT
+          echo "ios_count=$IOS_COUNT" >> $GITHUB_OUTPUT
           echo "count=$SVG_COUNT" >> $GITHUB_OUTPUT
 
       # ========================================
       # Validate
       # ========================================
 
-      - name: Validate package
+      - name: Validate packages
         run: |
           echo "::group::Validating package contents"
 
           # Check required directories exist
-          [ -d "packages/icons/dist/svg" ] || (echo "Missing packages/icons/dist/svg" && exit 1)
-          [ -d "packages/icons/dist/react" ] || (echo "Missing packages/icons/dist/react" && exit 1)
+          [ -d "packages/icons/svg/dist" ] || (echo "Missing packages/icons/svg/dist" && exit 1)
+          [ -d "packages/icons/react/dist" ] || (echo "Missing packages/icons/react/dist" && exit 1)
+          [ -d "packages/icons/android/src/main/res/drawable" ] || (echo "Missing packages/icons/android/src/main/res/drawable" && exit 1)
+          [ -d "packages/icons/ios/Sources/BildIcons/Resources/Assets.xcassets/Icons" ] || (echo "Missing packages/icons/ios assets" && exit 1)
 
           # Check for at least one icon
-          SVG_COUNT=$(find packages/icons/dist/svg -name "*.svg" | wc -l)
+          SVG_COUNT=$(find packages/icons/svg/dist -name "*.svg" | wc -l)
           if [ "$SVG_COUNT" -eq 0 ]; then
             echo "No SVG icons found - skipping publish"
             echo "skip=true" >> $GITHUB_OUTPUT
@@ -134,16 +151,24 @@ jobs:
           echo "::endgroup::"
 
       # ========================================
-      # Publish
+      # Publish npm packages
       # ========================================
 
-      - name: Publish to npm
+      - name: Publish SVG package to npm
         if: steps.count.outputs.count != '0'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # Publish via npm workspace - no more package.json swap hack needed!
-          npm publish -w @marioschmidt/design-system-icons --access public || echo "Publish failed or package already exists"
+          echo "Publishing @marioschmidt/design-system-icons..."
+          npm publish -w @marioschmidt/design-system-icons --access public || echo "SVG package publish failed or already exists"
+
+      - name: Publish React package to npm
+        if: steps.count.outputs.count != '0'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "Publishing @marioschmidt/design-system-icons-react..."
+          npm publish -w @marioschmidt/design-system-icons-react --access public || echo "React package publish failed or already exists"
 
       # ========================================
       # Commit & Tag
@@ -155,7 +180,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add packages/icons/package.json
+          git add packages/icons/svg/package.json packages/icons/react/package.json
           git commit -m "chore(icons): bump version to ${{ steps.version.outputs.version }}" || true
           git push || true
 
@@ -176,29 +201,43 @@ jobs:
         with:
           script: |
             const version = '${{ steps.version.outputs.version }}';
-            const iconCount = '${{ steps.count.outputs.count }}';
+            const svgCount = '${{ steps.count.outputs.svg_count }}';
+            const reactCount = '${{ steps.count.outputs.react_count }}';
+            const androidCount = '${{ steps.count.outputs.android_count }}';
+            const iosCount = '${{ steps.count.outputs.ios_count }}';
 
-            const body = `## Icon Package v${version}
+            const body = `## Icon Packages v${version}
 
-            ### Package
+            ### npm Packages
             \`\`\`bash
+            # SVG icons
             npm install @marioschmidt/design-system-icons@${version}
+
+            # React components
+            npm install @marioschmidt/design-system-icons-react@${version}
             \`\`\`
 
-            ### Contents
-            - ${iconCount} icons
-            - React TSX components
-            - Android Vector Drawables
-            - iOS Asset Catalog
+            ### Platform Contents
+            | Platform | Package | Count |
+            |----------|---------|-------|
+            | SVG | \`@marioschmidt/design-system-icons\` | ${svgCount} |
+            | React | \`@marioschmidt/design-system-icons-react\` | ${reactCount} |
+            | Android | \`de.bild.design:icons\` | ${androidCount} |
+            | iOS | \`BildIcons\` (SPM) | ${iosCount} |
 
             ### Usage
 
             **React:**
             \`\`\`tsx
-            import { Add, Menu } from '@marioschmidt/design-system-icons';
+            import { IconAdd, IconMenu } from '@marioschmidt/design-system-icons-react';
 
-            <Add size={24} />
-            <Menu aria-label="Open menu" />
+            <IconAdd size={24} />
+            <IconMenu aria-label="Open menu" />
+            \`\`\`
+
+            **SVG (direct import):**
+            \`\`\`js
+            import addIcon from '@marioschmidt/design-system-icons/svg/icon-add.svg';
             \`\`\`
 
             **Android:**
@@ -206,6 +245,13 @@ jobs:
             <ImageView
                 android:src="@drawable/ic_add"
                 app:tint="?attr/colorOnSurface" />
+            \`\`\`
+
+            **iOS (Swift Package Manager):**
+            \`\`\`swift
+            import BildIcons
+
+            Image(BildIcon.add.rawValue, bundle: .module)
             \`\`\`
             `;
 
@@ -228,5 +274,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: icon-release-${{ steps.version.outputs.version }}
-          path: packages/icons/dist/
+          path: |
+            packages/icons/svg/dist/
+            packages/icons/react/dist/
+            packages/icons/android/src/main/res/
+            packages/icons/ios/Sources/BildIcons/
           retention-days: 90

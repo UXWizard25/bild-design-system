@@ -12,14 +12,15 @@
 
 const fs = require('fs');
 const path = require('path');
+const { PATHS: SHARED_PATHS, ensureDir } = require('./paths');
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const PATHS = {
-  input: path.resolve(__dirname, '../../packages/icons/src'),
-  output: path.resolve(__dirname, '../../packages/icons/dist/svg'),
+  input: SHARED_PATHS.source,
+  output: SHARED_PATHS.svg,
   config: path.resolve(__dirname, '../../build-config/icons/svgo.config.js'),
 };
 

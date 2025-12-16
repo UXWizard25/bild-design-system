@@ -12,14 +12,15 @@
 
 const fs = require('fs');
 const path = require('path');
+const { PATHS: SHARED_PATHS } = require('./paths');
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const PATHS = {
-  input: path.resolve(__dirname, '../../packages/icons/dist/svg'),
-  output: path.resolve(__dirname, '../../packages/icons/dist/react-src'),
+  input: SHARED_PATHS.svg,
+  output: SHARED_PATHS.reactSrc,
   config: path.resolve(__dirname, '../../build-config/icons/svgr.config.js'),
 };
 

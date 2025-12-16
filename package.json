@@ -5,7 +5,8 @@
   "description": "BILD Design System - Monorepo for design tokens, icons, and web components",
   "workspaces": [
     "packages/tokens",
-    "packages/icons",
+    "packages/icons/svg",
+    "packages/icons/react",
     "packages/components/*"
   ],
   "scripts": {
@@ -13,7 +14,11 @@
     "build": "npm run build:tokens && npm run build:components",
     "build:tokens": "npm run preprocess && node scripts/tokens/build.js && node scripts/tokens/bundles.js && node scripts/tokens/generate-docs.js",
     "build:docs": "node scripts/tokens/generate-docs.js",
-    "build:icons": "npm run build -w @marioschmidt/design-system-icons",
+    "build:icons": "node scripts/icons/build-icons.js",
+    "build:icons:svg": "node scripts/icons/optimize-svg.js",
+    "build:icons:react": "node scripts/icons/generate-react.js && node scripts/icons/compile-react.js",
+    "build:icons:android": "node scripts/icons/generate-android.js",
+    "build:icons:ios": "node scripts/icons/generate-ios.js",
     "build:components": "npm run build -w @marioschmidt/design-system-components && node scripts/fix-vue-imports.js",
     "build:react": "npm run build -w @marioschmidt/design-system-react",
     "build:vue": "npm run build -w @marioschmidt/design-system-vue",
@@ -25,11 +30,13 @@
     "build:storybook": "npm run build:tokens && npm run build:components && storybook build -c build-config/storybook -o dist/storybook",
     "clean": "npm run clean --workspaces --if-present && rm -rf dist",
     "publish:tokens": "npm publish -w @marioschmidt/design-system-tokens",
-    "publish:icons": "npm publish -w @marioschmidt/design-system-icons",
+    "publish:icons": "npm publish -w @marioschmidt/design-system-icons --access public",
+    "publish:icons:react": "npm publish -w @marioschmidt/design-system-icons-react --access public",
+    "publish:icons:all": "npm run publish:icons && npm run publish:icons:react",
     "publish:components": "npm publish -w @marioschmidt/design-system-components",
     "publish:react": "npm publish -w @marioschmidt/design-system-react",
     "publish:vue": "npm publish -w @marioschmidt/design-system-vue",
-    "publish:all": "npm run publish:tokens && npm run publish:icons && npm run publish:components && npm run publish:react && npm run publish:vue"
+    "publish:all": "npm run publish:tokens && npm run publish:icons:all && npm run publish:components && npm run publish:react && npm run publish:vue"
   },
   "repository": {
     "type": "git",

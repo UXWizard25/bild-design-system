@@ -67,16 +67,27 @@ jobs:
           echo "::group::Fetching baseline from main"
 
           # Create temp directory for baseline
-          mkdir -p dist-icons-old
+          mkdir -p dist-icons-old/svg
+          mkdir -p dist-icons-old/react
+          mkdir -p dist-icons-old/android
+          mkdir -p dist-icons-old/ios
 
           # Try to get existing icons from main
           git fetch origin main:refs/remotes/origin/main || true
 
-          if git show origin/main:packages/icons/dist/svg 2>/dev/null; then
-            git checkout origin/main -- packages/icons/dist || true
-            if [ -d "packages/icons/dist" ]; then
-              cp -r packages/icons/dist/* dist-icons-old/ 2>/dev/null || true
-              rm -rf packages/icons/dist
+          if git show origin/main:packages/icons/svg/dist 2>/dev/null; then
+            git checkout origin/main -- packages/icons/svg/dist || true
+            if [ -d "packages/icons/svg/dist" ]; then
+              cp -r packages/icons/svg/dist/* dist-icons-old/svg/ 2>/dev/null || true
+              rm -rf packages/icons/svg/dist
+            fi
+          fi
+
+          if git show origin/main:packages/icons/react/dist 2>/dev/null; then
+            git checkout origin/main -- packages/icons/react/dist || true
+            if [ -d "packages/icons/react/dist" ]; then
+              cp -r packages/icons/react/dist/* dist-icons-old/react/ 2>/dev/null || true
+              rm -rf packages/icons/react/dist
             fi
           fi
 
@@ -100,7 +111,8 @@ jobs:
         id: compare
         run: |
           echo "::group::Comparing builds"
-          node scripts/icons/compare-icon-builds.js dist-icons-old packages/icons/dist
+          # Compare SVG outputs (primary source of truth for icon changes)
+          node scripts/icons/compare-icon-builds.js dist-icons-old/svg packages/icons/svg/dist
           echo "::endgroup::"
 
           # Read summary from diff
@@ -199,7 +211,10 @@ jobs:
         with:
           name: icon-build-figma
           path: |
-            packages/icons/dist/
+            packages/icons/svg/dist/
+            packages/icons/react/dist/
+            packages/icons/android/src/main/res/
+            packages/icons/ios/Sources/BildIcons/
             icons-diff.json
             icons-release-notes.md
           retention-days: 30

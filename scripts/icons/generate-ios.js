@@ -16,14 +16,16 @@
 
 const fs = require('fs');
 const path = require('path');
+const { PATHS: SHARED_PATHS } = require('./paths');
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const PATHS = {
-  input: path.resolve(__dirname, '../../packages/icons/dist/svg'),
-  output: path.resolve(__dirname, '../../packages/icons/dist/ios/Assets.xcassets/Icons'),
+  input: SHARED_PATHS.svg,
+  output: SHARED_PATHS.ios,
+  swift: SHARED_PATHS.iosSwift,
 };
 
 // ============================================================================
@@ -315,13 +317,12 @@ async function main() {
   // Generate Swift extension
   log.step('Generating Swift extension...');
   const swiftContent = generateSwiftExtension(results);
-  const swiftDir = path.join(path.dirname(xcassetsDir), 'Sources');
-  if (!fs.existsSync(swiftDir)) {
-    fs.mkdirSync(swiftDir, { recursive: true });
+  if (!fs.existsSync(PATHS.swift)) {
+    fs.mkdirSync(PATHS.swift, { recursive: true });
   }
-  const swiftPath = path.join(swiftDir, 'BildIcons.swift');
+  const swiftPath = path.join(PATHS.swift, 'BildIcon.swift');
   fs.writeFileSync(swiftPath, swiftContent, 'utf8');
-  log.success('Created BildIcons.swift');
+  log.success('Created BildIcon.swift');
 
   // Summary
   console.log('\n========================================');
