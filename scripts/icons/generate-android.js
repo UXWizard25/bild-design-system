@@ -21,6 +21,7 @@ const { PATHS: SHARED_PATHS } = require('./paths');
 const PATHS = {
   input: SHARED_PATHS.svg,
   output: SHARED_PATHS.android,
+  kotlin: SHARED_PATHS.androidKotlin,
 };
 
 const ANDROID_CONFIG = {
@@ -54,6 +55,27 @@ const log = {
  */
 function toAndroidName(name) {
   return `ic_${name.replace(/-/g, '_')}`;
+}
+
+/**
+ * Convert to Jetpack Compose naming (PascalCase)
+ * add -> Add
+ * arrow-left -> ArrowLeft
+ * 2-liga-logo -> _2LigaLogo (prefixed for Kotlin validity)
+ *
+ * Following Material Icons convention for Compose.
+ */
+function toComposeName(name) {
+  const pascalCase = name
+    .split('-')
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join('');
+
+  // Kotlin identifiers cannot start with a number - prefix with underscore
+  if (/^[0-9]/.test(pascalCase)) {
+    return '_' + pascalCase;
+  }
+  return pascalCase;
 }
 
 /**
@@ -252,6 +274,87 @@ function generateAttrsXml() {
   return attrsPath;
 }
 
+/**
+ * Generate BildIcons.kt for Jetpack Compose
+ * Provides type-safe access to icons following Material Icons convention.
+ */
+function generateKotlinExtension(icons) {
+  const iconProperties = icons
+    .filter(i => i.success)
+    .map(i => {
+      const composeName = toComposeName(i.originalName);
+      return `    /**
+     * ${i.originalName} icon
+     * @see R.drawable.${i.name}
+     */
+    val ${composeName}: ImageVector
+        @Composable
+        get() = ImageVector.vectorResource(R.drawable.${i.name})`;
+    })
+    .join('\n\n');
+
+  const iconList = icons
+    .filter(i => i.success)
+    .map(i => `        ${toComposeName(i.originalName)}`)
+    .join(',\n');
+
+  const kotlinContent = `// GENERATED CODE - DO NOT MODIFY BY HAND
+// Generated at: ${new Date().toISOString()}
+//
+// BILD Design System Icons - Jetpack Compose Extension
+// To regenerate, run: npm run build:icons:android
+
+package de.bild.design.icons
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+
+/**
+ * BILD Design System Icons for Jetpack Compose
+ *
+ * Provides type-safe access to all design system icons following
+ * the Material Icons naming convention (PascalCase).
+ *
+ * Usage:
+ * \`\`\`kotlin
+ * Icon(
+ *     imageVector = BildIcons.Add,
+ *     contentDescription = "Add item"
+ * )
+ *
+ * // With tint
+ * Icon(
+ *     imageVector = BildIcons.ArrowLeft,
+ *     contentDescription = "Go back",
+ *     tint = MaterialTheme.colorScheme.primary
+ * )
+ * \`\`\`
+ */
+object BildIcons {
+${iconProperties}
+
+    /**
+     * List of all available icons for iteration/preview
+     */
+    val allIcons: List<ImageVector>
+        @Composable
+        get() = listOf(
+${iconList}
+        )
+}
+`;
+
+  // Create Kotlin directory
+  if (!fs.existsSync(PATHS.kotlin)) {
+    fs.mkdirSync(PATHS.kotlin, { recursive: true });
+  }
+
+  const kotlinPath = path.join(PATHS.kotlin, 'BildIcons.kt');
+  fs.writeFileSync(kotlinPath, kotlinContent, 'utf8');
+  return kotlinPath;
+}
+
 // ============================================================================
 // MAIN
 // ============================================================================
@@ -309,6 +412,11 @@ async function main() {
   log.step('Generating theme attributes...');
   generateAttrsXml();
   log.success('Created attrs_icons.xml');
+
+  // Generate Kotlin extension for Compose
+  log.step('Generating Kotlin extension for Compose...');
+  generateKotlinExtension(results);
+  log.success('Created BildIcons.kt');
 
   // Summary
   console.log('\n========================================');

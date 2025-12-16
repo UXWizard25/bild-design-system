@@ -1,7 +1,7 @@
 /**
  * BILD Design System Icons - Android Library
  *
- * Publishes vector drawable icons to GitHub Packages (Maven).
+ * Publishes vector drawable icons with Jetpack Compose support to GitHub Packages (Maven).
  *
  * Usage:
  *   ./gradlew build                    # Build AAR
@@ -14,10 +14,17 @@
  *   dependencies {
  *       implementation("de.bild.design:icons:1.0.0")
  *   }
+ *
+ * Jetpack Compose usage:
+ *   Icon(
+ *       imageVector = BildIcons.Add,
+ *       contentDescription = "Add"
+ *   )
  */
 
 plugins {
     id("com.android.library") version "8.2.0"
+    id("org.jetbrains.kotlin.android") version "1.9.22"
     id("maven-publish")
 }
 
@@ -36,9 +43,27 @@ android {
         }
     }
 
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.8"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     sourceSets {
         getByName("main") {
             res.srcDirs("src/main/res")
+            kotlin.srcDirs("src/main/kotlin")
             manifest.srcFile("src/main/AndroidManifest.xml")
         }
     }
@@ -48,6 +73,11 @@ android {
             withSourcesJar()
         }
     }
+}
+
+dependencies {
+    // Jetpack Compose UI (required for ImageVector)
+    implementation("androidx.compose.ui:ui:1.6.0")
 }
 
 publishing {

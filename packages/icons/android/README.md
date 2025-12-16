@@ -61,10 +61,37 @@ The token needs the `read:packages` scope.
     app:tint="?attr/colorOnSurface" />
 ```
 
-### Jetpack Compose
+### Jetpack Compose (Recommended)
+
+Use the type-safe `BildIcons` object with PascalCase naming (following Material Icons convention):
 
 ```kotlin
 import androidx.compose.material3.Icon
+import de.bild.design.icons.BildIcons
+
+// Simple usage
+Icon(
+    imageVector = BildIcons.Add,
+    contentDescription = "Add"
+)
+
+// With custom tint
+Icon(
+    imageVector = BildIcons.ArrowLeft,
+    contentDescription = "Go back",
+    tint = MaterialTheme.colorScheme.primary
+)
+
+// Icons starting with numbers use underscore prefix
+Icon(
+    imageVector = BildIcons._2LigaLogo,
+    contentDescription = "2. Liga"
+)
+```
+
+### Alternative: Resource-based Access
+
+```kotlin
 import androidx.compose.ui.res.painterResource
 import de.bild.design.icons.R
 
@@ -72,15 +99,6 @@ Icon(
     painter = painterResource(R.drawable.ic_add),
     contentDescription = "Add",
     tint = MaterialTheme.colorScheme.onSurface
-)
-```
-
-### ImageVector (Compose)
-
-```kotlin
-Icon(
-    imageVector = ImageVector.vectorResource(R.drawable.ic_add),
-    contentDescription = "Add"
 )
 ```
 
@@ -112,11 +130,17 @@ Icon(
 
 ## Naming Convention
 
-| Source SVG | Android Drawable |
-|------------|------------------|
-| `icon-add.svg` | `ic_add.xml` |
-| `icon-arrow-left.svg` | `ic_arrow_left.xml` |
-| `icon-chevron-down.svg` | `ic_chevron_down.xml` |
+| Source SVG | Android Drawable | Compose (BildIcons) |
+|------------|------------------|---------------------|
+| `add.svg` | `ic_add.xml` | `BildIcons.Add` |
+| `arrow-left.svg` | `ic_arrow_left.xml` | `BildIcons.ArrowLeft` |
+| `chevron-down.svg` | `ic_chevron_down.xml` | `BildIcons.ChevronDown` |
+| `2-liga-logo.svg` | `ic_2_liga_logo.xml` | `BildIcons._2LigaLogo` |
+
+**Conventions:**
+- **Drawable files:** `ic_` prefix + snake_case (Android resource naming)
+- **Compose API:** PascalCase (Material Icons convention)
+- **Numbers:** Drawable allows `ic_2_...`, Kotlin requires `_2...` prefix
 
 ---
 

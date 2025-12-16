@@ -49,6 +49,9 @@ const PATHS = {
   /** Android values (attrs.xml) */
   androidValues: path.join(ICONS_ROOT, 'android/src/main/res/values'),
 
+  /** Android Kotlin source files */
+  androidKotlin: path.join(ICONS_ROOT, 'android/src/main/kotlin/de/bild/design/icons'),
+
   /** iOS Asset Catalog */
   ios: path.join(ICONS_ROOT, 'ios/Sources/BildIcons/Resources/Assets.xcassets/Icons'),
 
