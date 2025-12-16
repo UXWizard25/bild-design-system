@@ -41,10 +41,13 @@ const log = {
 // ============================================================================
 
 /**
- * Convert kebab-case to PascalCase
- * add -> Add
- * arrow-left -> ArrowLeft
- * 2-liga-logo -> Icon2LigaLogo (prefix with Icon if starts with number)
+ * Convert kebab-case to PascalCase with Icon prefix
+ * add -> IconAdd
+ * arrow-left -> IconArrowLeft
+ * 2-liga-logo -> Icon2LigaLogo
+ *
+ * Following Heroicons naming convention (industry best practice)
+ * for clarity and to avoid naming collisions with other components.
  */
 function toPascalCase(str) {
   const pascalCase = str
@@ -52,12 +55,10 @@ function toPascalCase(str) {
     .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join('');
 
-  // If the name starts with a number, prefix with 'Icon' to make it a valid JS identifier
-  if (/^\d/.test(pascalCase)) {
-    return 'Icon' + pascalCase;
-  }
-
-  return pascalCase;
+  // Always prefix with 'Icon' for clarity and consistency
+  // This follows the Heroicons naming convention (e.g., ArrowLeftIcon)
+  // but uses prefix instead of suffix for better IDE autocomplete grouping
+  return 'Icon' + pascalCase;
 }
 
 /**
