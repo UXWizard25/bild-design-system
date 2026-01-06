@@ -4463,6 +4463,106 @@ object ${className} {
   return output;
 };
 
+/**
+ * Format: Shared Density Object for Jetpack Compose
+ * Brand-independent density tokens (like Effects)
+ * Output: DensityDefault, DensityDense, DensitySpacious in shared/
+ */
+const composeSharedDensityFormat = ({ dictionary, options, file }) => {
+  const { packageName, densityMode } = options;
+
+  // Helper to convert value to Compose Dp format
+  const toComposeDp = (value) => {
+    if (value === null || value === undefined) return value;
+    if (typeof value === 'string' && value.endsWith('.dp')) return value;
+    if (typeof value === 'number') return `${value}.dp`;
+    if (typeof value === 'string') {
+      const num = parseFloat(value.replace('px', ''));
+      if (!isNaN(num)) return `${num}.dp`;
+    }
+    return value;
+  };
+
+  let output = generateFileHeader({
+    fileName: file.destination,
+    commentStyle: 'block',
+    platform: 'android',
+    context: `Shared Density${densityMode} Object\nBrand-independent semantic density tokens`
+  });
+
+  output += `package ${packageName}
+
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
+/**
+ * ${densityMode} density spacing tokens (brand-independent)
+ *
+ * Semantic density tokens for spacing adjustments.
+ * Same values across all brands (BILD, SportBILD, Advertorial).
+ */
+object Density${densityMode} : DesignDensityScheme {
+`;
+
+  dictionary.allTokens.forEach(token => {
+    const name = token.name;
+    const value = toComposeDp(token.$value !== undefined ? token.$value : token.value);
+    output += `    override val ${name}: Dp = ${value}\n`;
+  });
+
+  output += `}
+`;
+  return output;
+};
+
+/**
+ * Format: Shared Density Struct for SwiftUI
+ * Brand-independent density tokens (like Effects)
+ * Output: DensityDefault, DensityDense, DensitySpacious in shared/
+ */
+const swiftuiSharedDensityFormat = ({ dictionary, options, file }) => {
+  const { densityMode } = options;
+
+  // Helper to ensure numeric value for CGFloat
+  const toNumericValue = (value) => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') {
+      const num = parseFloat(value.replace('px', ''));
+      if (!isNaN(num)) return num;
+    }
+    return value;
+  };
+
+  let output = generateFileHeader({
+    fileName: file.destination,
+    commentStyle: 'line',
+    platform: 'ios',
+    context: `Shared Density${densityMode} Struct\nBrand-independent semantic density tokens`
+  });
+
+  output += `import SwiftUI
+
+/// ${densityMode} density spacing tokens (brand-independent)
+///
+/// Semantic density tokens for spacing adjustments.
+/// Same values across all brands (BILD, SportBILD, Advertorial).
+public struct Density${densityMode}: DesignDensityScheme {
+    public static let shared = Density${densityMode}()
+    private init() {}
+
+`;
+
+  dictionary.allTokens.forEach(token => {
+    const name = token.name;
+    const value = toNumericValue(token.$value !== undefined ? token.$value : token.value);
+    output += `    public let ${name}: CGFloat = ${value}\n`;
+  });
+
+  output += `}
+`;
+  return output;
+};
+
 // ============================================================================
 // EXPORTS
 // ============================================================================
@@ -4520,6 +4620,7 @@ module.exports = {
     'compose/typography-scheme': composeTypographySchemeFormat,
     'compose/effects': composeEffectsFormat,
     'compose/component-effects': composeComponentEffectsFormat,
+    'compose/shared-density': composeSharedDensityFormat,
 
     // SwiftUI Formats
     'swiftui/enums': swiftuiEnumsFormat,
@@ -4531,6 +4632,7 @@ module.exports = {
     'swiftui/sizing-scheme': swiftuiSizingSchemeFormat,
     'swiftui/typography': swiftuiTypographyFormat,
     'swiftui/effects': swiftuiEffectsFormat,
+    'swiftui/shared-density': swiftuiSharedDensityFormat,
     'swiftui/theme-provider': swiftuiThemeProviderFormat,
     'swiftui/component-tokens': swiftuiComponentTokensFormat,
     'swiftui/design-system-theme': swiftuiDesignSystemThemeFormat

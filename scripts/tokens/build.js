@@ -229,7 +229,8 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
     },
     // iOS: SwiftUI format - For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
     // Skip ios platform when SWIFTUI_ENABLED since swiftui platform generates the same output correctly
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || SWIFTUI_ENABLED ? {} : {
+    // Skip density tokens - they are now generated as shared (brand-independent) via buildSharedDensityTokens()
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || cssOptions.modeType === 'density' || SWIFTUI_ENABLED ? {} : {
       ios: {
         transformGroup: 'custom/ios-swift',
         buildPath: (() => {
@@ -324,10 +325,10 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
       }
     }),
     // Compose: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
-    // For density mode, output all three density variants
+    // Skip density tokens - they are now generated as shared (brand-independent) via buildSharedDensityTokens()
     // Skip compose for overrides (brand mapping layer) - these are intermediate tokens not needed in final output
     // Android uses 3 size classes: Compact, Medium, Expanded (Material 3 WindowSizeClass)
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode, 'android')) || !COMPOSE_ENABLED || cssOptions.skipCompose ? {} : {
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode, 'android')) || cssOptions.modeType === 'density' || !COMPOSE_ENABLED || cssOptions.skipCompose ? {} : {
       compose: {
         transformGroup: 'custom/compose',
         buildPath: (() => {
@@ -444,7 +445,8 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
     // SwiftUI: For breakpoint mode, use sizeclass folder and naming, skip non-native breakpoints
     // Skip swiftui for overrides (brand mapping layer) - these are intermediate tokens not needed in final output
     // Skip swiftui for individual primitives (they're consolidated into DesignTokenPrimitives.swift)
-    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || !SWIFTUI_ENABLED || cssOptions.skipCompose || cssOptions.skipSwiftUI ? {} : {
+    // Skip density tokens - they are now generated as shared (brand-independent) via buildSharedDensityTokens()
+    ...((cssOptions.modeType === 'breakpoint' && !isNativeBreakpoint(cssOptions.mode)) || cssOptions.modeType === 'density' || !SWIFTUI_ENABLED || cssOptions.skipCompose || cssOptions.skipSwiftUI ? {} : {
       swiftui: {
         transformGroup: 'custom/ios-swift',
         buildPath: (() => {
@@ -785,6 +787,93 @@ function createEffectConfig(brand, colorMode) {
       } : {})
     }
   };
+}
+
+/**
+ * Creates Style Dictionary config for shared (brand-independent) density tokens
+ * Similar pattern to Effects - density values are identical across all brands
+ *
+ * @param {string} densityMode - 'default', 'dense', or 'spacious'
+ */
+function createSharedDensityConfig(densityMode) {
+  // Source: Use bild as reference (values identical across brands)
+  const sourceFile = path.join(TOKENS_DIR, 'brands', 'bild', 'density', `density-${densityMode}.json`);
+
+  if (!fs.existsSync(sourceFile)) {
+    return null;
+  }
+
+  const modePascal = densityMode.charAt(0).toUpperCase() + densityMode.slice(1);
+
+  return {
+    source: [sourceFile],
+    platforms: {
+      // Android: Jetpack Compose (brand-independent, output to shared/)
+      ...(COMPOSE_ENABLED ? {
+        compose: {
+          transformGroup: 'custom/compose',
+          buildPath: `${DIST_DIR}/android/compose/shared/`,
+          files: [{
+            destination: `Density${modePascal}.kt`,
+            format: 'compose/shared-density',
+            options: {
+              packageName: 'com.bild.designsystem.shared',
+              densityMode: modePascal
+            }
+          }]
+        }
+      } : {}),
+
+      // iOS: SwiftUI (brand-independent, output to shared/)
+      ...(SWIFTUI_ENABLED ? {
+        swiftui: {
+          transformGroup: 'custom/ios-swift',
+          buildPath: `${DIST_DIR}/ios/shared/`,
+          files: [{
+            destination: `Density${modePascal}.swift`,
+            format: 'swiftui/shared-density',
+            options: {
+              densityMode: modePascal
+            }
+          }]
+        }
+      } : {})
+    }
+  };
+}
+
+/**
+ * Builds shared (brand-independent) density tokens
+ * Similar to Effects - density values are identical across all brands
+ * Output: dist/android/compose/shared/Density{Mode}.kt
+ *         dist/ios/shared/Density{Mode}.swift
+ */
+async function buildSharedDensityTokens() {
+  console.log('\n🎛️  Building Shared Density Tokens:\n');
+
+  const densityModes = ['default', 'dense', 'spacious'];
+  let successful = 0;
+
+  for (const mode of densityModes) {
+    const config = createSharedDensityConfig(mode);
+
+    if (!config) {
+      console.warn(`     ⚠️ Density config not found for mode: ${mode}`);
+      continue;
+    }
+
+    try {
+      const sd = new StyleDictionary(config);
+      await sd.buildAllPlatforms();
+      const modePascal = mode.charAt(0).toUpperCase() + mode.slice(1);
+      console.log(`     ✅ Density${modePascal}`);
+      successful++;
+    } catch (error) {
+      console.error(`     ❌ Density ${mode}: ${error.message}`);
+    }
+  }
+
+  return { total: densityModes.length, successful };
 }
 
 /**
@@ -3750,13 +3839,8 @@ async function generateComposeThemeProviders() {
     fs.writeFileSync(designDensitySchemeFile, designDensitySchemeContent, 'utf8');
     console.log('     ✅ shared/DesignDensityScheme.kt (unified interface)');
 
-    // Shared Density objects (brand-independent, like Effects)
-    const densityObjectsAndroid = generateSharedDensityObjectsForAndroid();
-    for (const [mode, content] of Object.entries(densityObjectsAndroid)) {
-      const modePascal = mode.charAt(0).toUpperCase() + mode.slice(1);
-      fs.writeFileSync(path.join(sharedDir, `Density${modePascal}.kt`), content, 'utf8');
-    }
-    console.log('     ✅ shared/DensityDefault.kt, DensityDense.kt, DensitySpacious.kt (brand-independent)');
+    // Note: Shared Density objects (DensityDefault.kt, etc.) are now generated via
+    // buildSharedDensityTokens() using Style Dictionary pipeline
 
     // DesignSystemTheme.kt (central theme provider with Dual-Axis)
     const designSystemThemeContent = generateDesignSystemThemeFile();
@@ -4754,115 +4838,6 @@ interface DesignDensityScheme {
     val densityLgStackSpaceResp2xl: Dp
 }
 `;
-}
-
-/**
- * Generates shared Density objects for Android (Kotlin)
- * Creates: DensityDefault.kt, DensityDense.kt, DensitySpacious.kt in shared/
- * Density is brand-independent (same values across all brands)
- */
-function generateSharedDensityObjectsForAndroid() {
-  const densityModes = ['default', 'dense', 'spacious'];
-  const files = {};
-
-  for (const mode of densityModes) {
-    const modePascal = mode.charAt(0).toUpperCase() + mode.slice(1);
-    const tokenFile = path.join(TOKENS_DIR, 'brands', 'bild', 'density', `density-${mode}.json`);
-
-    if (!fs.existsSync(tokenFile)) {
-      console.warn(`     ⚠️ Token file not found: ${tokenFile}`);
-      continue;
-    }
-
-    const tokenData = JSON.parse(fs.readFileSync(tokenFile, 'utf8'));
-    const tokens = flattenTokens(tokenData);
-
-    let output = generateFileHeader({
-      fileName: `Density${modePascal}.kt`,
-      commentStyle: 'block',
-      platform: 'android',
-      context: `Shared Density${modePascal} Object\nBrand-independent semantic density tokens`
-    });
-
-    output += `
-package com.bild.designsystem.shared
-
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-
-/**
- * ${modePascal} density spacing tokens (brand-independent)
- *
- * Semantic density tokens for spacing adjustments.
- * Same values across all brands (BILD, SportBILD, Advertorial).
- */
-object Density${modePascal} : DesignDensityScheme {
-`;
-
-    // Generate properties (strip 'px' suffix for Kotlin)
-    for (const [name, value] of Object.entries(tokens)) {
-      const numValue = typeof value === 'string' ? value.replace('px', '') : value;
-      output += `    override val ${name}: Dp = ${numValue}.dp\n`;
-    }
-
-    output += `}\n`;
-    files[mode] = output;
-  }
-
-  return files;
-}
-
-/**
- * Generates shared Density objects for iOS (Swift)
- * Creates: DensityDefault.swift, DensityDense.swift, DensitySpacious.swift in shared/
- * Density is brand-independent (same values across all brands)
- */
-function generateSharedDensityObjectsForIOS() {
-  const densityModes = ['default', 'dense', 'spacious'];
-  const files = {};
-
-  for (const mode of densityModes) {
-    const modePascal = mode.charAt(0).toUpperCase() + mode.slice(1);
-    const tokenFile = path.join(TOKENS_DIR, 'brands', 'bild', 'density', `density-${mode}.json`);
-
-    if (!fs.existsSync(tokenFile)) {
-      console.warn(`     ⚠️ Token file not found: ${tokenFile}`);
-      continue;
-    }
-
-    const tokenData = JSON.parse(fs.readFileSync(tokenFile, 'utf8'));
-    const tokens = flattenTokens(tokenData);
-
-    let output = generateFileHeader({
-      fileName: `Density${modePascal}.swift`,
-      commentStyle: 'line',
-      platform: 'ios',
-      context: `Shared Density${modePascal} Struct\nBrand-independent semantic density tokens`
-    });
-
-    output += `import SwiftUI
-
-/// ${modePascal} density spacing tokens (brand-independent)
-///
-/// Semantic density tokens for spacing adjustments.
-/// Same values across all brands (BILD, SportBILD, Advertorial).
-public struct Density${modePascal}: DesignDensityScheme {
-    public static let shared = Density${modePascal}()
-    private init() {}
-
-`;
-
-    // Generate properties (strip 'px' suffix for Swift)
-    for (const [name, value] of Object.entries(tokens)) {
-      const numValue = typeof value === 'string' ? value.replace('px', '') : value;
-      output += `    public let ${name}: CGFloat = ${numValue}\n`;
-    }
-
-    output += `}\n`;
-    files[mode] = output;
-  }
-
-  return files;
 }
 
 /**
@@ -6181,21 +6156,15 @@ public extension View {
 }
 `;
 
-  // Shared Density objects for iOS (brand-independent, like Effects)
-  const densityObjectsIOS = generateSharedDensityObjectsForIOS();
-  for (const [mode, content] of Object.entries(densityObjectsIOS)) {
-    const modePascal = mode.charAt(0).toUpperCase() + mode.slice(1);
-    fs.writeFileSync(path.join(sharedDir, `Density${modePascal}.swift`), content, 'utf8');
-    successful++;
-  }
-  console.log('     ✅ shared/DensityDefault.swift, DensityDense.swift, DensitySpacious.swift (brand-independent)');
+  // Note: Shared Density objects (DensityDefault.swift, etc.) are now generated via
+  // buildSharedDensityTokens() using Style Dictionary pipeline
 
   fs.writeFileSync(path.join(sharedDir, 'DesignSystemTheme.swift'), designSystemThemeContent, 'utf8');
   console.log('     ✅ shared/DesignSystemTheme.swift');
   successful++;
 
   console.log(`  📊 Generated ${successful} shared SwiftUI files\n`);
-  return { total: 8, successful };  // Updated count: 5 + 3 density files
+  return { total: 5, successful };  // Updated count: 5 files (density now via Style Dictionary)
 }
 
 /**
@@ -7932,6 +7901,9 @@ async function main() {
 
   // Build shared primitives
   stats.sharedPrimitives = await buildSharedPrimitives();
+
+  // Build shared density tokens (brand-independent, via Style Dictionary)
+  stats.sharedDensity = await buildSharedDensityTokens();
 
   // Build brand-specific tokens
   stats.brandSpecific = await buildBrandSpecificTokens();
