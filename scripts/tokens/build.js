@@ -5141,12 +5141,78 @@ object DesignSystemTheme {
 
     /**
      * Current density spacing scheme (brand-independent, based on Density only)
-     * Provides semantic density tokens for spacing adjustments
+     * Provides raw semantic density tokens for spacing adjustments.
+     * For pre-resolved responsive tokens, use stackSpaceRespSm, stackSpaceRespMd, etc.
      */
     val densitySpacing: DesignDensityScheme
         @Composable
         @ReadOnlyComposable
         get() = LocalDesignDensitySpacing.current
+
+    // ══════════════════════════════════════════════════════════════════════════════
+    // RESOLVED DENSITY SPACING (Density × SizeClass Matrix)
+    // ══════════════════════════════════════════════════════════════════════════════
+
+    // Constant spacing (same across all breakpoints)
+
+    /** Constant density spacing 3XS - same value regardless of screen size */
+    val stackSpaceConst3xs: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConst3xs
+    /** Constant density spacing 2XS - same value regardless of screen size */
+    val stackSpaceConst2xs: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConst2xs
+    /** Constant density spacing XS - same value regardless of screen size */
+    val stackSpaceConstXs: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstXs
+    /** Constant density spacing SM - same value regardless of screen size */
+    val stackSpaceConstSm: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstSm
+    /** Constant density spacing MD - same value regardless of screen size */
+    val stackSpaceConstMd: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstMd
+    /** Constant density spacing LG - same value regardless of screen size */
+    val stackSpaceConstLg: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstLg
+    /** Constant density spacing XL - same value regardless of screen size */
+    val stackSpaceConstXl: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstXl
+    /** Constant density spacing 2XL - same value regardless of screen size */
+    val stackSpaceConst2xl: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConst2xl
+
+    // Responsive spacing (automatically resolved based on WindowSizeClass)
+
+    /** Responsive density spacing SM - automatically resolved for current WindowSizeClass */
+    val stackSpaceRespSm: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespSm
+            WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespSm
+            WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespSm
+        }
+
+    /** Responsive density spacing MD - automatically resolved for current WindowSizeClass */
+    val stackSpaceRespMd: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespMd
+            WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespMd
+            WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespMd
+        }
+
+    /** Responsive density spacing LG - automatically resolved for current WindowSizeClass */
+    val stackSpaceRespLg: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespLg
+            WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespLg
+            WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespLg
+        }
+
+    /** Responsive density spacing XL - automatically resolved for current WindowSizeClass */
+    val stackSpaceRespXl: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespXl
+            WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespXl
+            WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespXl
+        }
+
+    /** Responsive density spacing 2XL - automatically resolved for current WindowSizeClass */
+    val stackSpaceResp2xl: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceResp2xl
+            WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceResp2xl
+            WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceResp2xl
+        }
 
     /**
      * Current window size class
@@ -5941,21 +6007,28 @@ public extension View {
   }
   const typographyPropertyDeclarations = typographyProperties.map(prop => `    var ${prop}: TextStyle { get }`).join('\n');
 
-  // Dynamically read density properties from generated iOS files
-  const bildDensityPath = path.join(DIST_DIR, 'ios', 'brands', 'bild', 'density', 'DensityDefault.swift');
+  // Dynamically read density properties from generated iOS files (now in shared/ directory)
+  const sharedDensityPath = path.join(DIST_DIR, 'ios', 'shared', 'DensityDefault.swift');
   let densityProperties = [];
-  if (fs.existsSync(bildDensityPath)) {
-    const content = fs.readFileSync(bildDensityPath, 'utf8');
-    // Extract all var declarations with CGFloat type
-    const propsMatch = content.matchAll(/^\s*var\s+(\w+):\s*CGFloat\s*\{\s*get\s*\}/gm);
+  if (fs.existsSync(sharedDensityPath)) {
+    const content = fs.readFileSync(sharedDensityPath, 'utf8');
+    // Extract all public let declarations with CGFloat type (format: public let propertyName: CGFloat = value)
+    const propsMatch = content.matchAll(/^\s*public\s+let\s+(\w+):\s*CGFloat\s*=/gm);
     for (const match of propsMatch) {
       densityProperties.push(match[1]);
     }
   }
   if (densityProperties.length === 0) {
+    // Fallback: Complete list of density properties matching Android interface
     densityProperties = [
-      'densityStackSpaceConstXs', 'densityStackSpaceConstSm', 'densityStackSpaceConstMd', 'densityStackSpaceConstLg',
-      'densityXsStackSpaceRespSm', 'densityXsStackSpaceRespMd', 'densityXsStackSpaceRespLg'
+      // Constant spacing (breakpoint-independent)
+      'densityStackSpaceConst3xs', 'densityStackSpaceConst2xs', 'densityStackSpaceConstXs', 'densityStackSpaceConstSm',
+      'densityStackSpaceConstMd', 'densityStackSpaceConstLg', 'densityStackSpaceConstXl', 'densityStackSpaceConst2xl',
+      // Responsive spacing per breakpoint
+      'densityXsStackSpaceRespSm', 'densityXsStackSpaceRespMd', 'densityXsStackSpaceRespLg', 'densityXsStackSpaceRespXl', 'densityXsStackSpaceResp2xl',
+      'densitySmStackSpaceRespSm', 'densitySmStackSpaceRespMd', 'densitySmStackSpaceRespLg', 'densitySmStackSpaceRespXl', 'densitySmStackSpaceResp2xl',
+      'densityMdStackSpaceRespSm', 'densityMdStackSpaceRespMd', 'densityMdStackSpaceRespLg', 'densityMdStackSpaceRespXl', 'densityMdStackSpaceResp2xl',
+      'densityLgStackSpaceRespSm', 'densityLgStackSpaceRespMd', 'densityLgStackSpaceRespLg', 'densityLgStackSpaceRespXl', 'densityLgStackSpaceResp2xl'
     ];
   }
   const densityPropertyDeclarations = densityProperties.map(prop => `    var ${prop}: CGFloat { get }`).join('\n');
@@ -6105,12 +6178,57 @@ public final class DesignSystemTheme: @unchecked Sendable {
     // MARK: - Density Spacing Access (brand-independent)
 
     /// Current density spacing scheme (brand-independent, like Effects)
+    /// For pre-resolved responsive tokens, use stackSpaceRespSm, stackSpaceRespMd, etc.
     public var densitySpacing: any DesignDensityScheme {
         switch density {
         case .default: return DensityDefault.shared
         case .dense: return DensityDense.shared
         case .spacious: return DensitySpacious.shared
         }
+    }
+
+    // MARK: - Resolved Density Spacing (Density × SizeClass Matrix)
+
+    // Constant spacing (same across all breakpoints)
+
+    /// Constant density spacing 3XS - same value regardless of screen size
+    public var stackSpaceConst3xs: CGFloat { densitySpacing.densityStackSpaceConst3xs }
+    /// Constant density spacing 2XS - same value regardless of screen size
+    public var stackSpaceConst2xs: CGFloat { densitySpacing.densityStackSpaceConst2xs }
+    /// Constant density spacing XS - same value regardless of screen size
+    public var stackSpaceConstXs: CGFloat { densitySpacing.densityStackSpaceConstXs }
+    /// Constant density spacing SM - same value regardless of screen size
+    public var stackSpaceConstSm: CGFloat { densitySpacing.densityStackSpaceConstSm }
+    /// Constant density spacing MD - same value regardless of screen size
+    public var stackSpaceConstMd: CGFloat { densitySpacing.densityStackSpaceConstMd }
+    /// Constant density spacing LG - same value regardless of screen size
+    public var stackSpaceConstLg: CGFloat { densitySpacing.densityStackSpaceConstLg }
+    /// Constant density spacing XL - same value regardless of screen size
+    public var stackSpaceConstXl: CGFloat { densitySpacing.densityStackSpaceConstXl }
+    /// Constant density spacing 2XL - same value regardless of screen size
+    public var stackSpaceConst2xl: CGFloat { densitySpacing.densityStackSpaceConst2xl }
+
+    // Responsive spacing (automatically resolved based on SizeClass)
+
+    /// Responsive density spacing SM - automatically resolved for current SizeClass
+    public var stackSpaceRespSm: CGFloat {
+        sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespSm : densitySpacing.densityLgStackSpaceRespSm
+    }
+    /// Responsive density spacing MD - automatically resolved for current SizeClass
+    public var stackSpaceRespMd: CGFloat {
+        sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespMd : densitySpacing.densityLgStackSpaceRespMd
+    }
+    /// Responsive density spacing LG - automatically resolved for current SizeClass
+    public var stackSpaceRespLg: CGFloat {
+        sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespLg : densitySpacing.densityLgStackSpaceRespLg
+    }
+    /// Responsive density spacing XL - automatically resolved for current SizeClass
+    public var stackSpaceRespXl: CGFloat {
+        sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespXl : densitySpacing.densityLgStackSpaceRespXl
+    }
+    /// Responsive density spacing 2XL - automatically resolved for current SizeClass
+    public var stackSpaceResp2xl: CGFloat {
+        sizeClass == .compact ? densitySpacing.densitySmStackSpaceResp2xl : densitySpacing.densityLgStackSpaceResp2xl
     }
 }
 
