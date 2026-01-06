@@ -89,144 +89,190 @@ function getDocumentationUrl(platform) {
 }
 
 /**
- * Parses density tokens from generated files and creates resolver metadata.
- * This enables dynamic, scalable density token resolution without hardcoding.
+ * Scans BreakpointMode JSON files to find tokens that reference Density collection.
+ * This is the correct approach: Consumer API uses BreakpointMode token names,
+ * and internally resolves to density tokens based on SizeClass × DensityMode.
  *
- * Token patterns:
- * - Constant: density{Category}Const{Size} (e.g., densityStackSpaceConst3xs)
- * - Responsive: density{Breakpoint}{Category}Resp{Size} (e.g., densitySmStackSpaceRespMd)
- *
- * @param {string} platform - 'android' or 'ios'
- * @returns {Object} Parsed density tokens with resolver metadata
+ * @returns {Object} Map of consumer tokens to their density references per breakpoint
+ *   {
+ *     consumerTokens: Map<consumerName, { breakpoints: { xs, sm, md, lg }, isConstant }>
+ *     // e.g., "stackSpaceRespMd" → { breakpoints: { sm: "densitySmStackSpaceRespMd", ... } }
+ *   }
  */
-function parseDensityTokens(platform = 'android') {
-  const densityDir = path.join(DIST_DIR, platform === 'android' ? 'android/compose/shared' : 'ios/shared');
-  const densityFile = platform === 'android' ? 'DensityDefault.kt' : 'DensityDefault.swift';
-  const densityPath = path.join(densityDir, densityFile);
+function scanBreakpointDensityReferences() {
+  const breakpointDir = path.join(TOKENS_DIR, 'brands', 'bild', 'breakpoints');
+  const consumerTokens = new Map();
 
-  if (!fs.existsSync(densityPath)) {
-    console.warn(`Density file not found: ${densityPath}`);
-    return { constant: [], responsive: [], categories: new Set() };
+  if (!fs.existsSync(breakpointDir)) {
+    console.warn(`BreakpointMode directory not found: ${breakpointDir}`);
+    return { consumerTokens };
   }
 
-  const content = fs.readFileSync(densityPath, 'utf8');
+  // Map breakpoint file patterns to breakpoint keys
+  const breakpointMap = {
+    'breakpoint-xs': 'xs',
+    'breakpoint-sm': 'sm',
+    'breakpoint-md': 'md',
+    'breakpoint-lg': 'lg'
+  };
 
-  // Extract token names based on platform
-  const tokenRegex = platform === 'android'
-    ? /override val (density\w+):/g
-    : /public let (density\w+):/g;
+  const files = fs.readdirSync(breakpointDir).filter(f => f.endsWith('.json'));
 
+  for (const file of files) {
+    // Determine which breakpoint this file represents
+    let breakpointKey = null;
+    for (const [pattern, key] of Object.entries(breakpointMap)) {
+      if (file.startsWith(pattern)) {
+        breakpointKey = key;
+        break;
+      }
+    }
+    if (!breakpointKey) continue;
+
+    const filePath = path.join(breakpointDir, file);
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+    // Recursively find tokens that reference density
+    function findDensityReferences(obj, parentPath = '') {
+      for (const [key, value] of Object.entries(obj)) {
+        if (value && typeof value === 'object') {
+          if (value.$alias && value.$alias.collectionType === 'density') {
+            // Found a token that references density!
+            const consumerName = key; // e.g., "stackSpaceRespMd"
+            const densityToken = value.$alias.token; // e.g., "densityMdStackSpaceRespMd"
+
+            // Check if this is a constant token (no breakpoint prefix in density token)
+            const isConstant = !densityToken.match(/^density(Xs|Sm|Md|Lg)/);
+
+            if (!consumerTokens.has(consumerName)) {
+              consumerTokens.set(consumerName, {
+                breakpoints: {},
+                isConstant,
+                category: parentPath
+              });
+            }
+
+            consumerTokens.get(consumerName).breakpoints[breakpointKey] = densityToken;
+          } else if (!value.$type && !value.$value) {
+            // Recurse into nested objects (but not into token definitions)
+            findDensityReferences(value, parentPath ? `${parentPath}.${key}` : key);
+          }
+        }
+      }
+    }
+
+    findDensityReferences(data);
+  }
+
+  return { consumerTokens };
+}
+
+/**
+ * Parses density tokens from source JSON for interface generation.
+ * Used to generate the internal DesignDensityScheme interface.
+ *
+ * @returns {Object} All density token names from source
+ */
+function parseDensityTokensFromSource() {
+  const densitySourcePath = path.join(TOKENS_DIR, 'brands', 'bild', 'density', 'density-default.json');
+
+  if (!fs.existsSync(densitySourcePath)) {
+    console.warn(`Density source not found: ${densitySourcePath}`);
+    return { tokens: [] };
+  }
+
+  const data = JSON.parse(fs.readFileSync(densitySourcePath, 'utf8'));
   const tokens = [];
-  let match;
-  while ((match = tokenRegex.exec(content)) !== null) {
-    tokens.push(match[1]);
-  }
 
-  // Parse tokens into structured data
-  const constant = [];    // { tokenName, category, size, propertyName }
-  const responsive = [];  // { tokenName, breakpoint, category, size, propertyName }
-  const categories = new Set();
-
-  // Pattern for constant tokens: density{Category}Const{Size}
-  const constPattern = /^density(\w+?)Const(\w+)$/;
-  // Pattern for responsive tokens: density{Breakpoint}{Category}Resp{Size}
-  const respPattern = /^density(Xs|Sm|Md|Lg)(\w+?)Resp(\w+)$/;
-
-  for (const token of tokens) {
-    let match;
-
-    if ((match = constPattern.exec(token))) {
-      const category = match[1]; // e.g., "StackSpace"
-      const size = match[2];     // e.g., "3xs", "Md"
-      categories.add(category);
-      constant.push({
-        tokenName: token,
-        category,
-        size,
-        // Property name for consumer API: stackSpaceConst3xs
-        propertyName: category.charAt(0).toLowerCase() + category.slice(1) + 'Const' + size
-      });
-    } else if ((match = respPattern.exec(token))) {
-      const breakpoint = match[1]; // e.g., "Sm", "Md", "Lg"
-      const category = match[2];   // e.g., "StackSpace"
-      const size = match[3];       // e.g., "Sm", "Md"
-      categories.add(category);
-      responsive.push({
-        tokenName: token,
-        breakpoint,
-        category,
-        size,
-        // Property name for consumer API: stackSpaceRespMd
-        propertyName: category.charAt(0).toLowerCase() + category.slice(1) + 'Resp' + size
-      });
+  function extractTokens(obj) {
+    for (const [key, value] of Object.entries(obj)) {
+      if (value && typeof value === 'object') {
+        if (value.$type === 'dimension' || value.type === 'float') {
+          tokens.push(key);
+        } else {
+          extractTokens(value);
+        }
+      }
     }
   }
 
-  return { constant, responsive, categories: Array.from(categories) };
+  extractTokens(data);
+  return { tokens };
 }
 
 /**
  * Generates dynamic density resolver code for Android Compose.
- * Creates properties that resolve density tokens based on WindowSizeClass.
+ * Uses BreakpointMode token names as consumer API, internally resolving to density tokens.
+ *
+ * Consumer API: DesignSystemTheme.stackSpaceRespMd (BreakpointMode name)
+ * Internal: densitySpacing.densitySmStackSpaceRespMd (Density token)
  *
  * @returns {string} Kotlin code for density resolvers
  */
 function generateAndroidDensityResolvers() {
-  const { constant, responsive } = parseDensityTokens('android');
+  const { consumerTokens } = scanBreakpointDensityReferences();
 
-  if (constant.length === 0 && responsive.length === 0) {
-    return '    // No density tokens found - skipping resolver generation';
+  if (consumerTokens.size === 0) {
+    return '    // No density-referencing tokens found in BreakpointMode';
+  }
+
+  // Separate constant and responsive tokens
+  const constantTokens = [];
+  const responsiveTokens = [];
+
+  for (const [name, info] of consumerTokens) {
+    if (info.isConstant) {
+      constantTokens.push({ name, ...info });
+    } else {
+      responsiveTokens.push({ name, ...info });
+    }
   }
 
   let output = `    // ══════════════════════════════════════════════════════════════════════════════
-    // DYNAMIC DENSITY SPACING (Auto-generated from ${constant.length + responsive.length} tokens)
+    // DENSITY-AWARE SPACING (Auto-generated from BreakpointMode references)
     // ══════════════════════════════════════════════════════════════════════════════
     //
-    // These resolvers are dynamically generated based on density token patterns.
-    // Adding new tokens in Figma will automatically create new resolvers.
+    // These properties use BreakpointMode token names (consumer API).
+    // Internally they resolve to Density tokens based on WindowSizeClass × DensityMode.
     //
-    // Constant tokens: Same value regardless of screen size
-    // Responsive tokens: Automatically resolved based on WindowSizeClass
-    //   - Compact → SM breakpoint tokens
-    //   - Medium → MD breakpoint tokens
-    //   - Expanded → LG breakpoint tokens
+    // Adding new tokens in Figma BreakpointMode that reference Density will
+    // automatically create new resolvers here.
+    //
+    // Consumer API: DesignSystemTheme.stackSpaceRespMd
+    // Internal: densitySpacing.densitySmStackSpaceRespMd (varies by SizeClass & Density)
 
 `;
 
-  // Group responsive tokens by category+size to generate unified resolvers
-  const respByProperty = new Map();
-  for (const token of responsive) {
-    if (!respByProperty.has(token.propertyName)) {
-      respByProperty.set(token.propertyName, {});
-    }
-    respByProperty.get(token.propertyName)[token.breakpoint] = token.tokenName;
-  }
-
   // Generate constant token resolvers
-  if (constant.length > 0) {
-    output += '    // Constant spacing tokens (breakpoint-independent)\n\n';
-    for (const token of constant) {
-      output += `    /** ${token.category} ${token.size} - constant value regardless of screen size */
-    val ${token.propertyName}: Dp
-        @Composable @ReadOnlyComposable get() = densitySpacing.${token.tokenName}
+  if (constantTokens.length > 0) {
+    output += '    // Constant spacing tokens (same value across all breakpoints)\n\n';
+    for (const token of constantTokens) {
+      // For constant tokens, all breakpoints reference the same density token
+      const densityToken = Object.values(token.breakpoints)[0];
+      output += `    /** ${token.name} - constant spacing, varies only by density mode */
+    val ${token.name}: Dp
+        @Composable @ReadOnlyComposable get() = densitySpacing.${densityToken}
 
 `;
     }
   }
 
   // Generate responsive token resolvers
-  if (respByProperty.size > 0) {
+  if (responsiveTokens.length > 0) {
     output += '    // Responsive spacing tokens (resolved by WindowSizeClass)\n\n';
-    for (const [propertyName, breakpoints] of respByProperty) {
-      // Find a token to extract category info
-      const sampleToken = responsive.find(t => t.propertyName === propertyName);
+    for (const token of responsiveTokens) {
+      const bp = token.breakpoints;
+      // Map WindowSizeClass to breakpoint: Compact→sm, Medium→md, Expanded→lg
+      const smToken = bp.sm || bp.xs || Object.values(bp)[0];
+      const mdToken = bp.md || bp.sm || Object.values(bp)[0];
+      const lgToken = bp.lg || bp.md || Object.values(bp)[0];
 
-      output += `    /** ${sampleToken.category} ${sampleToken.size} - automatically resolved for current WindowSizeClass */
-    val ${propertyName}: Dp
+      output += `    /** ${token.name} - responsive spacing, varies by WindowSizeClass and density mode */
+    val ${token.name}: Dp
         @Composable @ReadOnlyComposable get() = when (sizeClass) {
-            WindowSizeClass.Compact -> densitySpacing.${breakpoints.Sm || breakpoints.Xs || Object.values(breakpoints)[0]}
-            WindowSizeClass.Medium -> densitySpacing.${breakpoints.Md || breakpoints.Sm || Object.values(breakpoints)[0]}
-            WindowSizeClass.Expanded -> densitySpacing.${breakpoints.Lg || breakpoints.Md || Object.values(breakpoints)[0]}
+            WindowSizeClass.Compact -> densitySpacing.${smToken}
+            WindowSizeClass.Medium -> densitySpacing.${mdToken}
+            WindowSizeClass.Expanded -> densitySpacing.${lgToken}
         }
 
 `;
@@ -238,59 +284,69 @@ function generateAndroidDensityResolvers() {
 
 /**
  * Generates dynamic density resolver code for iOS SwiftUI.
- * Creates properties that resolve density tokens based on SizeClass.
+ * Uses BreakpointMode token names as consumer API, internally resolving to density tokens.
+ *
+ * Consumer API: theme.stackSpaceRespMd (BreakpointMode name)
+ * Internal: densitySpacing.densitySmStackSpaceRespMd (Density token)
  *
  * @returns {string} Swift code for density resolvers
  */
 function generateiOSDensityResolvers() {
-  const { constant, responsive } = parseDensityTokens('ios');
+  const { consumerTokens } = scanBreakpointDensityReferences();
 
-  if (constant.length === 0 && responsive.length === 0) {
-    return '    // No density tokens found - skipping resolver generation';
+  if (consumerTokens.size === 0) {
+    return '    // No density-referencing tokens found in BreakpointMode';
   }
 
-  let output = `    // MARK: - Dynamic Density Spacing (Auto-generated from ${constant.length + responsive.length} tokens)
+  // Separate constant and responsive tokens
+  const constantTokens = [];
+  const responsiveTokens = [];
+
+  for (const [name, info] of consumerTokens) {
+    if (info.isConstant) {
+      constantTokens.push({ name, ...info });
+    } else {
+      responsiveTokens.push({ name, ...info });
+    }
+  }
+
+  let output = `    // MARK: - Density-Aware Spacing (Auto-generated from BreakpointMode references)
     //
-    // These resolvers are dynamically generated based on density token patterns.
-    // Adding new tokens in Figma will automatically create new resolvers.
+    // These properties use BreakpointMode token names (consumer API).
+    // Internally they resolve to Density tokens based on SizeClass × DensityMode.
     //
-    // Constant tokens: Same value regardless of screen size
-    // Responsive tokens: Automatically resolved based on SizeClass
-    //   - compact → SM breakpoint tokens
-    //   - regular → LG breakpoint tokens
+    // Adding new tokens in Figma BreakpointMode that reference Density will
+    // automatically create new resolvers here.
+    //
+    // Consumer API: theme.stackSpaceRespMd
+    // Internal: densitySpacing.densitySmStackSpaceRespMd (varies by SizeClass & Density)
 
 `;
 
-  // Group responsive tokens by category+size
-  const respByProperty = new Map();
-  for (const token of responsive) {
-    if (!respByProperty.has(token.propertyName)) {
-      respByProperty.set(token.propertyName, {});
-    }
-    respByProperty.get(token.propertyName)[token.breakpoint] = token.tokenName;
-  }
-
   // Generate constant token resolvers
-  if (constant.length > 0) {
-    output += '    // Constant spacing tokens (breakpoint-independent)\n\n';
-    for (const token of constant) {
-      output += `    /// ${token.category} ${token.size} - constant value regardless of screen size
-    public var ${token.propertyName}: CGFloat { densitySpacing.${token.tokenName} }
+  if (constantTokens.length > 0) {
+    output += '    // Constant spacing tokens (same value across all breakpoints)\n\n';
+    for (const token of constantTokens) {
+      // For constant tokens, all breakpoints reference the same density token
+      const densityToken = Object.values(token.breakpoints)[0];
+      output += `    /// ${token.name} - constant spacing, varies only by density mode
+    public var ${token.name}: CGFloat { densitySpacing.${densityToken} }
 
 `;
     }
   }
 
   // Generate responsive token resolvers
-  if (respByProperty.size > 0) {
+  if (responsiveTokens.length > 0) {
     output += '    // Responsive spacing tokens (resolved by SizeClass)\n\n';
-    for (const [propertyName, breakpoints] of respByProperty) {
-      const sampleToken = responsive.find(t => t.propertyName === propertyName);
-      const smToken = breakpoints.Sm || breakpoints.Xs || Object.values(breakpoints)[0];
-      const lgToken = breakpoints.Lg || breakpoints.Md || Object.values(breakpoints)[0];
+    for (const token of responsiveTokens) {
+      const bp = token.breakpoints;
+      // Map SizeClass to breakpoint: compact→sm, regular→lg
+      const smToken = bp.sm || bp.xs || Object.values(bp)[0];
+      const lgToken = bp.lg || bp.md || Object.values(bp)[0];
 
-      output += `    /// ${sampleToken.category} ${sampleToken.size} - automatically resolved for current SizeClass
-    public var ${propertyName}: CGFloat {
+      output += `    /// ${token.name} - responsive spacing, varies by SizeClass and density mode
+    public var ${token.name}: CGFloat {
         sizeClass == .compact ? densitySpacing.${smToken} : densitySpacing.${lgToken}
     }
 
@@ -5062,14 +5118,15 @@ import androidx.compose.ui.unit.Dp
 /**
  * Unified density scheme interface for the BILD Design System
  *
- * Semantic density tokens (Global/StackSpace) that vary by density mode.
- * This interface is implemented by {Brand}DensityDefault, {Brand}DensityDense, {Brand}DensitySpacious.
+ * Internal semantic density tokens (Global/StackSpace) that vary by density mode.
+ * This interface is implemented by DensityDefault, DensityDense, DensitySpacious.
  *
- * Usage:
+ * NOTE: Do not use densitySpacing directly. Use the BreakpointMode resolver properties:
  * \`\`\`kotlin
  * @Composable
  * fun MyLayout() {
- *     val spacing = DesignSystemTheme.densitySpacing.densityStackSpaceConstMd
+ *     // Use BreakpointMode token names - automatically resolve by WindowSizeClass & Density
+ *     val spacing = DesignSystemTheme.stackSpaceRespMd  // NOT densitySpacing.density...
  *     Column(
  *         verticalArrangement = Arrangement.spacedBy(spacing)
  *     ) {
@@ -5384,11 +5441,11 @@ object DesignSystemTheme {
         get() = LocalDesignEffects.current
 
     /**
-     * Current density spacing scheme (brand-independent, based on Density only)
-     * Provides raw semantic density tokens for spacing adjustments.
-     * For pre-resolved responsive tokens, use stackSpaceSm, stackSpaceMd, etc.
+     * Internal density spacing scheme - not for direct consumption.
+     * Use the resolver properties below (stackSpaceRespMd, stackSpaceConstLg, etc.)
+     * which automatically resolve based on WindowSizeClass and DensityMode.
      */
-    val densitySpacing: DesignDensityScheme
+    internal val densitySpacing: DesignDensityScheme
         @Composable
         @ReadOnlyComposable
         get() = LocalDesignDensitySpacing.current
@@ -6362,11 +6419,12 @@ public final class DesignSystemTheme: @unchecked Sendable {
         }
     }
 
-    // MARK: - Density Spacing Access (brand-independent)
+    // MARK: - Density Spacing Access (internal)
 
-    /// Current density spacing scheme (brand-independent, like Effects)
-    /// For pre-resolved responsive tokens, use stackSpaceSm, stackSpaceMd, etc.
-    public var densitySpacing: any DesignDensityScheme {
+    /// Internal density spacing scheme - not for direct consumption.
+    /// Use the resolver properties below (stackSpaceRespMd, stackSpaceConstLg, etc.)
+    /// which automatically resolve based on SizeClass and DensityMode.
+    internal var densitySpacing: any DesignDensityScheme {
         switch density {
         case .default: return DensityDefault.shared
         case .dense: return DensityDense.shared
