@@ -1041,7 +1041,10 @@ function processBrandSpecificTokens(collections, aliasLookup) {
               }
 
               // Extract DEEP alias info - follows chain to primitive (for CSS var() references)
-              aliasInfo = getDeepAliasInfo(modeValue.id, aliasLookup, collections, context);
+              // For BreakpointMode: stop at Density level to preserve var(--density-*) references
+              aliasInfo = getDeepAliasInfo(modeValue.id, aliasLookup, collections, context, {
+                acceptDensityEndpoint: collection.id === COLLECTION_IDS.BREAKPOINT_MODE
+              });
 
               processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set(), collections);
             } else {
