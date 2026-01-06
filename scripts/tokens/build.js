@@ -5142,7 +5142,7 @@ object DesignSystemTheme {
     /**
      * Current density spacing scheme (brand-independent, based on Density only)
      * Provides raw semantic density tokens for spacing adjustments.
-     * For pre-resolved responsive tokens, use stackSpaceRespSm, stackSpaceRespMd, etc.
+     * For pre-resolved responsive tokens, use stackSpaceSm, stackSpaceMd, etc.
      */
     val densitySpacing: DesignDensityScheme
         @Composable
@@ -5150,64 +5150,76 @@ object DesignSystemTheme {
         get() = LocalDesignDensitySpacing.current
 
     // ══════════════════════════════════════════════════════════════════════════════
-    // RESOLVED DENSITY SPACING (Density × SizeClass Matrix)
+    // UNIFIED DENSITY SPACING (All tokens resolved by SizeClass)
     // ══════════════════════════════════════════════════════════════════════════════
+    //
+    // All density spacing tokens use a consistent API - developers don't need to
+    // know if a token is "constant" or "responsive" internally. Constant tokens
+    // simply have the same value for all breakpoints.
+    //
+    // Usage:
+    //   DesignSystemTheme.stackSpace3xs  // Same value for all screen sizes
+    //   DesignSystemTheme.stackSpaceMd   // Varies by screen size
+    //   DesignSystemTheme.stackSpace2xl  // Varies by screen size
 
-    // Constant spacing (same across all breakpoints)
+    /** Density spacing 3XS - automatically resolved for current WindowSizeClass */
+    val stackSpace3xs: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densityStackSpaceConst3xs
+            WindowSizeClass.Medium -> densitySpacing.densityStackSpaceConst3xs
+            WindowSizeClass.Expanded -> densitySpacing.densityStackSpaceConst3xs
+        }
 
-    /** Constant density spacing 3XS - same value regardless of screen size */
-    val stackSpaceConst3xs: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConst3xs
-    /** Constant density spacing 2XS - same value regardless of screen size */
-    val stackSpaceConst2xs: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConst2xs
-    /** Constant density spacing XS - same value regardless of screen size */
-    val stackSpaceConstXs: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstXs
-    /** Constant density spacing SM - same value regardless of screen size */
-    val stackSpaceConstSm: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstSm
-    /** Constant density spacing MD - same value regardless of screen size */
-    val stackSpaceConstMd: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstMd
-    /** Constant density spacing LG - same value regardless of screen size */
-    val stackSpaceConstLg: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstLg
-    /** Constant density spacing XL - same value regardless of screen size */
-    val stackSpaceConstXl: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConstXl
-    /** Constant density spacing 2XL - same value regardless of screen size */
-    val stackSpaceConst2xl: Dp @Composable @ReadOnlyComposable get() = densitySpacing.densityStackSpaceConst2xl
+    /** Density spacing 2XS - automatically resolved for current WindowSizeClass */
+    val stackSpace2xs: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densityStackSpaceConst2xs
+            WindowSizeClass.Medium -> densitySpacing.densityStackSpaceConst2xs
+            WindowSizeClass.Expanded -> densitySpacing.densityStackSpaceConst2xs
+        }
 
-    // Responsive spacing (automatically resolved based on WindowSizeClass)
+    /** Density spacing XS - automatically resolved for current WindowSizeClass */
+    val stackSpaceXs: Dp
+        @Composable @ReadOnlyComposable get() = when (sizeClass) {
+            WindowSizeClass.Compact -> densitySpacing.densityStackSpaceConstXs
+            WindowSizeClass.Medium -> densitySpacing.densityStackSpaceConstXs
+            WindowSizeClass.Expanded -> densitySpacing.densityStackSpaceConstXs
+        }
 
-    /** Responsive density spacing SM - automatically resolved for current WindowSizeClass */
-    val stackSpaceRespSm: Dp
+    /** Density spacing SM - automatically resolved for current WindowSizeClass */
+    val stackSpaceSm: Dp
         @Composable @ReadOnlyComposable get() = when (sizeClass) {
             WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespSm
             WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespSm
             WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespSm
         }
 
-    /** Responsive density spacing MD - automatically resolved for current WindowSizeClass */
-    val stackSpaceRespMd: Dp
+    /** Density spacing MD - automatically resolved for current WindowSizeClass */
+    val stackSpaceMd: Dp
         @Composable @ReadOnlyComposable get() = when (sizeClass) {
             WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespMd
             WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespMd
             WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespMd
         }
 
-    /** Responsive density spacing LG - automatically resolved for current WindowSizeClass */
-    val stackSpaceRespLg: Dp
+    /** Density spacing LG - automatically resolved for current WindowSizeClass */
+    val stackSpaceLg: Dp
         @Composable @ReadOnlyComposable get() = when (sizeClass) {
             WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespLg
             WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespLg
             WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespLg
         }
 
-    /** Responsive density spacing XL - automatically resolved for current WindowSizeClass */
-    val stackSpaceRespXl: Dp
+    /** Density spacing XL - automatically resolved for current WindowSizeClass */
+    val stackSpaceXl: Dp
         @Composable @ReadOnlyComposable get() = when (sizeClass) {
             WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceRespXl
             WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceRespXl
             WindowSizeClass.Expanded -> densitySpacing.densityLgStackSpaceRespXl
         }
 
-    /** Responsive density spacing 2XL - automatically resolved for current WindowSizeClass */
-    val stackSpaceResp2xl: Dp
+    /** Density spacing 2XL - automatically resolved for current WindowSizeClass */
+    val stackSpace2xl: Dp
         @Composable @ReadOnlyComposable get() = when (sizeClass) {
             WindowSizeClass.Compact -> densitySpacing.densitySmStackSpaceResp2xl
             WindowSizeClass.Medium -> densitySpacing.densityMdStackSpaceResp2xl
@@ -6178,7 +6190,7 @@ public final class DesignSystemTheme: @unchecked Sendable {
     // MARK: - Density Spacing Access (brand-independent)
 
     /// Current density spacing scheme (brand-independent, like Effects)
-    /// For pre-resolved responsive tokens, use stackSpaceRespSm, stackSpaceRespMd, etc.
+    /// For pre-resolved responsive tokens, use stackSpaceSm, stackSpaceMd, etc.
     public var densitySpacing: any DesignDensityScheme {
         switch density {
         case .default: return DensityDefault.shared
@@ -6187,47 +6199,47 @@ public final class DesignSystemTheme: @unchecked Sendable {
         }
     }
 
-    // MARK: - Resolved Density Spacing (Density × SizeClass Matrix)
+    // MARK: - Unified Density Spacing (All tokens resolved by SizeClass)
+    //
+    // All density spacing tokens use a consistent API - developers don't need to
+    // know if a token is "constant" or "responsive" internally. Constant tokens
+    // simply have the same value for all size classes.
+    //
+    // Usage:
+    //   theme.stackSpace3xs  // Same value for all screen sizes
+    //   theme.stackSpaceMd   // Varies by screen size
+    //   theme.stackSpace2xl  // Varies by screen size
 
-    // Constant spacing (same across all breakpoints)
-
-    /// Constant density spacing 3XS - same value regardless of screen size
-    public var stackSpaceConst3xs: CGFloat { densitySpacing.densityStackSpaceConst3xs }
-    /// Constant density spacing 2XS - same value regardless of screen size
-    public var stackSpaceConst2xs: CGFloat { densitySpacing.densityStackSpaceConst2xs }
-    /// Constant density spacing XS - same value regardless of screen size
-    public var stackSpaceConstXs: CGFloat { densitySpacing.densityStackSpaceConstXs }
-    /// Constant density spacing SM - same value regardless of screen size
-    public var stackSpaceConstSm: CGFloat { densitySpacing.densityStackSpaceConstSm }
-    /// Constant density spacing MD - same value regardless of screen size
-    public var stackSpaceConstMd: CGFloat { densitySpacing.densityStackSpaceConstMd }
-    /// Constant density spacing LG - same value regardless of screen size
-    public var stackSpaceConstLg: CGFloat { densitySpacing.densityStackSpaceConstLg }
-    /// Constant density spacing XL - same value regardless of screen size
-    public var stackSpaceConstXl: CGFloat { densitySpacing.densityStackSpaceConstXl }
-    /// Constant density spacing 2XL - same value regardless of screen size
-    public var stackSpaceConst2xl: CGFloat { densitySpacing.densityStackSpaceConst2xl }
-
-    // Responsive spacing (automatically resolved based on SizeClass)
-
-    /// Responsive density spacing SM - automatically resolved for current SizeClass
-    public var stackSpaceRespSm: CGFloat {
+    /// Density spacing 3XS - automatically resolved for current SizeClass
+    public var stackSpace3xs: CGFloat {
+        sizeClass == .compact ? densitySpacing.densityStackSpaceConst3xs : densitySpacing.densityStackSpaceConst3xs
+    }
+    /// Density spacing 2XS - automatically resolved for current SizeClass
+    public var stackSpace2xs: CGFloat {
+        sizeClass == .compact ? densitySpacing.densityStackSpaceConst2xs : densitySpacing.densityStackSpaceConst2xs
+    }
+    /// Density spacing XS - automatically resolved for current SizeClass
+    public var stackSpaceXs: CGFloat {
+        sizeClass == .compact ? densitySpacing.densityStackSpaceConstXs : densitySpacing.densityStackSpaceConstXs
+    }
+    /// Density spacing SM - automatically resolved for current SizeClass
+    public var stackSpaceSm: CGFloat {
         sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespSm : densitySpacing.densityLgStackSpaceRespSm
     }
-    /// Responsive density spacing MD - automatically resolved for current SizeClass
-    public var stackSpaceRespMd: CGFloat {
+    /// Density spacing MD - automatically resolved for current SizeClass
+    public var stackSpaceMd: CGFloat {
         sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespMd : densitySpacing.densityLgStackSpaceRespMd
     }
-    /// Responsive density spacing LG - automatically resolved for current SizeClass
-    public var stackSpaceRespLg: CGFloat {
+    /// Density spacing LG - automatically resolved for current SizeClass
+    public var stackSpaceLg: CGFloat {
         sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespLg : densitySpacing.densityLgStackSpaceRespLg
     }
-    /// Responsive density spacing XL - automatically resolved for current SizeClass
-    public var stackSpaceRespXl: CGFloat {
+    /// Density spacing XL - automatically resolved for current SizeClass
+    public var stackSpaceXl: CGFloat {
         sizeClass == .compact ? densitySpacing.densitySmStackSpaceRespXl : densitySpacing.densityLgStackSpaceRespXl
     }
-    /// Responsive density spacing 2XL - automatically resolved for current SizeClass
-    public var stackSpaceResp2xl: CGFloat {
+    /// Density spacing 2XL - automatically resolved for current SizeClass
+    public var stackSpace2xl: CGFloat {
         sizeClass == .compact ? densitySpacing.densitySmStackSpaceResp2xl : densitySpacing.densityLgStackSpaceResp2xl
     }
 }
