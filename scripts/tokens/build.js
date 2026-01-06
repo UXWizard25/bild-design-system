@@ -4976,10 +4976,76 @@ interface DesignEffectsScheme {
 }
 
 /**
- * Generates the shared DesignDensityScheme interface
+ * Generates the shared DesignDensityScheme interface dynamically
  * Creates: dist/android/compose/shared/DesignDensityScheme.kt
+ *
+ * Reads token names from the source JSON to ensure scalability.
+ * New tokens added in Figma will automatically appear in the interface.
  */
 function generateSharedDesignDensitySchemeFile() {
+  // Read density tokens from source JSON for dynamic interface generation
+  const densitySourcePath = path.join(TOKENS_DIR, 'brands', 'bild', 'density', 'density-default.json');
+  let interfaceProperties = '';
+
+  if (fs.existsSync(densitySourcePath)) {
+    const densityData = JSON.parse(fs.readFileSync(densitySourcePath, 'utf8'));
+    const tokens = [];
+
+    // Recursively extract all token names from the JSON structure
+    function extractTokens(obj, prefix = '') {
+      for (const [key, value] of Object.entries(obj)) {
+        if (value && typeof value === 'object') {
+          if (value.$type === 'dimension' || value.type === 'float') {
+            // This is a token - extract the key name
+            tokens.push(key);
+          } else {
+            // Recurse into nested objects
+            extractTokens(value, prefix ? `${prefix}.${key}` : key);
+          }
+        }
+      }
+    }
+
+    extractTokens(densityData);
+
+    // Group tokens by type (constant vs responsive)
+    const constantTokens = tokens.filter(t => t.includes('Const'));
+    const responsiveTokens = tokens.filter(t => !t.includes('Const'));
+
+    // Group responsive tokens by breakpoint
+    const breakpoints = ['Xs', 'Sm', 'Md', 'Lg'];
+    const respByBreakpoint = {};
+    breakpoints.forEach(bp => {
+      respByBreakpoint[bp] = responsiveTokens.filter(t => t.startsWith(`density${bp}`));
+    });
+
+    // Generate constant properties
+    if (constantTokens.length > 0) {
+      interfaceProperties += '    // Constant spacing (breakpoint-independent)\n';
+      constantTokens.forEach(token => {
+        interfaceProperties += `    val ${token}: Dp\n`;
+      });
+    }
+
+    // Generate responsive properties grouped by breakpoint
+    if (responsiveTokens.length > 0) {
+      interfaceProperties += '\n    // Responsive spacing (per breakpoint)\n';
+      breakpoints.forEach(bp => {
+        const bpTokens = respByBreakpoint[bp];
+        if (bpTokens.length > 0) {
+          interfaceProperties += `    // ${bp.toUpperCase()} breakpoint\n`;
+          bpTokens.forEach(token => {
+            interfaceProperties += `    val ${token}: Dp\n`;
+          });
+        }
+      });
+    }
+  } else {
+    // Fallback: minimal interface if source not found
+    console.warn('Density source JSON not found, using minimal interface');
+    interfaceProperties = '    // No density tokens found\n';
+  }
+
   let output = generateFileHeader({
     fileName: 'DesignDensityScheme.kt',
     commentStyle: 'block',
@@ -5014,42 +5080,7 @@ import androidx.compose.ui.unit.Dp
  */
 @Stable
 interface DesignDensityScheme {
-    // Constant spacing (breakpoint-independent)
-    val densityStackSpaceConst3xs: Dp
-    val densityStackSpaceConst2xs: Dp
-    val densityStackSpaceConstXs: Dp
-    val densityStackSpaceConstSm: Dp
-    val densityStackSpaceConstMd: Dp
-    val densityStackSpaceConstLg: Dp
-    val densityStackSpaceConstXl: Dp
-    val densityStackSpaceConst2xl: Dp
-
-    // Responsive spacing (per breakpoint)
-    // XS breakpoint
-    val densityXsStackSpaceRespSm: Dp
-    val densityXsStackSpaceRespMd: Dp
-    val densityXsStackSpaceRespLg: Dp
-    val densityXsStackSpaceRespXl: Dp
-    val densityXsStackSpaceResp2xl: Dp
-    // SM breakpoint
-    val densitySmStackSpaceRespSm: Dp
-    val densitySmStackSpaceRespMd: Dp
-    val densitySmStackSpaceRespLg: Dp
-    val densitySmStackSpaceRespXl: Dp
-    val densitySmStackSpaceResp2xl: Dp
-    // MD breakpoint
-    val densityMdStackSpaceRespSm: Dp
-    val densityMdStackSpaceRespMd: Dp
-    val densityMdStackSpaceRespLg: Dp
-    val densityMdStackSpaceRespXl: Dp
-    val densityMdStackSpaceResp2xl: Dp
-    // LG breakpoint
-    val densityLgStackSpaceRespSm: Dp
-    val densityLgStackSpaceRespMd: Dp
-    val densityLgStackSpaceRespLg: Dp
-    val densityLgStackSpaceRespXl: Dp
-    val densityLgStackSpaceResp2xl: Dp
-}
+${interfaceProperties}}
 `;
 }
 
@@ -6157,30 +6188,36 @@ public extension View {
   }
   const typographyPropertyDeclarations = typographyProperties.map(prop => `    var ${prop}: TextStyle { get }`).join('\n');
 
-  // Dynamically read density properties from generated iOS files (now in shared/ directory)
-  const sharedDensityPath = path.join(DIST_DIR, 'ios', 'shared', 'DensityDefault.swift');
+  // Dynamically read density properties from SOURCE JSON (not generated files)
+  // This ensures scalability - new tokens in Figma automatically appear in the protocol
+  const densitySourcePath = path.join(TOKENS_DIR, 'brands', 'bild', 'density', 'density-default.json');
   let densityProperties = [];
-  if (fs.existsSync(sharedDensityPath)) {
-    const content = fs.readFileSync(sharedDensityPath, 'utf8');
-    // Extract all public let declarations with CGFloat type (format: public let propertyName: CGFloat = value)
-    const propsMatch = content.matchAll(/^\s*public\s+let\s+(\w+):\s*CGFloat\s*=/gm);
-    for (const match of propsMatch) {
-      densityProperties.push(match[1]);
+
+  if (fs.existsSync(densitySourcePath)) {
+    const densityData = JSON.parse(fs.readFileSync(densitySourcePath, 'utf8'));
+
+    // Recursively extract all token names from the JSON structure
+    function extractDensityTokens(obj) {
+      const tokens = [];
+      for (const [key, value] of Object.entries(obj)) {
+        if (value && typeof value === 'object') {
+          if (value.$type === 'dimension' || value.type === 'float') {
+            tokens.push(key);
+          } else {
+            tokens.push(...extractDensityTokens(value));
+          }
+        }
+      }
+      return tokens;
     }
+
+    densityProperties = extractDensityTokens(densityData);
   }
+
   if (densityProperties.length === 0) {
-    // Fallback: Complete list of density properties matching Android interface
-    densityProperties = [
-      // Constant spacing (breakpoint-independent)
-      'densityStackSpaceConst3xs', 'densityStackSpaceConst2xs', 'densityStackSpaceConstXs', 'densityStackSpaceConstSm',
-      'densityStackSpaceConstMd', 'densityStackSpaceConstLg', 'densityStackSpaceConstXl', 'densityStackSpaceConst2xl',
-      // Responsive spacing per breakpoint
-      'densityXsStackSpaceRespSm', 'densityXsStackSpaceRespMd', 'densityXsStackSpaceRespLg', 'densityXsStackSpaceRespXl', 'densityXsStackSpaceResp2xl',
-      'densitySmStackSpaceRespSm', 'densitySmStackSpaceRespMd', 'densitySmStackSpaceRespLg', 'densitySmStackSpaceRespXl', 'densitySmStackSpaceResp2xl',
-      'densityMdStackSpaceRespSm', 'densityMdStackSpaceRespMd', 'densityMdStackSpaceRespLg', 'densityMdStackSpaceRespXl', 'densityMdStackSpaceResp2xl',
-      'densityLgStackSpaceRespSm', 'densityLgStackSpaceRespMd', 'densityLgStackSpaceRespLg', 'densityLgStackSpaceRespXl', 'densityLgStackSpaceResp2xl'
-    ];
+    console.warn('No density tokens found in source JSON for iOS protocol');
   }
+
   const densityPropertyDeclarations = densityProperties.map(prop => `    var ${prop}: CGFloat { get }`).join('\n');
 
   const designSystemThemeContent = generateFileHeader({
