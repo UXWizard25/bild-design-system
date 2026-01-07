@@ -144,39 +144,6 @@ function isConstantAcrossBreakpoints(tokenValues) {
 }
 
 /**
- * Parses density tokens from source JSON for interface generation.
- * Used to generate the internal DesignDensityScheme interface.
- *
- * @returns {Object} All density token names from source
- */
-function parseDensityTokensFromSource() {
-  const densitySourcePath = path.join(TOKENS_DIR, 'brands', 'bild', 'density', 'density-default.json');
-
-  if (!fs.existsSync(densitySourcePath)) {
-    console.warn(`Density source not found: ${densitySourcePath}`);
-    return { tokens: [] };
-  }
-
-  const data = JSON.parse(fs.readFileSync(densitySourcePath, 'utf8'));
-  const tokens = [];
-
-  function extractTokens(obj) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (value && typeof value === 'object') {
-        if (value.$type === 'dimension' || value.type === 'float') {
-          tokens.push(key);
-        } else {
-          extractTokens(value);
-        }
-      }
-    }
-  }
-
-  extractTokens(data);
-  return { tokens };
-}
-
-/**
  * Generates density-aware spacing code for Android Compose.
  * Uses the Breakpoint × Density matrix with directly resolved values.
  *
