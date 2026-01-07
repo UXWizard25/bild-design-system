@@ -667,6 +667,8 @@ object DesignSystemTheme {
 }
 ```
 
+> **Important - Single Entry Point Pattern:** Density-aware spacing tokens (`stackSpaceRespMd`, `stackSpaceConstLg`, etc.) are **NOT** part of `DesignSizingScheme`. They are only accessible via `DesignSystemTheme` resolvers, which perform the `WindowSizeClass × Density` matrix lookup internally. This ensures consistent density behavior across the application.
+
 ### Component Token Accessors
 
 ```kotlin

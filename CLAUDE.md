@@ -226,7 +226,7 @@ Density tokens exist at two levels:
 **2. Component Density (Button, InputField, IconButton):**
 - `--density-button-*`, `--density-input-field-*`, `--density-icon-button-*`
 
-**Alias Chain:**
+**Alias Chain (CSS):**
 ```
 BreakpointMode                    Density                         Primitive
 ────────────────────────────────────────────────────────────────────────────
@@ -235,10 +235,44 @@ BreakpointMode                    Density                         Primitive
      @media (min-width)
 ```
 
+**Native Platforms - Single Entry Point Pattern:**
+
+On iOS and Android, density-matrix tokens (`stackSpaceRespMd`, `stackSpaceConstLg`, etc.) are **NOT** part of `DesignSizingScheme`. Instead, they are only accessible via `DesignSystemTheme` resolvers:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    NATIVE DENSITY TOKEN ACCESS                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ❌ NOT via SizingScheme:                                                   │
+│     theme.sizing.stackSpaceRespMd  // Does NOT exist!                       │
+│                                                                             │
+│  ✅ ONLY via DesignSystemTheme:                                             │
+│     DesignSystemTheme.stackSpaceRespMd   // Android                         │
+│     theme.stackSpaceRespMd               // iOS                             │
+│                                                                             │
+│  Why: The resolver performs WindowSizeClass × Density matrix lookup:        │
+│                                                                             │
+│     when (sizeClass) {                                                      │
+│         Compact -> when (density) {                                         │
+│             Dense -> 8.dp                                                   │
+│             Default -> 12.dp                                                │
+│             Spacious -> 16.dp                                               │
+│         }                                                                   │
+│         Medium -> when (density) { ... }                                    │
+│         Expanded -> when (density) { ... }                                  │
+│     }                                                                       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+This architecture is enforced by the `nativeTokenFilter` in `build.js`, which excludes density-matrix tokens from `SizingScheme` files.
+
 This architecture allows:
 - Density modes (default/dense/spacious) to control spacing values
 - BreakpointMode to reference density tokens with proper `var()` fallbacks
-- @media queries to select the correct density token per breakpoint
+- @media queries to select the correct density token per breakpoint (CSS)
+- WindowSizeClass × Density matrix resolution on native platforms
 
 ---
 
@@ -553,6 +587,8 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 **Note on Effects:** Effects/shadows are **brand-independent** and only depend on light/dark mode. Both iOS and Android share the same `EffectsLight`/`EffectsDark` implementations across all brands.
 
 **Note on Density:** Density tokens are **brand-independent** and **internal**. Consumers should use the BreakpointMode resolver properties (`stackSpaceRespMd`, `stackSpaceConstLg`) which automatically resolve density based on `WindowSizeClass`/`SizeClass` × `Density` mode.
+
+> **Important:** Density-matrix tokens (`stackSpaceRespMd`, `stackSpaceConstLg`, etc.) are **NOT** part of `DesignSizingScheme`. They are only accessible via `DesignSystemTheme` resolvers. This "Single Entry Point" pattern is enforced by the build pipeline's `nativeTokenFilter`.
 
 **Benefit:** Code can work with `any DesignColorScheme` without knowing the specific brand.
 
@@ -1004,6 +1040,7 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Change alias resolution | `preprocess.js` |
 | Modify density alias endpoints | `preprocess.js` → `getDeepAliasInfo()` with `acceptDensityEndpoint` option |
 | Add semantic density to bundle | `bundles.js` → `buildBrandTokens()` |
+| Modify native density token filter | `build.js` → `nativeTokenFilter()` (controls which tokens are in SizingScheme) |
 | Add new brand | `preprocess.js`, `build.js`, `bundles.js` |
 | Add new breakpoint | `preprocess.js`, `build.js` |
 | Add new density mode | `preprocess.js`, `build.js`, `bundles.js` |

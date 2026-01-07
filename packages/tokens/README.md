@@ -390,6 +390,8 @@ struct MyLayout: View {
 
 > **Note:** The `densitySpacing` property is internal. Always use the semantic token names (`stackSpaceRespMd`, `stackSpaceConstLg`, etc.) which automatically resolve based on the current `sizeClass` and `density` mode.
 
+> **Important - Single Entry Point:** Density-aware spacing tokens (`stackSpaceRespMd`, `stackSpaceConstLg`, etc.) are **NOT** part of `DesignSizingScheme`. They are only accessible via `DesignSystemTheme` resolvers, which perform the `WindowSizeClass × Density` matrix lookup.
+
 #### Component Token Accessors
 
 All Component Tokens provide theme-aware `current()` accessors:
