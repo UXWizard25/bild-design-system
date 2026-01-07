@@ -462,6 +462,30 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
     return true;
   };
 
+  // Load density-matrix token names for exclusion from native SizingScheme files
+  // These tokens are exposed ONLY via DesignSystemTheme density resolvers (Single Entry Point pattern)
+  const densityMatrixTokenNames = new Set(Object.keys(loadBreakpointDensityMatrix()));
+
+  // Native platform filter: excludes density-matrix tokens from SizingScheme files
+  // This prevents token duplication - density-aware tokens are only in DesignSystemTheme
+  const nativeTokenFilter = (token) => {
+    // First apply standard token filter
+    if (!tokenFilter(token)) {
+      return false;
+    }
+
+    // For breakpoint mode, exclude tokens that are in the density matrix
+    // These tokens are exposed via DesignSystemTheme.stackSpaceRespMd etc.
+    if (cssOptions.modeType === 'breakpoint' && densityMatrixTokenNames.size > 0) {
+      const tokenName = token.path[token.path.length - 1];
+      if (densityMatrixTokenNames.has(tokenName)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   return {
     css: {
       transformGroup: 'custom/css',
@@ -565,7 +589,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
             }
             return 'swiftui/component-tokens';
           })(),
-          filter: tokenFilter,
+          filter: nativeTokenFilter,
           options: {
             outputReferences: false,
             brand: (() => {
@@ -665,7 +689,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
             }
             return 'compose/primitives';
           })(),
-          filter: tokenFilter,
+          filter: nativeTokenFilter,
           options: {
             outputReferences: false,
             packageName: (() => {
@@ -786,7 +810,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
             }
             return 'swiftui/primitives';
           })(),
-          filter: tokenFilter,
+          filter: nativeTokenFilter,
           options: {
             outputReferences: false,
             brand: cssOptions.brand || '',
