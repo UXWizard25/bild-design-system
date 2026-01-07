@@ -2676,33 +2676,30 @@ function getChangedVariables(baseVars, compareVars, previousBpVars = null) {
 }
 
 /**
- * Extracts CSS classes from a file
+ * Extracts CSS classes from a file for responsive merging
  * Supports both single selectors and dual selectors (for Shadow DOM compatibility)
+ * Comment-agnostic: works regardless of whether SHOW_DESCRIPTIONS is enabled
  */
 function extractClasses(content, brand, breakpoint) {
   const classes = [];
+  const selector = `[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`;
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  // Check if content uses data-attribute selectors or plain classes (Dual-Axis: Typography uses ContentBrand)
-  const hasDataAttributes = content.includes(`[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`);
+  // Check if content uses data-attribute selectors (Dual-Axis: Typography uses ContentBrand)
+  const hasDataAttributes = content.includes(selector);
 
   if (hasDataAttributes) {
-    // Component typography with data attributes (supports dual selectors)
-    // Match pattern: /* comment */ [selector] .class, :host([selector]) .class { properties }
-    // Or single: /* comment */ [selector] .class { properties }
-    const selector = `[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`;
-    const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    // Regex that handles dual selectors: matches the first selector, optional :host part, then class and properties
+    // Match dual selector pattern: [selector] .class, :host([selector]) .class { properties }
+    // Comment-agnostic: regex does not depend on comments being present
     const classRegex = new RegExp(
-      `\\/\\*[\\s\\S]*?\\*\\/\\s*` +                          // /* comment */
       `${escapedSelector}\\s+` +                              // [data-content-brand="..."][data-breakpoint="..."]
       `\\.(\\S+?)` +                                          // .className (capture group 1)
       `(?:,\\s*:host\\(${escapedSelector}\\)\\s+\\.\\S+)?` +  // optional: , :host([...]) .className
       `\\s*\\{([^}]*)\\}`,                                    // { properties } (capture group 2)
       'g'
     );
-    let match;
 
+    let match;
     while ((match = classRegex.exec(content)) !== null) {
       const className = match[1];
       const properties = match[2]
@@ -2716,23 +2713,14 @@ function extractClasses(content, brand, breakpoint) {
         properties
       });
     }
-  } else {
-    // Semantic typography - supports dual selectors format
-    // Match pattern: /* comment */ [selector] .class, :host([selector]) .class { properties }
-    // Or: /* comment */ .class { properties } (plain classes)
+  }
 
-    // First try to match dual selector pattern with data-content-brand
-    const dualSelectorRegex = new RegExp(
-      `\\/\\*[\\s\\S]*?\\*\\/\\s*` +                                           // /* comment */
-      `\\[data-content-brand="${brand}"\\]\\[data-breakpoint="${breakpoint}"\\]\\s+` +  // [data-content-brand][data-breakpoint]
-      `\\.(\\S+?)` +                                                            // .className (capture group 1)
-      `(?:,\\s*:host\\([^)]+\\)\\s+\\.\\S+)?` +                                  // optional: , :host(...) .className
-      `\\s*\\{([^}]*)\\}`,                                                      // { properties } (capture group 2)
-      'g'
-    );
-
+  // Fallback: try plain class selectors (no data attributes)
+  if (classes.length === 0) {
+    // Match plain .className { properties } - comment-agnostic
+    const plainClassRegex = /\.([\w-]+)\s*\{([^}]*)\}/g;
     let match;
-    while ((match = dualSelectorRegex.exec(content)) !== null) {
+    while ((match = plainClassRegex.exec(content)) !== null) {
       const className = match[1];
       const properties = match[2]
         .split(';')
@@ -2744,24 +2732,6 @@ function extractClasses(content, brand, breakpoint) {
         name: className,
         properties
       });
-    }
-
-    // If no dual selectors found, try plain class selectors
-    if (classes.length === 0) {
-      const plainClassRegex = /\/\*[\s\S]*?\*\/\s*\.([\w-]+)\s*{([^}]*)}/g;
-      while ((match = plainClassRegex.exec(content)) !== null) {
-        const className = match[1];
-        const properties = match[2]
-          .split(';')
-          .map(p => p.trim())
-          .filter(p => p.length > 0)
-          .map(p => p + ';');
-
-        classes.push({
-          name: className,
-          properties
-        });
-      }
     }
   }
 
