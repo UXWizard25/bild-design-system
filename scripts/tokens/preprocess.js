@@ -1939,28 +1939,27 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
 function generateBreakpointDensityMatrix(collections, aliasLookup) {
   console.log('\n📊 Generating Breakpoint × Density Matrix:\n');
 
-  const matrix = {};
-  let tokenCount = 0;
+  const semanticMatrix = {};
+  const componentMatrices = {}; // { componentName: { tokenName: { ... } } }
+  let semanticCount = 0;
+  let componentCount = 0;
 
   // Find BreakpointMode collection
   const breakpointCollection = collections.find(c => c.id === COLLECTION_IDS.BREAKPOINT_MODE);
   if (!breakpointCollection) {
     console.warn('   ⚠️  BreakpointMode collection not found');
-    return matrix;
+    return { semantic: semanticMatrix, components: componentMatrices };
   }
 
   // Find Density collection
   const densityCollection = collections.find(c => c.id === COLLECTION_IDS.DENSITY);
   if (!densityCollection) {
     console.warn('   ⚠️  Density collection not found');
-    return matrix;
+    return { semantic: semanticMatrix, components: componentMatrices };
   }
 
   // Process each variable in BreakpointMode
   for (const variable of breakpointCollection.variables) {
-    // Skip component tokens - they're handled separately
-    if (isComponentToken(variable.name)) continue;
-
     // Check if any mode references a Density token
     let referencesDensity = false;
     for (const modeValue of Object.values(variable.valuesByMode)) {
@@ -1978,8 +1977,8 @@ function generateBreakpointDensityMatrix(collections, aliasLookup) {
     // Extract consumer-facing token name (last segment of path)
     const tokenName = variable.name.split('/').pop();
 
-    // Initialize matrix entry for this token
-    matrix[tokenName] = {
+    // Create matrix entry
+    const matrixEntry = {
       path: variable.name,
       variableId: variable.id,
       values: {}
@@ -1987,7 +1986,7 @@ function generateBreakpointDensityMatrix(collections, aliasLookup) {
 
     // Resolve for each Breakpoint × Density combination
     for (const [breakpointName, breakpointModeId] of Object.entries(BREAKPOINTS)) {
-      matrix[tokenName].values[breakpointName] = {};
+      matrixEntry.values[breakpointName] = {};
 
       for (const [densityName, densityModeId] of Object.entries(DENSITY_MODES)) {
         // Get the alias for this breakpoint
@@ -2008,32 +2007,68 @@ function generateBreakpointDensityMatrix(collections, aliasLookup) {
             collections
           );
 
-          matrix[tokenName].values[breakpointName][densityName] = resolvedValue;
+          matrixEntry.values[breakpointName][densityName] = resolvedValue;
         }
       }
     }
 
-    tokenCount++;
+    // Determine if this is a component token or semantic token
+    if (isComponentToken(variable.name)) {
+      const componentName = getComponentName(variable.name);
+      if (componentName) {
+        if (!componentMatrices[componentName]) {
+          componentMatrices[componentName] = {};
+        }
+        componentMatrices[componentName][tokenName] = matrixEntry;
+        componentCount++;
+      }
+    } else {
+      semanticMatrix[tokenName] = matrixEntry;
+      semanticCount++;
+    }
   }
 
-  console.log(`   ✅ Generated matrix for ${tokenCount} tokens`);
-  return matrix;
+  console.log(`   ✅ Generated matrix for ${semanticCount} semantic tokens`);
+  console.log(`   ✅ Generated matrix for ${componentCount} component tokens across ${Object.keys(componentMatrices).length} components`);
+
+  return { semantic: semanticMatrix, components: componentMatrices };
 }
 
 /**
- * Saves the Breakpoint × Density matrix
+ * Saves the Breakpoint × Density matrix (semantic + components)
  */
-function saveBreakpointDensityMatrix(matrix) {
+function saveBreakpointDensityMatrix(matrixData) {
   console.log('\n💾 Saving Breakpoint × Density Matrix:\n');
 
+  const { semantic, components } = matrixData;
+
+  // Save semantic matrix
   const sharedDir = path.join(OUTPUT_DIR, 'shared');
   if (!fs.existsSync(sharedDir)) {
     fs.mkdirSync(sharedDir, { recursive: true });
   }
 
-  const filePath = path.join(sharedDir, 'breakpoint-density-matrix.json');
-  fs.writeFileSync(filePath, JSON.stringify(matrix, null, 2), 'utf8');
-  console.log(`   ✅ ${path.relative(process.cwd(), filePath)}`);
+  const semanticFilePath = path.join(sharedDir, 'breakpoint-density-matrix.json');
+  fs.writeFileSync(semanticFilePath, JSON.stringify(semantic, null, 2), 'utf8');
+  console.log(`   ✅ Semantic: ${path.relative(process.cwd(), semanticFilePath)}`);
+
+  // Save component matrices (per brand, per component)
+  const brands = ['bild', 'sportbild', 'advertorial'];
+  for (const brand of brands) {
+    for (const [componentName, componentMatrix] of Object.entries(components)) {
+      const componentDir = path.join(OUTPUT_DIR, 'brands', brand, 'components', componentName);
+      if (!fs.existsSync(componentDir)) {
+        fs.mkdirSync(componentDir, { recursive: true });
+      }
+
+      const componentFilePath = path.join(componentDir, 'breakpoint-density-matrix.json');
+      fs.writeFileSync(componentFilePath, JSON.stringify(componentMatrix, null, 2), 'utf8');
+    }
+  }
+
+  if (Object.keys(components).length > 0) {
+    console.log(`   ✅ Components: ${Object.keys(components).length} component matrices saved per brand`);
+  }
 }
 
 /**
