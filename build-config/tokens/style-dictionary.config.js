@@ -865,7 +865,7 @@ const cssVariablesFormat = ({ dictionary, options, file }) => {
       tokens.forEach(token => {
         const uniqueName = uniqueNames.get(token.path.join('.'));
         const comment = token.comment || token.description;
-        if (comment) {
+        if (comment && options.showDescriptions !== false) {
           output += `  /**\n   * ${comment}\n   */\n`;
         }
         // Use $value (transformed) or fallback to value (original)
@@ -920,7 +920,7 @@ const scssVariablesFormat = ({ dictionary, options, file }) => {
       tokens.forEach(token => {
         const uniqueName = uniqueNames.get(token.path.join('.'));
         const comment = token.comment || token.description;
-        if (comment) {
+        if (comment && options.showDescriptions !== false) {
           output += `// ${comment}\n`;
         }
         output += `$${uniqueName}: ${token.$value !== undefined ? token.$value : token.value};\n`;
@@ -972,7 +972,7 @@ const javascriptEs6Format = ({ dictionary, options, file }) => {
       tokens.forEach(token => {
         const uniqueName = uniqueNames.get(token.path.join('.'));
         const comment = token.comment || token.description;
-        if (comment) {
+        if (comment && options.showDescriptions !== false) {
           output += `/** ${comment} */\n`;
         }
         output += `export const ${uniqueName} = "${token.$value !== undefined ? token.$value : token.value}";\n`;
@@ -1163,7 +1163,7 @@ const cssTypographyClassesFormat = ({ dictionary, options }) => {
             className = className.substring(1);
           }
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `/* ${token.comment} */\n`;
           }
 
@@ -1246,7 +1246,7 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
             className = className.substring(1);
           }
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `/* ${token.comment} */\n`;
           }
 
@@ -1333,7 +1333,7 @@ const iosSwiftTypographyFormat = ({ dictionary, options }) => {
           const rawName = token.path[token.path.length - 1];
           const propName = nameTransformers.camel(rawName);
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `        /** ${token.comment} */\n`;
           }
 
@@ -1404,7 +1404,7 @@ const iosSwiftEffectsFormat = ({ dictionary, options }) => {
         if (token.$type === 'shadow' && Array.isArray(token.$value)) {
           const uniqueName = uniqueNames.get(token.path.join('.'));
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `    /** ${token.comment} */\n`;
           }
 
@@ -1485,7 +1485,7 @@ const javascriptEffectsFormat = ({ dictionary, options }) => {
         if (token.$type === 'shadow' && Array.isArray(token.$value)) {
           const uniqueName = uniqueNames.get(token.path.join('.'));
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `/** ${token.comment} */\n`;
           }
 
@@ -1556,7 +1556,7 @@ const javascriptTypographyFormat = ({ dictionary, options }) => {
           const uniqueName = uniqueNames.get(token.path.join('.'));
           const style = token.$value;
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `/** ${token.comment} */\n`;
           }
 
@@ -1636,7 +1636,7 @@ const scssEffectsFormat = ({ dictionary, options }) => {
         if (token.$type === 'shadow' && Array.isArray(token.$value)) {
           const uniqueName = uniqueNames.get(token.path.join('.'));
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `/** ${token.comment} */\n`;
           }
 
@@ -1700,7 +1700,7 @@ const scssTypographyFormat = ({ dictionary, options }) => {
           const uniqueName = uniqueNames.get(token.path.join('.'));
           const style = token.$value;
 
-          if (token.comment) {
+          if (token.comment && options.showDescriptions !== false) {
             output += `/** ${token.comment} */\n`;
           }
 
@@ -1847,7 +1847,7 @@ const cssThemedVariablesFormat = ({ dictionary, options, file }) => {
       tokens.forEach(token => {
         const uniqueName = uniqueNames.get(token.path.join('.'));
         const comment = token.comment || token.description;
-        if (comment) {
+        if (comment && options.showDescriptions !== false) {
           output += `  /**\n   * ${comment}\n   */\n`;
         }
         const finalValue = token.$value !== undefined ? token.$value : token.value;
@@ -2862,7 +2862,7 @@ public enum DesignTokenPrimitives {
       const value = token.$value !== undefined ? token.$value : token.value;
       const comment = token.comment || token.description;
 
-      if (comment) {
+      if (comment && options.showDescriptions !== false) {
         output += `        /// ${comment}\n`;
       }
 
@@ -2915,7 +2915,7 @@ public enum DesignTokenPrimitives {
       const value = token.$value !== undefined ? token.$value : token.value;
       const comment = token.comment || token.description;
 
-      if (comment) {
+      if (comment && options.showDescriptions !== false) {
         output += `        /// ${comment}\n`;
       }
 
@@ -2975,7 +2975,7 @@ public protocol ${brandPascal}ColorScheme: Sendable {
     colorTokens.forEach(token => {
       const name = uniqueNames.get(token.path.join('.')) || token.name;
       const comment = token.comment || token.description;
-      if (comment) {
+      if (comment && options.showDescriptions !== false) {
         output += `    /// ${comment}\n`;
       }
       output += `    var ${name}: Color { get }\n`;
@@ -2985,7 +2985,7 @@ public protocol ${brandPascal}ColorScheme: Sendable {
     opacityTokens.forEach(token => {
       const name = uniqueNames.get(token.path.join('.')) || token.name;
       const comment = token.comment || token.description;
-      if (comment) {
+      if (comment && options.showDescriptions !== false) {
         output += `    /// ${comment}\n`;
       }
       output += `    var ${name}: Double { get }\n`;
@@ -3096,7 +3096,7 @@ public protocol ${protocolName}: Sendable {
       const name = uniqueNames.get(token.path.join('.')) || token.name;
       const comment = token.comment || token.description;
       const typeInfo = getSwiftTypeInfo(token);
-      if (comment) {
+      if (comment && options.showDescriptions !== false) {
         output += `    /// ${comment}\n`;
       }
       output += `    var ${name}: ${typeInfo.swiftType} { get }\n`;
@@ -3169,7 +3169,7 @@ public protocol ${brandPascal}TypographyScheme: DesignTypographyScheme {
     dictionary.allTokens.forEach(token => {
       const name = token.name;
       const comment = token.comment || token.description;
-      if (comment) {
+      if (comment && options.showDescriptions !== false) {
         output += `    /// ${comment}\n`;
       }
       output += `    var ${name}: TextStyle { get }\n`;
@@ -3247,7 +3247,7 @@ public protocol ${brandPascal}EffectsScheme: Sendable {
     dictionary.allTokens.forEach(token => {
       const name = token.name;
       const comment = token.comment || token.description;
-      if (comment) {
+      if (comment && options.showDescriptions !== false) {
         output += `    /// ${comment}\n`;
       }
       output += `    var ${name}: ShadowStyle { get }\n`;
@@ -4150,7 +4150,7 @@ import com.bild.designsystem.shared.DesignTextCase
 interface ${brandPascal}TypographyScheme : DesignTypographyScheme {
 `;
     tokens.forEach(token => {
-      const comment = token.comment ? `    /** ${token.comment.split('\n')[0]} */\n` : '';
+      const comment = (token.comment && options.showDescriptions !== false) ? `    /** ${token.comment.split('\n')[0]} */\n` : '';
       output += `${comment}    override val ${token.name}: DesignTextStyle\n`;
     });
     output += `}
@@ -4363,7 +4363,7 @@ object ${className} : DesignEffectsScheme {
     const value = token.$value !== undefined ? token.$value : token.value;
     const comment = token.comment || token.description;
 
-    if (comment) {
+    if (comment && options.showDescriptions !== false) {
       output += `    /** ${comment} */\n`;
     }
 
@@ -4442,7 +4442,7 @@ object ${className} {
     const value = token.$value !== undefined ? token.$value : token.value;
     const comment = token.comment || token.description;
 
-    if (comment) {
+    if (comment && options.showDescriptions !== false) {
       output += `    /** ${comment} */\n`;
     }
 

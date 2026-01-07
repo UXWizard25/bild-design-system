@@ -34,6 +34,17 @@ const SWIFTUI_ENABLED = true;       // SwiftUI output in dist/ios/
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;
 
+// Figma description comment toggles per platform
+// Controls whether token.comment (from Figma descriptions) is output as code comments
+// Does NOT affect: file headers, section comments, or structural comments
+const SHOW_DESCRIPTIONS = {
+  css: false,      // Disabled - cleaner CSS output
+  scss: true,      // Enabled for SCSS
+  js: true,        // Enabled for JS
+  ios: true,       // Enabled for iOS/Swift
+  android: true    // Enabled for Android/Kotlin
+};
+
 // iOS: Uses 2 size classes (Apple HIG)
 // Maps sm (390px) → compact, lg (1024px) → regular
 const IOS_BREAKPOINTS = ['sm', 'lg'];
@@ -464,7 +475,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         filter: tokenFilter,
         options: {
           outputReferences: true,  // Enable var() references to primitives
-          showDescriptions: false, // Disable token descriptions for cleaner CSS output
+          showDescriptions: SHOW_DESCRIPTIONS.css,
           ...cssOptions  // brand, mode, modeType for data-attributes
         }
       }]
@@ -476,7 +487,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         destination: `${fileName}.scss`,
         format: 'custom/scss/variables',
         filter: tokenFilter,
-        options: { outputReferences: false }
+        options: { outputReferences: false, showDescriptions: SHOW_DESCRIPTIONS.scss }
       }]
     },
     json: {
@@ -900,7 +911,8 @@ function createTypographyConfig(brand, breakpoint) {
           format: 'css/typography-classes',
           options: {
             brand: brandName,
-            breakpoint
+            breakpoint,
+            showDescriptions: SHOW_DESCRIPTIONS.css
           }
         }]
       },
@@ -921,7 +933,8 @@ function createTypographyConfig(brand, breakpoint) {
           format: 'scss/typography',
           options: {
             brand: brandName,
-            breakpoint
+            breakpoint,
+            showDescriptions: SHOW_DESCRIPTIONS.scss
           }
         }]
       },
@@ -938,7 +951,8 @@ function createTypographyConfig(brand, breakpoint) {
             options: {
               brand: brandName,
               breakpoint,
-              sizeClass: getSizeClassName(breakpoint, 'ios')
+              sizeClass: getSizeClassName(breakpoint, 'ios'),
+              showDescriptions: SHOW_DESCRIPTIONS.ios
             }
           }]
         }
@@ -958,7 +972,8 @@ function createTypographyConfig(brand, breakpoint) {
               brand: brandName,
               breakpoint,
               sizeClass: getSizeClassName(breakpoint, 'android'),
-              platform: 'android'
+              platform: 'android',
+              showDescriptions: SHOW_DESCRIPTIONS.android
             }
           }]
         }
@@ -992,7 +1007,8 @@ function createEffectConfig(brand, colorMode) {
           format: 'css/effect-classes',
           options: {
             brand: brandName,
-            colorMode
+            colorMode,
+            showDescriptions: SHOW_DESCRIPTIONS.css
           }
         }]
       },
@@ -1013,7 +1029,8 @@ function createEffectConfig(brand, colorMode) {
           format: 'swiftui/effects',
           options: {
             brand: brandName,
-            colorMode
+            colorMode,
+            showDescriptions: SHOW_DESCRIPTIONS.ios
           }
         }]
       },
@@ -1027,7 +1044,8 @@ function createEffectConfig(brand, colorMode) {
           format: 'scss/effects',
           options: {
             brand: brandName,
-            colorMode
+            colorMode,
+            showDescriptions: SHOW_DESCRIPTIONS.scss
           }
         }]
       },
@@ -1042,7 +1060,8 @@ function createEffectConfig(brand, colorMode) {
             destination: `Effects${colorMode === 'light' ? 'Light' : 'Dark'}.kt`,
             format: 'compose/effects',
             options: {
-              colorMode
+              colorMode,
+              showDescriptions: SHOW_DESCRIPTIONS.android
             }
           }]
         }
@@ -1080,7 +1099,8 @@ function createSharedDensityConfig(densityMode) {
             format: 'compose/shared-density',
             options: {
               packageName: 'com.bild.designsystem.shared',
-              densityMode: modePascal
+              densityMode: modePascal,
+              showDescriptions: SHOW_DESCRIPTIONS.android
             }
           }]
         }
@@ -1095,7 +1115,8 @@ function createSharedDensityConfig(densityMode) {
             destination: `Density${modePascal}.swift`,
             format: 'swiftui/shared-density',
             options: {
-              densityMode: modePascal
+              densityMode: modePascal,
+              showDescriptions: SHOW_DESCRIPTIONS.ios
             }
           }]
         }
@@ -1217,7 +1238,8 @@ async function buildConsolidatedSwiftUIPrimitives() {
             return true;
           },
           options: {
-            outputReferences: false
+            outputReferences: false,
+            showDescriptions: SHOW_DESCRIPTIONS.ios
           }
         }]
       }
@@ -1408,7 +1430,8 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
           options: {
             brand: brandName,
             breakpoint: breakpoint || 'default',
-            componentName
+            componentName,
+            showDescriptions: SHOW_DESCRIPTIONS.css
           }
         }]
       },
@@ -1421,7 +1444,8 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
           options: {
             brand: brandName,
             breakpoint: breakpoint || 'default',
-            componentName
+            componentName,
+            showDescriptions: SHOW_DESCRIPTIONS.scss
           }
         }]
       },
@@ -1442,7 +1466,8 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
               brand: brandName,
               breakpoint,
               componentName,
-              sizeClass: getSizeClassName(breakpoint)
+              sizeClass: getSizeClassName(breakpoint),
+              showDescriptions: SHOW_DESCRIPTIONS.ios
             }
           }]
         }
@@ -1460,7 +1485,8 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
               brand: brand,
               mode: getSizeClassName(breakpoint, 'android'),
               componentName,
-              platform: 'android'
+              platform: 'android',
+              showDescriptions: SHOW_DESCRIPTIONS.android
             }
           }]
         }
@@ -1490,7 +1516,8 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
           options: {
             brand: brandName,
             colorMode: colorMode || 'default',
-            componentName
+            componentName,
+            showDescriptions: SHOW_DESCRIPTIONS.css
           }
         }]
       },
@@ -1503,7 +1530,8 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
           options: {
             brand: brandName,
             colorMode: colorMode || 'default',
-            componentName
+            componentName,
+            showDescriptions: SHOW_DESCRIPTIONS.scss
           }
         }]
       },
@@ -1522,7 +1550,8 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
             brand: brandName,
             colorMode,
             componentName,
-            mode: colorMode
+            mode: colorMode,
+            showDescriptions: SHOW_DESCRIPTIONS.ios
           }
         }]
       },
@@ -1537,7 +1566,8 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
             options: {
               brand: brandName,
               colorMode,
-              componentName
+              componentName,
+              showDescriptions: SHOW_DESCRIPTIONS.android
             }
           }]
         }
