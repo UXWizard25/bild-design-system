@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2026-01-06T11:54:15.221Z",
+  "lastModified": "2026-01-07T15:20:26.847Z",
   "figmaFileKey": "unknown",
-  "figmaFileName": "variables refactor",
+  "figmaFileName": "BILD Design System",
   "collections": [
     {
       "id": "VariableCollectionId:470:1450",
@@ -718,7 +718,7 @@
         {
           "id": "VariableID:539:2239",
           "name": "BILD/red/colorBildRed50",
-          "description": "Tone 046",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "#DD0000"
@@ -796,7 +796,7 @@
         {
           "id": "VariableID:2496:18724",
           "name": "Shared/orange/colorOrange70",
-          "description": "Tone: 067",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "#FD8227"
@@ -900,7 +900,7 @@
         {
           "id": "VariableID:2979:10317",
           "name": "Shared/yellow/colorYellow80",
-          "description": "Tone: 081",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "#FFBF00"
@@ -938,7 +938,7 @@
         {
           "id": "VariableID:5457:10118",
           "name": "BILD/purple/colorBildPurple20",
-          "description": "Tone: 020",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "#551937"
@@ -974,7 +974,7 @@
         {
           "id": "VariableID:8076:22743",
           "name": "Shared/alpha/colorNeutral0a60",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(0, 0, 0, 0.6000000238418579)"
@@ -1166,7 +1166,7 @@
         {
           "id": "VariableID:16107:27",
           "name": "SportBILD/blue/colorSpobiBlue30",
-          "description": "This variable in the current online CSS is called secondary-tenant-color",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "#174482"
@@ -1178,7 +1178,7 @@
         {
           "id": "VariableID:16107:28",
           "name": "SportBILD/blue/colorSpobiBlue20",
-          "description": "This variable in the current online CSS is called main-tenant-color for the spobi tenant.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "#0C2F61"
@@ -1202,7 +1202,7 @@
         {
           "id": "VariableID:16894:98370",
           "name": "Shared/alpha/colorNeutral0a70",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(0, 0, 0, 0.699999988079071)"
@@ -1253,7 +1253,7 @@
         {
           "id": "VariableID:16914:22436",
           "name": "Shared/alpha/colorNeutral100a60",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(255, 255, 255, 0.6000000238418579)"
@@ -1265,7 +1265,7 @@
         {
           "id": "VariableID:16914:22437",
           "name": "Shared/alpha/colorNeutral100a70",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(255, 255, 255, 0.699999988079071)"
@@ -1301,7 +1301,7 @@
         {
           "id": "VariableID:17385:14798",
           "name": "BILD/alpha/colorBildRed50a80",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(221, 0, 0, 0.800000011920929)"
@@ -1313,7 +1313,7 @@
         {
           "id": "VariableID:17385:14799",
           "name": "Shared/alpha/colorNeutral0a80",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(0, 0, 0, 0.800000011920929)"
@@ -1325,7 +1325,7 @@
         {
           "id": "VariableID:17385:14801",
           "name": "Shared/alpha/colorNeutral100a80",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(255, 255, 255, 0.800000011920929)"
@@ -1385,7 +1385,7 @@
         {
           "id": "VariableID:18355:65196",
           "name": "SportBILD/alpha/colorSpobiBlue15a0",
-          "description": "This primitive is used for creating the teaser title background gradient.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(11, 38, 71, 0)"
@@ -1397,7 +1397,7 @@
         {
           "id": "VariableID:18355:65197",
           "name": "SportBILD/alpha/colorSpobiBlue15a70",
-          "description": "This primitive is used for creating the teaser title background gradient.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(11, 38, 71, 0.699999988079071)"
@@ -2090,7 +2090,7 @@
         {
           "id": "VariableID:21764:1045",
           "name": "SportBILD/blue/colorSpobiBlue25",
-          "description": "This variable in the current online CSS is called main-tenant-color for the spobi tenant.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "#113B72"
@@ -2102,7 +2102,7 @@
         {
           "id": "VariableID:21899:301647",
           "name": "Shared/alpha/colorNeutral100a95",
-          "description": "Used on elevation effects.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(255, 255, 255, 0.949999988079071)"
@@ -2152,7 +2152,7 @@
         {
           "id": "VariableID:21936:345684",
           "name": "SportBILD/alpha/colorSpobiBlue20a0",
-          "description": "This variable in the current online CSS is called main-tenant-color for the spobi tenant.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(12, 47, 97, 0)"
@@ -2212,7 +2212,7 @@
         {
           "id": "VariableID:21936:345693",
           "name": "SportBILD/alpha/colorSpobiBlue25a0",
-          "description": "This variable in the current online CSS is called main-tenant-color for the spobi tenant.",
+          "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "539:2": "rgba(17, 59, 114, 0)"
@@ -2415,7 +2415,6 @@
         "VariableID:21718:51",
         "VariableID:21718:52",
         "VariableID:21718:65",
-        "VariableID:21748:708",
         "VariableID:21751:709",
         "VariableID:21751:710",
         "VariableID:21751:711",
@@ -2469,7 +2468,7 @@
         {
           "id": "VariableID:588:1980",
           "name": "Semantic/Text/Brand/textColorBrand",
-          "description": "Applies to text elements requiring fixed brand color usage (e.g., permanent links, brand slogans on constant backgrounds). Behavior: Constant — maintains identical red tone across Light and Dark mode.",
+          "description": "Brand-colored text for emphasis and highlights (e.g., highlighted keywords, brand callouts, promotional text). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2490,7 +2489,7 @@
         {
           "id": "VariableID:588:1981",
           "name": "Semantic/Text/Standard/textColorPrimary",
-          "description": "Main text color used for body copy and all primary textual content. Ensures optimal readability and contrast on standard surfaces. Behavior: Dynamic — switches between dark text on light backgrounds and light text on dark backgrounds.",
+          "description": "Primary text color for static content like body copy and labels (e.g., article text, titles, form labels). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2532,7 +2531,7 @@
         {
           "id": "VariableID:588:1984",
           "name": "Semantic/Background/Standard/bgColorPrimary",
-          "description": "Primary surface color used for main backgrounds and large layout areas (e.g., page background, primary containers). Behavior: Dynamic — adapts between light and dark surface tokens to maintain legibility and hierarchy.",
+          "description": "Primary background color for main surfaces and page backgrounds (e.g., page background, primary containers). Behavior: Dynamic — adapts between light and dark mode. Brand-specific in dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2554,7 +2553,7 @@
         {
           "id": "VariableID:733:2657",
           "name": "Semantic/Text/Heading/kickerTextColor",
-          "description": "Used for kicker text and category labels placed directly on standard surface backgrounds. Behavior: Dynamic — adjusts between red for Light and a neutral tone in Dark modes.",
+          "description": "Kicker text color for category labels above headlines on standard surface backgrounds. Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2575,7 +2574,7 @@
         {
           "id": "VariableID:733:2659",
           "name": "Semantic/Text/Heading/headlineTextColor",
-          "description": "Primary color for headings and display typography. Ensures clear hierarchy and optimal readability on main surfaces. Adapds it´s color based on the brand mode for brand recognition. Behavior: Dynamic — dark text in Light mode, light text in Dark mode.",
+          "description": "Headline text color for article titles and major headings. Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2617,7 +2616,7 @@
         {
           "id": "VariableID:762:3573",
           "name": "Semantic/Text/OnSolid/textColorOnImage",
-          "description": "Fixed white heading color used on dark or colored backgrounds (e.g., hero sections, banners) that remain constant across modes. Behavior: Constant — remains white in both Light and Dark mode.",
+          "description": "Text color for content overlaid on images, mode-independent (e.g., image captions, teaser headlines on photos). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2638,7 +2637,7 @@
         {
           "id": "VariableID:1954:19186",
           "name": "Semantic/Border/Standard/borderColorDefault",
-          "description": "Medium-emphasis border color for standard outlines, input fields, or separators that require visible yet non-dominant contrast. Behavior: Dynamic - adjusts to maintain legibility in Light and Dark themes. L:085 D:045",
+          "description": "Default border color for static containers and separators (e.g., card borders, section dividers). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2659,7 +2658,7 @@
         {
           "id": "VariableID:2102:8677",
           "name": "Semantic/Icon/Interactive/iconColorIdle",
-          "description": "Primary icon color on primary surfaces.",
+          "description": "Default icon color for interactive/clickable icons in idle state (e.g., icon buttons, navigation icons, action icons). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2767,7 +2766,7 @@
         {
           "id": "VariableID:3269:3503",
           "name": "Semantic/Text/Interactive/textColorIdle",
-          "description": "Primary label color used for labels, badges, or tag text on light backgrounds. Ensures strong readability and visual hierarchy. Behavior: Dynamic — dark neutral in Light mode, light neutral in Dark mode. L: 015 D:093",
+          "description": "Default text color for interactive/clickable elements in idle state (e.g., text links, navigation items, clickable labels). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -2875,7 +2874,7 @@
         {
           "id": "VariableID:3746:1628",
           "name": "Semantic/Text/Interactive/textColorDisabled",
-          "description": "Disabled label tone indicating inactive or unavailable states in UI elements. Behavior: Dynamic — lighter gray in Light mode, darker neutral in Dark mode. L:085 D:035",
+          "description": "Text color for disabled elements (e.g., inactive button labels, disabled input text/links). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3240,7 +3239,7 @@
         {
           "id": "VariableID:3936:1911",
           "name": "Semantic/Background/Standard/bgColorDisabled",
-          "description": "Defines the disabled color for primary components (e.g., disabled primary buttons, inputs). Reduces emphasis and contrast to signal inactivity. Behavior: Dynamic - slightly lighter in Light mode and darker in Dark mode to remain visually accessible.",
+          "description": "Background color for disabled interactive elements (e.g., inactive buttons, disabled inputs). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3305,7 +3304,7 @@
         {
           "id": "VariableID:4978:2986",
           "name": "Semantic/Background/Standard/bgColorSecondary",
-          "description": "Used for secondary surface layers such as cards, panels, or nested containers that need to differentiate themselves from the primary surface.  Behavior: Dynamic — adapts brightness level based on mode for appropriate depth contrast.",
+          "description": "Secondary background for elevated containers (e.g., cards on primary background, sidebar panels). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3327,7 +3326,7 @@
         {
           "id": "VariableID:5003:3106",
           "name": "Semantic/Background/Brand/bgColorBrandLightOnly",
-          "description": "Primary accent color used to emphasize interactive or highlight elements such as links, selection states, or focus indicators. Adapts in Darkmode to a fully white tone.",
+          "description": "Brand background in light mode, neutral white in dark mode (e.g., accent elements that shouldn't be vibrant in dark). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3349,7 +3348,7 @@
         {
           "id": "VariableID:5511:2499",
           "name": "Semantic/Text/Standard/textColorSecondary",
-          "description": "Muted text tone for subtle information, timestamps, or inactive text elements. Behavior: Dynamic — adjusts between mid-gray in Light mode and lighter gray in Dark mode.",
+          "description": "Secondary text color for static supporting content (e.g., captions, timestamps, meta information, descriptions). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3391,7 +3390,7 @@
         {
           "id": "VariableID:5952:3059",
           "name": "Semantic/Background/Inverse/bgColorPrimaryInverse",
-          "description": "Inverse of the primary surface, used when Light and Dark surfaces are swapped (e.g., inverse cards or elevated sections). Behavior: Dynamic — switches between dark and light values depending on mode.",
+          "description": "nverted primary background for contrast sections (e.g., dark header on light page, footer). Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3413,7 +3412,7 @@
         {
           "id": "VariableID:7129:69342",
           "name": "Semantic/Text/Inverse/textColorPrimaryInverse",
-          "description": "Inverse text color used on opposing surfaces (e.g., white text on red or dark backgrounds). Behavior: Dynamic — alternates between light and dark mode.",
+          "description": "Primary static text on inverted/contrast backgrounds (e.g., body text in dark sections, footer copy). Not for interactive elements. Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3434,7 +3433,7 @@
         {
           "id": "VariableID:7531:63125",
           "name": "Semantic/Background/Standard/bgColorPrimaryConstDark",
-          "description": "A fixed dark surface tone used for dark overlays or nested dark sections inside light layouts. Behavior: Constant — identical across Light and Dark mode.",
+          "description": "Dark background that remains constant regardless of color mode (e.g. media containers). Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3456,7 +3455,7 @@
         {
           "id": "VariableID:7532:4296",
           "name": "Semantic/Background/Standard/bgColorQuaternary",
-          "description": "HIghtest elevation surface color, typically used for grouping or background accents to differentiate themselves from all previous surface color options. Uses corresponding light/dark tones for consistent layering.",
+          "description": "Quaternary background for fourth-level elements (e.g., pressed states, nested backgrounds). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3522,7 +3521,7 @@
         {
           "id": "VariableID:8704:13961",
           "name": "Semantic/Text/OnSolid/textColorSecondaryOnDark",
-          "description": "Fixed inverse label tone applied where white or bright text must always appear, regardless of theme. Behavior: Constant — remains bright neutral in both Light and Dark mode. L&D:093",
+          "description": "Secondary text on dark solid surfaces, mode-independent. Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3651,7 +3650,7 @@
         {
           "id": "VariableID:8786:2988",
           "name": "Semantic/Border/Standard/borderColorSubtle",
-          "description": "Used for subtle dividers and low-emphasis borders in neutral areas (e.g., card outlines, input containers). Dynamic - light gray 093 in Light mode, dark gray 035 in Dark mode.",
+          "description": "Subtle low-contrast border for soft static separations (e.g., list separators, subtle dividers). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3715,7 +3714,7 @@
         {
           "id": "VariableID:9598:13708",
           "name": "Semantic/Border/Standard/borderColorExtraStrong",
-          "description": "High-emphasis border color for clear delineation between surfaces (e.g., focus rings, high-contrast UI zones). Behavior: Dynamic — light surfaces use a darker neutral, dark surfaces a light neutral tone. L:015 D:100",
+          "description": "Extra strong border for maximum static contrast (e.g., critical sections, strong separations). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3736,7 +3735,7 @@
         {
           "id": "VariableID:9694:13817",
           "name": "Semantic/Text/OnSolid/textColorPrimaryOnLight",
-          "description": "Used when primary text color must remain fixed regardless of mode (e.g., on light constant backgrounds). Behavior: Constant — same tone across Light and Dark mode.",
+          "description": "Primary text on light solid surfaces, mode-independent (e.g., text on light colored backgrounds). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3757,7 +3756,7 @@
         {
           "id": "VariableID:9694:16562",
           "name": "Semantic/Border/OnSolid/borderColorSubtleOnDark",
-          "description": "Applies to UI elements that must visually remain the same regardless of theme (e.g., brand containers, static illustrations). Identical tone across Light and Dark mode. L&D: 093",
+          "description": "Subtle border on dark solid backgrounds (e.g., subtle dividers on dark UI). Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3778,7 +3777,7 @@
         {
           "id": "VariableID:9697:16794",
           "name": "Semantic/Background/Success/bgColorSuccessTint",
-          "description": "Success-related background used for positive notifications, confirmation surfaces, or success banners. Behavior: Constant — remains the same across Light and Dark mode to ensure brand alignment.",
+          "description": "Success feedback background for positive states (e.g., success message background, validated field). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3800,7 +3799,7 @@
         {
           "id": "VariableID:9692:15537",
           "name": "Semantic/Text/Feedback/textColorSuccess",
-          "description": "Used for positive or success-related messages (e.g., “Saved”, “Success”, or confirmation text) on success surface colors. Behavior: Constant — green tone remains consistent across both modes.",
+          "description": "Success text color for confirmation messages and positive feedback. Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3821,7 +3820,7 @@
         {
           "id": "VariableID:9756:1625",
           "name": "Semantic/Background/Standard/bgColorTertiary",
-          "description": "Tertiary background layer for inner containers, grouped content, or subtle elevation steps  that need to differentiate themselves from the primary and secondary surfaces. Behavior: Dynamic — switches between light and dark tertiary tones.",
+          "description": "Tertiary background for third-level containers (e.g., input fields, nested cards, hover states). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3930,7 +3929,7 @@
         {
           "id": "VariableID:11563:10610",
           "name": "Semantic/Background/GradientStops/bgColorTertiaryGradientStop",
-          "description": "Represents tertiary-level gradient background. Currently used on skeletons.",
+          "description": "Gradient stop color for tertiary background transitions. Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3953,7 +3952,7 @@
         {
           "id": "VariableID:12672:137718",
           "name": "Semantic/Border/Feedback/borderColorSuccess",
-          "description": "Used for success states and validation borders (e.g., input success outlines or confirmation frames). Behavior: Constant — same success tone across modes for consistent feedback semantics.",
+          "description": "Success border for valid states (e.g., validated input, successful upload). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3974,7 +3973,7 @@
         {
           "id": "VariableID:12672:137719",
           "name": "Semantic/Border/Feedback/borderColorError",
-          "description": "Defines border color for warning and error-related components, typically used for input validation or caution zones. Behavior: Constant — retains the same red warning tone in both Light and Dark modes.",
+          "description": "Error border for invalid states (e.g., form validation error, required field indicator). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -3995,7 +3994,7 @@
         {
           "id": "VariableID:12682:137901",
           "name": "Semantic/Background/Inverse/bgColorTertiaryInverse",
-          "description": "Inverse tertiary background, applied when Light and Dark surfaces are reversed (e.g., dark-on-light cards). Behavior: Dynamic — swaps values between modes for contrast preservation.",
+          "description": "Inverted tertiary background for nested contrast elements (e.g., code blocks, nested menus). Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4017,7 +4016,7 @@
         {
           "id": "VariableID:13150:34412",
           "name": "Semantic/Text/Standard/textColorTertiary",
-          "description": "Secondary text color used for supportive information, subtitles, and less prominent text. Behavior: Dynamic — adapts between neutral tones to maintain proper contrast per theme. In 2025 css it is called figure meta.",
+          "description": "Tertiary text color for static de-emphasized content (e.g., placeholder text, helper text, footnotes). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4056,7 +4055,7 @@
         {
           "id": "VariableID:14215:155421",
           "name": "Semantic/Background/Standard/bgColorPrimaryConstLight",
-          "description": "Use this on elements that must maintain the white color even in dark mode.",
+          "description": "Light background that remains constant regardless of color mode (e.g., fixed white elements). Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4078,7 +4077,7 @@
         {
           "id": "VariableID:14345:7767",
           "name": "Semantic/Background/GradientStops/bgColorPrimaryGradientStop",
-          "description": "Defines the end stops for primary surface gradients, creating visual depth or elevation. Used next to sliders buttons and slider container edges for fading out content. Behavior: Dynamic — light gradients in Light mode, dark gradients in Dark mode.",
+          "description": "Gradient stop color for primary background fade effects (e.g., scroll shadows, content fade-outs). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4101,7 +4100,7 @@
         {
           "id": "VariableID:14345:14512",
           "name": "Semantic/Background/GradientStops/bgColorSecondaryGradientStop",
-          "description": "Used for secondary surface gradients or subtle depth layers across backgrounds. Behavior: Dynamic — adapts to mode brightness for smooth gradient transitions.",
+          "description": "Gradient stop color for secondary background transitions. Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4388,7 +4387,7 @@
         {
           "id": "VariableID:16279:19035",
           "name": "Semantic/Text/Feedback/textColorError",
-          "description": "Used for strong warnings, errors, or destructive action labels. Behavior: Constant — red color remains unchanged between Light and Dark mode for visibility and recognition.",
+          "description": "Error text color for error messages and validation feedback. Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4409,7 +4408,7 @@
         {
           "id": "VariableID:16279:19036",
           "name": "Semantic/Border/Interactive/borderColorDisabled",
-          "description": "Applied to disabled states of primary elements (e.g., buttons, inputs) to visually reduce emphasis and indicate inactivity.",
+          "description": "Border color for disabled elements (e.g., disabled input borders, inactive containers). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4430,7 +4429,7 @@
         {
           "id": "VariableID:16279:318799",
           "name": "Semantic/Text/Brand/textColorBrandLightOnly",
-          "description": "Accent text color used for links, interactive text, or highlighted key words. Changes from a red in light mode to a white in dark mode.",
+          "description": "Brand text color in light mode, neutral white in dark mode (e.g., subtle brand accents that shouldn't be vibrant in dark). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4451,7 +4450,7 @@
         {
           "id": "VariableID:16279:318800",
           "name": "Semantic/Background/Brand/bgColorBrandSolid",
-          "description": "Used for accent highlights that must remain visually consistent across themes (e.g., brand identifiers, logos, or fixed emphasis areas). Color value does not change between Light and Dark mode.",
+          "description": "Solid brand background for primary CTAs and brand-emphasized elements (e.g., primary buttons, badges). Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4473,7 +4472,7 @@
         {
           "id": "VariableID:16279:318945",
           "name": "Semantic/Text/Feedback/textColorWarning",
-          "description": "Represents medium attention states, often used in warnings or pending states. Behavior: Constant — same orange tone across Light and Dark mode.",
+          "description": "Warning text color for caution messages and alerts. Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4494,7 +4493,7 @@
         {
           "id": "VariableID:16279:318946",
           "name": "Semantic/Background/Success/bgColorSuccessSolid",
-          "description": "Primary success color used to indicate positive states, confirmations, or completed actions (e.g., success banners, icons, or badges). Remains the same across modes to ensure recognizability and consistency. L&D:070",
+          "description": "Solid success background for positive actions (e.g., confirm button, success badge). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4843,7 +4842,7 @@
         {
           "id": "VariableID:17831:12266",
           "name": "Semantic/Icon/OnSolid/iconColorSecondaryOnLight",
-          "description": "Used for icons that must remain visually consistent regardless of mode (e.g.,  icons that are on surfaces that don't change color). Identical tone in both Light and Dark mode.",
+          "description": "Secondary icon on light solid surfaces. Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -4895,7 +4894,7 @@
         {
           "id": "VariableID:18119:28",
           "name": "Semantic/Background/Success/bgColorSuccessSolidHover",
-          "description": "Secondary success tone used for secondary states. Maintains the same color in both Light and Dark mode for clarity. L&D: green40",
+          "description": "Solid success background for hover state (e.g., confirm button hover). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5195,7 +5194,7 @@
         {
           "id": "VariableID:18975:16732",
           "name": "Semantic/Icon/Feedback/iconColorSuccess",
-          "description": "Represents success or confirmation icons (e.g., checkmarks, completion indicators). Behavior: Constant - same success green tone across Light and Dark mode.",
+          "description": "Success icon color for success indicators (e.g., checkmark icon, completion indicator). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5595,7 +5594,7 @@
         {
           "id": "VariableID:19358:163830",
           "name": "Semantic/Text/OnSolid/textColorPrimaryOnDark",
-          "description": "Used for text displayed on dark surfaces to ensure maximum legibility and contrast. Behavior: Constant — always light neutral to guarantee accessibility on dark backgrounds.",
+          "description": "Primary text on dark solid surfaces, mode-independent (e.g., button labels on dark buttons). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5616,7 +5615,7 @@
         {
           "id": "VariableID:19568:251966",
           "name": "Semantic/Background/Inverse/bgColorQuaternaryInverse",
-          "description": "Inverse of the quartenary surface, used for background reversals in mixed-layout areas. Behavior: Dynamic — inverts between dark and light tones depending on mode.",
+          "description": "Inverted quaternary background for subtle contrast distinctions. Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5769,7 +5768,7 @@
         {
           "id": "VariableID:21341:6799",
           "name": "Semantic/Border/Inverse/borderColorDefaultInverse",
-          "description": "",
+          "description": "Default border on inverted surfaces. Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5790,7 +5789,7 @@
         {
           "id": "VariableID:21341:6800",
           "name": "Semantic/Border/Standard/borderColorStrong",
-          "description": "High-emphasis border color for clear delineation between surfaces (e.g., focus rings, high-contrast UI zones). Behavior: Dynamic — light surfaces use a darker neutral, dark surfaces a light neutral tone. L:015 D:100",
+          "description": "Strong border for static emphasis (e.g., highlighted sections, important containers). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5811,7 +5810,7 @@
         {
           "id": "VariableID:21341:28664",
           "name": "Semantic/Background/Standard/bgColorQuintenary",
-          "description": "",
+          "description": "Quintenary background for fifth-level elements and high-contrast utility surfaces. Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5833,7 +5832,7 @@
         {
           "id": "VariableID:21412:75342",
           "name": "Semantic/Border/OnSolid/borderColorDefaultOnDark",
-          "description": "Medium-emphasis border color for standard outlines, input fields, or separators that require visible yet non-dominant contrast. Behavior: Dynamic - adjusts to maintain legibility in Light and Dark themes. L:085 D:045",
+          "description": "Default border on dark solid backgrounds. Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5875,7 +5874,7 @@
         {
           "id": "VariableID:21709:109226",
           "name": "Semantic/Text/Interactive/textColorHover",
-          "description": "",
+          "description": "Text color for interactive/clickable elements on hover (e.g., link hover, navigation item hover). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5896,7 +5895,7 @@
         {
           "id": "VariableID:21709:109227",
           "name": "Semantic/Text/Interactive/textColorActive",
-          "description": "",
+          "description": "Text color for interactive/clickable elements in active or visited state (e.g., visited links, active navigation item, current page). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5917,7 +5916,7 @@
         {
           "id": "VariableID:21711:89277",
           "name": "Semantic/Background/Success/bgColorSuccessTintHover",
-          "description": "Success-related background used for positive notifications, confirmation surfaces, or success banners. Behavior: Constant — remains the same across Light and Dark mode to ensure brand alignment.",
+          "description": "Success feedback background for hover state (e.g., success notification hover). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5939,7 +5938,7 @@
         {
           "id": "VariableID:21711:100551",
           "name": "Semantic/Background/Brand/bgColorBrandSolidHover",
-          "description": "",
+          "description": "Solid brand background for hover interactions (e.g., CTA button hover). Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5961,7 +5960,7 @@
         {
           "id": "VariableID:21711:100552",
           "name": "Semantic/Background/Brand/bgColorBrandSolidActive",
-          "description": "",
+          "description": "Solid brand background for active/pressed state (e.g., CTA button pressed). Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -5983,7 +5982,7 @@
         {
           "id": "VariableID:21711:116432",
           "name": "Semantic/Background/Brand/bgColorBrandTint",
-          "description": "",
+          "description": "Subtle brand tint background for soft brand presence (e.g., notification backgrounds, selected list items). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6005,7 +6004,7 @@
         {
           "id": "VariableID:21711:116433",
           "name": "Semantic/Background/Brand/bgColorBrandTintHover",
-          "description": "",
+          "description": "Subtle brand tint background for hover state (e.g., secondary button hover). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6027,7 +6026,7 @@
         {
           "id": "VariableID:21718:45",
           "name": "Semantic/Background/Error/bgColorErrorTint",
-          "description": "",
+          "description": "Error feedback background for error states (e.g., error message background, invalid field highlight). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6049,7 +6048,7 @@
         {
           "id": "VariableID:21718:46",
           "name": "Semantic/Background/Error/bgColorErrorTintHover",
-          "description": "",
+          "description": "Error feedback background for hover state (e.g., error notification hover). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6071,7 +6070,7 @@
         {
           "id": "VariableID:21718:47",
           "name": "Semantic/Background/Error/bgColorErrorSolid",
-          "description": "",
+          "description": "Solid error background for critical actions (e.g., delete button, error badge). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6093,7 +6092,7 @@
         {
           "id": "VariableID:21718:48",
           "name": "Semantic/Background/Error/bgColorErrorSolidHover",
-          "description": "",
+          "description": "Solid error background for hover state (e.g., destructive button hover). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6115,7 +6114,7 @@
         {
           "id": "VariableID:21718:49",
           "name": "Semantic/Background/Warning/bgColorWarningTint",
-          "description": "",
+          "description": "Warning feedback background for caution states (e.g., warning banner, attention indicators). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6137,7 +6136,7 @@
         {
           "id": "VariableID:21718:50",
           "name": "Semantic/Background/Warning/bgColorWarningTintHover",
-          "description": "",
+          "description": "Warning feedback background for hover state. Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6159,7 +6158,7 @@
         {
           "id": "VariableID:21718:51",
           "name": "Semantic/Background/Warning/bgColorWarningSolid",
-          "description": "",
+          "description": "Solid warning background for caution indicators (e.g., warning badge, alert background). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6181,7 +6180,7 @@
         {
           "id": "VariableID:21718:52",
           "name": "Semantic/Background/Warning/bgColorWarningSolidHover",
-          "description": "",
+          "description": "Solid warning background for hover state. Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6203,7 +6202,7 @@
         {
           "id": "VariableID:21718:65",
           "name": "Semantic/Border/Feedback/borderColorWarning",
-          "description": "",
+          "description": "Warning border for caution states (e.g., field warning, attention required). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6222,30 +6221,9 @@
           "variableCollectionId": "VariableCollectionId:588:1979"
         },
         {
-          "id": "VariableID:21748:708",
-          "name": "Semantic/Border/Feedback/borderColorInfo",
-          "description": "",
-          "resolvedType": "COLOR",
-          "valuesByMode": {
-            "588:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:2552:18733"
-            },
-            "592:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:3912:4271"
-            }
-          },
-          "scopes": [
-            "STROKE_COLOR"
-          ],
-          "hiddenFromPublishing": false,
-          "variableCollectionId": "VariableCollectionId:588:1979"
-        },
-        {
           "id": "VariableID:21751:709",
           "name": "Semantic/Background/Success/bgColorSuccessSolidActive",
-          "description": "Secondary success tone used for secondary states. Maintains the same color in both Light and Dark mode for clarity. L&D: green40",
+          "description": "Solid success background for active/pressed state (e.g., confirm button pressed). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6267,7 +6245,7 @@
         {
           "id": "VariableID:21751:710",
           "name": "Semantic/Border/Brand/borderColorBrand",
-          "description": "",
+          "description": "Brand-colored border for emphasis (e.g., active tabs, selected items, brand highlights). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6288,7 +6266,7 @@
         {
           "id": "VariableID:21751:711",
           "name": "Semantic/Border/Brand/borderColorBrandLightOnly",
-          "description": "",
+          "description": "Brand border in light mode, neutral white in dark mode (e.g., accent borders that shouldn't be vibrant in dark). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6308,8 +6286,8 @@
         },
         {
           "id": "VariableID:21751:712",
-          "name": "Semantic/Border/Interactive/borderColorFocus",
-          "description": "",
+          "name": "Semantic/Border/Interactive/borderColorSelected",
+          "description": "Border for selected elements (e.g., selected checkbox, active tab indicator). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6330,7 +6308,7 @@
         {
           "id": "VariableID:21751:715",
           "name": "Semantic/Border/Interactive/borderColorActive",
-          "description": "",
+          "description": "Border for active elements (e.g., active tab indicator). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6351,7 +6329,7 @@
         {
           "id": "VariableID:21753:64899",
           "name": "Semantic/Icon/Brand/iconColorBrand",
-          "description": "Applies to text elements requiring fixed brand color usage (e.g., permanent links, brand slogans on constant backgrounds). Behavior: Constant — maintains identical red tone across Light and Dark mode.",
+          "description": "Brand-colored icon for emphasis (e.g., featured icons, brand indicators). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6372,7 +6350,7 @@
         {
           "id": "VariableID:21753:64901",
           "name": "Semantic/Icon/Interactive/iconColorDisabled",
-          "description": "Disabled label tone indicating inactive or unavailable states in UI elements. Behavior: Dynamic — lighter gray in Light mode, darker neutral in Dark mode. L:085 D:035",
+          "description": "Icon color for disabled elements (e.g., inactive button icons, disabled controls). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6393,7 +6371,7 @@
         {
           "id": "VariableID:21753:65318",
           "name": "Semantic/Icon/Standard/iconColorPrimary",
-          "description": "Main text color used for body copy and all primary textual content. Ensures optimal readability and contrast on standard surfaces. Behavior: Dynamic — switches between dark text on light backgrounds and light text on dark backgrounds.",
+          "description": "Primary icon color for static/decorative icons (e.g., section icons, illustrative icons, status indicators). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6414,7 +6392,7 @@
         {
           "id": "VariableID:21753:65319",
           "name": "Semantic/Icon/Standard/iconColorSecondary",
-          "description": "Muted text tone for subtle information, timestamps, or inactive text elements. Behavior: Dynamic — adjusts between mid-gray in Light mode and lighter gray in Dark mode.",
+          "description": "Secondary icon color for static supporting icons (e.g., metadata icons, decorative icons, list markers). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6435,7 +6413,7 @@
         {
           "id": "VariableID:21753:65320",
           "name": "Semantic/Icon/Standard/iconColorTertiary",
-          "description": "Secondary text color used for supportive information, subtitles, and less prominent text. Behavior: Dynamic — adapts between neutral tones to maintain proper contrast per theme. In 2025 css it is called figure meta.",
+          "description": "Tertiary icon color for static de-emphasized icons (e.g., subtle indicators, background icons).  Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6456,7 +6434,7 @@
         {
           "id": "VariableID:21753:65323",
           "name": "Semantic/Icon/Brand/iconColorBrandLightOnly",
-          "description": "Accent text color used for links, interactive text, or highlighted key words. Changes from a red in light mode to a white in dark mode.",
+          "description": "Brand icon color in light mode, neutral white in dark mode. Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6477,7 +6455,7 @@
         {
           "id": "VariableID:21753:65325",
           "name": "Semantic/Icon/Interactive/iconColorHover",
-          "description": "",
+          "description": "Icon color for interactive/clickable icons on hover (e.g., icon button hover, navigation icon hover). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6498,7 +6476,7 @@
         {
           "id": "VariableID:21753:65326",
           "name": "Semantic/Icon/Interactive/iconColorActive",
-          "description": "",
+          "description": "Icon color for interactive/clickable icons in active or selected state (e.g., active navigation, selected action). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6519,7 +6497,7 @@
         {
           "id": "VariableID:21753:65327",
           "name": "Semantic/Icon/Feedback/iconColorError",
-          "description": "Used for strong warnings, errors, or destructive action labels. Behavior: Constant — red color remains unchanged between Light and Dark mode for visibility and recognition.",
+          "description": "Error icon color for error indicators (e.g., error badge icon, validation error icon). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6540,7 +6518,7 @@
         {
           "id": "VariableID:21753:65328",
           "name": "Semantic/Icon/Feedback/iconColorWarning",
-          "description": "Represents medium attention states, often used in warnings or pending states. Behavior: Constant — same orange tone across Light and Dark mode.",
+          "description": "Warning icon color for caution indicators (e.g., warning triangle, alert icon). Behavior: Dynamic — adapts between light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6561,7 +6539,7 @@
         {
           "id": "VariableID:21753:65330",
           "name": "Semantic/Icon/Inverse/iconColorPrimaryInverse",
-          "description": "Inverse text color used on opposing surfaces (e.g., white text on red or dark backgrounds). Behavior: Dynamic — alternates between light and dark mode.",
+          "description": "Primary icon on inverted/contrast backgrounds. Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6582,7 +6560,7 @@
         {
           "id": "VariableID:21753:65332",
           "name": "Semantic/Icon/OnSolid/iconColorPrimaryOnDark",
-          "description": "Used for text displayed on dark surfaces to ensure maximum legibility and contrast. Behavior: Constant — always light neutral to guarantee accessibility on dark backgrounds.",
+          "description": "Primary icon on dark solid surfaces (e.g., icons on dark buttons, player controls). Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6603,7 +6581,7 @@
         {
           "id": "VariableID:21753:65333",
           "name": "Semantic/Icon/OnSolid/iconColorSecondaryOnDark",
-          "description": "Fixed inverse label tone applied where white or bright text must always appear, regardless of theme. Behavior: Constant — remains bright neutral in both Light and Dark mode. L&D:093",
+          "description": "Secondary icon on dark solid surfaces. Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6624,7 +6602,7 @@
         {
           "id": "VariableID:21753:65334",
           "name": "Semantic/Icon/OnSolid/iconColorPrimaryOnLight",
-          "description": "Used when primary text color must remain fixed regardless of mode (e.g., on light constant backgrounds). Behavior: Constant — same tone across Light and Dark mode.",
+          "description": "Primary icon on light solid surfaces. Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6645,7 +6623,7 @@
         {
           "id": "VariableID:21753:65335",
           "name": "Semantic/Icon/OnSolid/iconColorConstOnImage",
-          "description": "Fixed white heading color used on dark or colored backgrounds (e.g., hero sections, banners) that remain constant across modes. Behavior: Constant — remains white in both Light and Dark mode.",
+          "description": "Icon color for elements overlaid on images (e.g., play button on video thumbnail). Mode-independent. Behavior: Static — same value in light and dark mode.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6666,7 +6644,7 @@
         {
           "id": "VariableID:21801:127051",
           "name": "Semantic/Text/Inverse/textColorSecondaryInverse",
-          "description": "",
+          "description": "Secondary static text on inverted/contrast backgrounds (e.g., meta info in dark sections). Not for interactive elements. Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6687,7 +6665,7 @@
         {
           "id": "VariableID:21809:11976",
           "name": "Semantic/Border/Brand/borderColorBrandConst",
-          "description": "",
+          "description": "Brand border that remains constant regardless of color mode. Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6708,7 +6686,7 @@
         {
           "id": "VariableID:21809:14865",
           "name": "Semantic/Border/Inverse/borderColorSubtleInverse",
-          "description": "",
+          "description": "Subtle border on inverted surfaces (e.g., subtle separators in dark sections). Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6729,7 +6707,7 @@
         {
           "id": "VariableID:21809:59823",
           "name": "Semantic/Border/Utilities/borderColorNoContrast",
-          "description": "",
+          "description": "Zero-contrast border matching surface color (e.g., invisible borders for layout, spacing helpers). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6794,7 +6772,7 @@
         {
           "id": "VariableID:21816:61399",
           "name": "Semantic/Text/Inverse/textColorInverseHighContrast",
-          "description": "",
+          "description": "High contrast inverse text for maximum readability on inverted surfaces (e.g., white text on dark buttons). Behavior: Inverted — swaps light and dark values.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6902,7 +6880,7 @@
         {
           "id": "VariableID:21863:125445",
           "name": "Semantic/Background/Inverse/bgColorSecondaryInverse",
-          "description": "Inverse of the primary surface, used when Light and Dark surfaces are swapped (e.g., inverse cards or elevated sections). Behavior: Dynamic — switches between dark and light values depending on mode.",
+          "description": "Inverted secondary background for elevated contrast elements (e.g., tooltips, popovers). Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6924,7 +6902,7 @@
         {
           "id": "VariableID:21874:125677",
           "name": "Semantic/Icon/Inverse/iconColorSecondaryInverse",
-          "description": "",
+          "description": "Secondary icon on inverted/contrast backgrounds. Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6945,7 +6923,7 @@
         {
           "id": "VariableID:21874:125678",
           "name": "Semantic/Icon/Inverse/iconColorInverseHighContrast",
-          "description": "",
+          "description": "High contrast inverse icon for maximum visibility on inverted surfaces. Behavior: Inverted — swaps light and dark values.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -6987,7 +6965,7 @@
         {
           "id": "VariableID:21892:301617",
           "name": "Semantic/Border/Interactive/borderColorIdle",
-          "description": "High-emphasis border color for clear delineation between surfaces (e.g., focus rings, high-contrast UI zones). Behavior: Dynamic — light surfaces use a darker neutral, dark surfaces a light neutral tone. L:015 D:100",
+          "description": "Default border color for interactive elements in idle state (e.g., input fields, buttons, selectable items). Behavior: Dynamic — adapts between light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -7030,7 +7008,7 @@
         {
           "id": "VariableID:21897:301623",
           "name": "Semantic/Border/OnSolid/borderColorSubtleOnLight",
-          "description": "Applies to UI elements that must visually remain the same regardless of theme (e.g., brand containers, static illustrations). Identical tone across Light and Dark mode. L&D: 093",
+          "description": "Subtle border on light solid backgrounds. Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -7051,7 +7029,7 @@
         {
           "id": "VariableID:21897:301624",
           "name": "Semantic/Border/OnSolid/borderColorDefaultOnLight",
-          "description": "Medium-emphasis border color for standard outlines, input fields, or separators that require visible yet non-dominant contrast. Behavior: Dynamic - adjusts to maintain legibility in Light and Dark themes. L:085 D:045",
+          "description": "Default border on light solid backgrounds. Behavior: Static — same value in light and dark mode. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -7072,7 +7050,7 @@
         {
           "id": "VariableID:21900:31298",
           "name": "Semantic/Background/Inverse/bgColorQuintenaryInverse",
-          "description": "Inverse of the quartenary surface, used for background reversals in mixed-layout areas. Behavior: Dynamic — inverts between dark and light tones depending on mode.",
+          "description": "Inverted quintenary background for high-contrast inverse elements. Behavior: Inverted — swaps light and dark values. Brand-specific.",
           "resolvedType": "COLOR",
           "valuesByMode": {
             "588:0": {
@@ -9256,9 +9234,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 8,
-            "5695:2": 12,
-            "5695:3": 14
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12078"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12082"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:6758:54915"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9270,9 +9257,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 12,
-            "5695:2": 16,
-            "5695:3": 20
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12082"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12081"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:3114:1737"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9284,9 +9280,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 16,
-            "5695:2": 24,
-            "5695:3": 28
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12081"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12084"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:11009:3182"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9298,9 +9303,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 24,
-            "5695:2": 32,
-            "5695:3": 40
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12084"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12083"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2878:10155"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9312,9 +9326,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 36,
-            "5695:2": 48,
-            "5695:3": 60
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4805:2298"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2824:891"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4870:2803"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9326,9 +9349,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 12,
-            "5695:2": 16,
-            "5695:3": 20
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12082"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12081"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:3114:1737"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9340,9 +9372,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 16,
-            "5695:2": 24,
-            "5695:3": 28
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12081"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12084"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:11009:3182"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9354,9 +9395,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 24,
-            "5695:2": 32,
-            "5695:3": 40
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12084"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2726:12083"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2878:10155"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9368,9 +9418,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 28,
-            "5695:2": 40,
-            "5695:3": 48
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:11009:3182"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2878:10155"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2824:891"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -9382,9 +9441,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "5695:1": 48,
-            "5695:2": 64,
-            "5695:3": 80
+            "5695:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2824:891"
+            },
+            "5695:2": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:2824:892"
+            },
+            "5695:3": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:3113:1638"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -27787,7 +27855,7 @@
         },
         {
           "id": "VariableID:21752:1281",
-          "name": "Global/Border/Interactive/focusRingColorLight",
+          "name": "Global/Border/Interactive/borderColorSelectedLight",
           "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
@@ -27806,7 +27874,7 @@
         },
         {
           "id": "VariableID:21752:1282",
-          "name": "Global/Border/Interactive/focusRingColorDark",
+          "name": "Global/Border/Interactive/borderColorSelectedDark",
           "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
@@ -29939,42 +30007,6 @@
       }
     },
     {
-      "id": "S:5df4e5673625d36b5317d15014fa77eaa79d1d4e,",
-      "name": "Component/Accordion/accordionLabel",
-      "description": "This text style is for use on accordion labels",
-      "type": "TEXT",
-      "fontName": {
-        "family": "Gotham XNarrow",
-        "style": "Bold"
-      },
-      "paragraphSpacing": 0,
-      "paragraphIndent": 0,
-      "textCase": "ORIGINAL",
-      "textDecoration": "NONE",
-      "boundVariables": {
-        "letterSpacing": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:8524:34363"
-        },
-        "fontSize": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:7514:1756"
-        },
-        "fontFamily": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:7510:7080"
-        },
-        "lineHeight": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:8384:9930"
-        },
-        "fontWeight": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:7514:1760"
-        }
-      }
-    },
-    {
       "id": "S:0326482cead9102414fd3dc83d422613318854b0,",
       "name": "Component/Article/articleKicker",
       "description": "This text style contains the variables necessary for setting how the font parameters for the article kicker behaves across breakpoints. For font size, this component level token currently references the semantic level token kicker1FontSize.",
@@ -30320,7 +30352,7 @@
         },
         "fontFamily": {
           "type": "VARIABLE_ALIAS",
-          "id": "VariableID:18321:11220"
+          "id": "VariableID:7823:67058"
         },
         "lineHeight": {
           "type": "VARIABLE_ALIAS",
@@ -30356,7 +30388,7 @@
         },
         "fontFamily": {
           "type": "VARIABLE_ALIAS",
-          "id": "VariableID:18321:11220"
+          "id": "VariableID:7823:67058"
         },
         "lineHeight": {
           "type": "VARIABLE_ALIAS",
@@ -30395,7 +30427,7 @@
         },
         "fontFamily": {
           "type": "VARIABLE_ALIAS",
-          "id": "VariableID:585:1969"
+          "id": "VariableID:7426:415987"
         },
         "fontWeight": {
           "type": "VARIABLE_ALIAS",
@@ -30427,7 +30459,7 @@
         },
         "fontFamily": {
           "type": "VARIABLE_ALIAS",
-          "id": "VariableID:18379:11164"
+          "id": "VariableID:7426:415987"
         },
         "lineHeight": {
           "type": "VARIABLE_ALIAS",
@@ -31957,42 +31989,6 @@
         "fontFamily": {
           "type": "VARIABLE_ALIAS",
           "id": "VariableID:585:1969"
-        },
-        "fontWeight": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:4197:5113"
-        }
-      }
-    },
-    {
-      "id": "S:474611a9670d6ffa566da60089275784d13e7d3e,",
-      "name": "Component/.DSDocsStyles/.verticalVideosMockHeadlines",
-      "description": "This text style is only used for mockups the vertical video component teaser headlines.",
-      "type": "TEXT",
-      "fontName": {
-        "family": "Gotham Condensed",
-        "style": "Bold"
-      },
-      "letterSpacing": {
-        "unit": "PERCENT",
-        "value": 0
-      },
-      "paragraphSpacing": 0,
-      "paragraphIndent": 0,
-      "textCase": "ORIGINAL",
-      "textDecoration": "UNDERLINE",
-      "boundVariables": {
-        "fontSize": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:12837:24705"
-        },
-        "fontFamily": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:588:1985"
-        },
-        "lineHeight": {
-          "type": "VARIABLE_ALIAS",
-          "id": "VariableID:12837:24705"
         },
         "fontWeight": {
           "type": "VARIABLE_ALIAS",
