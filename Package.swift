@@ -42,10 +42,10 @@ import PackageDescription
 let package = Package(
     name: "BildDesignSystem",
     platforms: [
-        .iOS(.v14),
-        .macOS(.v11),
-        .tvOS(.v14),
-        .watchOS(.v7)
+        .iOS(.v17),
+        .macOS(.v14),
+        .tvOS(.v17),
+        .watchOS(.v10)
     ],
     products: [
         .library(
