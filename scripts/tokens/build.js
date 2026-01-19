@@ -366,7 +366,12 @@ function generateFileHeader({ fileName, commentStyle, platform, brand, context }
   ];
 
   if (context) {
-    lines.push(`Context: ${context}`);
+    // Split context on newlines to ensure each line gets comment prefix
+    const contextLines = context.split('\n');
+    lines.push(`Context: ${contextLines[0]}`);
+    for (let i = 1; i < contextLines.length; i++) {
+      lines.push(contextLines[i]);
+    }
     lines.push('');
   }
 
