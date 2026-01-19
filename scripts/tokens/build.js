@@ -3959,7 +3959,7 @@ public enum ${tokenClassName} {
     output += `    }
 
     /// Density accessor with SizeClass × Density resolution
-    public enum Density {
+    public enum DensityAccessor {
         /// Returns density tokens resolved by SizeClass × DensityMode
         public static func current(for sizeClass: SizeClass, density: Density) -> any ${densityProtocolName} {
             switch (sizeClass, density) {
@@ -6312,6 +6312,7 @@ public struct TextStyle: Equatable, Sendable {
 }
 
 /// View modifier for applying TextStyle
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 public struct TextStyleModifier: ViewModifier {
     let style: TextStyle
     let relativeTo: Font.TextStyle
@@ -6330,6 +6331,7 @@ public struct TextStyleModifier: ViewModifier {
     }
 }
 
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 public extension View {
     func textStyle(_ style: TextStyle, relativeTo: Font.TextStyle = .body) -> some View {
         modifier(TextStyleModifier(style, relativeTo: relativeTo))
@@ -6571,6 +6573,7 @@ ${densityPropertyDeclarations}
 /// // Advertorial content with SportBILD colors
 /// DesignSystemTheme(colorBrand: .sportbild, contentBrand: .advertorial)
 /// \`\`\`
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
 @Observable
 public final class DesignSystemTheme: @unchecked Sendable {
 
@@ -6788,6 +6791,7 @@ import SwiftUI
 
 /// Convenience theme provider for ${brandPascal} brand
 /// For multi-brand apps, use DesignSystemTheme with colorBrand and contentBrand axes
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
 @Observable
 public final class ${brandPascal}Theme: @unchecked Sendable {
 
