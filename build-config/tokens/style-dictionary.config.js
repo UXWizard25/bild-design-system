@@ -72,14 +72,23 @@ function generateFileHeader({ fileName, commentStyle, platform, brand, context }
   ];
 
   // Add Brand + Context if available
+  // Split context on newlines to ensure each line gets comment prefix
   if (brand && context) {
-    lines.push(`Brand: ${brand} | Context: ${context}`);
+    const contextLines = context.split('\n');
+    lines.push(`Brand: ${brand} | Context: ${contextLines[0]}`);
+    for (let i = 1; i < contextLines.length; i++) {
+      lines.push(contextLines[i]);
+    }
     lines.push('');
   } else if (brand) {
     lines.push(`Brand: ${brand}`);
     lines.push('');
   } else if (context) {
-    lines.push(`Context: ${context}`);
+    const contextLines = context.split('\n');
+    lines.push(`Context: ${contextLines[0]}`);
+    for (let i = 1; i < contextLines.length; i++) {
+      lines.push(contextLines[i]);
+    }
     lines.push('');
   }
 
@@ -3170,7 +3179,11 @@ public protocol ${brandPascal}TypographyScheme: DesignTypographyScheme {
       const name = token.name;
       const comment = token.comment || token.description;
       if (comment && options.showDescriptions !== false) {
-        output += `    /// ${comment}\n`;
+        // Split comment on newlines to ensure each line gets /// prefix
+        const commentLines = comment.split('\n').filter(line => line.trim() !== '');
+        commentLines.forEach(line => {
+          output += `    /// ${line.trim()}\n`;
+        });
       }
       output += `    var ${name}: TextStyle { get }\n`;
     });

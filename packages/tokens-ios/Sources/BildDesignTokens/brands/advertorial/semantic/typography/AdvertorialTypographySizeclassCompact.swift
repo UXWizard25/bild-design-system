@@ -42,13 +42,11 @@ public protocol AdvertorialTypographyScheme: DesignTypographyScheme {
     var title1: TextStyle { get }
     /// Title styles are mid-level headings, often used for module names, card headers, or section labels. They balance prominence with readability. Font size: 22 - 22 - 22 - 28
     var title1uppercase: TextStyle { get }
-    /// Title styles are mid-level headings, often used for module names, card headers, or section labels. They balance prominence with readability. 
-
-In the previous system, this style was named Caption. For greater clarity and consistency, it has been renamed to title2. Font size: 16 - 16 - 18 - 20
+    /// Title styles are mid-level headings, often used for module names, card headers, or section labels. They balance prominence with readability.
+    /// In the previous system, this style was named Caption. For greater clarity and consistency, it has been renamed to title2. Font size: 16 - 16 - 18 - 20
     var title2: TextStyle { get }
-    /// Title styles are mid-level headings, often used for module names, card headers, or section labels. They balance prominence with readability. 
-
-In the previous system, this style was named Caption. For greater clarity and consistency, it has been renamed to title2. Font size: 16 - 16 - 18 - 20
+    /// Title styles are mid-level headings, often used for module names, card headers, or section labels. They balance prominence with readability.
+    /// In the previous system, this style was named Caption. For greater clarity and consistency, it has been renamed to title2. Font size: 16 - 16 - 18 - 20
     var title2uppercase: TextStyle { get }
     /// Callouts highlight key information, quotes, or important notes inside content. They stand apart from body text to draw attention. There is overlap between this text style and the title text styles. Font size: 18 - 18 - 22 - 22
     var callout: TextStyle { get }
