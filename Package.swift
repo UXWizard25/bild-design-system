@@ -2,17 +2,35 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 /**
- * BILD Design System Icons - Root Swift Package
+ * BILD Design System - Swift Package
  *
- * This Package.swift at the repository root enables SPM users to add
- * the icons package directly via the repository URL.
+ * This monorepo provides two iOS packages:
+ *
+ * 1. BildDesignTokens - Design tokens (colors, typography, spacing, effects)
+ * 2. BildIcons - Icon library
  *
  * Installation:
  *   1. In Xcode: File > Add Package Dependencies
  *   2. Enter: https://github.com/UXWizard25/bild-design-system
- *   3. Select version (e.g., from: "1.0.0") or branch
+ *   3. Select the product(s) you need:
+ *      - BildDesignTokens (for design tokens)
+ *      - BildIcons (for icons)
  *
- * Usage:
+ * Usage (Tokens):
+ *   import BildDesignTokens
+ *
+ *   .designSystemTheme(
+ *       colorBrand: .bild,
+ *       contentBrand: .bild,
+ *       darkTheme: false,
+ *       sizeClass: .compact,
+ *       density: .default
+ *   )
+ *
+ *   @Environment(\.designSystemTheme) var theme
+ *   theme.colors.textColorPrimary
+ *
+ * Usage (Icons):
  *   import BildIcons
  *
  *   BildIcon.add.image
@@ -22,7 +40,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "BildDesignSystemIcons",
+    name: "BildDesignSystem",
     platforms: [
         .iOS(.v14),
         .macOS(.v11),
@@ -31,11 +49,19 @@ let package = Package(
     ],
     products: [
         .library(
+            name: "BildDesignTokens",
+            targets: ["BildDesignTokens"]
+        ),
+        .library(
             name: "BildIcons",
             targets: ["BildIcons"]
         )
     ],
     targets: [
+        .target(
+            name: "BildDesignTokens",
+            path: "packages/tokens-ios/Sources/BildDesignTokens"
+        ),
         .target(
             name: "BildIcons",
             path: "packages/icons/ios/Sources/BildIcons",
