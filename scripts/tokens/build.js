@@ -3961,7 +3961,7 @@ public enum ${tokenClassName} {
     /// Density accessor with SizeClass × Density resolution
     public enum Density {
         /// Returns density tokens resolved by SizeClass × DensityMode
-        public static func current(for sizeClass: SizeClass, density: DesignDensity) -> any ${densityProtocolName} {
+        public static func current(for sizeClass: SizeClass, density: Density) -> any ${densityProtocolName} {
             switch (sizeClass, density) {
             case (.compact, .dense): return CompactDense.shared
             case (.compact, .default): return CompactDefault.shared
@@ -4026,7 +4026,7 @@ public enum ${tokenClassName} {
     /// Density accessor
     public enum DensityMode {
         /// Returns density tokens for the specified density mode
-        public static func current(for density: DesignDensity) -> any ${densityFallbackProtocolName} {
+        public static func current(for density: Density) -> any ${densityFallbackProtocolName} {
             switch density {
             case .dense: return Dense.shared
             case .default: return Default.shared
@@ -6517,7 +6517,8 @@ public extension View {
     console.warn('No density tokens found in source JSON for iOS protocol');
   }
 
-  const densityPropertyDeclarations = densityProperties.map(prop => `    var ${prop}: CGFloat { get }`).join('\n');
+  // Apply toCamelCase to match Style Dictionary's naming (e.g., 3Xs → 3xs)
+  const densityPropertyDeclarations = densityProperties.map(prop => `    var ${toCamelCase(prop)}: CGFloat { get }`).join('\n');
 
   const designSystemThemeContent = generateFileHeader({
     fileName: 'DesignSystemTheme.swift',

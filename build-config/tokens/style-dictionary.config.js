@@ -3236,7 +3236,7 @@ public struct ${structName}: ${brandPascal}TypographyScheme, DesignTypographySch
 const swiftuiEffectsFormat = ({ dictionary, options, file }) => {
   const brand = options.brand || 'Bild';
   const brandPascal = toPascalCase(brand);
-  const mode = options.mode || 'light';
+  const mode = options.mode || options.colorMode || 'light';
   const isLight = mode === 'light';
 
   let output = generateFileHeader({
