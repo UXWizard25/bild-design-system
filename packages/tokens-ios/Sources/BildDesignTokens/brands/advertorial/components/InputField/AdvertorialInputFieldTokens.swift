@@ -79,7 +79,7 @@ public enum AdvertorialInputFieldTokens {
     /// Density accessor with SizeClass × Density resolution
     public enum Density {
         /// Returns density tokens resolved by SizeClass × DensityMode
-        public static func current(for sizeClass: SizeClass, density: DesignDensity) -> any AdvertorialInputFieldDensityTokens {
+        public static func current(for sizeClass: SizeClass, density: Density) -> any AdvertorialInputFieldDensityTokens {
             switch (sizeClass, density) {
             case (.compact, .dense): return CompactDense.shared
             case (.compact, .default): return CompactDefault.shared

@@ -86,7 +86,7 @@ public enum AdvertorialButtonTokens {
     /// Density accessor with SizeClass × Density resolution
     public enum Density {
         /// Returns density tokens resolved by SizeClass × DensityMode
-        public static func current(for sizeClass: SizeClass, density: DesignDensity) -> any AdvertorialButtonDensityTokens {
+        public static func current(for sizeClass: SizeClass, density: Density) -> any AdvertorialButtonDensityTokens {
             switch (sizeClass, density) {
             case (.compact, .dense): return CompactDense.shared
             case (.compact, .default): return CompactDefault.shared
