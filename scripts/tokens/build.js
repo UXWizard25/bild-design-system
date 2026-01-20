@@ -8666,22 +8666,42 @@ async function main() {
     // Docs are in packages/tokens/docs/
     const readmeSrcDir = path.join(__dirname, '../../packages/tokens/docs');
 
-    // Copy docs/css.md to dist/css/README.md
+    // Function to transform relative links when copying from docs/ to dist/*/
+    // docs/ is at packages/tokens/docs/, dist/*/ is at packages/tokens/dist/*/
+    // So we need to add one level of ../ for most paths
+    const transformLinksForDist = (content, targetSubdir) => {
+      return content
+        // Cross-reference between css and js docs
+        .replace(/\(\.\/js\.md\)/g, '(../js/README.md)')
+        .replace(/\(\.\/css\.md\)/g, '(../css/README.md)')
+        // Native package docs (need extra ../ because we're one level deeper in dist/)
+        .replace(/\(\.\.\/\.\.\/tokens-android/g, '(../../../tokens-android')
+        .replace(/\(\.\.\/\.\.\/tokens-ios/g, '(../../../tokens-ios')
+        // Tokens package README
+        .replace(/\(\.\.\/README\.md\)/g, '(../../README.md)')
+        // Root README and CLAUDE.md
+        .replace(/\(\.\.\/\.\.\/README\.md\)/g, '(../../../../README.md)')
+        .replace(/\(\.\.\/\.\.\/CLAUDE\.md\)/g, '(../../../../CLAUDE.md)');
+    };
+
+    // Copy docs/css.md to dist/css/README.md (with link transformation)
     const cssReadmeSrc = path.join(readmeSrcDir, 'css.md');
     const cssReadmeDest = path.join(DIST_DIR, 'css/README.md');
     if (fs.existsSync(cssReadmeSrc)) {
-      fs.copyFileSync(cssReadmeSrc, cssReadmeDest);
-      console.log(`   ✅ docs/css.md → dist/css/README.md`);
+      const content = fs.readFileSync(cssReadmeSrc, 'utf8');
+      fs.writeFileSync(cssReadmeDest, transformLinksForDist(content, 'css'));
+      console.log(`   ✅ docs/css.md → dist/css/README.md (links adjusted)`);
     } else {
       console.log(`   ⚠️  docs/css.md nicht gefunden`);
     }
 
-    // Copy docs/js.md to dist/js/README.md
+    // Copy docs/js.md to dist/js/README.md (with link transformation)
     const jsReadmeSrc = path.join(readmeSrcDir, 'js.md');
     const jsReadmeDest = path.join(DIST_DIR, 'js/README.md');
     if (fs.existsSync(jsReadmeSrc)) {
-      fs.copyFileSync(jsReadmeSrc, jsReadmeDest);
-      console.log(`   ✅ docs/js.md → dist/js/README.md`);
+      const content = fs.readFileSync(jsReadmeSrc, 'utf8');
+      fs.writeFileSync(jsReadmeDest, transformLinksForDist(content, 'js'));
+      console.log(`   ✅ docs/js.md → dist/js/README.md (links adjusted)`);
     } else {
       console.log(`   ⚠️  docs/js.md nicht gefunden`);
     }

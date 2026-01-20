@@ -322,7 +322,7 @@ let padding: CGFloat = BildSizingCompact.space2x  // 16
 
 ### Android Jetpack Compose (Dual-Axis Architecture)
 
-> **See [docs/android.md](./docs/android.md) for complete documentation**
+> **See [Android USAGE.md](../tokens-android/docs/USAGE.md) for complete documentation**
 
 ```kotlin
 import com.bild.designsystem.shared.DesignSystemTheme
@@ -434,7 +434,7 @@ All Component Tokens provide theme-aware `current()` accessors:
 
 ### iOS SwiftUI (Dual-Axis Architecture)
 
-> **See [docs/ios.md](./docs/ios.md) for complete documentation**
+> **See [iOS USAGE.md](../tokens-ios/Documentation/USAGE.md) for complete documentation**
 
 ```swift
 import SwiftUI
@@ -948,8 +948,8 @@ grep "Space2x" dist/ios/shared/Spaceprimitive.swift
 | [📖 Main README](../../README.md) | Project overview |
 | [📖 docs/css.md](./docs/css.md) | CSS Custom Properties documentation |
 | [📖 docs/js.md](./docs/js.md) | JavaScript/React integration (Dual-Axis) |
-| [📖 docs/android.md](./docs/android.md) | Android Jetpack Compose (Dual-Axis) |
-| [📖 docs/ios.md](./docs/ios.md) | iOS SwiftUI (Dual-Axis) |
+| [📖 Android USAGE.md](../tokens-android/docs/USAGE.md) | Android Jetpack Compose (Dual-Axis) |
+| [📖 iOS USAGE.md](../tokens-ios/Documentation/USAGE.md) | iOS SwiftUI (Dual-Axis) |
 | [📖 Icons README](../icons/README.md) | Icon pipeline documentation |
 | [📖 Components README](../components/core/README.md) | Stencil Web Components |
 | [📖 React README](../components/react/README.md) | React wrapper components |
