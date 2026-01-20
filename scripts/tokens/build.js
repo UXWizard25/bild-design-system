@@ -619,6 +619,10 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
           if (cssOptions.modeType === 'breakpoint' && composePath.includes('/breakpoints')) {
             composePath = composePath.replace('/breakpoints', '/sizeclass');
           }
+          // Lowercase component directory names to match Kotlin package conventions
+          if (composePath.includes('/components/')) {
+            composePath = composePath.replace(/\/components\/([^/]+)/, (match, name) => `/components/${name.toLowerCase()}`);
+          }
           return `${ANDROID_DIST_DIR}/${composePath}/`;
         })(),
         files: [{
@@ -686,7 +690,12 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
               }
               if (cssOptions.brand) {
                 if (buildPath.includes('/components/')) {
-                  return `${basePkg}.brands.${cssOptions.brand}.components`;
+                  // Extract component name from path and add to package (lowercase)
+                  const componentMatch = buildPath.match(/\/components\/([^/]+)/);
+                  const componentName = componentMatch ? componentMatch[1].toLowerCase() : '';
+                  return componentName
+                    ? `${basePkg}.brands.${cssOptions.brand}.components.${componentName}`
+                    : `${basePkg}.brands.${cssOptions.brand}.components`;
                 }
                 // For semantic tokens, include the subdirectory in the package name
                 // File path must match package declaration in Kotlin
@@ -1501,12 +1510,12 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
       ...(COMPOSE_ENABLED && breakpoint && isNativeBreakpoint(breakpoint, 'android') ? {
         compose: {
           transforms: ['attribute/cti'],
-          buildPath: `${ANDROID_DIST_DIR}/brands/${brand}/components/${componentName}/`,
+          buildPath: `${ANDROID_DIST_DIR}/brands/${brand}/components/${componentName.toLowerCase()}/`,
           files: [{
             destination: `${componentName}Typography${getSizeClassName(breakpoint, 'android').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'android').slice(1)}.kt`,
             format: 'compose/typography',
             options: {
-              packageName: `com.bild.designsystem.brands.${brand}.components`,
+              packageName: `com.bild.designsystem.brands.${brand}.components.${componentName.toLowerCase()}`,
               brand: brand,
               mode: getSizeClassName(breakpoint, 'android'),
               componentName,
@@ -1584,7 +1593,7 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
       ...(COMPOSE_ENABLED ? {
         compose: {
           transforms: ['attribute/cti'],
-          buildPath: `${ANDROID_DIST_DIR}/brands/${brand}/components/${componentName}/`,
+          buildPath: `${ANDROID_DIST_DIR}/brands/${brand}/components/${componentName.toLowerCase()}/`,
           files: [{
             destination: `${componentName}Effects${colorMode ? colorMode.charAt(0).toUpperCase() + colorMode.slice(1) : ''}.kt`,
             format: 'compose/component-effects',
@@ -2862,9 +2871,11 @@ async function aggregateComposeComponents() {
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name);
 
-    for (const componentName of componentDirs) {
+    for (const componentDirName of componentDirs) {
       totalComponents++;
-      const componentDir = path.join(brandComponentsDir, componentName);
+      const componentDir = path.join(brandComponentsDir, componentDirName);
+      // Convert directory name (lowercase) to PascalCase for class names
+      const componentName = componentDirName.charAt(0).toUpperCase() + componentDirName.slice(1);
       const ktFiles = fs.readdirSync(componentDir)
         .filter(f => f.endsWith('.kt'))
         .sort();
@@ -3108,7 +3119,7 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   });
 
   output += `
-package com.bild.designsystem.brands.${brand}.components
+package com.bild.designsystem.brands.${brand}.components.${componentName.toLowerCase()}
 
 ${imports.join('\n')}
 
@@ -6097,9 +6108,11 @@ async function cleanupComposeIndividualFiles() {
         .filter(d => d.isDirectory())
         .map(d => d.name);
 
-      for (const componentName of componentDirs) {
-        const componentDir = path.join(componentsDir, componentName);
+      for (const componentDirName of componentDirs) {
+        const componentDir = path.join(componentsDir, componentDirName);
         const files = fs.readdirSync(componentDir).filter(f => f.endsWith('.kt'));
+        // Convert directory name (lowercase) to PascalCase for aggregated file name
+        const componentName = componentDirName.charAt(0).toUpperCase() + componentDirName.slice(1);
 
         // Keep only {Component}Tokens.kt, remove individual files
         const aggregatedFile = `${componentName}Tokens.kt`;
