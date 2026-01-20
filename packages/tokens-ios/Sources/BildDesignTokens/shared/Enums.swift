@@ -9,7 +9,7 @@
 // Copyright (c) 2026 Axel Springer Deutschland GmbH
 // Proprietary and confidential. All rights reserved.
 //
-// Documentation: https://github.com/UXWizard25/bild-design-system/blob/main/packages/tokens/docs/ios.md
+// Documentation: https://github.com/UXWizard25/bild-design-system/blob/main/packages/tokens-ios/Documentation/USAGE.md
 
 import Foundation
 
