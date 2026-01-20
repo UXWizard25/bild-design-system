@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2026-01-08T13:44:11.275Z",
+  "lastModified": "2026-01-20T20:40:19.508Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -2463,7 +2463,8 @@
         "VariableID:21945:510389",
         "VariableID:21979:330760",
         "VariableID:21979:330761",
-        "VariableID:22102:25099"
+        "VariableID:22102:25099",
+        "VariableID:22112:46162"
       ],
       "variables": [
         {
@@ -7261,6 +7262,27 @@
           ],
           "hiddenFromPublishing": false,
           "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22112:46162",
+          "name": "Component/MediaPlayer/vidPlayerFullscreenBackdropColor",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:17326:23858"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:17326:23858"
+            }
+          },
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
         }
       ]
     },
@@ -7312,10 +7334,7 @@
           "valuesByMode": {
             "2726:0": 8
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7327,10 +7346,7 @@
           "valuesByMode": {
             "2726:0": 4
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7342,10 +7358,7 @@
           "valuesByMode": {
             "2726:0": 2
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7357,10 +7370,7 @@
           "valuesByMode": {
             "2726:0": 16
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7372,10 +7382,7 @@
           "valuesByMode": {
             "2726:0": 12
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7387,10 +7394,7 @@
           "valuesByMode": {
             "2726:0": 32
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7402,10 +7406,7 @@
           "valuesByMode": {
             "2726:0": 24
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7417,10 +7418,7 @@
           "valuesByMode": {
             "2726:0": 48
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7432,10 +7430,7 @@
           "valuesByMode": {
             "2726:0": 64
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7447,10 +7442,7 @@
           "valuesByMode": {
             "2726:0": 72
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7462,10 +7454,7 @@
           "valuesByMode": {
             "2726:0": 40
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7477,10 +7466,7 @@
           "valuesByMode": {
             "2726:0": 0
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7492,10 +7478,7 @@
           "valuesByMode": {
             "2726:0": 80
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7507,10 +7490,7 @@
           "valuesByMode": {
             "2726:0": 160
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7522,10 +7502,7 @@
           "valuesByMode": {
             "2726:0": 20
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7537,10 +7514,7 @@
           "valuesByMode": {
             "2726:0": -2
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7552,10 +7526,7 @@
           "valuesByMode": {
             "2726:0": 6
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7567,10 +7538,7 @@
           "valuesByMode": {
             "2726:0": 10
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7582,10 +7550,7 @@
           "valuesByMode": {
             "2726:0": 22
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7597,10 +7562,7 @@
           "valuesByMode": {
             "2726:0": 36
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7612,10 +7574,7 @@
           "valuesByMode": {
             "2726:0": 60
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7627,10 +7586,7 @@
           "valuesByMode": {
             "2726:0": 96
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7642,10 +7598,7 @@
           "valuesByMode": {
             "2726:0": 14
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7657,10 +7610,7 @@
           "valuesByMode": {
             "2726:0": 68
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         },
@@ -7672,10 +7622,7 @@
           "valuesByMode": {
             "2726:0": 28
           },
-          "scopes": [
-            "WIDTH_HEIGHT",
-            "GAP"
-          ],
+          "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:2726:12077"
         }
@@ -8779,7 +8726,7 @@
         {
           "id": "VariableID:21950:511205",
           "name": "Component/IconButton/densityIconButtonSize",
-          "description": "",
+          "description": "This variable controls the size of icon buttons. default, dense, spacious: 48, 40, 56",
           "resolvedType": "FLOAT",
           "valuesByMode": {
             "5695:1": {
@@ -13368,22 +13315,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "7015:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:18038:10775"
-            },
-            "7015:2": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:18038:10776"
-            },
-            "7017:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:18038:10773"
-            },
-            "16706:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:18038:10774"
-            }
+            "7015:1": 15,
+            "7015:2": 17,
+            "7017:0": 10,
+            "16706:1": 10
           },
           "scopes": [
             "LINE_HEIGHT"
@@ -15624,7 +15559,7 @@
         },
         {
           "id": "VariableID:13568:27",
-          "name": "Semantic/Layout/Breakpoints/breakpointMinWidthSize",
+          "name": "Semantic/Layout/Breakpoints/canvasMinWidthSize",
           "description": "320 - 390 - 600 - 1024 – Defines the minimum width of the main frame for different breakpoints. Apply this token to the main frame of page layouts to simulate realistic minimum widths across responsive viewports.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -15641,7 +15576,7 @@
         },
         {
           "id": "VariableID:13568:28",
-          "name": "Semantic/Layout/Breakpoints/breakpointMaxWidthSize",
+          "name": "Semantic/Layout/Breakpoints/canvasMaxWidthSize",
           "description": "389 - 599 - 1023 - 1024 – Defines the minimum width of the main frame for different breakpoints. Apply this token to the main frame of page layouts to simulate realistic maximum widths across responsive viewports.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -18597,7 +18532,7 @@
         },
         {
           "id": "VariableID:16912:30971",
-          "name": "Semantic/Layout/Grid/LayoutGuide/layoutGuideGridColums",
+          "name": "Semantic/Layout/Grid/LayoutGuide/layoutGuideGridColumns",
           "description": "Used to set the column count in Figma Layout guide Grids",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -26066,7 +26001,7 @@
         {
           "id": "VariableID:18288:5806",
           "name": "Global/Typography/FontWeight/Headline/brandHeadline1FontWeightSt",
-          "description": "",
+          "description": "String type var. Bild: Bold, SpoBi: BoldItalic, Ads: Bold",
           "resolvedType": "STRING",
           "valuesByMode": {
             "18038:0": {
@@ -28773,7 +28708,7 @@
         },
         "lineHeight": {
           "type": "VARIABLE_ALIAS",
-          "id": "VariableID:7139:2990"
+          "id": "VariableID:16181:168057"
         }
       }
     },
