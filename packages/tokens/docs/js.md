@@ -228,7 +228,7 @@ function MyComponent() {
   return (
     <div style={{
       color: theme.colors.textColorPrimary,
-      backgroundColor: theme.colors.surfaceColorPrimary,
+      backgroundColor: theme.colors.bgColorPrimary,
       padding: theme.spacing.gridSpaceRespBase  // "12px"
     }}>
       Content
@@ -520,7 +520,7 @@ interface Theme {
   colors: {
     textColorPrimary: string;      // "#232629"
     textColorSecondary: string;
-    surfaceColorPrimary: string;
+    bgColorPrimary: string;
     accentColorPrimary: string;
     layerOpacity50: number;        // 50 (opacity stays as number)
     // ... 80+ color tokens
@@ -703,7 +703,7 @@ function ThemeWrapper({ children }) {
 
 // Use in styled components - values are CSS-ready strings
 const Card = styled.div`
-  background: ${props => props.theme.colors.surfaceColorPrimary};
+  background: ${props => props.theme.colors.bgColorPrimary};
   padding: ${props => props.theme.spacing.gridSpaceRespBase};  /* "12px" */
 `;
 ```

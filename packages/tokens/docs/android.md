@@ -220,8 +220,8 @@ For global design decisions with polymorphic access:
 fun SemanticExample() {
     // Colors - automatically Light/Dark, polymorphic type
     val textColor = DesignSystemTheme.colors.textColorPrimary
-    val bgColor = DesignSystemTheme.colors.surfaceColorPrimary
-    val accentColor = DesignSystemTheme.colors.textColorAccent
+    val bgColor = DesignSystemTheme.colors.bgColorPrimary
+    val brandColor = DesignSystemTheme.colors.textColorBrand
 
     // Sizing - automatically Compact/Medium/Expanded, polymorphic type
     val headlineSize = DesignSystemTheme.sizing.headline1FontSize
@@ -547,7 +547,7 @@ package com.bild.designsystem.shared
 interface DesignColorScheme {
     val textColorPrimary: Color
     val textColorSecondary: Color
-    val surfaceColorPrimary: Color
+    val bgColorPrimary: Color
     // ... 80+ color properties
 }
 

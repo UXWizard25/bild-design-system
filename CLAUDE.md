@@ -1059,7 +1059,7 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify density alias endpoints | `preprocess.js` → `getDeepAliasInfo()` with `acceptDensityEndpoint` option |
 | Add semantic density to bundle | `bundles.js` → `buildBrandTokens()` |
 | Modify native density token filter | `build.js` → `nativeTokenFilter()` (controls which tokens are in SizingScheme) |
-| Add new brand | `preprocess.js`, `build.js`, `bundles.js` |
+| Add new brand | `build.js` (BRANDS arrays, lines 27-29), `preprocess.js`, `bundles.js`. See "Native Platform Code Generation" section below |
 | Add new breakpoint | `preprocess.js`, `build.js` |
 | Add new density mode | `preprocess.js`, `build.js`, `bundles.js` |
 | Enable/disable platform | `build.js` (toggle flags) |
@@ -1104,6 +1104,69 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify iOS icon generation | `scripts/icons/generate-ios.js` |
 | Modify Android icon generation | `scripts/icons/generate-android.js` |
 | Change icon CI/CD triggers | `.github/workflows/publish-icons-on-merge.yml` → `paths` |
+
+---
+
+## Native Platform Code Generation (Android/iOS)
+
+### Android Generation Stability
+
+The Android code generation is **mostly dynamic** and automatically adapts to token changes:
+
+| Area | Dynamic? | How It Works |
+|------|----------|--------------|
+| **Enums (ColorBrand, ContentBrand)** | ✅ Yes | Generated from `COLOR_BRANDS` / `CONTENT_BRANDS` arrays |
+| **Theme Provider switch cases** | ✅ Yes | Dynamically generated from brand arrays |
+| **Imports** | ✅ Yes | Dynamically generated for all brands |
+| **Interface Properties** | ✅ Yes | Reads from generated `.kt` files |
+| **Component Token Aggregation** | ✅ Yes | Scans directories automatically |
+| **Density/WindowSizeClass enums** | ⚠️ Hardcoded | Material 3 standard values |
+
+### Adding a New Brand
+
+To add a new brand, update these arrays in `build.js` (lines 27-29):
+
+```javascript
+const BRANDS = ['bild', 'sportbild', 'advertorial', 'newbrand'];
+const COLOR_BRANDS = ['bild', 'sportbild', 'newbrand'];  // If brand has own colors
+const CONTENT_BRANDS = ['bild', 'sportbild', 'advertorial', 'newbrand'];
+```
+
+Everything else (enums, theme provider, imports) will be auto-generated.
+
+### iOS Generation (Less Dynamic)
+
+iOS switch statements in `build.js` are **hardcoded** and require manual updates when adding brands:
+
+```swift
+// These are hardcoded in build.js and need manual extension:
+public var colors: any DesignColorScheme {
+    switch colorBrand {
+    case .bild: return isDarkTheme ? BildDarkColors.shared : BildLightColors.shared
+    case .sportbild: return isDarkTheme ? SportbildDarkColors.shared : SportbildLightColors.shared
+    // New brands need manual addition here
+    }
+}
+```
+
+### Fallback Values
+
+If generated files don't exist, these fallbacks are used:
+
+| Category | Fallback Properties | Risk |
+|----------|---------------------|------|
+| Colors | 13 essential properties | Low - only during initial build |
+| Sizing | 5 grid/page properties | Low - only during initial build |
+| Typography | 11 text styles | Low - only during initial build |
+
+### Default CompositionLocals
+
+Default values in `DesignSystemTheme.kt` use BILD as the default brand:
+
+```kotlin
+internal val LocalDesignColors = staticCompositionLocalOf<DesignColorScheme> { BildLightColors }
+internal val LocalDesignSizing = staticCompositionLocalOf<DesignSizingScheme> { BildSizingCompact }
+```
 
 ---
 

@@ -248,11 +248,11 @@ struct SemanticExample: View {
             Text("Primary")
                 .foregroundColor(theme.colors.textColorPrimary)
 
-            Text("Accent")
-                .foregroundColor(theme.colors.textColorAccent)
+            Text("Brand")
+                .foregroundColor(theme.colors.textColorBrand)
 
             Rectangle()
-                .fill(theme.colors.surfaceColorPrimary)
+                .fill(theme.colors.bgColorPrimary)
 
             // Typography - polymorphic access via unified protocol
             Text("Headline")
@@ -563,8 +563,8 @@ public enum SizeClass: String, CaseIterable, Sendable {
 public protocol DesignColorScheme: Sendable {
     var textColorPrimary: Color { get }
     var textColorSecondary: Color { get }
-    var surfaceColorPrimary: Color { get }
-    var coreColorPrimary: Color { get }
+    var bgColorPrimary: Color { get }
+    var bgColorBrandSolid: Color { get }
     // ... 20+ color properties
 }
 
