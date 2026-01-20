@@ -220,8 +220,8 @@ For global design decisions with polymorphic access:
 fun SemanticExample() {
     // Colors - automatically Light/Dark, polymorphic type
     val textColor = DesignSystemTheme.colors.textColorPrimary
-    val bgColor = DesignSystemTheme.colors.surfaceColorPrimary
-    val accentColor = DesignSystemTheme.colors.textColorAccent
+    val bgColor = DesignSystemTheme.colors.bgColorPrimary
+    val brandColor = DesignSystemTheme.colors.textColorBrand
 
     // Sizing - automatically Compact/Medium/Expanded, polymorphic type
     val headlineSize = DesignSystemTheme.sizing.headline1FontSize
@@ -547,7 +547,7 @@ package com.bild.designsystem.shared
 interface DesignColorScheme {
     val textColorPrimary: Color
     val textColorSecondary: Color
-    val surfaceColorPrimary: Color
+    val bgColorPrimary: Color
     // ... 80+ color properties
 }
 
@@ -820,9 +820,9 @@ DesignSystemTheme.sizing.gridSpaceRespBase // Dp
 
 | Document | Description |
 |----------|-------------|
-| [CSS](./css.md) | CSS Custom Properties & Shadow DOM |
-| [JavaScript/React](./js.md) | ESM tokens with React ThemeProvider |
-| [iOS SwiftUI](./ios.md) | Swift tokens for SwiftUI |
-| [Tokens README](../README.md) | Token pipeline overview |
-| [Main README](../../README.md) | Project overview |
-| [CLAUDE.md](../../CLAUDE.md) | Architecture & build details |
+| [CSS](../../tokens/docs/css.md) | CSS Custom Properties & Shadow DOM |
+| [JavaScript/React](../../tokens/docs/js.md) | ESM tokens with React ThemeProvider |
+| [iOS SwiftUI](../../tokens-ios/Documentation/USAGE.md) | Swift tokens for SwiftUI |
+| [Tokens README](../../tokens/README.md) | Token pipeline overview |
+| [Main README](../../../README.md) | Project overview |
+| [CLAUDE.md](../../../CLAUDE.md) | Architecture & build details |

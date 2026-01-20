@@ -102,8 +102,8 @@ struct ContentView: View {
 ```swift
 theme.colors.textColorPrimary
 theme.colors.textColorSecondary
-theme.colors.surfaceColorPrimary
-theme.colors.accentColorPrimary
+theme.colors.bgColorPrimary
+theme.colors.textColorBrand
 ```
 
 ### Sizing
@@ -141,6 +141,10 @@ theme.stackSpaceRespLg
 theme.stackSpaceConstSm
 theme.stackSpaceConstMd
 ```
+
+## Documentation
+
+For complete API documentation, see [USAGE.md](Documentation/USAGE.md).
 
 ## Platforms
 

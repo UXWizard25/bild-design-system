@@ -248,11 +248,11 @@ struct SemanticExample: View {
             Text("Primary")
                 .foregroundColor(theme.colors.textColorPrimary)
 
-            Text("Accent")
-                .foregroundColor(theme.colors.textColorAccent)
+            Text("Brand")
+                .foregroundColor(theme.colors.textColorBrand)
 
             Rectangle()
-                .fill(theme.colors.surfaceColorPrimary)
+                .fill(theme.colors.bgColorPrimary)
 
             // Typography - polymorphic access via unified protocol
             Text("Headline")
@@ -563,8 +563,8 @@ public enum SizeClass: String, CaseIterable, Sendable {
 public protocol DesignColorScheme: Sendable {
     var textColorPrimary: Color { get }
     var textColorSecondary: Color { get }
-    var surfaceColorPrimary: Color { get }
-    var coreColorPrimary: Color { get }
+    var bgColorPrimary: Color { get }
+    var bgColorBrandSolid: Color { get }
     // ... 20+ color properties
 }
 
@@ -827,9 +827,9 @@ theme.sizing.gridSpaceRespBase           // CGFloat
 
 | Document | Description |
 |----------|-------------|
-| [CSS](./css.md) | CSS Custom Properties & Shadow DOM |
-| [JavaScript/React](./js.md) | ESM tokens with React ThemeProvider |
-| [Android Compose](./android.md) | Kotlin tokens for Jetpack Compose |
-| [Tokens README](../README.md) | Token pipeline overview |
-| [Main README](../../README.md) | Project overview |
-| [CLAUDE.md](../../CLAUDE.md) | Architecture & build details |
+| [CSS](../../tokens/docs/css.md) | CSS Custom Properties & Shadow DOM |
+| [JavaScript/React](../../tokens/docs/js.md) | ESM tokens with React ThemeProvider |
+| [Android Compose](../../tokens-android/docs/USAGE.md) | Kotlin tokens for Jetpack Compose |
+| [Tokens README](../../tokens/README.md) | Token pipeline overview |
+| [Main README](../../../README.md) | Project overview |
+| [CLAUDE.md](../../../CLAUDE.md) | Architecture & build details |
