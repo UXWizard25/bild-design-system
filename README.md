@@ -78,8 +78,8 @@ Both pipelines use the **CodeBridge Figma Plugin** for automated exports.
 |----------|---------------|
 | CSS/Web | [packages/tokens/docs/css.md](./packages/tokens/docs/css.md) |
 | JavaScript/React | [packages/tokens/docs/js.md](./packages/tokens/docs/js.md) |
-| Android Compose | [packages/tokens/docs/android.md](./packages/tokens/docs/android.md) |
-| iOS SwiftUI | [packages/tokens/docs/ios.md](./packages/tokens/docs/ios.md) |
+| Android Compose | [packages/tokens-android/docs/USAGE.md](./packages/tokens-android/docs/USAGE.md) |
+| iOS SwiftUI | [packages/tokens-ios/Documentation/USAGE.md](./packages/tokens-ios/Documentation/USAGE.md) |
 
 ---
 
