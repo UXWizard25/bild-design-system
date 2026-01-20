@@ -35,7 +35,7 @@ plugins {
 }
 
 android {
-    namespace = "de.bild.design.tokens"
+    namespace = "com.bild.designsystem"
     compileSdk = 34
 
     defaultConfig {
