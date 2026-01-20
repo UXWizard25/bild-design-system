@@ -21,13 +21,113 @@ import com.bild.designsystem.shared.DesignColorScheme
 /**
  * Color scheme interface for Sportbild
  * Extends DesignColorScheme for Dual-Axis theming compatibility
- * Allows type-safe access to colors and enables color scheme sharing across brands
- *
- * All color properties are inherited from DesignColorScheme.
- * This interface exists to enable brand-specific type checking.
+ * Provides type-safe access to all 102 color tokens
  */
 @Stable
-interface SportbildColorScheme : DesignColorScheme
+interface SportbildColorScheme : DesignColorScheme {
+    override val textColorBrand: Color
+    override val textColorBrandLightOnly: Color
+    override val textColorPrimary: Color
+    override val textColorSecondary: Color
+    override val textColorTertiary: Color
+    override val kickerTextColor: Color
+    override val headlineTextColor: Color
+    override val textColorOnImage: Color
+    override val textColorSecondaryOnDark: Color
+    override val textColorPrimaryOnLight: Color
+    override val kickerTextColorOnDark: Color
+    override val kickerTextColorOnLight: Color
+    override val textColorPrimaryOnDark: Color
+    override val textColorSecondaryOnLight: Color
+    override val textColorIdle: Color
+    override val textColorDisabled: Color
+    override val textColorHover: Color
+    override val textColorActive: Color
+    override val textColorPrimaryInverse: Color
+    override val textColorSecondaryInverse: Color
+    override val textColorInverseHighContrast: Color
+    override val textColorSuccess: Color
+    override val textColorError: Color
+    override val textColorWarning: Color
+    override val bgColorPrimary: Color
+    override val bgColorDisabled: Color
+    override val bgColorSecondary: Color
+    override val bgColorPrimaryConstDark: Color
+    override val bgColorQuaternary: Color
+    override val bgColorTertiary: Color
+    override val bgColorPrimaryConstLight: Color
+    override val bgColorQuintenary: Color
+    override val bgColorBrandLightOnly: Color
+    override val bgColorBrandSolid: Color
+    override val bgColorBrandSolidHover: Color
+    override val bgColorBrandSolidActive: Color
+    override val bgColorBrandTint: Color
+    override val bgColorBrandTintHover: Color
+    override val bgColorPrimaryInverse: Color
+    override val bgColorTertiaryInverse: Color
+    override val bgColorQuaternaryInverse: Color
+    override val bgColorSecondaryInverse: Color
+    override val bgColorQuintenaryInverse: Color
+    override val bgColorSuccessTint: Color
+    override val bgColorSuccessSolid: Color
+    override val bgColorSuccessSolidHover: Color
+    override val bgColorSuccessTintHover: Color
+    override val bgColorSuccessSolidActive: Color
+    override val bgColorTertiaryGradientStop: Color
+    override val bgColorPrimaryGradientStop: Color
+    override val bgColorSecondaryGradientStop: Color
+    override val overlayScrimBlackConst: Color
+    override val overlayScrimWhiteConst: Color
+    override val bgColorErrorTint: Color
+    override val bgColorErrorTintHover: Color
+    override val bgColorErrorSolid: Color
+    override val bgColorErrorSolidHover: Color
+    override val bgColorWarningTint: Color
+    override val bgColorWarningTintHover: Color
+    override val bgColorWarningSolid: Color
+    override val bgColorWarningSolidHover: Color
+    override val borderColorDefault: Color
+    override val borderColorSubtle: Color
+    override val borderColorExtraStrong: Color
+    override val borderColorStrong: Color
+    override val borderColorSubtleOnDark: Color
+    override val borderColorDefaultOnDark: Color
+    override val borderColorSubtleOnLight: Color
+    override val borderColorDefaultOnLight: Color
+    override val borderColorSuccess: Color
+    override val borderColorError: Color
+    override val borderColorWarning: Color
+    override val borderColorDisabled: Color
+    override val borderColorSelected: Color
+    override val borderColorActive: Color
+    override val borderColorIdle: Color
+    override val borderColorDefaultInverse: Color
+    override val borderColorSubtleInverse: Color
+    override val borderColorBrand: Color
+    override val borderColorBrandLightOnly: Color
+    override val borderColorBrandConst: Color
+    override val borderColorNoContrast: Color
+    override val iconColorIdle: Color
+    override val iconColorDisabled: Color
+    override val iconColorHover: Color
+    override val iconColorActive: Color
+    override val iconColorSecondaryOnLight: Color
+    override val iconColorPrimaryOnDark: Color
+    override val iconColorSecondaryOnDark: Color
+    override val iconColorPrimaryOnLight: Color
+    override val iconColorConstOnImage: Color
+    override val iconColorSuccess: Color
+    override val iconColorError: Color
+    override val iconColorWarning: Color
+    override val iconColorBrand: Color
+    override val iconColorBrandLightOnly: Color
+    override val iconColorPrimary: Color
+    override val iconColorSecondary: Color
+    override val iconColorTertiary: Color
+    override val iconColorPrimaryInverse: Color
+    override val iconColorSecondaryInverse: Color
+    override val iconColorInverseHighContrast: Color
+}
 
 /**
  * Sportbild Color Scheme - Light Mode

@@ -3699,19 +3699,22 @@ import com.bild.designsystem.shared.DesignColorScheme
 `;
 
   // Generate interface (only for Light mode to avoid duplication)
-  // The interface extends DesignColorScheme and inherits all its properties automatically.
-  // We don't redeclare properties here to avoid "hides member of supertype" errors in Kotlin.
+  // Interface declares ALL color properties - same pattern as Sizing/Density schemes
+  // This enables build.js to extract properties for the unified DesignColorScheme interface
   if (mode.toLowerCase() === 'light') {
     output += `/**
  * Color scheme interface for ${brandPascal}
  * Extends DesignColorScheme for Dual-Axis theming compatibility
- * Allows type-safe access to colors and enables color scheme sharing across brands
- *
- * All color properties are inherited from DesignColorScheme.
- * This interface exists to enable brand-specific type checking.
+ * Provides type-safe access to all ${tokens.length} color tokens
  */
 @Stable
-interface ${brandPascal}ColorScheme : DesignColorScheme
+interface ${brandPascal}ColorScheme : DesignColorScheme {
+`;
+    // Declare ALL color properties in the interface (consistent with Sizing/Density pattern)
+    tokens.forEach(token => {
+      output += `    override val ${token.name}: Color\n`;
+    });
+    output += `}
 
 `;
   }
