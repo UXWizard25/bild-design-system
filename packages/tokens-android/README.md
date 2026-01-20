@@ -50,7 +50,7 @@ The token needs `read:packages` scope.
 ### Theme Setup
 
 ```kotlin
-import de.bild.design.tokens.*
+import com.bild.designsystem.shared.*
 
 @Composable
 fun MyApp() {
