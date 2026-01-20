@@ -902,8 +902,8 @@ theme.effects.shadowSoftSm      // [{ offsetX: 0, ... }]
 | Document | Description |
 |----------|-------------|
 | [CSS](./css.md) | CSS Custom Properties & Shadow DOM |
-| [Android Compose](./android.md) | Kotlin tokens for Jetpack Compose |
-| [iOS SwiftUI](./ios.md) | Swift tokens for SwiftUI |
+| [Android Compose](../../tokens-android/docs/USAGE.md) | Kotlin tokens for Jetpack Compose |
+| [iOS SwiftUI](../../tokens-ios/Documentation/USAGE.md) | Swift tokens for SwiftUI |
 | [Tokens README](../README.md) | Token pipeline overview |
 | [Main README](../../README.md) | Project overview |
 | [CLAUDE.md](../../CLAUDE.md) | Architecture & build details |

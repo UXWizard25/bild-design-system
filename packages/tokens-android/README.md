@@ -133,7 +133,7 @@ DesignSystemTheme.stackSpaceConstLg  // Constant
 
 ## Documentation
 
-For complete API documentation, see [USAGE.md](src/main/kotlin/com/bild/designsystem/USAGE.md).
+For complete API documentation, see [USAGE.md](docs/USAGE.md).
 
 ## Requirements
 

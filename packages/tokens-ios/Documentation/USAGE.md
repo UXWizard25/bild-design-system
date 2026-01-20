@@ -827,9 +827,9 @@ theme.sizing.gridSpaceRespBase           // CGFloat
 
 | Document | Description |
 |----------|-------------|
-| [CSS](./css.md) | CSS Custom Properties & Shadow DOM |
-| [JavaScript/React](./js.md) | ESM tokens with React ThemeProvider |
-| [Android Compose](./android.md) | Kotlin tokens for Jetpack Compose |
-| [Tokens README](../README.md) | Token pipeline overview |
-| [Main README](../../README.md) | Project overview |
-| [CLAUDE.md](../../CLAUDE.md) | Architecture & build details |
+| [CSS](../../tokens/docs/css.md) | CSS Custom Properties & Shadow DOM |
+| [JavaScript/React](../../tokens/docs/js.md) | ESM tokens with React ThemeProvider |
+| [Android Compose](../../tokens-android/docs/USAGE.md) | Kotlin tokens for Jetpack Compose |
+| [Tokens README](../../tokens/README.md) | Token pipeline overview |
+| [Main README](../../../README.md) | Project overview |
+| [CLAUDE.md](../../../CLAUDE.md) | Architecture & build details |

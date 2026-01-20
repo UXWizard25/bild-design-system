@@ -903,8 +903,8 @@ For legacy browser support, fallback values are included:
 | Document | Description |
 |----------|-------------|
 | [JavaScript/React](./js.md) | ESM tokens with React ThemeProvider |
-| [Android Compose](./android.md) | Kotlin tokens for Jetpack Compose |
-| [iOS SwiftUI](./ios.md) | Swift tokens for SwiftUI |
+| [Android Compose](../../tokens-android/docs/USAGE.md) | Kotlin tokens for Jetpack Compose |
+| [iOS SwiftUI](../../tokens-ios/Documentation/USAGE.md) | Swift tokens for SwiftUI |
 | [Tokens README](../README.md) | Token pipeline overview |
 | [Main README](../../README.md) | Project overview |
 | [CLAUDE.md](../../CLAUDE.md) | Architecture & build details |

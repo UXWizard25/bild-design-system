@@ -68,8 +68,8 @@ npm run publish:vue            # npm publish -w @marioschmidt/design-system-vue
 
 **Platform Documentation:**
 - Web: `packages/tokens/docs/css.md`, `packages/tokens/docs/js.md`
-- iOS: `packages/tokens-ios/README.md`, `packages/tokens/docs/ios.md`
-- Android: `packages/tokens-android/README.md`, `packages/tokens/docs/android.md`
+- iOS: `packages/tokens-ios/README.md`, `packages/tokens-ios/Documentation/USAGE.md`
+- Android: `packages/tokens-android/README.md`, `packages/tokens-android/docs/USAGE.md`
 
 ---
 

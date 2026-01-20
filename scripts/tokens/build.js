@@ -91,12 +91,14 @@ function getDocumentationUrl(platform) {
     || 'https://github.com/user/design-system-tokens';
   const baseDocsUrl = `${repoUrl}/blob/main/packages/tokens`;
 
+  // Native platforms have docs in their own packages
+  const repoBaseUrl = repoUrl.replace('/packages/tokens', '');
   const platformDocs = {
     css: `${baseDocsUrl}/docs/css.md`,
     scss: `${baseDocsUrl}/docs/css.md`,
     js: `${baseDocsUrl}/docs/js.md`,
-    ios: `${baseDocsUrl}/docs/ios.md`,
-    android: `${baseDocsUrl}/docs/android.md`,
+    ios: `${repoBaseUrl}/blob/main/packages/tokens-ios/Documentation/USAGE.md`,
+    android: `${repoBaseUrl}/blob/main/packages/tokens-android/docs/USAGE.md`,
     default: `${baseDocsUrl}/README.md`
   };
 
@@ -8684,31 +8686,9 @@ async function main() {
       console.log(`   ⚠️  docs/js.md nicht gefunden`);
     }
 
-    // Copy docs/android.md to Android package as USAGE.md (README.md is maintained separately)
-    if (COMPOSE_ENABLED) {
-      const androidReadmeSrc = path.join(readmeSrcDir, 'android.md');
-      const androidReadmeDest = path.join(ANDROID_DIST_DIR, 'USAGE.md');
-      if (fs.existsSync(androidReadmeSrc)) {
-        fs.mkdirSync(path.dirname(androidReadmeDest), { recursive: true });
-        fs.copyFileSync(androidReadmeSrc, androidReadmeDest);
-        console.log(`   ✅ docs/android.md → tokens-android/.../USAGE.md`);
-      } else {
-        console.log(`   ⚠️  docs/android.md nicht gefunden`);
-      }
-    }
-
-    // Copy docs/ios.md to iOS package as USAGE.md (README.md is maintained separately)
-    if (SWIFTUI_ENABLED) {
-      const iosReadmeSrc = path.join(readmeSrcDir, 'ios.md');
-      const iosReadmeDest = path.join(IOS_DIST_DIR, 'USAGE.md');
-      if (fs.existsSync(iosReadmeSrc)) {
-        fs.mkdirSync(path.dirname(iosReadmeDest), { recursive: true });
-        fs.copyFileSync(iosReadmeSrc, iosReadmeDest);
-        console.log(`   ✅ docs/ios.md → tokens-ios/.../USAGE.md`);
-      } else {
-        console.log(`   ⚠️  docs/ios.md nicht gefunden`);
-      }
-    }
+    // Note: Native platform docs (Android/iOS) are now maintained directly in their packages:
+    // - packages/tokens-android/docs/USAGE.md
+    // - packages/tokens-ios/Documentation/USAGE.md
   } catch (err) {
     console.log(`   ⚠️  Fehler beim Kopieren der READMEs: ${err.message}`);
   }

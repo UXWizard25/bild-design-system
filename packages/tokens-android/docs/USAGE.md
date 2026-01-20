@@ -820,9 +820,9 @@ DesignSystemTheme.sizing.gridSpaceRespBase // Dp
 
 | Document | Description |
 |----------|-------------|
-| [CSS](./css.md) | CSS Custom Properties & Shadow DOM |
-| [JavaScript/React](./js.md) | ESM tokens with React ThemeProvider |
-| [iOS SwiftUI](./ios.md) | Swift tokens for SwiftUI |
-| [Tokens README](../README.md) | Token pipeline overview |
-| [Main README](../../README.md) | Project overview |
-| [CLAUDE.md](../../CLAUDE.md) | Architecture & build details |
+| [CSS](../../tokens/docs/css.md) | CSS Custom Properties & Shadow DOM |
+| [JavaScript/React](../../tokens/docs/js.md) | ESM tokens with React ThemeProvider |
+| [iOS SwiftUI](../../tokens-ios/Documentation/USAGE.md) | Swift tokens for SwiftUI |
+| [Tokens README](../../tokens/README.md) | Token pipeline overview |
+| [Main README](../../../README.md) | Project overview |
+| [CLAUDE.md](../../../CLAUDE.md) | Architecture & build details |
