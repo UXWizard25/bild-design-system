@@ -37,7 +37,7 @@ The BILD Design Ops Pipeline transforms design assets from Figma into production
 
 | Pipeline | Input | Output | Platforms |
 |----------|-------|--------|-----------|
-| **🎨 Token Pipeline** | Figma Variables | Design Tokens | Web (CSS, SCSS, JS), iOS, Android |
+| **🎨 Token Pipeline** | Figma Variables | Design Tokens | Web (CSS, JSON), iOS, Android |
 | **🖼️ Icon Pipeline** | Figma Icons (SVG) | Multi-format Icons | React, iOS, Android |
 | **🧩 Component Pipeline** | Stencil Source | Web Components | All browsers (Shadow DOM) |
 
@@ -51,7 +51,7 @@ Both pipelines use the **CodeBridge Figma Plugin** for automated exports.
 
 | Package | Registry | Description | Documentation |
 |---------|----------|-------------|---------------|
-| **@marioschmidt/design-system-tokens** | npm | Web tokens (CSS, JS, SCSS, JSON) | [📖 README](./packages/tokens/README.md) |
+| **@marioschmidt/design-system-tokens** | npm | Web tokens (CSS, JSON) | [📖 README](./packages/tokens/README.md) |
 | **BildDesignTokens** | SPM (GitHub) | iOS/macOS SwiftUI tokens | [📖 README](./packages/tokens-ios/README.md) |
 | **de.bild.design:tokens** | Maven (GitHub Packages) | Android Jetpack Compose tokens | [📖 README](./packages/tokens-android/README.md) |
 
@@ -77,8 +77,6 @@ Both pipelines use the **CodeBridge Figma Plugin** for automated exports.
 | Platform | Documentation |
 |----------|---------------|
 | CSS/Web | [packages/tokens/docs/css.md](./packages/tokens/docs/css.md) |
-| SCSS | [packages/tokens/docs/scss.md](./packages/tokens/docs/scss.md) |
-| JavaScript/React | [packages/tokens/docs/js.md](./packages/tokens/docs/js.md) |
 | Android Compose | [packages/tokens-android/docs/USAGE.md](./packages/tokens-android/docs/USAGE.md) |
 | iOS SwiftUI | [packages/tokens-ios/Documentation/USAGE.md](./packages/tokens-ios/Documentation/USAGE.md) |
 
@@ -125,8 +123,8 @@ Both pipelines use the **CodeBridge Figma Plugin** for automated exports.
 │  ├── tokens/                    ├── icons/                                   │
 │  │   └── dist/                  │   ├── svg/dist/        (npm: SVG)          │
 │  │       ├── css/               │   ├── react/dist/      (npm: React)        │
-│  │       ├── scss/              │   ├── android/src/     (Maven)             │
-│  │       └── js/                │   └── ios/Sources/     (SPM)               │
+│  │       └── json/              │   ├── android/src/     (Maven)             │
+│  │                              │   └── ios/Sources/     (SPM)               │
 │  │                              │                                            │
 │  ├── tokens-ios/                ├── components/          (Stencil)           │
 │  │   └── Sources/   (SPM)       ├── react/               (React wrappers)    │
@@ -268,15 +266,6 @@ gpr.token=YOUR_GITHUB_TOKEN  # needs read:packages scope
 }
 ```
 
-```javascript
-// JavaScript
-import { createTheme } from '@marioschmidt/design-system-tokens/themes';
-
-const theme = createTheme({ colorBrand: 'bild', colorMode: 'light' });
-console.log(theme.colors.textColorPrimary);   // "#232629"
-console.log(theme.spacing.gridSpaceRespBase); // "12px"
-```
-
 ```tsx
 // React Icons
 import { IconAdd, IconSearch } from '@marioschmidt/design-system-icons-react';
@@ -344,7 +333,7 @@ bild-design-system/
 │   ├── tokens/                    # @marioschmidt/design-system-tokens (npm)
 │   │   ├── src/                   # Figma export (bild-design-system-raw-data.json)
 │   │   ├── docs/                  # Platform guides (css, js, ios, android)
-│   │   ├── dist/                  # Built outputs (css, scss, js, json)
+│   │   ├── dist/                  # Built outputs (css, json)
 │   │   ├── README.md
 │   │   └── package.json
 │   │

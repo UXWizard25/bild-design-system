@@ -34,6 +34,8 @@ const DENSITY_MODES = ['default', 'dense', 'spacious'];
 // Platform output toggles - set to false to disable output generation
 const COMPOSE_ENABLED = true;
 const SWIFTUI_ENABLED = true;       // SwiftUI output in dist/ios/
+const SCSS_ENABLED = false;         // SCSS output in dist/scss/
+const JS_ENABLED = false;           // JS/ESM output in dist/js/ and dist/js.min/
 
 // Token type toggles - set to false to exclude from all platform outputs
 const BOOLEAN_TOKENS_ENABLED = false;
@@ -9472,10 +9474,14 @@ async function main() {
   console.log(`   - Output-Verzeichnis: dist/\n`);
 
   // Build optimized JS output (replaces flat structure with grouped files)
-  await buildOptimizedJSOutput();
+  if (JS_ENABLED) {
+    await buildOptimizedJSOutput();
+  }
 
   // Build optimized SCSS output (replaces granular files with token maps)
-  await buildOptimizedSCSSOutput();
+  if (SCSS_ENABLED) {
+    await buildOptimizedSCSSOutput();
+  }
 
   // Copy platform-specific README files to dist directories
   console.log(`\n📄 Kopiere Platform-READMEs:\n`);
@@ -9513,14 +9519,16 @@ async function main() {
     }
 
     // Copy docs/js.md to dist/js/README.md (with link transformation)
-    const jsReadmeSrc = path.join(readmeSrcDir, 'js.md');
-    const jsReadmeDest = path.join(DIST_DIR, 'js/README.md');
-    if (fs.existsSync(jsReadmeSrc)) {
-      const content = fs.readFileSync(jsReadmeSrc, 'utf8');
-      fs.writeFileSync(jsReadmeDest, transformLinksForDist(content, 'js'));
-      console.log(`   ✅ docs/js.md → dist/js/README.md (links adjusted)`);
-    } else {
-      console.log(`   ⚠️  docs/js.md nicht gefunden`);
+    if (JS_ENABLED) {
+      const jsReadmeSrc = path.join(readmeSrcDir, 'js.md');
+      const jsReadmeDest = path.join(DIST_DIR, 'js/README.md');
+      if (fs.existsSync(jsReadmeSrc)) {
+        const content = fs.readFileSync(jsReadmeSrc, 'utf8');
+        fs.writeFileSync(jsReadmeDest, transformLinksForDist(content, 'js'));
+        console.log(`   ✅ docs/js.md → dist/js/README.md (links adjusted)`);
+      } else {
+        console.log(`   ⚠️  docs/js.md nicht gefunden`);
+      }
     }
 
     // Note: Native platform docs (Android/iOS) are now maintained directly in their packages:
@@ -9530,12 +9538,38 @@ async function main() {
     console.log(`   ⚠️  Fehler beim Kopieren der READMEs: ${err.message}`);
   }
 
+  // Clean up disabled output directories (at the very end, after all Style Dictionary builds)
+  if (!JS_ENABLED) {
+    const jsDistDir = path.join(DIST_DIR, 'js');
+    const jsMinDir = path.join(DIST_DIR, 'js.min');
+    if (fs.existsSync(jsDistDir)) {
+      fs.rmSync(jsDistDir, { recursive: true });
+      console.log('\n   🧹 dist/js/ removed (JS_ENABLED=false)');
+    }
+    if (fs.existsSync(jsMinDir)) {
+      fs.rmSync(jsMinDir, { recursive: true });
+      console.log('   🧹 dist/js.min/ removed (JS_ENABLED=false)');
+    }
+  }
+
+  if (!SCSS_ENABLED) {
+    const scssDistDir = path.join(DIST_DIR, 'scss');
+    if (fs.existsSync(scssDistDir)) {
+      fs.rmSync(scssDistDir, { recursive: true });
+      console.log('\n   🧹 dist/scss/ removed (SCSS_ENABLED=false)');
+    }
+  }
+
   console.log(`\n📁 Struktur:`);
   console.log(`   packages/tokens/dist/`);
   console.log(`   ├── css/        (CSS with data-attributes)`);
-  console.log(`   ├── scss/       (SCSS variables)`);
-  console.log(`   ├── js/         (ESM modules)`);
-  console.log(`   ├── js.min/     (ESM minified)`);
+  if (SCSS_ENABLED) {
+    console.log(`   ├── scss/       (SCSS variables)`);
+  }
+  if (JS_ENABLED) {
+    console.log(`   ├── js/         (ESM modules)`);
+    console.log(`   ├── js.min/     (ESM minified)`);
+  }
   console.log(`   └── json/       (JSON)`);
   if (SWIFTUI_ENABLED) {
     console.log(`   packages/tokens-ios/Sources/BildDesignTokens/`);
@@ -9546,18 +9580,20 @@ async function main() {
     console.log(`   └── (Jetpack Compose - for Maven distribution)`);
   }
   console.log(``);
-  console.log(`   JS structure (all variants):`);
-  console.log(`   - primitives/          (bundled primitives)`);
-  console.log(`   - themes/              (createTheme, pre-built themes)`);
-  console.log(`   - react/               (ThemeProvider, useTheme, useBreakpoint)`);
-  console.log(`   - brands/{brand}/`);
-  console.log(`       ├── colors.js      (light/dark + flat exports)`);
-  console.log(`       ├── spacing.js     (breakpoints + flat exports)`);
-  console.log(`       ├── typography.js  (breakpoints + flat exports)`);
-  console.log(`       ├── effects.js     (light/dark + flat exports)`);
-  console.log(`       ├── density.js     (density modes + flat exports)`);
-  console.log(`       └── components/    (one file per component)`);
-  console.log('');
+  if (JS_ENABLED) {
+    console.log(`   JS structure (all variants):`);
+    console.log(`   - primitives/          (bundled primitives)`);
+    console.log(`   - themes/              (createTheme, pre-built themes)`);
+    console.log(`   - react/               (ThemeProvider, useTheme, useBreakpoint)`);
+    console.log(`   - brands/{brand}/`);
+    console.log(`       ├── colors.js      (light/dark + flat exports)`);
+    console.log(`       ├── spacing.js     (breakpoints + flat exports)`);
+    console.log(`       ├── typography.js  (breakpoints + flat exports)`);
+    console.log(`       ├── effects.js     (light/dark + flat exports)`);
+    console.log(`       ├── density.js     (density modes + flat exports)`);
+    console.log(`       └── components/    (one file per component)`);
+    console.log('');
+  }
 
   // Explizit success exit code
   process.exit(0);

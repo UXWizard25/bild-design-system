@@ -1,5 +1,8 @@
 # ⚡ JavaScript/React - Design System Tokens
 
+> ⚠️ **Currently disabled:** JavaScript/ESM output is disabled (`JS_ENABLED=false` in `scripts/tokens/build.js`).
+> This documentation is kept as a reference in case the output is re-enabled later.
+
 > **ESM Design Tokens for JavaScript & React**
 >
 > Tree-shakeable, type-safe, multi-brand ready with **Dual-Axis Architecture**.
