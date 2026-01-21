@@ -530,16 +530,19 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
         }
       }]
     },
-    scss: {
-      transformGroup: 'custom/scss',
-      buildPath: `${DIST_DIR}/scss/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
-      files: [{
-        destination: `${fileName}.scss`,
-        format: 'custom/scss/variables',
-        filter: tokenFilter,
-        options: { outputReferences: false, showDescriptions: SHOW_DESCRIPTIONS.scss }
-      }]
-    },
+    // SCSS: Only build when SCSS_ENABLED=true (conditional like compose)
+    ...(SCSS_ENABLED ? {
+      scss: {
+        transformGroup: 'custom/scss',
+        buildPath: `${DIST_DIR}/scss/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
+        files: [{
+          destination: `${fileName}.scss`,
+          format: 'custom/scss/variables',
+          filter: tokenFilter,
+          options: { outputReferences: false, showDescriptions: SHOW_DESCRIPTIONS.scss }
+        }]
+      }
+    } : {}),
     json: {
       transformGroup: 'custom/js',
       buildPath: `${DIST_DIR}/json/${buildPath.replace(DIST_DIR + '/css/', '')}/`,
@@ -9549,14 +9552,6 @@ async function main() {
     if (fs.existsSync(jsMinDir)) {
       fs.rmSync(jsMinDir, { recursive: true });
       console.log('   🧹 dist/js.min/ removed (JS_ENABLED=false)');
-    }
-  }
-
-  if (!SCSS_ENABLED) {
-    const scssDistDir = path.join(DIST_DIR, 'scss');
-    if (fs.existsSync(scssDistDir)) {
-      fs.rmSync(scssDistDir, { recursive: true });
-      console.log('\n   🧹 dist/scss/ removed (SCSS_ENABLED=false)');
     }
   }
 
