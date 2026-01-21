@@ -422,13 +422,14 @@ function getSizeClassName(breakpoint, platform = 'ios') {
  *
  * @param {string} attrSelector - The attribute selector, e.g., [data-content-brand="bild"]
  * @param {string} [classSelector] - Optional class selector, e.g., .headline-1
+ * @param {string} [indent=''] - Indentation for the :host line (for @media blocks)
  * @returns {string} Combined selector for both contexts
  */
-function buildDualSelector(attrSelector, classSelector = '') {
+function buildDualSelector(attrSelector, classSelector = '', indent = '') {
   if (classSelector) {
-    return `${attrSelector} ${classSelector},\n:host(${attrSelector}) ${classSelector}`;
+    return `${attrSelector} ${classSelector},\n${indent}:host(${attrSelector}) ${classSelector}`;
   }
-  return `${attrSelector},\n:host(${attrSelector})`;
+  return `${attrSelector},\n${indent}:host(${attrSelector})`;
 }
 
 /**
@@ -1982,12 +1983,20 @@ async function optimizeComponentEffectsCSS() {
   /**
    * Parse effects CSS file and extract class rules
    * Returns: Map<className, ruleContent>
+   *
+   * Handles Dual-Selector format with :host() for Shadow DOM compatibility:
+   * [data-color-brand="..."][data-theme="..."] .class-name,
+   * :host([data-color-brand="..."][data-theme="..."]) .class-name {
+   *   box-shadow: ...;
+   * }
    */
   function parseEffectsCssFile(cssContent) {
     const rules = new Map();
 
-    // Match: [data-color-brand="..."][data-theme="..."] .class-name { ... } (Dual-Axis)
-    const ruleRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\]\s+\.([a-z0-9-]+)\s*\{([^}]+)\}/gi;
+    // Match: [data-color-brand="..."][data-theme="..."] .class-name followed by
+    // optional ",\n:host(...)" dual-selector part, then { content }
+    // The (?:,[\s\S]*?)? handles the optional :host() line (non-greedy)
+    const ruleRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\]\s+\.([a-z0-9-]+)(?:,[\s\S]*?)?\s*\{([^}]+)\}/gi;
     let match;
 
     while ((match = ruleRegex.exec(cssContent)) !== null) {
@@ -2003,6 +2012,12 @@ async function optimizeComponentEffectsCSS() {
    * Check if all rules are identical between light and dark
    */
   function areEffectsIdentical(lightRules, darkRules) {
+    // Guard: Empty maps should not be considered "identical"
+    // This prevents silent failures when parsing fails
+    if (lightRules.size === 0 && darkRules.size === 0) {
+      return false;
+    }
+
     if (lightRules.size !== darkRules.size) {
       return false;
     }
@@ -2479,6 +2494,7 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
   // Uses dual selectors for Shadow DOM compatibility
   const attrSelector = `[data-content-brand="${brand}"]`;
   const dualSelector = buildDualSelector(attrSelector);
+  const dualSelectorIndented = buildDualSelector(attrSelector, '', '  '); // For @media blocks
 
   output += `${dualSelector} {\n`;
   if (baseVars && Object.keys(baseVars).length > 0) {
@@ -2500,7 +2516,7 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
 
       if (Object.keys(changedVars).length > 0) {
         output += `@media (min-width: ${breakpointConfig[bp]}) {\n`;
-        output += `  ${dualSelector} {\n`;
+        output += `  ${dualSelectorIndented} {\n`;
         for (const [varName, value] of Object.entries(changedVars)) {
           output += `    ${varName}: ${value};\n`;
         }
@@ -2577,6 +2593,7 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
   // Uses dual selectors for Shadow DOM compatibility
   const attrSelector = `[data-content-brand="${brand}"]`;
   const dualSelector = buildDualSelector(attrSelector);
+  const dualSelectorIndented = buildDualSelector(attrSelector, '', '  '); // For @media blocks
 
   // Base styles (XS)
   output += `${dualSelector} {\n`;
@@ -2599,7 +2616,7 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
 
       if (Object.keys(changedVars).length > 0) {
         output += `@media (min-width: ${breakpointConfig[bp]}) {\n`;
-        output += `  ${dualSelector} {\n`;
+        output += `  ${dualSelectorIndented} {\n`;
         for (const [varName, value] of Object.entries(changedVars)) {
           output += `    ${varName}: ${value};\n`;
         }
