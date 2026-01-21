@@ -1,7 +1,7 @@
 # ⚡ JavaScript/React - Design System Tokens
 
-> ⚠️ **Aktuell deaktiviert:** Die JavaScript/ESM-Ausgabe ist deaktiviert (`JS_ENABLED=false` in `scripts/tokens/build.js`).
-> Diese Dokumentation bleibt als Referenz erhalten für den Fall, dass die Ausgabe später wieder aktiviert wird.
+> ⚠️ **Currently disabled:** JavaScript/ESM output is disabled (`JS_ENABLED=false` in `scripts/tokens/build.js`).
+> This documentation is kept as a reference in case the output is re-enabled later.
 
 > **ESM Design Tokens for JavaScript & React**
 >
