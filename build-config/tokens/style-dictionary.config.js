@@ -1623,131 +1623,363 @@ function mapTextCase(figmaTextCase) {
   return mapping[figmaTextCase] || figmaTextCase.toLowerCase();
 }
 
+// ============================================================================
+// OPTIMIZED SCSS FORMATS - Token Maps for Modern SCSS Architecture
+// ============================================================================
+
 /**
- * SCSS Effects Format - Outputs shadow tokens as SCSS maps
+ * SCSS Optimized Color Map Format
+ * Generates flat color maps per mode: $colors-light, $colors-dark
+ *
+ * Output:
+ * $colors-light: (
+ *   text-primary: #222628,
+ *   text-secondary: #565A5F,
+ *   bg-primary: #FFFFFF,
+ * );
  */
-const scssEffectsFormat = ({ dictionary, options }) => {
+const scssOptimizedColorMapFormat = ({ dictionary, options }) => {
   const { brand, colorMode } = options;
-  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
+  const mapName = `colors-${colorMode}`;
 
   let output = generateFileHeader({
-    fileName: `effects-${colorMode}.scss`,
+    fileName: `_${mapName}.scss`,
     commentStyle: 'line',
     platform: 'scss',
     brand: brand,
-    context: `Mode: ${colorMode}`
+    context: `Color tokens for ${colorMode} mode`
   });
 
-  const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
+  output += `// Color tokens for ${colorMode} mode\n`;
+  output += `// Usage: map-get($${mapName}, 'text-primary')\n\n`;
+  output += `$${mapName}: (\n`;
 
-  let isFirstTopLevel = true;
-  Object.keys(hierarchicalGroups).forEach(topLevel => {
-    const subGroups = hierarchicalGroups[topLevel];
+  // Group tokens by category for organization
+  const groupedTokens = {};
 
-    if (!isFirstTopLevel) {
+  dictionary.allTokens.forEach(token => {
+    if (token.$type === 'color' || token.type === 'color') {
+      // Get category from path (e.g., Semantic/Text/Brand -> text)
+      const category = token.path.length > 2 ? token.path[1].toLowerCase() : 'other';
+      if (!groupedTokens[category]) {
+        groupedTokens[category] = [];
+      }
+      groupedTokens[category].push(token);
+    }
+  });
+
+  // Output tokens grouped by category
+  const categories = Object.keys(groupedTokens).sort();
+  categories.forEach((category, catIndex) => {
+    output += `  // ${category.charAt(0).toUpperCase() + category.slice(1)}\n`;
+
+    groupedTokens[category].forEach(token => {
+      const tokenName = nameTransformers.kebab(token.path[token.path.length - 1]);
+      const value = token.$value !== undefined ? token.$value : token.value;
+      output += `  '${tokenName}': ${value},\n`;
+    });
+
+    if (catIndex < categories.length - 1) {
       output += `\n`;
     }
-    output += `// ============================================\n`;
-    output += `// ${topLevel.toUpperCase()}\n`;
-    output += `// ============================================\n\n`;
-    isFirstTopLevel = false;
-
-    Object.keys(subGroups).forEach(subLevel => {
-      const tokens = subGroups[subLevel];
-
-      if (subLevel) {
-        output += `// ${topLevel} - ${subLevel}\n`;
-      }
-
-      tokens.forEach(token => {
-        if (token.$type === 'shadow' && Array.isArray(token.$value)) {
-          const uniqueName = uniqueNames.get(token.path.join('.'));
-
-          if (token.comment && options.showDescriptions !== false) {
-            output += `/** ${token.comment} */\n`;
-          }
-
-          // Convert shadow array to SCSS map array with kebab-case keys
-          const shadowsSCSS = token.$value.map((effect, idx) => {
-            if (effect.type === 'dropShadow') {
-              return `  ${idx + 1}: (\n    offset-x: ${effect.offsetX || 0}px,\n    offset-y: ${effect.offsetY || 0}px,\n    blur-radius: ${effect.radius || 0}px,\n    spread-radius: ${effect.spread || 0}px,\n    color: ${effect.color || 'rgba(0, 0, 0, 0)'}\n  )`;
-            }
-            return null;
-          }).filter(Boolean);
-
-          output += `$${uniqueName}: (\n${shadowsSCSS.join(',\n')}\n);\n`;
-        }
-      });
-
-      output += `\n`;
-    });
   });
+
+  output += `);\n`;
 
   return output;
 };
 
 /**
- * SCSS Typography Format - Outputs typography tokens as SCSS maps
+ * SCSS Optimized Typography Map Format
+ * Generates typography map with responsive values consolidated
+ *
+ * Output:
+ * $typography: (
+ *   'display-1': (
+ *     font-family: 'Gotham',
+ *     font-weight: 900,
+ *     letter-spacing: -0.5px,
+ *     responsive: (
+ *       xs: (font-size: 40px, line-height: 40px),
+ *       sm: (font-size: 40px, line-height: 40px),
+ *       md: (font-size: 72px, line-height: 72px),
+ *       lg: (font-size: 120px, line-height: 120px),
+ *     ),
+ *   ),
+ * );
  */
-const scssTypographyFormat = ({ dictionary, options }) => {
+const scssOptimizedTypographyMapFormat = ({ dictionary, options }) => {
   const { brand, breakpoint } = options;
-  const uniqueNames = generateUniqueNames(dictionary.allTokens, 'kebab');
 
   let output = generateFileHeader({
-    fileName: `typography-${breakpoint}.scss`,
+    fileName: `_typography-${breakpoint}.scss`,
     commentStyle: 'line',
     platform: 'scss',
     brand: brand,
-    context: `Breakpoint: ${breakpoint}`
+    context: `Typography tokens for breakpoint ${breakpoint}`
   });
 
-  const hierarchicalGroups = groupTokensHierarchically(dictionary.allTokens);
+  output += `// Typography tokens for breakpoint: ${breakpoint}\n`;
+  output += `// This file is merged with other breakpoints to create $typography map\n\n`;
+  output += `$typography-${breakpoint}: (\n`;
 
-  let isFirstTopLevel = true;
-  Object.keys(hierarchicalGroups).forEach(topLevel => {
-    const subGroups = hierarchicalGroups[topLevel];
+  dictionary.allTokens.forEach(token => {
+    if (token.$type === 'typography' && token.$value) {
+      const tokenName = nameTransformers.kebab(token.path[token.path.length - 1]);
+      const style = token.$value;
 
-    if (!isFirstTopLevel) {
-      output += `\n`;
-    }
-    output += `// ============================================\n`;
-    output += `// ${topLevel.toUpperCase()}\n`;
-    output += `// ============================================\n\n`;
-    isFirstTopLevel = false;
-
-    Object.keys(subGroups).forEach(subLevel => {
-      const tokens = subGroups[subLevel];
-
-      if (subLevel) {
-        output += `// ${topLevel} - ${subLevel}\n`;
+      output += `  '${tokenName}': (\n`;
+      if (style.fontFamily) output += `    font-family: '${style.fontFamily}',\n`;
+      if (style.fontWeight) output += `    font-weight: ${style.fontWeight},\n`;
+      if (style.fontSize) output += `    font-size: ${typeof style.fontSize === 'number' ? style.fontSize + 'px' : style.fontSize},\n`;
+      if (style.lineHeight) output += `    line-height: ${typeof style.lineHeight === 'number' ? style.lineHeight + 'px' : style.lineHeight},\n`;
+      if (style.letterSpacing) output += `    letter-spacing: ${typeof style.letterSpacing === 'number' ? style.letterSpacing + 'px' : style.letterSpacing},\n`;
+      if (style.fontStyle && style.fontStyle !== 'null' && style.fontStyle !== 'normal') {
+        output += `    font-style: ${style.fontStyle.toLowerCase()},\n`;
       }
+      if (style.textCase && style.textCase !== 'ORIGINAL') {
+        output += `    text-transform: ${mapTextCase(style.textCase)},\n`;
+      }
+      if (style.textDecoration && style.textDecoration !== 'NONE') {
+        output += `    text-decoration: ${style.textDecoration.toLowerCase()},\n`;
+      }
+      output += `  ),\n`;
+    }
+  });
 
-      tokens.forEach(token => {
-        if (token.$type === 'typography' && token.$value) {
-          const uniqueName = uniqueNames.get(token.path.join('.'));
-          const style = token.$value;
+  output += `);\n`;
 
-          if (token.comment && options.showDescriptions !== false) {
-            output += `/** ${token.comment} */\n`;
-          }
+  return output;
+};
 
-          output += `$${uniqueName}: (\n`;
-          // Use kebab-case for SCSS map keys (CSS property naming convention)
-          if (style.fontFamily) output += `  font-family: ${style.fontFamily},\n`;
-          if (style.fontWeight) output += `  font-weight: ${style.fontWeight},\n`;
-          if (style.fontSize) output += `  font-size: ${typeof style.fontSize === 'number' ? style.fontSize + 'px' : style.fontSize},\n`;
-          if (style.lineHeight) output += `  line-height: ${typeof style.lineHeight === 'number' ? style.lineHeight + 'px' : style.lineHeight},\n`;
-          if (style.letterSpacing) output += `  letter-spacing: ${typeof style.letterSpacing === 'number' ? style.letterSpacing + 'px' : style.letterSpacing},\n`;
-          if (style.fontStyle && style.fontStyle !== 'null') output += `  font-style: ${style.fontStyle.toLowerCase()},\n`;
-          if (style.textCase && style.textCase !== 'ORIGINAL') output += `  text-transform: ${mapTextCase(style.textCase)},\n`;
-          if (style.textDecoration && style.textDecoration !== 'NONE') output += `  text-decoration: ${style.textDecoration.toLowerCase()},\n`;
-          output += `);\n`;
+/**
+ * SCSS Optimized Effects Map Format
+ * Generates shadow maps per mode: $effects-light, $effects-dark
+ *
+ * Output:
+ * $effects-light: (
+ *   'shadow-soft-md': (
+ *     1: (offset-x: 0, offset-y: 2px, blur: 16px, spread: 0, color: rgba(0,0,0,0.03)),
+ *     2: (offset-x: 0, offset-y: 4px, blur: 12px, spread: 0, color: rgba(0,0,0,0.07)),
+ *   ),
+ * );
+ */
+const scssOptimizedEffectsMapFormat = ({ dictionary, options }) => {
+  const { brand, colorMode } = options;
+  const mapName = `effects-${colorMode}`;
+
+  let output = generateFileHeader({
+    fileName: `_${mapName}.scss`,
+    commentStyle: 'line',
+    platform: 'scss',
+    brand: brand,
+    context: `Effect tokens for ${colorMode} mode`
+  });
+
+  output += `// Shadow/Effect tokens for ${colorMode} mode\n`;
+  output += `// Usage: map-get($${mapName}, 'shadow-soft-md')\n\n`;
+  output += `$${mapName}: (\n`;
+
+  dictionary.allTokens.forEach(token => {
+    if (token.$type === 'shadow' && Array.isArray(token.$value)) {
+      const tokenName = nameTransformers.kebab(token.path[token.path.length - 1]);
+
+      output += `  '${tokenName}': (\n`;
+
+      token.$value.forEach((effect, idx) => {
+        if (effect.type === 'dropShadow') {
+          output += `    ${idx + 1}: (\n`;
+          output += `      offset-x: ${effect.offsetX || 0}px,\n`;
+          output += `      offset-y: ${effect.offsetY || 0}px,\n`;
+          output += `      blur: ${effect.radius || 0}px,\n`;
+          output += `      spread: ${effect.spread || 0}px,\n`;
+          output += `      color: ${effect.color || 'rgba(0, 0, 0, 0)'},\n`;
+          output += `    ),\n`;
         }
       });
 
-      output += `\n`;
-    });
+      output += `  ),\n`;
+    }
   });
+
+  output += `);\n`;
+
+  return output;
+};
+
+/**
+ * SCSS Optimized Spacing Map Format
+ * Generates spacing maps with density variants
+ *
+ * Output:
+ * $spacing-default: (
+ *   'stack-space-xs': 4px,
+ *   'stack-space-sm': 8px,
+ * );
+ */
+const scssOptimizedSpacingMapFormat = ({ dictionary, options }) => {
+  const { brand, density } = options;
+  const mapName = `spacing-${density}`;
+
+  let output = generateFileHeader({
+    fileName: `_${mapName}.scss`,
+    commentStyle: 'line',
+    platform: 'scss',
+    brand: brand,
+    context: `Spacing tokens for density: ${density}`
+  });
+
+  output += `// Spacing tokens for density: ${density}\n`;
+  output += `// Usage: map-get($${mapName}, 'stack-space-md')\n\n`;
+  output += `$${mapName}: (\n`;
+
+  dictionary.allTokens.forEach(token => {
+    const type = token.$type || token.type;
+    if (type === 'dimension' || type === 'spacing' || type === 'number') {
+      const tokenName = nameTransformers.kebab(token.path[token.path.length - 1]);
+      const value = token.$value !== undefined ? token.$value : token.value;
+      output += `  '${tokenName}': ${value},\n`;
+    }
+  });
+
+  output += `);\n`;
+
+  return output;
+};
+
+/**
+ * SCSS Optimized Primitives Format
+ * Generates flat primitive variables for direct use
+ *
+ * Output:
+ * $color-bild-red-50: #DD0000;
+ * $color-neutral-15: #222628;
+ * $space-1x: 8px;
+ */
+const scssOptimizedPrimitivesFormat = ({ dictionary, options }) => {
+  let output = generateFileHeader({
+    fileName: '_primitives.scss',
+    commentStyle: 'line',
+    platform: 'scss',
+    context: 'Primitive tokens (colors, spacing, sizing, fonts)'
+  });
+
+  output += `// Primitive tokens - Base values\n`;
+  output += `// These are the foundation tokens referenced by semantic tokens\n\n`;
+
+  // Group by type
+  const colorTokens = [];
+  const spaceTokens = [];
+  const sizeTokens = [];
+  const fontTokens = [];
+  const otherTokens = [];
+
+  dictionary.allTokens.forEach(token => {
+    const type = token.$type || token.type;
+    const name = nameTransformers.kebab(token.path[token.path.length - 1]);
+    const value = token.$value !== undefined ? token.$value : token.value;
+
+    if (type === 'color') {
+      colorTokens.push({ name, value });
+    } else if (name.includes('space') || name.includes('gap')) {
+      spaceTokens.push({ name, value });
+    } else if (name.includes('size') || name.includes('radius') || name.includes('border-width')) {
+      sizeTokens.push({ name, value });
+    } else if (name.includes('font') || name.includes('weight')) {
+      fontTokens.push({ name, value });
+    } else {
+      otherTokens.push({ name, value });
+    }
+  });
+
+  if (colorTokens.length > 0) {
+    output += `// Colors\n`;
+    colorTokens.forEach(t => {
+      output += `$${t.name}: ${t.value};\n`;
+    });
+    output += `\n`;
+  }
+
+  if (spaceTokens.length > 0) {
+    output += `// Spacing\n`;
+    spaceTokens.forEach(t => {
+      output += `$${t.name}: ${t.value};\n`;
+    });
+    output += `\n`;
+  }
+
+  if (sizeTokens.length > 0) {
+    output += `// Sizing\n`;
+    sizeTokens.forEach(t => {
+      output += `$${t.name}: ${t.value};\n`;
+    });
+    output += `\n`;
+  }
+
+  if (fontTokens.length > 0) {
+    output += `// Fonts\n`;
+    fontTokens.forEach(t => {
+      output += `$${t.name}: ${t.value};\n`;
+    });
+    output += `\n`;
+  }
+
+  if (otherTokens.length > 0) {
+    output += `// Other\n`;
+    otherTokens.forEach(t => {
+      output += `$${t.name}: ${t.value};\n`;
+    });
+  }
+
+  return output;
+};
+
+/**
+ * SCSS Optimized Component Tokens Format
+ * Generates component token maps organized by component
+ *
+ * Output:
+ * $button-colors-light: (
+ *   'primary-bg-idle': #DD0000,
+ *   'primary-bg-hover': #C10000,
+ * );
+ */
+const scssOptimizedComponentTokensFormat = ({ dictionary, options }) => {
+  const { brand, componentName, tokenType, mode } = options;
+  const mapName = `${nameTransformers.kebab(componentName)}-${tokenType}-${mode}`;
+
+  let output = generateFileHeader({
+    fileName: `_${mapName}.scss`,
+    commentStyle: 'line',
+    platform: 'scss',
+    brand: brand,
+    context: `${componentName} ${tokenType} tokens (${mode})`
+  });
+
+  output += `// ${componentName} ${tokenType} tokens for ${mode}\n\n`;
+  output += `$${mapName}: (\n`;
+
+  dictionary.allTokens.forEach(token => {
+    // Extract the property name (last part of path, without component prefix)
+    const fullName = token.path[token.path.length - 1];
+    // Remove component name prefix if present
+    const componentPrefix = componentName.toLowerCase();
+    let propName = fullName;
+    if (fullName.toLowerCase().startsWith(componentPrefix)) {
+      propName = fullName.substring(componentName.length);
+      // Remove leading dash or camelCase transition
+      propName = propName.replace(/^[-_]/, '');
+      // Convert first char to lowercase if it was camelCase
+      propName = propName.charAt(0).toLowerCase() + propName.slice(1);
+    }
+
+    const tokenName = nameTransformers.kebab(propName);
+    const value = token.$value !== undefined ? token.$value : token.value;
+
+    output += `  '${tokenName}': ${value},\n`;
+  });
+
+  output += `);\n`;
 
   return output;
 };
@@ -4642,8 +4874,14 @@ module.exports = {
     'javascript/typography': javascriptTypographyFormat,
     'ios-swift/effects': iosSwiftEffectsFormat,
     'ios-swift/typography': iosSwiftTypographyFormat,
-    'scss/effects': scssEffectsFormat,
-    'scss/typography': scssTypographyFormat,
+
+    // Optimized SCSS Formats (Token Maps)
+    'scss/optimized/color-map': scssOptimizedColorMapFormat,
+    'scss/optimized/typography-map': scssOptimizedTypographyMapFormat,
+    'scss/optimized/effects-map': scssOptimizedEffectsMapFormat,
+    'scss/optimized/spacing-map': scssOptimizedSpacingMapFormat,
+    'scss/optimized/primitives': scssOptimizedPrimitivesFormat,
+    'scss/optimized/component-tokens': scssOptimizedComponentTokensFormat,
 
     // Jetpack Compose Formats
     'compose/primitives': composePrimitivesFormat,

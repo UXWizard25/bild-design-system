@@ -489,14 +489,52 @@ struct MyView: View {
 
 ### SCSS
 
-```scss
-@import '@marioschmidt/design-system-tokens/scss/brands/bild/semantic/color/colormode-light';
+> **See [docs/scss.md](./docs/scss.md) for complete documentation**
 
-.button {
-  background-color: $text-color-accent-constant;
-  padding: $space2x;
+The SCSS output uses an **optimized Token Map architecture** with flat maps per mode:
+
+```scss
+// Quick Start: Use the convenience bundle
+@use '@marioschmidt/design-system-tokens/scss/bundles/bild' as tokens;
+
+.headline {
+  // Get color from the light mode color map
+  color: tokens.get-color(tokens.$bild-colors-light, 'heading-headline-text-color');
+
+  // Apply typography styles
+  @include tokens.typography(tokens.$bild-typography, 'headline-1');
+}
+
+.card {
+  // Get spacing from default density
+  padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-md');
+
+  // Get shadow effect
+  box-shadow: tokens.get-shadow(tokens.$bild-effects-light, 'shadow-soft-md');
+}
+
+// Responsive design with breakpoint mixin
+.component {
+  padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-sm');
+
+  @include tokens.breakpoint(md) {
+    padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-md');
+  }
 }
 ```
+
+**SCSS Output Structure:**
+
+| Directory | Content | Files |
+|-----------|---------|-------|
+| `scss/bundles/` | Convenience bundles per brand | 3 |
+| `scss/tokens/` | Token maps (`$bild-colors-light`, etc.) | 25 |
+| `scss/shared/` | Primitive maps | 4 |
+| `scss/abstracts/` | Breakpoints map | 1 |
+| `scss/_functions.scss` | Helper functions (`get-color`, etc.) | 1 |
+| `scss/_mixins.scss` | Breakpoint & typography mixins | 1 |
+
+**Total: 35 files, 128 KB** (optimized from 868 files)
 
 ### Web Components (Stencil, Lit)
 
@@ -726,7 +764,13 @@ packages/tokens/dist/
 │       ├── density/
 │       ├── components/              # ~48 component files
 │       └── semantic/
-├── scss/                            # Same structure as css/
+├── scss/                            # Optimized SCSS Token Maps (35 files)
+│   ├── bundles/                     # Brand bundles (bild.scss, sportbild.scss, advertorial.scss)
+│   ├── tokens/                      # Token maps ($bild-colors-light, $bild-typography, etc.)
+│   ├── shared/                      # Primitive maps
+│   ├── abstracts/                   # $breakpoints map
+│   ├── _functions.scss              # Helper functions (get-color, get-spacing)
+│   └── _mixins.scss                 # Breakpoint & typography mixins
 ├── js/                              # Optimized ESM output
 │   ├── index.js                     # Main entry point
 │   ├── types.d.ts                   # TypeScript definitions
@@ -947,6 +991,7 @@ grep "Space2x" dist/ios/shared/Spaceprimitive.swift
 |----------|-------------|
 | [📖 Main README](../../README.md) | Project overview |
 | [📖 docs/css.md](./docs/css.md) | CSS Custom Properties documentation |
+| [📖 docs/scss.md](./docs/scss.md) | SCSS Token Maps documentation |
 | [📖 docs/js.md](./docs/js.md) | JavaScript/React integration (Dual-Axis) |
 | [📖 Android USAGE.md](../tokens-android/docs/USAGE.md) | Android Jetpack Compose (Dual-Axis) |
 | [📖 iOS USAGE.md](../tokens-ios/Documentation/USAGE.md) | iOS SwiftUI (Dual-Axis) |
