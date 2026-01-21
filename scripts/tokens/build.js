@@ -8549,6 +8549,857 @@ export declare function useIsBreakpointDown(target: Breakpoint): boolean;
   console.log(`  ✅ TypeScript definitions: ${dtsCount} files`);
 }
 
+// ============================================================================
+// OPTIMIZED SCSS OUTPUT
+// ============================================================================
+
+/**
+ * Builds optimized SCSS output with token maps structure
+ * Replaces granular file structure with consolidated token maps
+ */
+async function buildOptimizedSCSSOutput() {
+  console.log('\n📦 Building Optimized SCSS Output...');
+
+  const scssDistDir = path.join(DIST_DIR, 'scss');
+  const optimizedDir = scssDistDir; // We replace the entire structure
+
+  // 1. Clean old granular SCSS output
+  console.log('  🧹 Cleaning old SCSS structure...');
+  if (fs.existsSync(path.join(scssDistDir, 'brands'))) {
+    fs.rmSync(path.join(scssDistDir, 'brands'), { recursive: true, force: true });
+  }
+
+  // Create new directory structure
+  const dirs = [
+    path.join(optimizedDir, 'abstracts'),
+    path.join(optimizedDir, 'tokens'),
+    path.join(optimizedDir, 'brands/bild'),
+    path.join(optimizedDir, 'brands/sportbild'),
+    path.join(optimizedDir, 'brands/advertorial'),
+    path.join(optimizedDir, 'bundles'),
+  ];
+
+  dirs.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
+
+  // 2. Build Color Maps (light/dark per brand)
+  console.log('  🎨 Building color maps...');
+  await buildSCSSColorMaps();
+
+  // 3. Build Typography Maps (responsive)
+  console.log('  📝 Building typography maps...');
+  await buildSCSSTypographyMaps();
+
+  // 4. Build Effects Maps (light/dark)
+  console.log('  ✨ Building effects maps...');
+  await buildSCSSEffectsMaps();
+
+  // 5. Build Spacing Maps (density variants)
+  console.log('  📏 Building spacing maps...');
+  await buildSCSSSpacingMaps();
+
+  // 6. Generate combined token files
+  console.log('  🔗 Generating combined token files...');
+  await generateSCSSCombinedFiles();
+
+  // 7. Generate Mixins and Functions
+  console.log('  🔧 Generating mixins and functions...');
+  await generateSCSSMixinsAndFunctions();
+
+  // 8. Generate Bundles
+  console.log('  📦 Generating bundles...');
+  await generateSCSSBundles();
+
+  // 9. Generate Index file
+  console.log('  📄 Generating index file...');
+  await generateSCSSIndex();
+
+  console.log('  ✅ Optimized SCSS output complete!');
+}
+
+/**
+ * Build SCSS Color Maps for all brands and modes
+ */
+async function buildSCSSColorMaps() {
+  const tokensDir = path.join(DIST_DIR, 'scss/tokens');
+
+  for (const brand of COLOR_BRANDS) {
+    for (const mode of COLOR_MODES) {
+      const sourceFile = path.join(TOKENS_DIR, 'brands', brand, 'color', `colormode-${mode}.json`);
+
+      if (!fs.existsSync(sourceFile)) continue;
+
+      const tokens = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
+      const flatTokens = flattenTokensForSCSS(tokens);
+
+      const mapName = `${brand}-colors-${mode}`;
+      let output = generateSCSSFileHeader(`_${mapName}.scss`, brand, `Color tokens for ${mode} mode`);
+
+      output += `// ${brand.charAt(0).toUpperCase() + brand.slice(1)} color tokens - ${mode} mode\n`;
+      output += `// Usage: map-get($${mapName}, 'text-color-primary')\n\n`;
+      output += `$${mapName}: (\n`;
+
+      // Group by category
+      const grouped = groupTokensByCategory(flatTokens);
+      Object.keys(grouped).sort().forEach(category => {
+        output += `  // ${category}\n`;
+        grouped[category].forEach(({ name, value }) => {
+          output += `  '${name}': ${value},\n`;
+        });
+        output += `\n`;
+      });
+
+      output += `);\n`;
+
+      fs.writeFileSync(path.join(tokensDir, `_${mapName}.scss`), output);
+    }
+  }
+}
+
+/**
+ * Build SCSS Typography Maps for all brands and breakpoints
+ */
+async function buildSCSSTypographyMaps() {
+  const tokensDir = path.join(DIST_DIR, 'scss/tokens');
+
+  for (const brand of BRANDS) {
+    const typographyData = {};
+
+    // Load all breakpoints
+    for (const bp of BREAKPOINTS) {
+      const sourceFile = path.join(TOKENS_DIR, 'brands', brand, 'semantic/typography', `typography-${bp}.json`);
+
+      if (!fs.existsSync(sourceFile)) continue;
+
+      const tokens = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
+      typographyData[bp] = extractTypographyStyles(tokens);
+    }
+
+    // Merge into responsive structure
+    const mergedTypography = mergeTypographyBreakpoints(typographyData);
+
+    const mapName = `${brand}-typography`;
+    let output = generateSCSSFileHeader(`_${mapName}.scss`, brand, 'Typography tokens (responsive)');
+
+    output += `// ${brand.charAt(0).toUpperCase() + brand.slice(1)} typography tokens\n`;
+    output += `// Contains all text styles with responsive font-size/line-height\n\n`;
+    output += `$${mapName}: (\n`;
+
+    Object.keys(mergedTypography).forEach(styleName => {
+      const style = mergedTypography[styleName];
+      output += `  '${styleName}': (\n`;
+
+      // Static properties
+      if (style.fontFamily) output += `    font-family: '${style.fontFamily}',\n`;
+      if (style.fontWeight) output += `    font-weight: ${style.fontWeight},\n`;
+      if (style.letterSpacing) output += `    letter-spacing: ${style.letterSpacing},\n`;
+      if (style.fontStyle) output += `    font-style: ${style.fontStyle},\n`;
+      if (style.textTransform) output += `    text-transform: ${style.textTransform},\n`;
+      if (style.textDecoration) output += `    text-decoration: ${style.textDecoration},\n`;
+
+      // Responsive properties
+      if (style.responsive && Object.keys(style.responsive).length > 0) {
+        output += `    responsive: (\n`;
+        BREAKPOINTS.forEach(bp => {
+          if (style.responsive[bp]) {
+            const bpStyle = style.responsive[bp];
+            output += `      ${bp}: (font-size: ${bpStyle.fontSize}, line-height: ${bpStyle.lineHeight}),\n`;
+          }
+        });
+        output += `    ),\n`;
+      } else if (style.fontSize) {
+        // Non-responsive (constant)
+        output += `    font-size: ${style.fontSize},\n`;
+        output += `    line-height: ${style.lineHeight},\n`;
+      }
+
+      output += `  ),\n`;
+    });
+
+    output += `);\n`;
+
+    fs.writeFileSync(path.join(tokensDir, `_${mapName}.scss`), output);
+  }
+}
+
+/**
+ * Build SCSS Effects Maps for all brands and modes
+ */
+async function buildSCSSEffectsMaps() {
+  const tokensDir = path.join(DIST_DIR, 'scss/tokens');
+
+  for (const brand of COLOR_BRANDS) {
+    for (const mode of COLOR_MODES) {
+      const sourceFile = path.join(TOKENS_DIR, 'brands', brand, 'semantic/effects', `effects-${mode}.json`);
+
+      if (!fs.existsSync(sourceFile)) continue;
+
+      const tokens = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
+      const shadowTokens = extractShadowTokens(tokens);
+
+      const mapName = `${brand}-effects-${mode}`;
+      let output = generateSCSSFileHeader(`_${mapName}.scss`, brand, `Effect tokens for ${mode} mode`);
+
+      output += `// ${brand.charAt(0).toUpperCase() + brand.slice(1)} shadow tokens - ${mode} mode\n`;
+      output += `// Usage: get-shadow($${mapName}, 'shadow-soft-md')\n\n`;
+      output += `$${mapName}: (\n`;
+
+      shadowTokens.forEach(({ name, layers }) => {
+        output += `  '${name}': (\n`;
+        layers.forEach((layer, idx) => {
+          output += `    ${idx + 1}: (\n`;
+          output += `      offset-x: ${layer.offsetX}px,\n`;
+          output += `      offset-y: ${layer.offsetY}px,\n`;
+          output += `      blur: ${layer.blur}px,\n`;
+          output += `      spread: ${layer.spread}px,\n`;
+          output += `      color: ${layer.color},\n`;
+          output += `    ),\n`;
+        });
+        output += `  ),\n`;
+      });
+
+      output += `);\n`;
+
+      fs.writeFileSync(path.join(tokensDir, `_${mapName}.scss`), output);
+    }
+  }
+}
+
+/**
+ * Build SCSS Spacing Maps for all brands and density modes
+ */
+async function buildSCSSSpacingMaps() {
+  const tokensDir = path.join(DIST_DIR, 'scss/tokens');
+
+  for (const brand of BRANDS) {
+    for (const density of DENSITY_MODES) {
+      const sourceFile = path.join(TOKENS_DIR, 'brands', brand, 'density', `density-${density}.json`);
+
+      if (!fs.existsSync(sourceFile)) continue;
+
+      const tokens = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
+      const flatTokens = flattenTokensForSCSS(tokens);
+
+      const mapName = `${brand}-spacing-${density}`;
+      let output = generateSCSSFileHeader(`_${mapName}.scss`, brand, `Spacing tokens for density: ${density}`);
+
+      output += `// ${brand.charAt(0).toUpperCase() + brand.slice(1)} spacing tokens - ${density}\n`;
+      output += `// Usage: map-get($${mapName}, 'stack-space-md')\n\n`;
+      output += `$${mapName}: (\n`;
+
+      flatTokens.forEach(({ name, value }) => {
+        output += `  '${name}': ${value},\n`;
+      });
+
+      output += `);\n`;
+
+      fs.writeFileSync(path.join(tokensDir, `_${mapName}.scss`), output);
+    }
+  }
+}
+
+/**
+ * Generate combined SCSS files that merge light/dark and breakpoint maps
+ */
+async function generateSCSSCombinedFiles() {
+  const tokensDir = path.join(DIST_DIR, 'scss/tokens');
+
+  // Generate _colors.scss (combines all brand color maps)
+  let colorsOutput = generateSCSSFileHeader('_colors.scss', null, 'Combined color token maps');
+  colorsOutput += `// Combined color maps with theme support\n\n`;
+
+  // Forward all brand color maps
+  COLOR_BRANDS.forEach(brand => {
+    COLOR_MODES.forEach(mode => {
+      colorsOutput += `@forward '${brand}-colors-${mode}';\n`;
+    });
+  });
+
+  colorsOutput += `\n// Theme maps for easy access\n`;
+  COLOR_BRANDS.forEach(brand => {
+    colorsOutput += `$${brand}-colors: (\n`;
+    colorsOutput += `  light: $${brand}-colors-light,\n`;
+    colorsOutput += `  dark: $${brand}-colors-dark,\n`;
+    colorsOutput += `);\n\n`;
+  });
+
+  fs.writeFileSync(path.join(tokensDir, '_colors.scss'), colorsOutput);
+
+  // Generate _typography.scss (combines all brand typography maps)
+  let typographyOutput = generateSCSSFileHeader('_typography.scss', null, 'Combined typography maps');
+  typographyOutput += `// Combined typography maps\n\n`;
+
+  BRANDS.forEach(brand => {
+    typographyOutput += `@forward '${brand}-typography';\n`;
+  });
+
+  fs.writeFileSync(path.join(tokensDir, '_typography.scss'), typographyOutput);
+
+  // Generate _effects.scss (combines all brand effect maps)
+  let effectsOutput = generateSCSSFileHeader('_effects.scss', null, 'Combined effect maps');
+  effectsOutput += `// Combined effect maps with theme support\n\n`;
+
+  COLOR_BRANDS.forEach(brand => {
+    COLOR_MODES.forEach(mode => {
+      effectsOutput += `@forward '${brand}-effects-${mode}';\n`;
+    });
+  });
+
+  effectsOutput += `\n// Theme maps for easy access\n`;
+  COLOR_BRANDS.forEach(brand => {
+    effectsOutput += `$${brand}-effects: (\n`;
+    effectsOutput += `  light: $${brand}-effects-light,\n`;
+    effectsOutput += `  dark: $${brand}-effects-dark,\n`;
+    effectsOutput += `);\n\n`;
+  });
+
+  fs.writeFileSync(path.join(tokensDir, '_effects.scss'), effectsOutput);
+
+  // Generate _spacing.scss (combines all brand spacing maps)
+  let spacingOutput = generateSCSSFileHeader('_spacing.scss', null, 'Combined spacing maps');
+  spacingOutput += `// Combined spacing maps with density support\n\n`;
+
+  BRANDS.forEach(brand => {
+    DENSITY_MODES.forEach(density => {
+      spacingOutput += `@forward '${brand}-spacing-${density}';\n`;
+    });
+  });
+
+  spacingOutput += `\n// Density maps for easy access\n`;
+  BRANDS.forEach(brand => {
+    spacingOutput += `$${brand}-spacing: (\n`;
+    DENSITY_MODES.forEach(density => {
+      spacingOutput += `  ${density}: $${brand}-spacing-${density},\n`;
+    });
+    spacingOutput += `);\n\n`;
+  });
+
+  fs.writeFileSync(path.join(tokensDir, '_spacing.scss'), spacingOutput);
+}
+
+/**
+ * Generate SCSS Mixins and Functions
+ */
+async function generateSCSSMixinsAndFunctions() {
+  const scssDir = path.join(DIST_DIR, 'scss');
+
+  // Generate _functions.scss
+  const functionsContent = `// BILD Design System - SCSS Functions
+// Auto-generated - Do not edit directly
+
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:string';
+
+/// Get color from a color map
+/// @param {Map} $map - The color map to use
+/// @param {String} $name - Token name (e.g., 'text-color-primary')
+/// @return {Color} The color value
+@function get-color($map, $name) {
+  @if map.has-key($map, $name) {
+    @return map.get($map, $name);
+  }
+  @warn "Color '#{$name}' not found in map";
+  @return null;
+}
+
+/// Get spacing value from a spacing map
+/// @param {Map} $map - The spacing map to use
+/// @param {String} $name - Token name (e.g., 'stack-space-md')
+/// @return {Number} The spacing value
+@function get-spacing($map, $name) {
+  @if map.has-key($map, $name) {
+    @return map.get($map, $name);
+  }
+  @warn "Spacing '#{$name}' not found in map";
+  @return null;
+}
+
+/// Convert shadow map to CSS box-shadow value
+/// @param {Map} $shadow-map - The shadow map with layers
+/// @return {String} CSS box-shadow value
+@function shadow-to-css($shadow-map) {
+  $shadows: ();
+
+  @each $index, $layer in $shadow-map {
+    $offset-x: map.get($layer, offset-x);
+    $offset-y: map.get($layer, offset-y);
+    $blur: map.get($layer, blur);
+    $spread: map.get($layer, spread);
+    $color: map.get($layer, color);
+
+    $shadow: #{$offset-x} #{$offset-y} #{$blur} #{$spread} #{$color};
+    $shadows: list.append($shadows, $shadow, comma);
+  }
+
+  @return $shadows;
+}
+
+/// Get shadow from effects map and convert to CSS
+/// @param {Map} $map - The effects map
+/// @param {String} $name - Shadow name (e.g., 'shadow-soft-md')
+/// @return {String} CSS box-shadow value
+@function get-shadow($map, $name) {
+  @if map.has-key($map, $name) {
+    @return shadow-to-css(map.get($map, $name));
+  }
+  @warn "Shadow '#{$name}' not found in map";
+  @return none;
+}
+`;
+
+  fs.writeFileSync(path.join(scssDir, '_functions.scss'), functionsContent);
+
+  // Generate _mixins.scss
+  const mixinsContent = `// BILD Design System - SCSS Mixins
+// Auto-generated - Do not edit directly
+
+@use 'sass:map';
+@use 'functions' as *;
+
+// Breakpoint configuration
+$breakpoints: (
+  xs: 320px,
+  sm: 390px,
+  md: 600px,
+  lg: 1024px,
+);
+
+/// Breakpoint mixin for responsive styles
+/// @param {String} $name - Breakpoint name (xs, sm, md, lg)
+@mixin breakpoint($name) {
+  @if $name == xs {
+    @content;
+  } @else {
+    $min-width: map.get($breakpoints, $name);
+    @media (min-width: $min-width) {
+      @content;
+    }
+  }
+}
+
+/// Apply typography style with optional responsive behavior
+/// @param {Map} $typography-map - The typography map for the brand
+/// @param {String} $style-name - Style name (e.g., 'headline-1')
+/// @param {String|null} $breakpoint - Optional specific breakpoint
+@mixin typography($typography-map, $style-name, $breakpoint: null) {
+  $style: map.get($typography-map, $style-name);
+
+  @if not $style {
+    @warn "Typography style '#{$style-name}' not found";
+  } @else {
+    // Apply static properties
+    @if map.has-key($style, font-family) {
+      font-family: map.get($style, font-family);
+    }
+    @if map.has-key($style, font-weight) {
+      font-weight: map.get($style, font-weight);
+    }
+    @if map.has-key($style, letter-spacing) {
+      letter-spacing: map.get($style, letter-spacing);
+    }
+    @if map.has-key($style, font-style) {
+      font-style: map.get($style, font-style);
+    }
+    @if map.has-key($style, text-transform) {
+      text-transform: map.get($style, text-transform);
+    }
+    @if map.has-key($style, text-decoration) {
+      text-decoration: map.get($style, text-decoration);
+    }
+
+    // Apply responsive or static font-size/line-height
+    @if map.has-key($style, responsive) {
+      $responsive: map.get($style, responsive);
+
+      @if $breakpoint {
+        // Specific breakpoint requested
+        @if map.has-key($responsive, $breakpoint) {
+          $bp-style: map.get($responsive, $breakpoint);
+          font-size: map.get($bp-style, font-size);
+          line-height: map.get($bp-style, line-height);
+        }
+      } @else {
+        // Apply all breakpoints (mobile-first)
+        @each $bp-name, $bp-style in $responsive {
+          @include breakpoint($bp-name) {
+            font-size: map.get($bp-style, font-size);
+            line-height: map.get($bp-style, line-height);
+          }
+        }
+      }
+    } @else {
+      // Non-responsive style
+      @if map.has-key($style, font-size) {
+        font-size: map.get($style, font-size);
+      }
+      @if map.has-key($style, line-height) {
+        line-height: map.get($style, line-height);
+      }
+    }
+  }
+}
+
+/// Apply shadow effect
+/// @param {Map} $effects-map - The effects map for the brand/mode
+/// @param {String} $shadow-name - Shadow name (e.g., 'shadow-soft-md')
+@mixin shadow($effects-map, $shadow-name) {
+  box-shadow: get-shadow($effects-map, $shadow-name);
+}
+`;
+
+  fs.writeFileSync(path.join(scssDir, '_mixins.scss'), mixinsContent);
+
+  // Generate abstracts/_breakpoints.scss
+  const abstractsDir = path.join(scssDir, 'abstracts');
+  const breakpointsContent = `// BILD Design System - Breakpoint Configuration
+// Auto-generated - Do not edit directly
+
+// Breakpoint values
+$breakpoint-xs: 320px;
+$breakpoint-sm: 390px;
+$breakpoint-md: 600px;
+$breakpoint-lg: 1024px;
+
+// Breakpoints map
+$breakpoints: (
+  xs: $breakpoint-xs,
+  sm: $breakpoint-sm,
+  md: $breakpoint-md,
+  lg: $breakpoint-lg,
+);
+`;
+
+  fs.writeFileSync(path.join(abstractsDir, '_breakpoints.scss'), breakpointsContent);
+}
+
+/**
+ * Generate SCSS Bundles for each brand
+ */
+async function generateSCSSBundles() {
+  const bundlesDir = path.join(DIST_DIR, 'scss/bundles');
+
+  for (const brand of BRANDS) {
+    const isColorBrand = COLOR_BRANDS.includes(brand);
+
+    let bundleContent = `// BILD Design System - ${brand.charAt(0).toUpperCase() + brand.slice(1)} Bundle
+// Auto-generated - Do not edit directly
+//
+// Usage:
+//   @use '@bild/tokens/bundles/${brand}' as tokens;
+//
+//   .headline {
+//     @include tokens.typography(tokens.$${brand}-typography, 'headline-1');
+//     color: tokens.get-color(tokens.$${brand}-colors-light, 'text-color-primary');
+//   }
+
+// Functions and Mixins
+@forward '../functions';
+@forward '../mixins';
+
+// Abstracts
+@forward '../abstracts/breakpoints';
+
+// Shared Primitives
+@forward '../shared/colorprimitive';
+@forward '../shared/spaceprimitive';
+@forward '../shared/sizeprimitive';
+@forward '../shared/fontprimitive';
+
+// Typography
+@forward '../tokens/${brand}-typography';
+
+// Spacing (all density modes)
+`;
+    DENSITY_MODES.forEach(density => {
+      bundleContent += `@forward '../tokens/${brand}-spacing-${density}';\n`;
+    });
+
+    if (isColorBrand) {
+      bundleContent += `
+// Colors (light and dark)
+@forward '../tokens/${brand}-colors-light';
+@forward '../tokens/${brand}-colors-dark';
+
+// Effects (light and dark)
+@forward '../tokens/${brand}-effects-light';
+@forward '../tokens/${brand}-effects-dark';
+`;
+    }
+
+    fs.writeFileSync(path.join(bundlesDir, `${brand}.scss`), bundleContent);
+  }
+}
+
+/**
+ * Generate SCSS Index file
+ */
+async function generateSCSSIndex() {
+  const scssDir = path.join(DIST_DIR, 'scss');
+
+  const indexContent = `// BILD Design System - SCSS Tokens
+// Auto-generated - Do not edit directly
+//
+// Usage (recommended - use brand bundle):
+//   @use '@bild/tokens/bundles/bild' as tokens;
+//
+// Usage (à la carte):
+//   @use '@bild/tokens/functions' as fn;
+//   @use '@bild/tokens/mixins' as mx;
+//   @use '@bild/tokens/tokens/bild-colors-light' as colors;
+
+// Core utilities
+@forward 'functions';
+@forward 'mixins';
+
+// Abstracts
+@forward 'abstracts/breakpoints';
+
+// All token maps
+@forward 'tokens/colors';
+@forward 'tokens/typography';
+@forward 'tokens/effects';
+@forward 'tokens/spacing';
+`;
+
+  fs.writeFileSync(path.join(scssDir, '_index.scss'), indexContent);
+}
+
+// ============================================================================
+// SCSS HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Generate SCSS file header
+ */
+function generateSCSSFileHeader(fileName, brand, context) {
+  const version = require('../../packages/tokens/package.json').version;
+  const lines = [
+    'Do not edit directly, this file was auto-generated.',
+    '',
+    `BILD Design System Tokens v${version}`,
+  ];
+
+  if (brand) {
+    lines.push(`Brand: ${brand.charAt(0).toUpperCase() + brand.slice(1)}`);
+  }
+  if (context) {
+    lines.push(`Context: ${context}`);
+  }
+
+  return lines.map(line => `// ${line}`.trimEnd()).join('\n') + '\n\n';
+}
+
+/**
+ * Flatten nested token structure for SCSS
+ */
+function flattenTokensForSCSS(obj, prefix = '') {
+  const result = [];
+
+  function recurse(current, path) {
+    for (const key of Object.keys(current)) {
+      const value = current[key];
+
+      if (value && typeof value === 'object') {
+        if (value.$value !== undefined || value.value !== undefined) {
+          // This is a token
+          const tokenName = toCamelCase(path.length > 0 ? path[path.length - 1] + key.charAt(0).toUpperCase() + key.slice(1) : key);
+          const kebabName = toKebabCase(tokenName);
+          const tokenValue = value.$value !== undefined ? value.$value : value.value;
+          result.push({ name: kebabName, value: tokenValue });
+        } else {
+          // Recurse into nested object
+          recurse(value, [...path, key]);
+        }
+      }
+    }
+  }
+
+  recurse(obj, []);
+  return result;
+}
+
+/**
+ * Group tokens by category
+ */
+function groupTokensByCategory(tokens) {
+  const grouped = {};
+
+  tokens.forEach(token => {
+    // Extract category from token name (e.g., 'text-color-primary' -> 'text')
+    const parts = token.name.split('-');
+    const category = parts[0] || 'other';
+
+    if (!grouped[category]) {
+      grouped[category] = [];
+    }
+    grouped[category].push(token);
+  });
+
+  return grouped;
+}
+
+/**
+ * Extract typography styles from token structure
+ */
+function extractTypographyStyles(tokens) {
+  const styles = {};
+
+  function recurse(current) {
+    for (const key of Object.keys(current)) {
+      const value = current[key];
+
+      if (value && typeof value === 'object') {
+        if (value.$type === 'typography' && value.$value) {
+          const styleName = toKebabCase(key);
+          const styleValue = value.$value;
+
+          styles[styleName] = {
+            fontFamily: styleValue.fontFamily,
+            fontWeight: styleValue.fontWeight,
+            fontSize: typeof styleValue.fontSize === 'number' ? `${styleValue.fontSize}px` : styleValue.fontSize,
+            lineHeight: typeof styleValue.lineHeight === 'number' ? `${styleValue.lineHeight}px` : styleValue.lineHeight,
+            letterSpacing: styleValue.letterSpacing ? (typeof styleValue.letterSpacing === 'number' ? `${styleValue.letterSpacing}px` : styleValue.letterSpacing) : null,
+            fontStyle: styleValue.fontStyle && styleValue.fontStyle !== 'normal' && styleValue.fontStyle !== 'null' ? styleValue.fontStyle.toLowerCase() : null,
+            textTransform: styleValue.textCase && styleValue.textCase !== 'ORIGINAL' ? mapTextCaseToCSS(styleValue.textCase) : null,
+            textDecoration: styleValue.textDecoration && styleValue.textDecoration !== 'NONE' ? styleValue.textDecoration.toLowerCase() : null,
+          };
+        } else {
+          recurse(value);
+        }
+      }
+    }
+  }
+
+  recurse(tokens);
+  return styles;
+}
+
+/**
+ * Merge typography styles across breakpoints
+ */
+function mergeTypographyBreakpoints(typographyData) {
+  const merged = {};
+
+  // Get all style names from all breakpoints
+  const allStyleNames = new Set();
+  for (const bp of Object.keys(typographyData)) {
+    for (const styleName of Object.keys(typographyData[bp])) {
+      allStyleNames.add(styleName);
+    }
+  }
+
+  // Merge each style
+  allStyleNames.forEach(styleName => {
+    const baseStyle = typographyData.xs?.[styleName] || typographyData.sm?.[styleName] || {};
+
+    merged[styleName] = {
+      fontFamily: baseStyle.fontFamily,
+      fontWeight: baseStyle.fontWeight,
+      letterSpacing: baseStyle.letterSpacing,
+      fontStyle: baseStyle.fontStyle,
+      textTransform: baseStyle.textTransform,
+      textDecoration: baseStyle.textDecoration,
+    };
+
+    // Check if font-size varies across breakpoints
+    const fontSizes = {};
+    let hasResponsive = false;
+
+    BREAKPOINTS.forEach(bp => {
+      if (typographyData[bp]?.[styleName]) {
+        fontSizes[bp] = {
+          fontSize: typographyData[bp][styleName].fontSize,
+          lineHeight: typographyData[bp][styleName].lineHeight,
+        };
+
+        // Check if this differs from xs
+        if (bp !== 'xs' && fontSizes[bp].fontSize !== fontSizes.xs?.fontSize) {
+          hasResponsive = true;
+        }
+      }
+    });
+
+    if (hasResponsive) {
+      merged[styleName].responsive = fontSizes;
+    } else if (fontSizes.xs) {
+      merged[styleName].fontSize = fontSizes.xs.fontSize;
+      merged[styleName].lineHeight = fontSizes.xs.lineHeight;
+    }
+  });
+
+  return merged;
+}
+
+/**
+ * Extract shadow tokens from token structure
+ */
+function extractShadowTokens(tokens) {
+  const shadows = [];
+
+  function recurse(current) {
+    for (const key of Object.keys(current)) {
+      const value = current[key];
+
+      if (value && typeof value === 'object') {
+        if (value.$type === 'shadow' && Array.isArray(value.$value)) {
+          const shadowName = toKebabCase(key);
+          const layers = value.$value.map(layer => ({
+            offsetX: layer.offsetX || 0,
+            offsetY: layer.offsetY || 0,
+            blur: layer.radius || 0,
+            spread: layer.spread || 0,
+            color: layer.color || 'rgba(0, 0, 0, 0)',
+          }));
+
+          shadows.push({ name: shadowName, layers });
+        } else {
+          recurse(value);
+        }
+      }
+    }
+  }
+
+  recurse(tokens);
+  return shadows;
+}
+
+/**
+ * Map text case to CSS value
+ */
+function mapTextCaseToCSS(textCase) {
+  const mapping = {
+    'UPPER': 'uppercase',
+    'LOWER': 'lowercase',
+    'TITLE': 'capitalize',
+    'ORIGINAL': null,
+  };
+  return mapping[textCase] || null;
+}
+
+/**
+ * Convert string to kebab-case
+ */
+function toKebabCase(str) {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase();
+}
+
+/**
+ * Convert string to camelCase
+ */
+function toCamelCase(str) {
+  return str
+    .replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : '')
+    .replace(/^[A-Z]/, c => c.toLowerCase());
+}
+
 /**
  * Main function
  */
@@ -8696,6 +9547,9 @@ async function main() {
 
   // Build optimized JS output (replaces flat structure with grouped files)
   await buildOptimizedJSOutput();
+
+  // Build optimized SCSS output (replaces granular files with token maps)
+  await buildOptimizedSCSSOutput();
 
   // Copy platform-specific README files to dist directories
   console.log(`\n📄 Kopiere Platform-READMEs:\n`);
