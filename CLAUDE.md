@@ -973,6 +973,215 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 | `generateReactBindings()` | Generates ThemeProvider, useTheme, useBreakpoint |
 | `generateTypeDefinitions()` | Generates TypeScript `.d.ts` files |
 
+### SCSS Output Functions (in build.js)
+
+| Function | Purpose |
+|----------|---------|
+| `buildOptimizedSCSSOutput()` | Main SCSS build orchestrator (35 files, 128 KB) |
+| `generateSCSSPrimitives()` | Generates shared primitive SCSS maps |
+| `generateSCSSColorMaps()` | Generates `$bild-colors-light`, `$bild-colors-dark` maps per brand |
+| `generateSCSSTypographyMaps()` | Generates `$bild-typography` maps per brand |
+| `generateSCSSEffectsMaps()` | Generates `$bild-effects-light`, `$bild-effects-dark` maps per brand |
+| `generateSCSSSpacingMaps()` | Generates `$bild-spacing-default/dense/spacious` maps per brand |
+| `generateSCSSMixinsAndFunctions()` | Generates `_functions.scss`, `_mixins.scss` with helpers |
+| `generateSCSSBundles()` | Generates convenience bundles per brand |
+| `generateSCSSCombinedFiles()` | Generates `_colors.scss`, `_typography.scss` aggregators |
+| `flattenTokensForSCSS()` | Converts nested tokens to flat SCSS map entries with px units |
+
+---
+
+## SCSS Output Architecture
+
+The SCSS output uses an **optimized Token Map architecture** for modern SCSS development:
+
+### Directory Structure
+
+```
+packages/tokens/dist/scss/
+├── _index.scss                    # Main entry point
+├── _functions.scss                # Helper functions (get-color, get-spacing, etc.)
+├── _mixins.scss                   # Breakpoint mixin
+├── abstracts/
+│   └── _breakpoints.scss          # $breakpoints map
+├── shared/
+│   ├── _colorprimitive.scss       # Primitive color values
+│   ├── _spaceprimitive.scss       # Primitive spacing values
+│   ├── _sizeprimitive.scss        # Primitive size values
+│   └── _fontprimitive.scss        # Font families, weights
+├── tokens/
+│   ├── _bild-colors-light.scss    # $bild-colors-light map
+│   ├── _bild-colors-dark.scss     # $bild-colors-dark map
+│   ├── _bild-typography.scss      # $bild-typography map
+│   ├── _bild-effects-light.scss   # $bild-effects-light map
+│   ├── _bild-effects-dark.scss    # $bild-effects-dark map
+│   ├── _bild-spacing-default.scss # $bild-spacing-default map
+│   ├── _bild-spacing-dense.scss   # $bild-spacing-dense map
+│   ├── _bild-spacing-spacious.scss # $bild-spacing-spacious map
+│   ├── _sportbild-*.scss          # SportBILD token maps
+│   ├── _advertorial-*.scss        # Advertorial token maps (spacing, typography only)
+│   ├── _colors.scss               # Combined @forward for all color maps
+│   ├── _typography.scss           # Combined @forward for all typography maps
+│   ├── _effects.scss              # Combined @forward for all effects maps
+│   └── _spacing.scss              # Combined @forward for all spacing maps
+└── bundles/
+    ├── bild.scss                  # BILD convenience bundle
+    ├── sportbild.scss             # SportBILD convenience bundle
+    └── advertorial.scss           # Advertorial convenience bundle
+```
+
+### Usage Patterns
+
+**Quick Start (Bundle):**
+```scss
+@use '@marioschmidt/design-system-tokens/scss/bundles/bild' as tokens;
+
+.headline {
+  color: tokens.get-color(tokens.$bild-colors-light, 'heading-headline-text-color');
+  @include tokens.typography(tokens.$bild-typography, 'headline-1');
+}
+
+.card {
+  padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-md');
+  box-shadow: tokens.get-shadow(tokens.$bild-effects-light, 'shadow-soft-md');
+}
+```
+
+**Selective Import:**
+```scss
+@use '@marioschmidt/design-system-tokens/scss/tokens/bild-colors-light' as colors;
+@use '@marioschmidt/design-system-tokens/scss/functions' as fn;
+
+.button {
+  background: fn.get-color(colors.$bild-colors-light, 'brand-bg-color-brand-solid');
+}
+```
+
+**Responsive Design:**
+```scss
+@use '@marioschmidt/design-system-tokens/scss/bundles/bild' as tokens;
+
+.component {
+  padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-sm');
+
+  @include tokens.breakpoint(md) {
+    padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-md');
+  }
+
+  @include tokens.breakpoint(lg) {
+    padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-lg');
+  }
+}
+```
+
+### Token Map Structure
+
+All token maps use flat kebab-case keys with categorized prefixes:
+
+```scss
+// Color tokens: $bild-colors-light
+$bild-colors-light: (
+  'brand-text-color-brand': #DD0000,
+  'brand-bg-color-brand-solid': #DD0000,
+  'heading-headline-text-color': #222628,
+  'interactive-text-color-idle': #565A5F,
+  // ... 80+ color tokens
+);
+
+// Typography tokens: $bild-typography
+$bild-typography: (
+  'headline-1-font-family': "Gotham XNarrow",
+  'headline-1-font-weight': 700,
+  'headline-1-font-size': 40px,
+  'headline-1-line-height': 44px,
+  // ... typography tokens per style
+);
+
+// Spacing tokens: $bild-spacing-default
+$bild-spacing-default: (
+  'stack-space-resp-xs': 4px,
+  'stack-space-resp-sm': 8px,
+  'stack-space-resp-md': 12px,
+  'inline-space-resp-md': 12px,
+  // ... spacing tokens
+);
+
+// Effects tokens: $bild-effects-light
+$bild-effects-light: (
+  'shadow-soft-sm': (
+    1: (offset-x: 0px, offset-y: 1px, blur-radius: 2px, spread-radius: 0px, color: rgba(0, 0, 0, 0.08)),
+    2: (offset-x: 0px, offset-y: 1px, blur-radius: 3px, spread-radius: 1px, color: rgba(0, 0, 0, 0.1))
+  ),
+  // ... shadow tokens
+);
+```
+
+### Helper Functions
+
+| Function | Purpose | Example |
+|----------|---------|---------|
+| `get-color($map, $key)` | Get color with fallback warning | `get-color($bild-colors-light, 'text-color-primary')` |
+| `get-spacing($map, $key)` | Get spacing value | `get-spacing($bild-spacing-default, 'stack-space-resp-md')` |
+| `get-typography($map, $key)` | Get typography property | `get-typography($bild-typography, 'headline-1-font-size')` |
+| `get-shadow($map, $key)` | Get shadow definition | `get-shadow($bild-effects-light, 'shadow-soft-md')` |
+
+### Breakpoint Mixin
+
+```scss
+// Usage
+@include breakpoint(sm) { ... }  // min-width: 390px
+@include breakpoint(md) { ... }  // min-width: 600px
+@include breakpoint(lg) { ... }  // min-width: 1024px
+
+// xs is the default (mobile-first), no media query needed
+```
+
+### Typography Mixin
+
+```scss
+// Apply all typography properties for a style
+@mixin typography($map, $style) {
+  font-family: map.get($map, '#{$style}-font-family');
+  font-weight: map.get($map, '#{$style}-font-weight');
+  font-size: map.get($map, '#{$style}-font-size');
+  line-height: map.get($map, '#{$style}-line-height');
+  letter-spacing: map.get($map, '#{$style}-letter-spacing');
+}
+
+// Usage
+.headline {
+  @include typography($bild-typography, 'headline-1');
+}
+```
+
+### Dual-Axis Support (Advertorial)
+
+Advertorial has spacing and typography tokens but **no color tokens** (uses BILD or SportBILD colors):
+
+```scss
+// Advertorial with BILD colors
+@use '@marioschmidt/design-system-tokens/scss/tokens/bild-colors-light' as colors;
+@use '@marioschmidt/design-system-tokens/scss/tokens/advertorial-typography' as typo;
+@use '@marioschmidt/design-system-tokens/scss/tokens/advertorial-spacing-default' as spacing;
+
+.advertorial-headline {
+  color: fn.get-color(colors.$bild-colors-light, 'heading-headline-text-color');
+  @include fn.typography(typo.$advertorial-typography, 'headline-1');
+  padding: fn.get-spacing(spacing.$advertorial-spacing-default, 'stack-space-resp-md');
+}
+```
+
+### Build Statistics
+
+| Metric | Value |
+|--------|-------|
+| Total Files | 35 |
+| Total Size | 128 KB |
+| Primitives | 4 files |
+| Token Maps | 25 files |
+| Bundles | 3 files |
+| Abstracts | 1 file |
+| Helpers | 2 files |
+
 ---
 
 ## Architecture Decisions
@@ -994,6 +1203,9 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 | **CSS effects consolidation** | Identical light/dark shadows merged into single mode-agnostic output |
 | **CSS Dual-Axis selectors** | `data-color-brand` for colors/effects, `data-content-brand` for typography/sizing |
 | **Format-agnostic naming** | Transformers normalize any input format (camelCase, kebab-case, snake_case) to consistent output |
+| **SCSS Token Maps** | Flat maps per mode (`$colors-light`, `$colors-dark`) instead of per-file variables - single import, better DX |
+| **SCSS @use/@forward** | Modern SCSS module system instead of deprecated @import - namespacing, encapsulation |
+| **SCSS helper functions** | `get-color()`, `get-spacing()` with fallback warnings - safer map access, debugging |
 
 ---
 
@@ -1067,6 +1279,11 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Change JS type mapping | `build.js` → `flattenTokens()` function |
 | Modify React bindings | `build.js` → `generateReactBindings()` function |
 | Change JS output structure | `build.js` → `buildOptimizedJSOutput()` function |
+| Modify SCSS output structure | `build.js` → `buildOptimizedSCSSOutput()` function |
+| Change SCSS token maps | `build.js` → `generateSCSSColorMaps()`, `generateSCSSTypographyMaps()`, etc. |
+| Modify SCSS helper functions | `build.js` → `generateSCSSMixinsAndFunctions()` |
+| Change SCSS bundles | `build.js` → `generateSCSSBundles()` |
+| Add SCSS token type | `build.js` → `flattenTokensForSCSS()` for value formatting |
 | Modify CSS color optimization | `build.js` → `optimizeComponentColorCSS()` function |
 | Modify CSS effects optimization | `build.js` → `optimizeComponentEffectsCSS()` function |
 | Change CSS bundle structure | `bundles.js` → `buildBrandTokens()`, `buildBrandBundle()` |
