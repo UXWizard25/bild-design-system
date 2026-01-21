@@ -997,21 +997,6 @@ function createTypographyConfig(brand, breakpoint) {
         files: [{ destination: `${fileName}.json`, format: 'json', options: { outputReferences: false } }]
       },
 
-      // SCSS: Custom Typography format
-      scss: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/scss/brands/${brand}/semantic/typography/`,
-        files: [{
-          destination: `${fileName}.scss`,
-          format: 'scss/typography',
-          options: {
-            brand: brandName,
-            breakpoint,
-            showDescriptions: SHOW_DESCRIPTIONS.scss
-          }
-        }]
-      },
-
       // iOS: Only compact (sm) and regular (lg) with SwiftUI format
       // Output to semantic/typography/ with brand-prefixed sizeclass in filename
       ...(isNativeBreakpoint(breakpoint, 'ios') ? {
@@ -1104,21 +1089,6 @@ function createEffectConfig(brand, colorMode) {
             brand: brandName,
             colorMode,
             showDescriptions: SHOW_DESCRIPTIONS.ios
-          }
-        }]
-      },
-
-      // SCSS: Custom Effects format
-      scss: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/scss/brands/${brand}/semantic/effects/`,
-        files: [{
-          destination: `${fileName}.scss`,
-          format: 'scss/effects',
-          options: {
-            brand: brandName,
-            colorMode,
-            showDescriptions: SHOW_DESCRIPTIONS.scss
           }
         }]
       },
@@ -1508,20 +1478,6 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
           }
         }]
       },
-      scss: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/scss/brands/${brand}/components/${componentName}/`,
-        files: [{
-          destination: `${fileName}.scss`,
-          format: 'scss/typography',
-          options: {
-            brand: brandName,
-            breakpoint: breakpoint || 'default',
-            componentName,
-            showDescriptions: SHOW_DESCRIPTIONS.scss
-          }
-        }]
-      },
       json: {
         transformGroup: 'js',
         buildPath: `${DIST_DIR}/json/brands/${brand}/components/${componentName}/`,
@@ -1591,20 +1547,6 @@ function createComponentEffectsConfig(sourceFile, brand, componentName, fileName
             colorMode: colorMode || 'default',
             componentName,
             showDescriptions: SHOW_DESCRIPTIONS.css
-          }
-        }]
-      },
-      scss: {
-        transforms: ['attribute/cti'],
-        buildPath: `${DIST_DIR}/scss/brands/${brand}/components/${componentName}/`,
-        files: [{
-          destination: `${fileName}.scss`,
-          format: 'scss/effects',
-          options: {
-            brand: brandName,
-            colorMode: colorMode || 'default',
-            componentName,
-            showDescriptions: SHOW_DESCRIPTIONS.scss
           }
         }]
       },
@@ -2848,7 +2790,9 @@ function createManifest(stats) {
         },
         scss: {
           shared: 'scss/shared/',
-          brands: 'scss/brands/{brand}/'
+          tokens: 'scss/tokens/',
+          abstracts: 'scss/abstracts/',
+          bundles: 'scss/bundles/'
         },
         js: {
           shared: 'js/shared/',
@@ -8573,9 +8517,7 @@ async function buildOptimizedSCSSOutput() {
   const dirs = [
     path.join(optimizedDir, 'abstracts'),
     path.join(optimizedDir, 'tokens'),
-    path.join(optimizedDir, 'brands/bild'),
-    path.join(optimizedDir, 'brands/sportbild'),
-    path.join(optimizedDir, 'brands/advertorial'),
+    path.join(optimizedDir, 'shared'),
     path.join(optimizedDir, 'bundles'),
   ];
 
