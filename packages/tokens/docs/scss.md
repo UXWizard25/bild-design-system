@@ -1,5 +1,8 @@
 # SCSS Token Maps Documentation
 
+> ⚠️ **Aktuell deaktiviert:** Die SCSS-Ausgabe ist deaktiviert (`SCSS_ENABLED=false` in `scripts/tokens/build.js`).
+> Diese Dokumentation bleibt als Referenz erhalten für den Fall, dass die Ausgabe später wieder aktiviert wird.
+
 > **BILD Design System Token Pipeline** | [CSS Documentation](./css.md) | [JS Documentation](./js.md)
 
 This document describes the SCSS output of the BILD Design System token pipeline. The SCSS output uses an **optimized Token Map architecture** for modern SCSS development.

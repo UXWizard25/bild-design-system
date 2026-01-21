@@ -42,7 +42,7 @@ Automated build process for Design Tokens from Figma exports.
 2. **Node.js Setup** - Installs Node.js 20
 3. **Dependencies Install** - `npm ci` for reproducible builds
 4. **Preprocessing** - Transforms Figma JSON → Style Dictionary format
-5. **Token Build** - Generates all output formats (CSS, SCSS, JS, JSON)
+5. **Token Build** - Generates all output formats (CSS, JSON)
 6. **Artifacts Upload** - Uploads generated files as build artifacts
 7. **Build Summary** - Creates detailed summary in GitHub UI
 8. **Optional: Commit** - Commits generated files back (on main or manually)

@@ -551,6 +551,8 @@ DesignSystemTheme(
 
 ### JavaScript/React (ES Modules)
 
+> ⚠️ **Aktuell deaktiviert** (`JS_ENABLED=false` in `build.js`). Die folgende Dokumentation bleibt als Referenz erhalten.
+
 ```javascript
 // React with ThemeProvider (Dual-Axis)
 import { ThemeProvider, useTheme } from '@bild/design-tokens/react';
@@ -643,7 +645,7 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 │              ▼                                                              │
 │  PLATFORM OUTPUTS:                                                          │
 │  ├── packages/tokens/dist/           (Web: npm package)                     │
-│  │   ├── css/, scss/, js/, json/                                            │
+│  │   ├── css/, json/ (scss/, js/ deaktiviert)                               │
 │  │   └── bundles/                    (Convenience CSS bundles)              │
 │  ├── packages/tokens-ios/Sources/    (iOS: SPM package)                     │
 │  │   └── BildDesignTokens/           (169 Swift files)                      │
@@ -965,6 +967,8 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 
 ### JS Output Functions (in build.js)
 
+> ⚠️ **Aktuell deaktiviert** (`JS_ENABLED=false`). Code bleibt erhalten für spätere Reaktivierung.
+
 | Function | Purpose |
 |----------|---------|
 | `buildOptimizedJSOutput()` | Main JS build orchestrator |
@@ -974,6 +978,8 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 | `generateTypeDefinitions()` | Generates TypeScript `.d.ts` files |
 
 ### SCSS Output Functions (in build.js)
+
+> ⚠️ **Aktuell deaktiviert** (`SCSS_ENABLED=false`). Code bleibt erhalten für spätere Reaktivierung.
 
 | Function | Purpose |
 |----------|---------|
@@ -991,6 +997,8 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 ---
 
 ## SCSS Output Architecture
+
+> ⚠️ **Aktuell deaktiviert** (`SCSS_ENABLED=false` in `build.js`). Die folgende Dokumentation bleibt als Referenz erhalten.
 
 The SCSS output uses an **optimized Token Map architecture** for modern SCSS development:
 

@@ -32,7 +32,7 @@ Multi-platform design token transformation pipeline powered by **Style Dictionar
 This pipeline processes the multi-layer, multi-brand BILD Design System architecture:
 
 - **3 Brands**: BILD, SportBILD, Advertorial
-- **3 Platforms** (6 formats): Web (CSS, SCSS, JS, JSON), iOS (SwiftUI), Android (Compose)
+- **3 Platforms**: Web (CSS, JSON), iOS (SwiftUI), Android (Compose)
 - **Multiple Modes**: Density (3), Breakpoints (4), Color Modes (2)
 - **Token Types**: Primitives, Semantic Tokens, Component Tokens (~970 files)
 - **Shadow DOM Compatible**: Works with Stencil, Lit, and native Web Components
@@ -248,59 +248,6 @@ Figma token types (`$type`) are automatically mapped to platform-specific types:
 }
 ```
 
-### JavaScript / React
-
-> **See [docs/js.md](./docs/js.md) for complete documentation**
-
-```javascript
-// With React ThemeProvider (Dual-Axis Architecture)
-import { ThemeProvider, useTheme } from '@marioschmidt/design-system-tokens/react';
-
-function App() {
-  return (
-    <ThemeProvider colorBrand="bild" colorMode="light">
-      <MyComponent />
-    </ThemeProvider>
-  );
-}
-
-function MyComponent() {
-  const { theme } = useTheme();
-  return (
-    <div style={{
-      color: theme.colors.textColorPrimary,      // "#232629"
-      padding: theme.spacing.gridSpaceRespBase   // "12px" - CSS-ready!
-    }}>
-      Content
-    </div>
-  );
-}
-
-// Without React - Direct theme creation
-import { createTheme } from '@marioschmidt/design-system-tokens/themes';
-
-const theme = createTheme({
-  colorBrand: 'bild',
-  colorMode: 'light',
-  breakpoint: 'md'
-});
-console.log(theme.colors.textColorPrimary);   // "#232629"
-console.log(theme.spacing.gridSpaceRespBase); // "12px"
-```
-
-#### JS Token Type Mapping
-
-Token values are automatically formatted based on their `$type` from Figma:
-
-| Token `$type` | JS Output | Example |
-|---------------|-----------|---------|
-| `dimension`, `fontSize`, `lineHeight`, `letterSpacing` | String with `px` | `"24px"` |
-| `color` | String (hex/rgba) | `"#DD0000"` |
-| `fontWeight`, `opacity`, `number` | Number | `700`, `50` |
-| `fontFamily`, `string` | String | `"Gotham Condensed"` |
-
-This follows the W3C DTCG spec and industry best practices (Chakra UI, MUI).
-
 ### iOS Swift
 
 ```swift
@@ -487,55 +434,6 @@ struct MyView: View {
 | `DesignTypographyScheme` | All text styles (TextStyle composites) |
 | `DesignEffectsScheme` | Shadow tokens (ShadowStyle composites, brand-independent) |
 
-### SCSS
-
-> **See [docs/scss.md](./docs/scss.md) for complete documentation**
-
-The SCSS output uses an **optimized Token Map architecture** with flat maps per mode:
-
-```scss
-// Quick Start: Use the convenience bundle
-@use '@marioschmidt/design-system-tokens/scss/bundles/bild' as tokens;
-
-.headline {
-  // Get color from the light mode color map
-  color: tokens.get-color(tokens.$bild-colors-light, 'heading-headline-text-color');
-
-  // Apply typography styles
-  @include tokens.typography(tokens.$bild-typography, 'headline-1');
-}
-
-.card {
-  // Get spacing from default density
-  padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-md');
-
-  // Get shadow effect
-  box-shadow: tokens.get-shadow(tokens.$bild-effects-light, 'shadow-soft-md');
-}
-
-// Responsive design with breakpoint mixin
-.component {
-  padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-sm');
-
-  @include tokens.breakpoint(md) {
-    padding: tokens.get-spacing(tokens.$bild-spacing-default, 'stack-space-resp-md');
-  }
-}
-```
-
-**SCSS Output Structure:**
-
-| Directory | Content | Files |
-|-----------|---------|-------|
-| `scss/bundles/` | Convenience bundles per brand | 3 |
-| `scss/tokens/` | Token maps (`$bild-colors-light`, etc.) | 25 |
-| `scss/shared/` | Primitive maps | 4 |
-| `scss/abstracts/` | Breakpoints map | 1 |
-| `scss/_functions.scss` | Helper functions (`get-color`, etc.) | 1 |
-| `scss/_mixins.scss` | Breakpoint & typography mixins | 1 |
-
-**Total: 35 files, 128 KB** (optimized from 868 files)
-
 ### Web Components (Stencil, Lit)
 
 CSS Custom Properties **inherit through Shadow DOM**, enabling seamless theming:
@@ -667,8 +565,6 @@ lg (1024px) ─────────→  Expanded (≥ 840dp)
 | Platform | Convention | Example |
 |----------|-----------|---------|
 | CSS | `kebab-case` with `--` | `--text-color-primary` |
-| SCSS | `kebab-case` with `$` | `$text-color-primary` |
-| JavaScript | `camelCase` | `textColorPrimary` |
 | iOS Swift | `camelCase` | `textColorPrimary` |
 | Android Compose | `camelCase` | `textColorPrimary` |
 
@@ -764,21 +660,7 @@ packages/tokens/dist/
 │       ├── density/
 │       ├── components/              # ~48 component files
 │       └── semantic/
-├── scss/                            # Optimized SCSS Token Maps (35 files)
-│   ├── bundles/                     # Brand bundles (bild.scss, sportbild.scss, advertorial.scss)
-│   ├── tokens/                      # Token maps ($bild-colors-light, $bild-typography, etc.)
-│   ├── shared/                      # Primitive maps
-│   ├── abstracts/                   # $breakpoints map
-│   ├── _functions.scss              # Helper functions (get-color, get-spacing)
-│   └── _mixins.scss                 # Breakpoint & typography mixins
-├── js/                              # Optimized ESM output
-│   ├── index.js                     # Main entry point
-│   ├── types.d.ts                   # TypeScript definitions
-│   ├── primitives/                  # Shared primitives
-│   ├── brands/{brand}/              # Brand tokens (colors, spacing, typography)
-│   ├── themes/                      # Pre-built themes + createTheme()
-│   └── react/                       # ThemeProvider, useTheme, useBreakpoint
-└── json/                            # Same structure
+└── json/                            # Same structure as css/
 ```
 
 ### iOS Package (`packages/tokens-ios/`)
@@ -991,8 +873,6 @@ grep "Space2x" dist/ios/shared/Spaceprimitive.swift
 |----------|-------------|
 | [📖 Main README](../../README.md) | Project overview |
 | [📖 docs/css.md](./docs/css.md) | CSS Custom Properties documentation |
-| [📖 docs/scss.md](./docs/scss.md) | SCSS Token Maps documentation |
-| [📖 docs/js.md](./docs/js.md) | JavaScript/React integration (Dual-Axis) |
 | [📖 Android USAGE.md](../tokens-android/docs/USAGE.md) | Android Jetpack Compose (Dual-Axis) |
 | [📖 iOS USAGE.md](../tokens-ios/Documentation/USAGE.md) | iOS SwiftUI (Dual-Axis) |
 | [📖 Icons README](../icons/README.md) | Icon pipeline documentation |
@@ -1038,7 +918,7 @@ MIT License - See [LICENSE](./LICENSE) file.
 
 | Feature | Status |
 |---------|--------|
-| 6 Platforms | ✅ |
+| 3 Platforms (Web, iOS, Android) | ✅ |
 | 3 Brands | ✅ |
 | ~970 Files | ✅ |
 | Figma Scopes | ✅ |
