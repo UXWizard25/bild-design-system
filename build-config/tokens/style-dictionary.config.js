@@ -1243,17 +1243,30 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
   const attrSelector = `[${brandAttr}="${brandLowercase}"][data-theme="${colorMode}"]`;
 
   // Helper: Convert shadow token to CSS box-shadow value string
+  // Outputs var() references for ALL properties that have aliases (color, offsetX, offsetY, radius, spread)
   const formatShadowValue = (token) => {
     const aliases = token.$aliases || [];
     return token.$value.map((effect, index) => {
       if (effect.type === 'dropShadow') {
-        const aliasEntry = aliases.find(a => a.index === index);
-        let colorValue = effect.color;
-        if (aliasEntry?.color?.token) {
-          const varName = nameTransformers.kebab(aliasEntry.color.token);
-          colorValue = `var(--${varName}, ${effect.color})`;
-        }
-        return `${effect.offsetX}px ${effect.offsetY}px ${effect.radius}px ${effect.spread}px ${colorValue}`;
+        const aliasEntry = aliases.find(a => a.index === index) || {};
+
+        // Helper: Format property as var() if alias exists, otherwise raw value
+        const formatProp = (propName, rawValue, unit = '') => {
+          if (aliasEntry[propName]?.token) {
+            const varName = nameTransformers.kebab(aliasEntry[propName].token);
+            const fallback = unit ? `${rawValue}${unit}` : rawValue;
+            return `var(--${varName}, ${fallback})`;
+          }
+          return unit ? `${rawValue}${unit}` : rawValue;
+        };
+
+        const offsetX = formatProp('offsetX', effect.offsetX, 'px');
+        const offsetY = formatProp('offsetY', effect.offsetY, 'px');
+        const radius = formatProp('radius', effect.radius, 'px');
+        const spread = formatProp('spread', effect.spread, 'px');
+        const color = formatProp('color', effect.color);
+
+        return `${offsetX} ${offsetY} ${radius} ${spread} ${color}`;
       }
       return null;
     }).filter(Boolean).join(', ');

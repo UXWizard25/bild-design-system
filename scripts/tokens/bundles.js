@@ -278,26 +278,40 @@ async function buildBrandTheme(brand) {
     }
   }
 
-  // Process effects (light first, then dark)
+  // Process effects
+  // First check for mode-agnostic consolidated file (effects.css)
+  // Fall back to separate light/dark files if not found
   if (fs.existsSync(effectsDir)) {
-    const effectFiles = await glob(`${effectsDir}/*.css`);
-    const lightEffects = effectFiles.filter(f => f.includes('light')).sort();
-    const darkEffects = effectFiles.filter(f => f.includes('dark')).sort();
+    const consolidatedEffects = path.join(effectsDir, 'effects.css');
 
-    if (lightEffects.length > 0 || darkEffects.length > 0) {
-      content += '/* === EFFECTS === */\n\n';
-
-      for (const file of lightEffects) {
-        const fileContent = readAndStripHeader(file);
-        if (fileContent) {
-          content += `/* Effects - Light */\n${fileContent}\n\n`;
-        }
+    if (fs.existsSync(consolidatedEffects)) {
+      // Use mode-agnostic consolidated file
+      const fileContent = readAndStripHeader(consolidatedEffects);
+      if (fileContent) {
+        content += '/* === EFFECTS (Mode-agnostic) === */\n\n';
+        content += `${fileContent}\n\n`;
       }
+    } else {
+      // Fall back to separate light/dark files
+      const effectFiles = await glob(`${effectsDir}/*.css`);
+      const lightEffects = effectFiles.filter(f => f.includes('light')).sort();
+      const darkEffects = effectFiles.filter(f => f.includes('dark')).sort();
 
-      for (const file of darkEffects) {
-        const fileContent = readAndStripHeader(file);
-        if (fileContent) {
-          content += `/* Effects - Dark */\n${fileContent}\n\n`;
+      if (lightEffects.length > 0 || darkEffects.length > 0) {
+        content += '/* === EFFECTS === */\n\n';
+
+        for (const file of lightEffects) {
+          const fileContent = readAndStripHeader(file);
+          if (fileContent) {
+            content += `/* Effects - Light */\n${fileContent}\n\n`;
+          }
+        }
+
+        for (const file of darkEffects) {
+          const fileContent = readAndStripHeader(file);
+          if (fileContent) {
+            content += `/* Effects - Dark */\n${fileContent}\n\n`;
+          }
         }
       }
     }

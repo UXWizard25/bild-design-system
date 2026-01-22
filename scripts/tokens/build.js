@@ -2176,6 +2176,187 @@ async function optimizeComponentEffectsCSS() {
 }
 
 /**
+ * Optimizes Semantic Effects CSS by consolidating identical light/dark effects
+ *
+ * With var() references to ColorMode semantic tokens, the CSS output for light and dark
+ * modes is identical (e.g., var(--shadow-color-soft-key-sm) is the same string for both modes).
+ * This function detects and consolidates such identical outputs to a single mode-agnostic file.
+ */
+async function optimizeSemanticEffectsCSS() {
+  console.log('\n✨ Optimizing Semantic Effects CSS:\n');
+
+  let optimizedCount = 0;
+  let skippedCount = 0;
+
+  /**
+   * Parse effects CSS file and extract custom properties and class rules
+   */
+  function parseEffectsCss(cssContent) {
+    const customProps = new Map();
+    const classRules = new Map();
+
+    // Parse Custom Properties Block
+    const propsBlockRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\](?:,\s*:host\([^)]+\))?\s*\{([^}]+)\}/g;
+    let propsMatch;
+
+    while ((propsMatch = propsBlockRegex.exec(cssContent)) !== null) {
+      const blockContent = propsMatch[1];
+      if (blockContent.includes('--') && !blockContent.trim().startsWith('box-shadow')) {
+        const propRegex = /--([\w-]+):\s*([^;]+);/g;
+        let propMatch;
+        while ((propMatch = propRegex.exec(blockContent)) !== null) {
+          customProps.set(propMatch[1], propMatch[2].trim());
+        }
+      }
+    }
+
+    // Parse Class Rules
+    const ruleRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\]\s+\.([a-z0-9-]+)(?:,[\s\S]*?)?\s*\{([^}]+)\}/gi;
+    let ruleMatch;
+
+    while ((ruleMatch = ruleRegex.exec(cssContent)) !== null) {
+      classRules.set(ruleMatch[1], ruleMatch[2].trim());
+    }
+
+    return { customProps, classRules };
+  }
+
+  /**
+   * Extract var() names from a CSS value, ignoring fallback values
+   * e.g., "var(--size-0-x, 0px) var(--shadow-color-soft-key-sm, rgba(0,0,0,0.07))"
+   *       → ["--size-0-x", "--shadow-color-soft-key-sm"]
+   */
+  function extractVarNames(value) {
+    const varNames = [];
+    const varRegex = /var\((--[\w-]+)/g;
+    let match;
+    while ((match = varRegex.exec(value)) !== null) {
+      varNames.push(match[1]);
+    }
+    return varNames.sort().join(',');
+  }
+
+  /**
+   * Compare maps by var() names only, ignoring fallback values
+   * Returns true if both maps have the same keys with the same var() references
+   */
+  function mapsHaveSameVarReferences(map1, map2) {
+    if (map1.size !== map2.size) return false;
+    for (const [key, value1] of map1) {
+      const value2 = map2.get(key);
+      if (!value2) return false;
+
+      // Extract and compare var() names only
+      const vars1 = extractVarNames(value1);
+      const vars2 = extractVarNames(value2);
+
+      if (vars1 !== vars2) return false;
+    }
+    return true;
+  }
+
+  function mapsAreEqual(map1, map2) {
+    if (map1.size !== map2.size) return false;
+    for (const [key, value] of map1) {
+      if (map2.get(key) !== value) return false;
+    }
+    return true;
+  }
+
+  function areEffectsIdentical(lightParsed, darkParsed) {
+    const lightTotal = lightParsed.customProps.size + lightParsed.classRules.size;
+    const darkTotal = darkParsed.customProps.size + darkParsed.classRules.size;
+
+    if (lightTotal === 0 && darkTotal === 0) return false;
+
+    // For custom properties: compare var() names only (ignore fallback values)
+    // For class rules: exact comparison (they just reference the custom props via var())
+    return mapsHaveSameVarReferences(lightParsed.customProps, darkParsed.customProps) &&
+           mapsAreEqual(lightParsed.classRules, darkParsed.classRules);
+  }
+
+  function generateModeAgnosticCss(header, brand, parsed) {
+    const updatedHeader = header.replace(
+      /Context: Mode: \w+/,
+      'Context: Effects (Mode-agnostic)'
+    );
+
+    let output = updatedHeader + '\n\n';
+    const baseSelector = `[data-color-brand="${brand}"]`;
+
+    // Custom Properties Block
+    if (parsed.customProps.size > 0) {
+      const dualSelector = buildDualSelector(baseSelector, '');
+      output += `${dualSelector} {\n`;
+      for (const [varName, value] of parsed.customProps) {
+        output += `  --${varName}: ${value};\n`;
+      }
+      output += `}\n\n`;
+    }
+
+    // Class Rules
+    for (const [className, ruleContent] of parsed.classRules) {
+      const dualSelector = buildDualSelector(baseSelector, `.${className}`);
+      output += `${dualSelector} {\n`;
+      output += `  ${ruleContent}\n`;
+      output += `}\n\n`;
+    }
+
+    return output;
+  }
+
+  for (const brand of COLOR_BRANDS) {
+    const effectsDir = path.join(DIST_DIR, 'css', 'brands', brand, 'semantic', 'effects');
+
+    if (!fs.existsSync(effectsDir)) continue;
+
+    const lightFile = path.join(effectsDir, 'effects-light.css');
+    const darkFile = path.join(effectsDir, 'effects-dark.css');
+    const optimizedFile = path.join(effectsDir, 'effects.css');
+
+    if (!fs.existsSync(lightFile) || !fs.existsSync(darkFile)) continue;
+
+    try {
+      const lightCss = fs.readFileSync(lightFile, 'utf8');
+      const darkCss = fs.readFileSync(darkFile, 'utf8');
+
+      const lightParsed = parseEffectsCss(lightCss);
+      const darkParsed = parseEffectsCss(darkCss);
+
+      if (!areEffectsIdentical(lightParsed, darkParsed)) {
+        console.log(`     ⏭️  ${brand}: Light/dark effects differ, keeping separate files`);
+        skippedCount++;
+        continue;
+      }
+
+      // Extract header from light file
+      const headerMatch = lightCss.match(/^\/\*\*[\s\S]*?\*\//);
+      const header = headerMatch ? headerMatch[0] : '';
+
+      // Generate optimized CSS
+      const optimizedCss = generateModeAgnosticCss(header, brand, lightParsed);
+
+      // Write optimized file
+      fs.writeFileSync(optimizedFile, optimizedCss);
+
+      // Delete original files
+      fs.unlinkSync(lightFile);
+      fs.unlinkSync(darkFile);
+
+      optimizedCount++;
+      console.log(`     ✅ ${brand}: Consolidated to mode-agnostic effects`);
+
+    } catch (e) {
+      console.log(`     ❌ ${brand}: Error - ${e.message}`);
+    }
+  }
+
+  console.log(`\n   📊 Summary: ${optimizedCount} brands optimized, ${skippedCount} kept separate`);
+
+  return { optimizedCount, skippedCount };
+}
+
+/**
  * Builds Typography Tokens (brand-specific)
  */
 async function buildTypographyTokens() {
@@ -9450,6 +9631,9 @@ async function main() {
 
   // Build effect tokens
   stats.effectTokens = await buildEffectTokens();
+
+  // Optimize semantic effects CSS (consolidate identical light/dark effects)
+  stats.semanticEffectsCssOptimization = await optimizeSemanticEffectsCSS();
 
   // Optimize component effects CSS (consolidate identical light/dark effects)
   stats.effectsCssOptimization = await optimizeComponentEffectsCSS();
