@@ -1243,17 +1243,39 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
   const attrSelector = `[${brandAttr}="${brandLowercase}"][data-theme="${colorMode}"]`;
 
   // Helper: Convert shadow token to CSS box-shadow value string
+  // Outputs var() references for ALL properties that have aliases (color, offsetX, offsetY, radius, spread)
+  // Fallbacks: Only for primitive tokens (dimensions), NOT for semantic tokens (colors)
+  // Rationale: Missing data-theme should cause visible errors, not silent degradation
   const formatShadowValue = (token) => {
     const aliases = token.$aliases || [];
     return token.$value.map((effect, index) => {
       if (effect.type === 'dropShadow') {
-        const aliasEntry = aliases.find(a => a.index === index);
-        let colorValue = effect.color;
-        if (aliasEntry?.color?.token) {
-          const varName = nameTransformers.kebab(aliasEntry.color.token);
-          colorValue = `var(--${varName}, ${effect.color})`;
-        }
-        return `${effect.offsetX}px ${effect.offsetY}px ${effect.radius}px ${effect.spread}px ${colorValue}`;
+        const aliasEntry = aliases.find(a => a.index === index) || {};
+
+        // Helper: Format property as var() if alias exists, otherwise raw value
+        // Only include fallback for primitive tokens, not semantic tokens
+        const formatProp = (propName, rawValue, unit = '') => {
+          const aliasInfo = aliasEntry[propName];
+          if (aliasInfo?.token) {
+            const varName = nameTransformers.kebab(aliasInfo.token);
+            // Only primitives get fallbacks - semantic tokens (ColorMode) should fail visibly if not set up
+            if (aliasInfo.collectionType === 'primitive') {
+              const fallback = unit ? `${rawValue}${unit}` : rawValue;
+              return `var(--${varName}, ${fallback})`;
+            }
+            // Semantic tokens: no fallback
+            return `var(--${varName})`;
+          }
+          return unit ? `${rawValue}${unit}` : rawValue;
+        };
+
+        const offsetX = formatProp('offsetX', effect.offsetX, 'px');
+        const offsetY = formatProp('offsetY', effect.offsetY, 'px');
+        const radius = formatProp('radius', effect.radius, 'px');
+        const spread = formatProp('spread', effect.spread, 'px');
+        const color = formatProp('color', effect.color);
+
+        return `${offsetX} ${offsetY} ${radius} ${spread} ${color}`;
       }
       return null;
     }).filter(Boolean).join(', ');

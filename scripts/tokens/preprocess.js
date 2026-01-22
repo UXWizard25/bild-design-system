@@ -1701,31 +1701,55 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
                 blendMode: effect.blendMode || 'NORMAL'
               };
 
-              // Track alias info for this effect layer
-              let layerAliases = null;
+              // Track alias info for this effect layer (all boundVariables)
+              const layerAliases = {};
 
-              // Resolve boundVariables if present
-              if (effect.boundVariables && effect.boundVariables.color) {
-                if (effect.boundVariables.color.type === 'VARIABLE_ALIAS') {
-                  // Extract alias info for CSS var() references - use getDeepAliasInfo with context
-                  const aliasInfo = getDeepAliasInfo(effect.boundVariables.color.id, aliasLookup, collections, context);
-                  if (aliasInfo) {
-                    layerAliases = { color: aliasInfo };
+              // Resolve ALL boundVariables if present (color, offsetX, offsetY, radius, spread)
+              if (effect.boundVariables) {
+                // Map Figma property names to shadowEffect property names
+                const propertyMap = {
+                  color: 'color',
+                  offsetX: 'offsetX',
+                  offsetY: 'offsetY',
+                  radius: 'radius',
+                  spread: 'spread'
+                };
+
+                Object.entries(effect.boundVariables).forEach(([figmaProp, alias]) => {
+                  if (alias.type === 'VARIABLE_ALIAS' && propertyMap[figmaProp]) {
+                    const targetProp = propertyMap[figmaProp];
+
+                    // For color: accept ColorMode semantic endpoint (mode-aware tokens)
+                    // For dimensions: follow to primitive (mode-agnostic)
+                    const isColorProperty = figmaProp === 'color';
+                    const aliasInfo = getDeepAliasInfo(
+                      alias.id,
+                      aliasLookup,
+                      collections,
+                      context,
+                      { acceptColorModeEndpoint: isColorProperty }
+                    );
+
+                    if (aliasInfo) {
+                      layerAliases[targetProp] = aliasInfo;
+                    }
+
+                    // Resolve actual value for fallback
+                    const resolved = resolveAliasWithContext(
+                      alias.id,
+                      aliasLookup,
+                      context,
+                      new Set(),
+                      collections
+                    );
+                    shadowEffect[targetProp] = resolved;
                   }
-
-                  const resolved = resolveAliasWithContext(
-                    effect.boundVariables.color.id,
-                    aliasLookup,
-                    context,
-                    new Set(),
-                    collections
-                  );
-                  shadowEffect.color = resolved;
-                }
+                });
               }
 
               resolvedEffects.push(shadowEffect);
-              if (layerAliases) {
+              // Only add to aliases if we found at least one alias
+              if (Object.keys(layerAliases).length > 0) {
                 aliases.push({ index, ...layerAliases });
               }
             }
@@ -1818,34 +1842,55 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
                   blendMode: effect.blendMode || 'NORMAL'
                 };
 
-                // Track alias info for this effect layer
-                let layerAliases = null;
+                // Track alias info for this effect layer (all boundVariables)
+                const layerAliases = {};
 
-                // Resolve boundVariables if present
-                if (effect.boundVariables && effect.boundVariables.color) {
-                  if (effect.boundVariables.color.type === 'VARIABLE_ALIAS') {
-                    // Extract alias info for CSS var() references
-                    // Component effects stop at ColorMode semantic tokens
-                    const aliasInfo = getDeepAliasInfo(effect.boundVariables.color.id, aliasLookup, collections, context, {
-                      acceptColorModeEndpoint: true
-                    });
-                    if (aliasInfo) {
-                      layerAliases = { color: aliasInfo };
+                // Resolve ALL boundVariables if present (color, offsetX, offsetY, radius, spread)
+                if (effect.boundVariables) {
+                  // Map Figma property names to shadowEffect property names
+                  const propertyMap = {
+                    color: 'color',
+                    offsetX: 'offsetX',
+                    offsetY: 'offsetY',
+                    radius: 'radius',
+                    spread: 'spread'
+                  };
+
+                  Object.entries(effect.boundVariables).forEach(([figmaProp, alias]) => {
+                    if (alias.type === 'VARIABLE_ALIAS' && propertyMap[figmaProp]) {
+                      const targetProp = propertyMap[figmaProp];
+
+                      // For color: accept ColorMode semantic endpoint (mode-aware tokens)
+                      // For dimensions: follow to primitive (mode-agnostic)
+                      const isColorProperty = figmaProp === 'color';
+                      const aliasInfo = getDeepAliasInfo(
+                        alias.id,
+                        aliasLookup,
+                        collections,
+                        context,
+                        { acceptColorModeEndpoint: isColorProperty }
+                      );
+
+                      if (aliasInfo) {
+                        layerAliases[targetProp] = aliasInfo;
+                      }
+
+                      // Resolve actual value for fallback
+                      const resolved = resolveAliasWithContext(
+                        alias.id,
+                        aliasLookup,
+                        context,
+                        new Set(),
+                        collections
+                      );
+                      shadowEffect[targetProp] = resolved;
                     }
-
-                    const resolved = resolveAliasWithContext(
-                      effect.boundVariables.color.id,
-                      aliasLookup,
-                      context,
-                      new Set(),
-                      collections
-                    );
-                    shadowEffect.color = resolved;
-                  }
+                  });
                 }
 
                 resolvedEffects.push(shadowEffect);
-                if (layerAliases) {
+                // Only add to aliases if we found at least one alias
+                if (Object.keys(layerAliases).length > 0) {
                   aliases.push({ index, ...layerAliases });
                 }
               }
