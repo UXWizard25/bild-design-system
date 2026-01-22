@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2026-01-21T08:25:44.931Z",
+  "lastModified": "2026-01-22T12:44:38.070Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -59,7 +59,29 @@
         "VariableID:18275:5789",
         "VariableID:19144:63647",
         "VariableID:21897:301632",
-        "VariableID:21898:301643"
+        "VariableID:21898:301643",
+        "VariableID:22354:35",
+        "VariableID:22354:36",
+        "VariableID:22354:37",
+        "VariableID:22354:38",
+        "VariableID:22354:39",
+        "VariableID:22354:40",
+        "VariableID:22354:41",
+        "VariableID:22354:42",
+        "VariableID:22354:44",
+        "VariableID:22354:45",
+        "VariableID:22354:46",
+        "VariableID:22354:48",
+        "VariableID:22354:50",
+        "VariableID:22354:51",
+        "VariableID:22354:53",
+        "VariableID:22354:58",
+        "VariableID:22354:61",
+        "VariableID:22354:62",
+        "VariableID:22354:63",
+        "VariableID:22354:66",
+        "VariableID:22354:67",
+        "VariableID:22354:68"
       ],
       "variables": [
         {
@@ -577,6 +599,270 @@
           "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:35",
+          "name": "FontSize/fontSize1p25x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 10
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:36",
+          "name": "FontSize/fontSize1p5x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 12
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:37",
+          "name": "FontSize/fontSize1p75x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 14
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:38",
+          "name": "FontSize/fontSize2x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 16
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:39",
+          "name": "FontSize/fontSize2p25x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 18
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:40",
+          "name": "FontSize/fontSize2p5x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 20
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:41",
+          "name": "FontSize/fontSize2p75x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 22
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:42",
+          "name": "FontSize/fontSize3x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 24
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:44",
+          "name": "FontSize/fontSize3p5x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 28
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:45",
+          "name": "FontSize/fontSize3p75x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 30
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:46",
+          "name": "FontSize/fontSize4x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 32
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:48",
+          "name": "FontSize/fontSize4p5x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 36
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:50",
+          "name": "FontSize/fontSize5x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 40
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:51",
+          "name": "FontSize/fontSize5p25x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 42
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:53",
+          "name": "FontSize/fontSize6x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 48
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:58",
+          "name": "FontSize/fontSize8x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 64
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:61",
+          "name": "FontSize/fontSize9x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 72
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:62",
+          "name": "FontSize/fontSize10x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 80
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:63",
+          "name": "FontSize/fontSize12p5x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 100
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:66",
+          "name": "FontSize/fontSize15x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 120
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:67",
+          "name": "FontSize/fontSize2p625x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 21
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
+        },
+        {
+          "id": "VariableID:22354:68",
+          "name": "FontSize/fontSize3p25x",
+          "description": "",
+          "resolvedType": "FLOAT",
+          "valuesByMode": {
+            "470:0": 26
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:470:1450"
         }
       ]
     },
@@ -712,7 +998,10 @@
         "VariableID:21936:345690",
         "VariableID:21936:345691",
         "VariableID:21936:345692",
-        "VariableID:21936:345693"
+        "VariableID:21936:345693",
+        "VariableID:22354:1638",
+        "VariableID:22354:1789",
+        "VariableID:22354:1790"
       ],
       "variables": [
         {
@@ -2220,6 +2509,42 @@
           "scopes": [],
           "hiddenFromPublishing": true,
           "variableCollectionId": "VariableCollectionId:539:2238"
+        },
+        {
+          "id": "VariableID:22354:1638",
+          "name": "Shared/alpha/colorNeutral0a3",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "539:2": "rgba(0, 0, 0, 0.029999999329447746)"
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:539:2238"
+        },
+        {
+          "id": "VariableID:22354:1789",
+          "name": "Shared/alpha/colorNeutral0a7",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "539:2": "rgba(0, 0, 0, 0.07000000029802322)"
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:539:2238"
+        },
+        {
+          "id": "VariableID:22354:1790",
+          "name": "Shared/alpha/colorNeutral0a15",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "539:2": "rgba(0, 0, 0, 0.15000000596046448)"
+          },
+          "scopes": [],
+          "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:539:2238"
         }
       ]
     },
@@ -2464,7 +2789,17 @@
         "VariableID:21979:330760",
         "VariableID:21979:330761",
         "VariableID:22102:25099",
-        "VariableID:22112:46162"
+        "VariableID:22112:46162",
+        "VariableID:22354:1772",
+        "VariableID:22354:1773",
+        "VariableID:22354:1774",
+        "VariableID:22354:1775",
+        "VariableID:22354:1776",
+        "VariableID:22354:1780",
+        "VariableID:22365:36",
+        "VariableID:22365:37",
+        "VariableID:22365:38",
+        "VariableID:22365:39"
       ],
       "variables": [
         {
@@ -3133,7 +3468,7 @@
         },
         {
           "id": "VariableID:3810:3105",
-          "name": "Component/InputField/inputFieldBorderColorIdle",
+          "name": "Component/Inputfield/inputFieldBorderColorIdle",
           "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
@@ -3154,7 +3489,7 @@
         },
         {
           "id": "VariableID:3810:3106",
-          "name": "Component/InputField/inputFieldBorderColorActive",
+          "name": "Component/Inputfield/inputFieldBorderColorActive",
           "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
@@ -6945,7 +7280,7 @@
         },
         {
           "id": "VariableID:21879:614293",
-          "name": "Component/InputField/inputFieldBorderColorDisabled",
+          "name": "Component/Inputfield/inputFieldBorderColorDisabled",
           "description": "",
           "resolvedType": "COLOR",
           "valuesByMode": {
@@ -7283,6 +7618,216 @@
             "SHAPE_FILL"
           ],
           "hiddenFromPublishing": true,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22354:1772",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftAmbientSm",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:19706:121945"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1790"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22354:1773",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftAmbientMd",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1638"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:33969"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22354:1774",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftAmbientLg",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1638"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:33969"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22354:1775",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftAmbientXl",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:19706:121945"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1790"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22354:1776",
+          "name": "Semantic/Shadow/Hard/shadowColorHardKey",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:32149"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:8076:22743"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22354:1780",
+          "name": "Semantic/Shadow/Hard/shadowColorHardAmbient",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:33969"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:8900:5503"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22365:36",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftKeytXl",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:33969"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:8900:5503"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22365:37",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftKeySm",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1789"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:32149"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22365:38",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftKeyMd",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1789"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:32149"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
+          "variableCollectionId": "VariableCollectionId:588:1979"
+        },
+        {
+          "id": "VariableID:22365:39",
+          "name": "Semantic/Shadow/Soft/shadowColorSoftKeyLg",
+          "description": "",
+          "resolvedType": "COLOR",
+          "valuesByMode": {
+            "588:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1789"
+            },
+            "592:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:7765:32149"
+            }
+          },
+          "scopes": [
+            "EFFECT_COLOR"
+          ],
+          "hiddenFromPublishing": false,
           "variableCollectionId": "VariableCollectionId:588:1979"
         }
       ]
@@ -7705,6 +8250,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7721,6 +8267,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7737,6 +8284,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7753,6 +8301,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7769,6 +8318,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7785,6 +8335,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7801,6 +8352,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7817,6 +8369,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7833,6 +8386,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7849,6 +8403,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7881,6 +8436,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7897,6 +8453,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7913,6 +8470,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7929,6 +8487,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7945,6 +8504,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7961,6 +8521,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7977,6 +8538,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -7993,6 +8555,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -8041,6 +8604,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -8073,6 +8637,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -8089,6 +8654,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -8105,6 +8671,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -8457,6 +9024,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -8473,6 +9041,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -8489,6 +9058,7 @@
           "scopes": [
             "TEXT_CONTENT",
             "WIDTH_HEIGHT",
+            "EFFECT_FLOAT",
             "FONT_VARIATIONS"
           ],
           "hiddenFromPublishing": true,
@@ -11972,22 +12542,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "7015:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4478:6965"
-            },
-            "7015:2": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4478:6965"
-            },
-            "7017:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4478:6965"
-            },
-            "16706:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4478:6965"
-            }
+            "7015:1": 12,
+            "7015:2": 12,
+            "7017:0": 12,
+            "16706:1": 12
           },
           "scopes": [
             "FONT_SIZE",
@@ -12085,7 +12643,7 @@
         },
         {
           "id": "VariableID:7700:38346",
-          "name": "Component/InputField/inputFieldStackSpace",
+          "name": "Component/Inputfield/inputFieldStackSpace",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -12114,7 +12672,7 @@
         },
         {
           "id": "VariableID:7700:44768",
-          "name": "Component/InputField/inputFieldInlineSpace",
+          "name": "Component/Inputfield/inputFieldInlineSpace",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -13161,7 +13719,7 @@
         },
         {
           "id": "VariableID:8418:2699",
-          "name": "Component/InputField/inputFieldMiniLabelInlineSpace",
+          "name": "Component/Inputfield/inputFieldMiniLabelInlineSpace",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -14078,22 +14636,10 @@
           "description": "This variable is used on the chips font size parameter of the chips text style. The font size changes only for the change between larger device widths and any device smaller than the largest. 16 - 16 -16 - 18",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "7015:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4075:56"
-            },
-            "7015:2": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4197:5112"
-            },
-            "7017:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4075:56"
-            },
-            "16706:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4075:56"
-            }
+            "7015:1": 16,
+            "7015:2": 18,
+            "7017:0": 16,
+            "16706:1": 16
           },
           "scopes": [
             "FONT_SIZE",
@@ -14307,7 +14853,7 @@
         },
         {
           "id": "VariableID:9445:22159",
-          "name": "Component/InputField/inputFieldLabelFontSize",
+          "name": "Component/Inputfield/inputFieldLabelFontSize",
           "description": "This variable controls texts inside of input fields such as dropdowns, date input and other text inputs that appear in forms for example. compact 15 - default 17 - spacious 19",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -14336,7 +14882,7 @@
         },
         {
           "id": "VariableID:9468:1084",
-          "name": "Component/InputField/inputFieldIMessageInlineSpace",
+          "name": "Component/Inputfield/inputFieldIMessageInlineSpace",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -14365,7 +14911,7 @@
         },
         {
           "id": "VariableID:9470:1117",
-          "name": "Component/InputField/inputFieldHeightSize",
+          "name": "Component/Inputfield/inputFieldHeightSize",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -14854,7 +15400,7 @@
         },
         {
           "id": "VariableID:12049:138853",
-          "name": "Component/Spinner/videoSpinnerSize0_5x",
+          "name": "Component/Spinner/videoSpinnerSize0p5x",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -19292,22 +19838,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "7015:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4172:4821"
-            },
-            "7015:2": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4075:1873"
-            },
-            "7017:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4125:2853"
-            },
-            "16706:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4125:2853"
-            }
+            "7015:1": 32,
+            "7015:2": 36,
+            "7017:0": 28,
+            "16706:1": 28
           },
           "scopes": [
             "FONT_SIZE",
@@ -19657,7 +20191,7 @@
         },
         {
           "id": "VariableID:17676:21456",
-          "name": "Component/InputField/heyInputContainerInlineSpace",
+          "name": "Component/Inputfield/heyInputContainerInlineSpace",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -20448,7 +20982,7 @@
         },
         {
           "id": "VariableID:18359:12684",
-          "name": "Component/InputField/inputFieldMessageGapSpace",
+          "name": "Component/Inputfield/inputFieldMessageGapSpace",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -20477,7 +21011,7 @@
         },
         {
           "id": "VariableID:18382:25550",
-          "name": "Component/InputField/inputFieldLabelFontFamily",
+          "name": "Component/Inputfield/inputFieldLabelFontFamily",
           "description": "",
           "resolvedType": "STRING",
           "valuesByMode": {
@@ -20689,22 +21223,10 @@
           "description": "This variable is used on the paywall card price tag. 64 constant",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "7015:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            },
-            "7015:2": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            },
-            "7017:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            },
-            "16706:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            }
+            "7015:1": 64,
+            "7015:2": 64,
+            "7017:0": 64,
+            "16706:1": 64
           },
           "scopes": [
             "FONT_SIZE"
@@ -20776,22 +21298,10 @@
           "description": "This variable is used on the paywall card text under the price tag. 40 - 40 - 40 - 40",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "7015:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4082:2076"
-            },
-            "7015:2": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4082:2076"
-            },
-            "7017:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4082:2076"
-            },
-            "16706:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4082:2076"
-            }
+            "7015:1": 40,
+            "7015:2": 40,
+            "7017:0": 40,
+            "16706:1": 40
           },
           "scopes": [
             "FONT_SIZE"
@@ -22175,7 +22685,7 @@
         },
         {
           "id": "VariableID:21990:8395",
-          "name": "Component/InputField/inputFieldLabelLineHeight",
+          "name": "Component/Inputfield/inputFieldLabelLineHeight",
           "description": "This variable controls texts inside of input fields such as dropdowns, date input and other text inputs that appear in forms for example. compact 15 - default 17 - spacious 19",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -23050,8 +23560,14 @@
           "resolvedType": "FLOAT",
           "valuesByMode": {
             "18038:0": 24,
-            "18094:0": 18,
-            "18094:1": 18
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23064,8 +23580,14 @@
           "resolvedType": "FLOAT",
           "valuesByMode": {
             "18038:0": 24,
-            "18094:0": 18,
-            "18094:1": 18
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23079,7 +23601,10 @@
           "valuesByMode": {
             "18038:0": 32,
             "18094:0": 22,
-            "18094:1": 18
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23161,8 +23686,14 @@
           "description": "Bild 16 | SpoBi 16 | Ads 14 | current online css var: --caption-1-font-size-sm",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
-            "18094:0": 16,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
             "18094:1": 14
           },
           "scopes": [],
@@ -23175,8 +23706,14 @@
           "description": "Bild 16 | SpoBi 16 | Ads 14 | current online css: --caption-1-font-size-sm",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
-            "18094:0": 16,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
             "18094:1": 14
           },
           "scopes": [],
@@ -23189,9 +23726,18 @@
           "description": "Bild 18 | SpoBi 18 | Ads 16 | current online css: --caption-1-font-size-md",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 18,
-            "18094:0": 18,
-            "18094:1": 16
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23205,7 +23751,10 @@
           "valuesByMode": {
             "18038:0": 20,
             "18094:0": 20,
-            "18094:1": 18
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23217,9 +23766,18 @@
           "description": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 18,
-            "18094:0": 18,
-            "18094:1": 16
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23231,9 +23789,18 @@
           "description": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 18,
-            "18094:0": 18,
-            "18094:1": 16
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23246,7 +23813,10 @@
           "resolvedType": "FLOAT",
           "valuesByMode": {
             "18038:0": 22,
-            "18094:0": 24,
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:42"
+            },
             "18094:1": 22
           },
           "scopes": [],
@@ -23260,7 +23830,10 @@
           "resolvedType": "FLOAT",
           "valuesByMode": {
             "18038:0": 22,
-            "18094:0": 24,
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:42"
+            },
             "18094:1": 22
           },
           "scopes": [],
@@ -23273,7 +23846,10 @@
           "description": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 21,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:67"
+            },
             "18094:0": 17,
             "18094:1": 17
           },
@@ -23287,7 +23863,10 @@
           "description": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for small device sizes. Current online css: --body-font-size",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 21,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:67"
+            },
             "18094:0": 17,
             "18094:1": 17
           },
@@ -23301,7 +23880,10 @@
           "description": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for medium device sizes. Current online css: --body-font-size",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 21,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:67"
+            },
             "18094:0": 17,
             "18094:1": 17
           },
@@ -23315,7 +23897,10 @@
           "description": "Bild: 21 | SpoBi: 17 | Ads: 17 | This variable is used in the body text style font size parameter for large device sizes. Current online css: --body-font-size",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 21,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:67"
+            },
             "18094:0": 17,
             "18094:1": 17
           },
@@ -23329,7 +23914,10 @@
           "description": "--footnote-font-size-sm",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
             "18094:0": 13,
             "18094:1": 13
           },
@@ -23343,7 +23931,10 @@
           "description": "--footnote-font-size-sm",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
             "18094:0": 13,
             "18094:1": 13
           },
@@ -23357,7 +23948,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
             "18094:0": 13,
             "18094:1": 13
           },
@@ -23371,7 +23965,10 @@
           "description": "--footnote-font-size-lg",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 18,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
             "18094:0": 15,
             "18094:1": 15
           },
@@ -23385,7 +23982,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 12,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:36"
+            },
             "18094:0": 10,
             "18094:1": 10
           },
@@ -23399,7 +23999,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 12,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:36"
+            },
             "18094:0": 10,
             "18094:1": 10
           },
@@ -23413,7 +24016,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 12,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:36"
+            },
             "18094:0": 10,
             "18094:1": 10
           },
@@ -23427,7 +24033,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
             "18094:0": 13,
             "18094:1": 13
           },
@@ -23441,9 +24050,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
-            "18094:0": 16,
-            "18094:1": 16
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23455,9 +24073,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 16,
-            "18094:0": 16,
-            "18094:1": 16
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23469,9 +24096,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 18,
-            "18094:0": 18,
-            "18094:1": 16
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:38"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23485,7 +24121,10 @@
           "valuesByMode": {
             "18038:0": 20,
             "18094:0": 20,
-            "18094:1": 18
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:39"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -23525,9 +24164,18 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 12,
-            "18094:0": 12,
-            "18094:1": 12
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:36"
+            },
+            "18094:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:36"
+            },
+            "18094:1": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:36"
+            }
           },
           "scopes": [],
           "hiddenFromPublishing": true,
@@ -30790,7 +31438,7 @@
     },
     {
       "id": "S:5130fdc845f664cc55727231932ae083a27bed09,",
-      "name": "Component/InputField/InputFieldLabel",
+      "name": "Component/Inputfield/InputFieldLabel",
       "description": "This text style is used in dropdowns and other text input fields such as date inputs, search input fields and other inputs for text found in forms for example. Font size references a variable from the density collection. 15 - 17 - 19",
       "type": "TEXT",
       "fontName": {
@@ -32241,39 +32889,81 @@
         {
           "type": "DROP_SHADOW",
           "visible": true,
-          "radius": 4,
-          "boundVariables": {},
-          "color": {
-            "r": 0,
-            "g": 0,
-            "b": 0,
-            "a": 0.03999999910593033
-          },
-          "offset": {
-            "x": 0,
-            "y": 1
-          },
-          "spread": 0,
-          "blendMode": "MULTIPLY",
-          "showShadowBehindNode": false
-        },
-        {
-          "type": "DROP_SHADOW",
-          "visible": true,
           "radius": 6,
-          "boundVariables": {},
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22365:37"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4539:2230"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:54"
+            }
+          },
           "color": {
             "r": 0,
             "g": 0,
             "b": 0,
-            "a": 0.07999999821186066
+            "a": 0.07000000029802322
           },
           "offset": {
             "x": 0,
             "y": 2
           },
           "spread": 0,
-          "blendMode": "LINEAR_BURN",
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 4,
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1772"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:55"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:18269:27"
+            }
+          },
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
           "showShadowBehindNode": false
         }
       ]
@@ -32287,27 +32977,29 @@
         {
           "type": "DROP_SHADOW",
           "visible": true,
-          "radius": 16,
-          "boundVariables": {},
-          "color": {
-            "r": 0,
-            "g": 0,
-            "b": 0,
-            "a": 0.029999999329447746
-          },
-          "offset": {
-            "x": 0,
-            "y": 2
-          },
-          "spread": 0,
-          "blendMode": "MULTIPLY",
-          "showShadowBehindNode": false
-        },
-        {
-          "type": "DROP_SHADOW",
-          "visible": true,
           "radius": 12,
-          "boundVariables": {},
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22365:38"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4478:6965"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:55"
+            }
+          },
           "color": {
             "r": 0,
             "g": 0,
@@ -32319,7 +33011,47 @@
             "y": 4
           },
           "spread": 0,
-          "blendMode": "LINEAR_BURN",
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 16,
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1773"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:56"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:54"
+            }
+          },
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.029999999329447746
+          },
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
           "showShadowBehindNode": false
         }
       ]
@@ -32333,27 +33065,13 @@
         {
           "type": "DROP_SHADOW",
           "visible": true,
-          "radius": 24,
-          "boundVariables": {},
-          "color": {
-            "r": 0,
-            "g": 0,
-            "b": 0,
-            "a": 0.029999999329447746
-          },
-          "offset": {
-            "x": 0,
-            "y": 8
-          },
-          "spread": 0,
-          "blendMode": "LINEAR_BURN",
-          "showShadowBehindNode": false
-        },
-        {
-          "type": "DROP_SHADOW",
-          "visible": true,
           "radius": 16,
-          "boundVariables": {},
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22365:39"
+            }
+          },
           "color": {
             "r": 0,
             "g": 0,
@@ -32365,7 +33083,47 @@
             "y": 8
           },
           "spread": 0,
-          "blendMode": "LINEAR_BURN",
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 24,
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1774"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:52"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:53"
+            }
+          },
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.029999999329447746
+          },
+          "offset": {
+            "x": 0,
+            "y": 8
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
           "showShadowBehindNode": false
         }
       ]
@@ -32379,27 +33137,29 @@
         {
           "type": "DROP_SHADOW",
           "visible": true,
-          "radius": 64,
-          "boundVariables": {},
-          "color": {
-            "r": 0,
-            "g": 0,
-            "b": 0,
-            "a": 0.05000000074505806
-          },
-          "offset": {
-            "x": 0,
-            "y": 0
-          },
-          "spread": 0,
-          "blendMode": "LINEAR_BURN",
-          "showShadowBehindNode": false
-        },
-        {
-          "type": "DROP_SHADOW",
-          "visible": true,
           "radius": 32,
-          "boundVariables": {},
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22365:36"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4172:4821"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:56"
+            }
+          },
           "color": {
             "r": 0,
             "g": 0,
@@ -32411,7 +33171,47 @@
             "y": 16
           },
           "spread": 0,
-          "blendMode": "LINEAR_BURN",
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 64,
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1775"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4547:2155"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            }
+          },
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 0
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
           "showShadowBehindNode": false
         }
       ]
@@ -32429,7 +33229,23 @@
           "boundVariables": {
             "color": {
               "type": "VARIABLE_ALIAS",
-              "id": "VariableID:7765:32149"
+              "id": "VariableID:22354:1776"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:54"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:18269:27"
             }
           },
           "color": {
@@ -32449,11 +33265,27 @@
         {
           "type": "DROP_SHADOW",
           "visible": true,
-          "radius": 3,
+          "radius": 4,
           "boundVariables": {
             "color": {
               "type": "VARIABLE_ALIAS",
-              "id": "VariableID:7765:33969"
+              "id": "VariableID:22354:1780"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:18269:27"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:55"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:18269:27"
             }
           },
           "color": {
@@ -32467,7 +33299,7 @@
             "y": 1
           },
           "spread": 1,
-          "blendMode": "LINEAR_BURN",
+          "blendMode": "NORMAL",
           "showShadowBehindNode": true
         }
       ]
@@ -32485,7 +33317,63 @@
           "boundVariables": {
             "color": {
               "type": "VARIABLE_ALIAS",
-              "id": "VariableID:7765:33969"
+              "id": "VariableID:22354:1776"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:53"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:54"
+            }
+          },
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.20000000298023224
+          },
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 4,
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:1780"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:55"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:54"
             }
           },
           "color": {
@@ -32496,29 +33384,10 @@
           },
           "offset": {
             "x": 0,
-            "y": 4
-          },
-          "spread": 0,
-          "blendMode": "LINEAR_BURN",
-          "showShadowBehindNode": false
-        },
-        {
-          "type": "DROP_SHADOW",
-          "visible": true,
-          "radius": 4,
-          "boundVariables": {},
-          "color": {
-            "r": 0,
-            "g": 0,
-            "b": 0,
-            "a": 0.1599999964237213
-          },
-          "offset": {
-            "x": 0,
             "y": 2
           },
           "spread": 0,
-          "blendMode": "MULTIPLY",
+          "blendMode": "NORMAL",
           "showShadowBehindNode": false
         }
       ]
@@ -32532,11 +33401,27 @@
         {
           "type": "DROP_SHADOW",
           "visible": true,
-          "radius": 3,
+          "radius": 6,
           "boundVariables": {
             "color": {
               "type": "VARIABLE_ALIAS",
-              "id": "VariableID:7765:32149"
+              "id": "VariableID:22354:1776"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4539:2230"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:54"
             }
           },
           "color": {
@@ -32556,11 +33441,27 @@
         {
           "type": "DROP_SHADOW",
           "visible": true,
-          "radius": 10,
+          "radius": 12,
           "boundVariables": {
             "color": {
               "type": "VARIABLE_ALIAS",
-              "id": "VariableID:7765:33969"
+              "id": "VariableID:22354:1780"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:55"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4478:6965"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4539:2230"
             }
           },
           "color": {
@@ -32574,7 +33475,7 @@
             "y": 6
           },
           "spread": 4,
-          "blendMode": "LINEAR_BURN",
+          "blendMode": "NORMAL",
           "showShadowBehindNode": true
         }
       ]
@@ -32592,7 +33493,23 @@
           "boundVariables": {
             "color": {
               "type": "VARIABLE_ALIAS",
-              "id": "VariableID:7765:32149"
+              "id": "VariableID:22354:1776"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:55"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:55"
             }
           },
           "color": {
@@ -32606,7 +33523,7 @@
             "y": 4
           },
           "spread": 0,
-          "blendMode": "DARKEN",
+          "blendMode": "NORMAL",
           "showShadowBehindNode": true
         },
         {
@@ -32616,7 +33533,23 @@
           "boundVariables": {
             "color": {
               "type": "VARIABLE_ALIAS",
-              "id": "VariableID:7765:33969"
+              "id": "VariableID:22354:1780"
+            },
+            "spread": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4539:2230"
+            },
+            "radius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4478:6965"
+            },
+            "offsetX": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:16056:163623"
+            },
+            "offsetY": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:4075:53"
             }
           },
           "color": {
@@ -32630,7 +33563,7 @@
             "y": 8
           },
           "spread": 6,
-          "blendMode": "LINEAR_BURN",
+          "blendMode": "NORMAL",
           "showShadowBehindNode": true
         }
       ]
