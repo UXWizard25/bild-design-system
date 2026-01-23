@@ -306,14 +306,15 @@ function isPrimitiveCollection(collectionId) {
  * @param {Map} aliasLookup - Lookup Map for all variables
  * @param {Array} collections - Array of all collections
  * @param {object} context - { brandName } for brand-specific mode resolution
- * @param {object} options - { acceptSemanticEndpoint, acceptColorModeEndpoint, acceptDensityEndpoint }
+ * @param {object} options - { acceptSemanticEndpoint, acceptColorModeEndpoint, acceptDensityEndpoint, acceptComponentEndpoint }
  * @returns {Object|null} - { token, collection, collectionType } or null
  */
 function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, options = {}) {
   const {
     acceptSemanticEndpoint = false,    // BreakpointMode semantic tokens
     acceptColorModeEndpoint = false,   // ColorMode semantic tokens
-    acceptDensityEndpoint = false      // Density tokens
+    acceptDensityEndpoint = false,     // Density tokens
+    acceptComponentEndpoint = false    // Component tokens in BreakpointMode (for typography composites)
   } = options;
   const visited = new Set();
   let currentId = variableId;
@@ -356,6 +357,19 @@ function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, op
         token: tokenName,
         collection: collection ? collection.name.toLowerCase() : 'breakpointmode',
         collectionType: 'semantic',
+        variableId: currentId
+      };
+    }
+
+    // BreakpointMode Component tokens - endpoint if flag set (for typography composite fontSize/lineHeight)
+    if (acceptComponentEndpoint && variable.collectionId === COLLECTION_IDS.BREAKPOINT_MODE && isComponentToken) {
+      const collection = collections.find(c => c.id === variable.collectionId);
+      const tokenName = variable.name.split('/').pop();
+
+      return {
+        token: tokenName,
+        collection: collection ? collection.name.toLowerCase() : 'breakpointmode',
+        collectionType: 'component-breakpoint',
         variableId: currentId
       };
     }
@@ -1403,10 +1417,12 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
             if (alias.type === 'VARIABLE_ALIAS') {
               // Accept Semantic-level (BreakpointMode) as endpoint for ALL typography properties
               // This preserves var() references for brand-switching (fontFamily, fontWeight change per brand)
+              // Accept Component-level (BreakpointMode) for fontSize/lineHeight cross-component references
               const acceptSemanticEndpoint = true;
+              const acceptComponentEndpoint = true;
 
-              // Extract DEEP alias info - follows chain to primitive (or semantic for typography)
-              const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint });
+              // Extract DEEP alias info - follows chain to primitive (or semantic/component-breakpoint for typography)
+              const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint, acceptComponentEndpoint });
               if (aliasInfo) {
                 aliases[property] = aliasInfo;
               }
@@ -1524,10 +1540,12 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
               if (alias.type === 'VARIABLE_ALIAS') {
                 // Accept Semantic-level (BreakpointMode) as endpoint for ALL typography properties
                 // This preserves var() references for brand-switching (fontFamily, fontWeight change per brand)
+                // Accept Component-level (BreakpointMode) for fontSize/lineHeight cross-component references
                 const acceptSemanticEndpoint = true;
+                const acceptComponentEndpoint = true;
 
-                // Extract DEEP alias info - follows chain to primitive (or semantic for typography)
-                const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint });
+                // Extract DEEP alias info - follows chain to primitive (or semantic/component-breakpoint for typography)
+                const aliasInfo = getDeepAliasInfo(alias.id, aliasLookup, collections, context, { acceptSemanticEndpoint, acceptComponentEndpoint });
                 if (aliasInfo) {
                   aliases[property] = aliasInfo;
                 }
