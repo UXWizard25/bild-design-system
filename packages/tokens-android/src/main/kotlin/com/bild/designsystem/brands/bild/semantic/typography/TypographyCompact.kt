@@ -502,7 +502,7 @@ object BildTypographyCompact : BildTypographyScheme {
         fontFamily = "Gotham XNarrow",
         fontWeight = FontWeight.Normal,
         fontSize = 21.sp,
-        lineHeight = 1.2000000476837158.sp,
+        lineHeight = 1.2.sp,
         letterSpacing = 0.sp,
         textCase = DesignTextCase.Original,
         textDecoration = TextDecoration.None

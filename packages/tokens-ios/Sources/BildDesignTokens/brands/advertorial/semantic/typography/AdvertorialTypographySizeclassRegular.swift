@@ -398,7 +398,7 @@ public struct AdvertorialTypographyRegular: AdvertorialTypographyScheme, DesignT
         fontFamily: "Lucida Grande",
         fontWeight: .regular,
         fontSize: 17,
-        lineHeight: 1.2000000476837158,
+        lineHeight: 1.2,
         letterSpacing: 0,
         textCase: .original,
         textDecoration: .none

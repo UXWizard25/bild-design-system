@@ -1374,7 +1374,7 @@ function resolveDirectLineHeight(lineHeightObj, fontSize) {
 
   switch (lineHeightObj.unit) {
     case 'PIXELS':
-      return typeof lineHeightObj.value === 'number' ? lineHeightObj.value : null;
+      return typeof lineHeightObj.value === 'number' ? roundNumericValue(lineHeightObj.value) : null;
 
     case 'PERCENT':
       if (fontSize != null && typeof fontSize === 'number' && typeof lineHeightObj.value === 'number') {
