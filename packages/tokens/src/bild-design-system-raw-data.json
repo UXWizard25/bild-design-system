@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastModified": "2026-01-22T15:23:17.396Z",
+  "lastModified": "2026-01-24T09:00:42.269Z",
   "figmaFileKey": "unknown",
   "figmaFileName": "BILD Design System",
   "collections": [
@@ -21240,22 +21240,10 @@
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "7015:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            },
-            "7015:2": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            },
-            "7017:0": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            },
-            "16706:1": {
-              "type": "VARIABLE_ALIAS",
-              "id": "VariableID:4547:2155"
-            }
+            "7015:1": 64,
+            "7015:2": 64,
+            "7017:0": 64,
+            "16706:1": 64
           },
           "scopes": [
             "LINE_HEIGHT"
@@ -21427,7 +21415,7 @@
         },
         {
           "id": "VariableID:18729:16809",
-          "name": "Component/Menu/appTopbarStageTitleHeight",
+          "name": "Component/Menu/appTopbarStageTitleLineHeight",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -22999,7 +22987,10 @@
           "description": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 40,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:50"
+            },
             "18094:0": 38,
             "18094:1": 39
           },
@@ -23013,7 +23004,10 @@
           "description": "Bild: 40 | SpoBi: 38 | Ads: 39 | This variable is used in the display1 text style font size parameter for small device sizes.",
           "resolvedType": "FLOAT",
           "valuesByMode": {
-            "18038:0": 40,
+            "18038:0": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:22354:50"
+            },
             "18094:0": 38,
             "18094:1": 39
           },
@@ -23762,7 +23756,7 @@
         },
         {
           "id": "VariableID:18038:10663",
-          "name": "Global/Typography/FontSize/Callout/callout1FontSizeXS",
+          "name": "Global/Typography/FontSize/Callout/calloutFontSizeXS",
           "description": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -23785,7 +23779,7 @@
         },
         {
           "id": "VariableID:18038:10664",
-          "name": "Global/Typography/FontSize/Callout/callout1FontSizeSM",
+          "name": "Global/Typography/FontSize/Callout/calloutFontSizeSM",
           "description": "Bild: 18 | SpoBi: 18 | Ads: 16 | This variable is used in the callout1 text style font size parameter for small device sizes. Current online css:",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -23808,7 +23802,7 @@
         },
         {
           "id": "VariableID:18038:10665",
-          "name": "Global/Typography/FontSize/Callout/callout1FontSizeMD",
+          "name": "Global/Typography/FontSize/Callout/calloutFontSizeMD",
           "description": "Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for medium device sizes. Current online css:",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -23825,7 +23819,7 @@
         },
         {
           "id": "VariableID:18038:10666",
-          "name": "Global/Typography/FontSize/Callout/callout1FontSizeLG",
+          "name": "Global/Typography/FontSize/Callout/calloutFontSizeLG",
           "description": "Bild: 22 | SpoBi: 24 | Ads: 22 | This variable is used in the callout1 text style font size parameter for large device sizes. Current online css:",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -24701,7 +24695,7 @@
         },
         {
           "id": "VariableID:18038:10748",
-          "name": "Global/Typography/LineHeight/Callout/callout1LineHeightXS",
+          "name": "Global/Typography/LineHeight/Callout/calloutLineHeightXS",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -24715,7 +24709,7 @@
         },
         {
           "id": "VariableID:18038:10749",
-          "name": "Global/Typography/LineHeight/Callout/callout1LineHeightSM",
+          "name": "Global/Typography/LineHeight/Callout/calloutLineHeightSM",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -24729,7 +24723,7 @@
         },
         {
           "id": "VariableID:18038:10750",
-          "name": "Global/Typography/LineHeight/Callout/callout1LineHeightMD",
+          "name": "Global/Typography/LineHeight/Callout/calloutLineHeightMD",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -24743,7 +24737,7 @@
         },
         {
           "id": "VariableID:18038:10751",
-          "name": "Global/Typography/LineHeight/Callout/callout1LineHeightLG",
+          "name": "Global/Typography/LineHeight/Callout/calloutLineHeightLG",
           "description": "",
           "resolvedType": "FLOAT",
           "valuesByMode": {
@@ -30609,6 +30603,38 @@
         "fontWeight": {
           "type": "VARIABLE_ALIAS",
           "id": "VariableID:17091:45977"
+        }
+      }
+    },
+    {
+      "id": "S:1435a977f4fdc51953ed747420f546f45df2326c,",
+      "name": "Global/Quote/testStyle",
+      "description": "",
+      "type": "TEXT",
+      "fontName": {
+        "family": "Gotham XNarrow",
+        "style": "Book"
+      },
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 1.2000000476837158
+      },
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "paragraphSpacing": 0,
+      "paragraphIndent": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:7426:415987"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:7426:415991"
         }
       }
     },
