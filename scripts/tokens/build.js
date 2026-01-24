@@ -170,7 +170,8 @@ function isConstantAcrossBreakpoints(tokenValues) {
 function resolveBreakpointFallback(values, targetBp) {
   const idx = BREAKPOINTS.indexOf(targetBp);
   for (let i = idx; i >= 0; i--) {
-    if (values[BREAKPOINTS[i]]) return values[BREAKPOINTS[i]];
+    const v = values[BREAKPOINTS[i]];
+    if (v && typeof v === 'object' && Object.keys(v).length > 0) return v;
   }
   return values[BREAKPOINTS[0]];
 }
