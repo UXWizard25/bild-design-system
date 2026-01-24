@@ -17,53 +17,33 @@
 const fs = require('fs');
 const path = require('path');
 
-// Paths
-const INPUT_JSON_PATH = path.join(__dirname, '../../packages/tokens/src/bild-design-system-raw-data.json');
-const OUTPUT_DIR = path.join(__dirname, '../../packages/tokens/.tokens');
+// Pipeline Configuration
+const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 
-// Brand and mode mappings
-const BRANDS = {
-  BILD: '18038:0',
-  SportBILD: '18094:0',
-  Advertorial: '18094:1'
-};
+// Paths (derived from config)
+const INPUT_JSON_PATH = path.join(__dirname, '../..', pipelineConfig.source.inputDir, pipelineConfig.source.inputFile);
+const OUTPUT_DIR = path.join(__dirname, '../..', pipelineConfig.source.outputDir);
 
-const BREAKPOINTS = {
-  xs: '7017:0',
-  sm: '16706:1',
-  md: '7015:1',
-  lg: '7015:2'
-};
+// Brand and mode mappings (derived from config)
+// BRANDS maps Figma display names → mode IDs (used for collection mode matching)
+const BRANDS = Object.fromEntries(
+  Object.entries(pipelineConfig.source.modes.brands).map(([key, { figmaName, modeId }]) => [figmaName, modeId])
+);
 
-const COLOR_MODES = {
-  light: '588:0',
-  dark: '592:1'
-};
+const BREAKPOINTS = pipelineConfig.source.modes.breakpoints;
 
-const DENSITY_MODES = {
-  default: '5695:2',
-  dense: '5695:1',
-  spacious: '5695:3'
-};
+const COLOR_MODES = pipelineConfig.source.modes.colorModes;
 
-// Collection IDs (stable)
-const COLLECTION_IDS = {
-  FONT_PRIMITIVE: 'VariableCollectionId:470:1450',
-  COLOR_PRIMITIVE: 'VariableCollectionId:539:2238',
-  SIZE_PRIMITIVE: 'VariableCollectionId:4072:1817',
-  SPACE_PRIMITIVE: 'VariableCollectionId:2726:12077',
-  DENSITY: 'VariableCollectionId:5695:5841',
-  BRAND_TOKEN_MAPPING: 'VariableCollectionId:18038:10593',
-  BRAND_COLOR_MAPPING: 'VariableCollectionId:18212:14495',
-  BREAKPOINT_MODE: 'VariableCollectionId:7017:25696',
-  COLOR_MODE: 'VariableCollectionId:588:1979'
-};
+const DENSITY_MODES = pipelineConfig.source.modes.densityModes;
+
+// Collection IDs (from config)
+const COLLECTION_IDS = pipelineConfig.source.collections;
 
 /**
  * Checks if a token path represents a component token
  */
 function isComponentToken(tokenPath) {
-  return tokenPath.startsWith('Component/');
+  return tokenPath.startsWith(pipelineConfig.source.pathConventions.componentPrefix);
 }
 
 /**

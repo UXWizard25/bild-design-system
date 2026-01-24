@@ -16,57 +16,56 @@ const path = require('path');
 // Import custom config
 const customConfig = require('../../build-config/tokens/style-dictionary.config.js');
 
-const TOKENS_DIR = path.join(__dirname, '../../packages/tokens/.tokens');
-const DIST_DIR = path.join(__dirname, '../../packages/tokens/dist');
+// Pipeline Configuration
+const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 
-// Native platform output directories (separate packages for SPM/Maven distribution)
-const IOS_DIST_DIR = path.join(__dirname, '../../packages/tokens-ios/Sources/BildDesignTokens');
-const ANDROID_DIST_DIR = path.join(__dirname, '../../packages/tokens-android/src/main/kotlin/com/bild/designsystem');
+// Paths (derived from config)
+const TOKENS_DIR = path.join(__dirname, '../..', pipelineConfig.source.outputDir);
+const DIST_DIR = path.join(__dirname, '../..', pipelineConfig.output.distDir);
 
-// Brands and breakpoints
-const BRANDS = ['bild', 'sportbild', 'advertorial'];
-const COLOR_BRANDS = ['bild', 'sportbild'];  // Brands with their own color tokens
-const CONTENT_BRANDS = ['bild', 'sportbild', 'advertorial'];  // All brands (for sizing/typography)
-const BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
-const COLOR_MODES = ['light', 'dark'];
-const DENSITY_MODES = ['default', 'dense', 'spacious'];
+// Native platform output directories (derived from config)
+const IOS_DIST_DIR = path.join(__dirname, '../..', pipelineConfig.platforms.ios.outputDir);
+const ANDROID_DIST_DIR = path.join(__dirname, '../..', pipelineConfig.platforms.android.outputDir);
 
-// Platform output toggles - set to false to disable output generation
-const COMPOSE_ENABLED = true;
-const SWIFTUI_ENABLED = true;       // SwiftUI output in dist/ios/
-const SCSS_ENABLED = false;         // SCSS output in dist/scss/
-const JS_ENABLED = false;           // JS/ESM output in dist/js/ and dist/js.min/
+// Brands and breakpoints (derived from config)
+const BRANDS = pipelineConfig.brands.all;
+const COLOR_BRANDS = pipelineConfig.brands.colorBrands;
+const CONTENT_BRANDS = pipelineConfig.brands.contentBrands;
+const BREAKPOINTS = Object.keys(pipelineConfig.modes.breakpoints);
+const COLOR_MODES = pipelineConfig.modes.color;
+const DENSITY_MODES = pipelineConfig.modes.density;
 
-// Token type toggles - set to false to exclude from all platform outputs
-const BOOLEAN_TOKENS_ENABLED = false;
+// Platform output toggles (derived from config)
+const COMPOSE_ENABLED = pipelineConfig.platforms.android.enabled;
+const SWIFTUI_ENABLED = pipelineConfig.platforms.ios.enabled;
+const SCSS_ENABLED = pipelineConfig.platforms.scss.enabled;
+const JS_ENABLED = pipelineConfig.platforms.js.enabled;
 
-// Figma description comment toggles per platform
-// Controls whether token.comment (from Figma descriptions) is output as code comments
-// Does NOT affect: file headers, section comments, or structural comments
-const SHOW_DESCRIPTIONS = {
-  css: false,      // Disabled - cleaner CSS output
-  scss: true,      // Enabled for SCSS
-  js: true,        // Enabled for JS
-  ios: true,       // Enabled for iOS/Swift
-  android: true    // Enabled for Android/Kotlin
-};
+// CSS data-attribute names (derived from config)
+const DATA_ATTRS = pipelineConfig.platforms.css.dataAttributes;
 
-// iOS: Uses 2 size classes (Apple HIG)
-// Maps sm (390px) → compact, lg (1024px) → regular
-const IOS_BREAKPOINTS = ['sm', 'lg'];
-const IOS_SIZE_CLASS_MAPPING = {
-  sm: 'compact',
-  lg: 'regular'
-};
+// Token type toggles (derived from config)
+const BOOLEAN_TOKENS_ENABLED = pipelineConfig.output.booleanTokens;
 
-// Android: Uses 3 size classes (Material 3 WindowSizeClass)
-// Maps sm (390px) → Compact (<600dp), md (600px) → Medium (600-839dp), lg (1024px) → Expanded (≥840dp)
-const ANDROID_BREAKPOINTS = ['sm', 'md', 'lg'];
-const ANDROID_SIZE_CLASS_MAPPING = {
-  sm: 'compact',
-  md: 'medium',
-  lg: 'expanded'
-};
+// Figma description comment toggles per platform (derived from config)
+const SHOW_DESCRIPTIONS = pipelineConfig.output.showDescriptions;
+
+// iOS: Size class mapping (derived from config)
+// Invert config (sizeClass→breakpoint) to get (breakpoint→sizeClass)
+const IOS_SIZE_CLASS_MAPPING = Object.fromEntries(
+  Object.entries(pipelineConfig.platforms.ios.sizeClasses).map(([sc, bp]) => [bp, sc])
+);
+const IOS_BREAKPOINTS = Object.keys(IOS_SIZE_CLASS_MAPPING);
+
+// Android package name shorthand (derived from config)
+const ANDROID_PKG = pipelineConfig.platforms.android.packageName;
+
+// Android: Size class mapping (derived from config)
+// Invert config (sizeClass→breakpoint) to get (breakpoint→sizeClass)
+const ANDROID_SIZE_CLASS_MAPPING = Object.fromEntries(
+  Object.entries(pipelineConfig.platforms.android.sizeClasses).map(([sc, bp]) => [bp, sc])
+);
+const ANDROID_BREAKPOINTS = Object.keys(ANDROID_SIZE_CLASS_MAPPING);
 
 // Package.json references for dynamic header generation
 const tokensPackageJson = require('../../packages/tokens/package.json');
@@ -364,7 +363,7 @@ function generateFileHeader({ fileName, commentStyle, platform, brand, context }
   const lines = [
     'Do not edit directly, this file was auto-generated.',
     '',
-    `BILD Design System Tokens v${version}`,
+    `${pipelineConfig.identity.name} Tokens v${version}`,
     `Generated by Style Dictionary v${sdVersion}`,
     ''
   ];
@@ -384,7 +383,7 @@ function generateFileHeader({ fileName, commentStyle, platform, brand, context }
     lines.push('');
   }
 
-  lines.push(`Copyright (c) ${currentYear} Axel Springer Deutschland GmbH`);
+  lines.push(`Copyright (c) ${currentYear} ${pipelineConfig.identity.copyright}`);
   lines.push('Proprietary and confidential. All rights reserved.');
   lines.push('');
   lines.push(`Documentation: ${docsUrl}`);
@@ -729,7 +728,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
           options: {
             outputReferences: false,
             packageName: (() => {
-              const basePkg = 'com.bild.designsystem';
+              const basePkg = ANDROID_PKG;
               if (buildPath.includes('/shared/')) {
                 return `${basePkg}.shared`;
               }
@@ -1032,7 +1031,7 @@ function createTypographyConfig(brand, breakpoint) {
             destination: `Typography${getSizeClassName(breakpoint, 'android').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'android').slice(1)}.kt`,
             format: 'compose/typography-scheme',
             options: {
-              packageName: `com.bild.designsystem.brands.${brand}.semantic.typography`,
+              packageName: `${ANDROID_PKG}.brands.${brand}.semantic.typography`,
               brand: brandName,
               breakpoint,
               sizeClass: getSizeClassName(breakpoint, 'android'),
@@ -1147,7 +1146,7 @@ function createSharedDensityConfig(densityMode) {
             destination: `Density${modePascal}.kt`,
             format: 'compose/shared-density',
             options: {
-              packageName: 'com.bild.designsystem.shared',
+              packageName: `${ANDROID_PKG}.shared`,
               densityMode: modePascal,
               showDescriptions: SHOW_DESCRIPTIONS.android
             }
@@ -1516,7 +1515,7 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
             destination: `${componentName}Typography${getSizeClassName(breakpoint, 'android').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'android').slice(1)}.kt`,
             format: 'compose/typography',
             options: {
-              packageName: `com.bild.designsystem.brands.${brand}.components.${componentName.toLowerCase()}`,
+              packageName: `${ANDROID_PKG}.brands.${brand}.components.${componentName.toLowerCase()}`,
               brand: brand,
               mode: getSizeClassName(breakpoint, 'android'),
               componentName,
@@ -1904,7 +1903,7 @@ async function optimizeComponentColorCSS() {
         // Write output files (Dual-Axis: Color tokens use data-color-brand)
         // Uses dual selectors for Shadow DOM compatibility
         if (optimizedVars.length > 0) {
-          const colorSelector = buildDualSelector(`[data-color-brand="${brand}"]`);
+          const colorSelector = buildDualSelector(`[${DATA_ATTRS.colorBrand}="${brand}"]`);
           const optimizedContent = generateCssContent(
             lightCss.header,
             colorSelector,
@@ -1924,7 +1923,7 @@ async function optimizeComponentColorCSS() {
           // Partial optimization - update light/dark files with remaining tokens
           // Uses dual selectors for Shadow DOM compatibility
           if (lightOnlyVars.length > 0) {
-            const lightSelector = buildDualSelector(`[data-color-brand="${brand}"][data-theme="light"]`);
+            const lightSelector = buildDualSelector(`[${DATA_ATTRS.colorBrand}="${brand}"][${DATA_ATTRS.theme}="light"]`);
             const lightContent = generateCssContent(
               lightCss.header,
               lightSelector,
@@ -1937,7 +1936,7 @@ async function optimizeComponentColorCSS() {
           }
 
           if (darkOnlyVars.length > 0) {
-            const darkSelector = buildDualSelector(`[data-color-brand="${brand}"][data-theme="dark"]`);
+            const darkSelector = buildDualSelector(`[${DATA_ATTRS.colorBrand}="${brand}"][${DATA_ATTRS.theme}="dark"]`);
             const darkContent = generateCssContent(
               darkCss.header,
               darkSelector,
@@ -2003,8 +2002,7 @@ async function optimizeComponentEffectsCSS() {
 
     // 1. Parse Custom Properties Block
     // Match selector block WITHOUT a class selector (contains custom properties)
-    // Pattern: [data-color-brand="..."][data-theme="..."], :host(...) { --var: value; ... }
-    const propsBlockRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\](?:,\s*:host\([^)]+\))?\s*\{([^}]+)\}/g;
+    const propsBlockRegex = new RegExp(`\\[${DATA_ATTRS.colorBrand}="[^"]+"]\\[${DATA_ATTRS.theme}="[^"]+"](?:,\\s*:host\\([^)]+\\))?\\s*\\{([^}]+)\\}`, 'g');
     let propsMatch;
 
     while ((propsMatch = propsBlockRegex.exec(cssContent)) !== null) {
@@ -2024,9 +2022,9 @@ async function optimizeComponentEffectsCSS() {
     }
 
     // 2. Parse Class Rules
-    // Match: [data-color-brand="..."][data-theme="..."] .class-name followed by
+    // Match: [colorBrand="..."][theme="..."] .class-name followed by
     // optional ",\n:host(...)" dual-selector part, then { content }
-    const ruleRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\]\s+\.([a-z0-9-]+)(?:,[\s\S]*?)?\s*\{([^}]+)\}/gi;
+    const ruleRegex = new RegExp(`\\[${DATA_ATTRS.colorBrand}="[^"]+"]\\[${DATA_ATTRS.theme}="[^"]+"]\\s+\\.([a-z0-9-]+)(?:,[\\s\\S]*?)?\\s*\\{([^}]+)\\}`, 'gi');
     let ruleMatch;
 
     while ((ruleMatch = ruleRegex.exec(cssContent)) !== null) {
@@ -2086,7 +2084,7 @@ async function optimizeComponentEffectsCSS() {
     );
 
     let output = updatedHeader + '\n\n';
-    const baseSelector = `[data-color-brand="${brand}"]`;
+    const baseSelector = `[${DATA_ATTRS.colorBrand}="${brand}"]`;
 
     // 1. Custom Properties Block (if any)
     if (parsed.customProps.size > 0) {
@@ -2196,7 +2194,7 @@ async function optimizeSemanticEffectsCSS() {
     const classRules = new Map();
 
     // Parse Custom Properties Block
-    const propsBlockRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\](?:,\s*:host\([^)]+\))?\s*\{([^}]+)\}/g;
+    const propsBlockRegex = new RegExp(`\\[${DATA_ATTRS.colorBrand}="[^"]+"]\\[${DATA_ATTRS.theme}="[^"]+"](?:,\\s*:host\\([^)]+\\))?\\s*\\{([^}]+)\\}`, 'g');
     let propsMatch;
 
     while ((propsMatch = propsBlockRegex.exec(cssContent)) !== null) {
@@ -2211,7 +2209,7 @@ async function optimizeSemanticEffectsCSS() {
     }
 
     // Parse Class Rules
-    const ruleRegex = /\[data-color-brand="[^"]+"\]\[data-theme="[^"]+"\]\s+\.([a-z0-9-]+)(?:,[\s\S]*?)?\s*\{([^}]+)\}/gi;
+    const ruleRegex = new RegExp(`\\[${DATA_ATTRS.colorBrand}="[^"]+"]\\[${DATA_ATTRS.theme}="[^"]+"]\\s+\\.([a-z0-9-]+)(?:,[\\s\\S]*?)?\\s*\\{([^}]+)\\}`, 'gi');
     let ruleMatch;
 
     while ((ruleMatch = ruleRegex.exec(cssContent)) !== null) {
@@ -2282,7 +2280,7 @@ async function optimizeSemanticEffectsCSS() {
     );
 
     let output = updatedHeader + '\n\n';
-    const baseSelector = `[data-color-brand="${brand}"]`;
+    const baseSelector = `[${DATA_ATTRS.colorBrand}="${brand}"]`;
 
     // Custom Properties Block
     if (parsed.customProps.size > 0) {
@@ -2437,12 +2435,13 @@ async function buildEffectTokens() {
 async function convertToResponsiveCSS() {
   console.log('\n📱 Converting to Responsive CSS with Media Queries:\n');
 
-  const breakpointConfig = {
-    xs: null,           // base, no media query
-    sm: '390px',
-    md: '600px',
-    lg: '1024px'
-  };
+  // Build breakpoint config from pipeline config
+  // First breakpoint is the base (no media query), rest get min-width values
+  const breakpointConfig = {};
+  const bpKeys = Object.keys(pipelineConfig.modes.breakpoints);
+  bpKeys.forEach((bp, i) => {
+    breakpointConfig[bp] = i === 0 ? null : `${pipelineConfig.modes.breakpoints[bp].minWidth}px`;
+  });
 
   let totalConversions = 0;
   let successfulConversions = 0;
@@ -2653,7 +2652,7 @@ async function generateResponsiveFile(dir, baseName, brand, breakpointConfig, op
 
   // Generate responsive CSS with media queries (Dual-Axis: Typography uses ContentBrand)
   // Uses dual selectors for Shadow DOM compatibility (flat, non-nested for browser compatibility)
-  const attrSelector = `[data-content-brand="${brand}"]`;
+  const attrSelector = `[${DATA_ATTRS.contentBrand}="${brand}"]`;
 
   // Base styles (XS) - use flat dual selectors (no CSS nesting)
   if (breakpointClasses.xs && breakpointClasses.xs.length > 0) {
@@ -2728,7 +2727,7 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
 
   // Generate responsive CSS with media queries (Dual-Axis: Breakpoints use ContentBrand)
   // Uses dual selectors for Shadow DOM compatibility
-  const attrSelector = `[data-content-brand="${brand}"]`;
+  const attrSelector = `[${DATA_ATTRS.contentBrand}="${brand}"]`;
   const dualSelector = buildDualSelector(attrSelector);
   const dualSelectorIndented = buildDualSelector(attrSelector, '', '  '); // For @media blocks
 
@@ -2827,7 +2826,7 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
 
   // Generate responsive CSS with media queries (Dual-Axis: Component breakpoints use ContentBrand)
   // Uses dual selectors for Shadow DOM compatibility
-  const attrSelector = `[data-content-brand="${brand}"]`;
+  const attrSelector = `[${DATA_ATTRS.contentBrand}="${brand}"]`;
   const dualSelector = buildDualSelector(attrSelector);
   const dualSelectorIndented = buildDualSelector(attrSelector, '', '  '); // For @media blocks
 
@@ -2880,7 +2879,7 @@ function extractRootVariables(content) {
   // 2. [data-content-brand="..."][data-breakpoint="..."],\n:host(...) { ... } (dual selector)
   // 3. :root { ... }
   // 4. :root,\n:host { ... } (dual selector)
-  const selectorMatch = content.match(/(?:\[data-content-brand="[^"]+"\]\[data-breakpoint="[^"]+"\](?:,\s*:host\([^)]+\))?|:root(?:,\s*:host)?)\s*\{([\s\S]*)\}/);
+  const selectorMatch = content.match(new RegExp(`(?:\\[${DATA_ATTRS.contentBrand}="[^"]+"]\\[data-breakpoint="[^"]+"](?:,\\s*:host\\([^)]+\\))?|:root(?:,\\s*:host)?)\\s*\\{([\\s\\S]*)\\}`));
   if (selectorMatch) {
     const selectorContent = selectorMatch[1];
 
@@ -2960,7 +2959,7 @@ function getChangedVariables(baseVars, compareVars, previousBpVars = null) {
  */
 function extractClasses(content, brand, breakpoint) {
   const classes = [];
-  const selector = `[data-content-brand="${brand}"][data-breakpoint="${breakpoint}"]`;
+  const selector = `[${DATA_ATTRS.contentBrand}="${brand}"][data-breakpoint="${breakpoint}"]`;
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   // Check if content uses data-attribute selectors (Dual-Axis: Typography uses ContentBrand)
@@ -3331,13 +3330,13 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   const imports = ['import androidx.compose.runtime.Immutable'];
   if (needsComposable) {
     imports.push('import androidx.compose.runtime.Composable');
-    imports.push('import com.bild.designsystem.shared.DesignSystemTheme');
+    imports.push(`import ${ANDROID_PKG}.shared.DesignSystemTheme`);
   }
   if (hasDensityTokens) {
-    imports.push('import com.bild.designsystem.shared.Density');
+    imports.push(`import ${ANDROID_PKG}.shared.Density`);
   }
   if (needsWindowSizeClass) {
-    imports.push('import com.bild.designsystem.shared.WindowSizeClass');
+    imports.push(`import ${ANDROID_PKG}.shared.WindowSizeClass`);
   }
   if (hasColor) imports.push('import androidx.compose.ui.graphics.Color');
   if (hasFontStyle) imports.push('import androidx.compose.ui.text.font.FontStyle');
@@ -3351,14 +3350,14 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   if (hasDesignTextStyle || hasTypographyTokens) {
     imports.push('import androidx.compose.ui.text.font.FontWeight');
     imports.push('import androidx.compose.ui.text.style.TextDecoration');
-    imports.push('import com.bild.designsystem.shared.DesignTextStyle');
-    imports.push('import com.bild.designsystem.shared.DesignTextCase');
+    imports.push(`import ${ANDROID_PKG}.shared.DesignTextStyle`);
+    imports.push(`import ${ANDROID_PKG}.shared.DesignTextCase`);
   }
 
   // Check if effects use ShadowStyle
   if (hasEffectsTokens) {
-    imports.push('import com.bild.designsystem.shared.ShadowStyle');
-    imports.push('import com.bild.designsystem.shared.DropShadow');
+    imports.push(`import ${ANDROID_PKG}.shared.ShadowStyle`);
+    imports.push(`import ${ANDROID_PKG}.shared.DropShadow`);
   }
 
   let output = generateFileHeader({
@@ -3370,7 +3369,7 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   });
 
   output += `
-package com.bild.designsystem.brands.${brand}.components.${componentName.toLowerCase()}
+package ${ANDROID_PKG}.brands.${brand}.components.${componentName.toLowerCase()}
 
 ${imports.join('\n')}
 
@@ -3594,19 +3593,19 @@ object ${componentName}Tokens {
             val density = DesignSystemTheme.density
             return when (sizeClass) {
                 WindowSizeClass.Compact -> when (density) {
-                    com.bild.designsystem.shared.Density.Dense -> CompactDense
-                    com.bild.designsystem.shared.Density.Default -> CompactDefault
-                    com.bild.designsystem.shared.Density.Spacious -> CompactSpacious
+                    ${ANDROID_PKG}.shared.Density.Dense -> CompactDense
+                    ${ANDROID_PKG}.shared.Density.Default -> CompactDefault
+                    ${ANDROID_PKG}.shared.Density.Spacious -> CompactSpacious
                 }
                 WindowSizeClass.Medium -> when (density) {
-                    com.bild.designsystem.shared.Density.Dense -> MediumDense
-                    com.bild.designsystem.shared.Density.Default -> MediumDefault
-                    com.bild.designsystem.shared.Density.Spacious -> MediumSpacious
+                    ${ANDROID_PKG}.shared.Density.Dense -> MediumDense
+                    ${ANDROID_PKG}.shared.Density.Default -> MediumDefault
+                    ${ANDROID_PKG}.shared.Density.Spacious -> MediumSpacious
                 }
                 WindowSizeClass.Expanded -> when (density) {
-                    com.bild.designsystem.shared.Density.Dense -> ExpandedDense
-                    com.bild.designsystem.shared.Density.Default -> ExpandedDefault
-                    com.bild.designsystem.shared.Density.Spacious -> ExpandedSpacious
+                    ${ANDROID_PKG}.shared.Density.Dense -> ExpandedDense
+                    ${ANDROID_PKG}.shared.Density.Default -> ExpandedDefault
+                    ${ANDROID_PKG}.shared.Density.Spacious -> ExpandedSpacious
                 }
             }
         }
@@ -3671,9 +3670,9 @@ object ${componentName}Tokens {
          */
         @Composable
         fun current(): DensityTokens = when (DesignSystemTheme.density) {
-            com.bild.designsystem.shared.Density.Dense -> Dense
-            com.bild.designsystem.shared.Density.Default -> Default
-            com.bild.designsystem.shared.Density.Spacious -> Spacious
+            ${ANDROID_PKG}.shared.Density.Dense -> Dense
+            ${ANDROID_PKG}.shared.Density.Default -> Default
+            ${ANDROID_PKG}.shared.Density.Spacious -> Spacious
         }
 
         /**
@@ -4679,14 +4678,14 @@ function generateThemeProviderFile(brand, hasColors = true) {
 
   // For brands without colors, we need to use a shared color scheme (BildColorScheme)
   const colorImports = hasColors
-    ? `import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}ColorScheme
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}LightColors
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}DarkColors`
+    ? `import ${ANDROID_PKG}.brands.${brand}.semantic.${brandPascal}ColorScheme
+import ${ANDROID_PKG}.brands.${brand}.semantic.${brandPascal}LightColors
+import ${ANDROID_PKG}.brands.${brand}.semantic.${brandPascal}DarkColors`
     : `// ${brandPascal} uses shared color schemes from other brands (e.g., Bild, Sportbild)
 // Import the color scheme you want to use:
-import com.bild.designsystem.bild.semantic.BildColorScheme
-import com.bild.designsystem.bild.semantic.BildLightColors
-import com.bild.designsystem.bild.semantic.BildDarkColors`;
+import ${ANDROID_PKG}.bild.semantic.BildColorScheme
+import ${ANDROID_PKG}.bild.semantic.BildLightColors
+import ${ANDROID_PKG}.bild.semantic.BildDarkColors`;
 
   const colorSchemeType = hasColors ? `${brandPascal}ColorScheme` : 'BildColorScheme';
   const defaultLightColors = hasColors ? `${brandPascal}LightColors` : 'BildLightColors';
@@ -4707,7 +4706,7 @@ import com.bild.designsystem.bild.semantic.BildDarkColors`;
   });
 
   output += `
-package com.bild.designsystem.brands.${brand}.theme`;
+package ${ANDROID_PKG}.brands.${brand}.theme`;
 
   return output + `
 
@@ -4717,11 +4716,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 ${colorImports}
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}SizingScheme
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}SizingCompact
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}SizingRegular
-import com.bild.designsystem.shared.Density
-import com.bild.designsystem.shared.WindowSizeClass
+import ${ANDROID_PKG}.brands.${brand}.semantic.${brandPascal}SizingScheme
+import ${ANDROID_PKG}.brands.${brand}.semantic.${brandPascal}SizingCompact
+import ${ANDROID_PKG}.brands.${brand}.semantic.${brandPascal}SizingRegular
+import ${ANDROID_PKG}.shared.Density
+import ${ANDROID_PKG}.shared.WindowSizeClass
 
 // ══════════════════════════════════════════════════════════════════════════════
 // COMPOSITION LOCALS
@@ -4889,7 +4888,7 @@ function generateSharedDensityFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 /**
  * UI density for spacing adjustments`;
@@ -4933,7 +4932,7 @@ function generateSharedWindowSizeClassFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 /**
  * Window size class for responsive layouts (Material 3 compliant)`;
@@ -4998,10 +4997,10 @@ function generateColorBrandEnumFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 /**
- * Color brands in the BILD Design System`;
+ * Color brands in the ${pipelineConfig.identity.name}`;
 
   return output + `
  *
@@ -5047,10 +5046,10 @@ function generateContentBrandEnumFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 /**
- * Content brands in the BILD Design System`;
+ * Content brands in the ${pipelineConfig.identity.name}`;
 
   return output + `
  *
@@ -5118,13 +5117,13 @@ function generateDesignColorSchemeFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 
 /**
- * Unified color scheme interface for the BILD Design System`;
+ * Unified color scheme interface for the ${pipelineConfig.identity.name}`;
 
   return output + `
  *
@@ -5196,14 +5195,14 @@ function generateDesignSizingSchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 
 /**
- * Unified sizing scheme interface for the BILD Design System
+ * Unified sizing scheme interface for the ${pipelineConfig.identity.name}
  *
  * All content brands (BILD, SportBILD, Advertorial) implement this interface,
  * enabling polymorphic sizing access across brands.
@@ -5228,7 +5227,7 @@ function generateSharedDesignTextStyleFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.TextStyle
@@ -5341,12 +5340,12 @@ function generateSharedDesignTypographySchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Stable
 
 /**
- * Unified typography scheme interface for the BILD Design System
+ * Unified typography scheme interface for the ${pipelineConfig.identity.name}
  *
  * All content brands (BILD, SportBILD, Advertorial) implement this interface,
  * enabling polymorphic typography access across brands.
@@ -5383,7 +5382,7 @@ function generateSharedDropShadowFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -5424,7 +5423,7 @@ function generateSharedShadowStyleFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
@@ -5503,12 +5502,12 @@ function generateSharedDesignEffectsSchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Stable
 
 /**
- * Unified effects scheme interface for the BILD Design System
+ * Unified effects scheme interface for the ${pipelineConfig.identity.name}
  *
  * Effects (shadows) are brand-independent and only vary by color mode (light/dark).
  * This interface is implemented by EffectsLight and EffectsDark.
@@ -5643,13 +5642,13 @@ function generateSharedDesignDensitySchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 
 /**
- * Unified density scheme interface for the BILD Design System
+ * Unified density scheme interface for the ${pipelineConfig.identity.name}
  *
  * Internal semantic density tokens (Global/StackSpace) that vary by density mode.
  * This interface is implemented by DensityDefault, DensityDense, DensitySpacious.
@@ -5683,33 +5682,33 @@ function generateDesignSystemThemeFile() {
   // Files are in semantic/color/ directory so package includes .color
   const colorImports = COLOR_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.brands.${brand}.semantic.color.${brandPascal}LightColors
-import com.bild.designsystem.brands.${brand}.semantic.color.${brandPascal}DarkColors`;
+    return `import ${ANDROID_PKG}.brands.${brand}.semantic.color.${brandPascal}LightColors
+import ${ANDROID_PKG}.brands.${brand}.semantic.color.${brandPascal}DarkColors`;
   }).join('\n');
 
   // Generate sizing imports for all content brands (Material 3: Compact, Medium, Expanded)
   // Files are in semantic/sizeclass/ directory so package includes .sizeclass
   const sizingImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.brands.${brand}.semantic.sizeclass.${brandPascal}SizingCompact
-import com.bild.designsystem.brands.${brand}.semantic.sizeclass.${brandPascal}SizingMedium
-import com.bild.designsystem.brands.${brand}.semantic.sizeclass.${brandPascal}SizingExpanded`;
+    return `import ${ANDROID_PKG}.brands.${brand}.semantic.sizeclass.${brandPascal}SizingCompact
+import ${ANDROID_PKG}.brands.${brand}.semantic.sizeclass.${brandPascal}SizingMedium
+import ${ANDROID_PKG}.brands.${brand}.semantic.sizeclass.${brandPascal}SizingExpanded`;
   }).join('\n');
 
   // Generate typography imports for all content brands (Material 3: Compact, Medium, Expanded)
   // Files are in semantic/typography/ directory so package includes .typography
   const typographyImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.brands.${brand}.semantic.typography.${brandPascal}TypographyCompact
-import com.bild.designsystem.brands.${brand}.semantic.typography.${brandPascal}TypographyMedium
-import com.bild.designsystem.brands.${brand}.semantic.typography.${brandPascal}TypographyExpanded`;
+    return `import ${ANDROID_PKG}.brands.${brand}.semantic.typography.${brandPascal}TypographyCompact
+import ${ANDROID_PKG}.brands.${brand}.semantic.typography.${brandPascal}TypographyMedium
+import ${ANDROID_PKG}.brands.${brand}.semantic.typography.${brandPascal}TypographyExpanded`;
   }).join('\n');
 
   // Density imports (brand-independent, like Effects)
   const densityImports = `// Density is brand-independent (same values across all brands)
-import com.bild.designsystem.shared.DensityDefault
-import com.bild.designsystem.shared.DensityDense
-import com.bild.designsystem.shared.DensitySpacious`;
+import ${ANDROID_PKG}.shared.DensityDefault
+import ${ANDROID_PKG}.shared.DensityDense
+import ${ANDROID_PKG}.shared.DensitySpacious`;
 
   // Generate color selection cases
   const colorCases = COLOR_BRANDS.map(brand => {
@@ -5753,7 +5752,7 @@ import com.bild.designsystem.shared.DensitySpacious`;
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -6088,7 +6087,7 @@ async function consolidateComposePrimitives() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PKG}.shared
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -6259,7 +6258,7 @@ async function aggregateComposeSemantics() {
       });
 
       output += `
-package com.bild.designsystem.brands.${brand}.semantic
+package ${ANDROID_PKG}.brands.${brand}.semantic
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -6480,7 +6479,7 @@ async function generateSwiftUISharedFiles() {
   }) + `
 import Foundation
 
-/// UI density modes for the BILD Design System
+/// UI density modes for the ${pipelineConfig.identity.name}
 public enum Density: String, CaseIterable, Sendable {
     case dense
     case \`default\`
@@ -7622,7 +7621,7 @@ async function buildOptimizedJSOutput() {
   writeJsFile(path.join(jsDistDir, 'brands', 'index.js'), brandsIdx);
 
   // Root index
-  let rootIdx = getJsFileHeader() + `// BILD Design System Tokens\n\n`;
+  let rootIdx = getJsFileHeader() + `// ${pipelineConfig.identity.name} Tokens\n\n`;
   rootIdx += `export * as primitives from './primitives/index.js';\n`;
   rootIdx += `export * as brands from './brands/index.js';\n\n`;
   BRANDS.forEach(b => { rootIdx += `export * as ${b} from './brands/${b}/index.js';\n`; });
@@ -7635,7 +7634,7 @@ async function buildOptimizedJSOutput() {
 
   // Type definitions header
   const TS_HEADER = `/**
- * TypeScript definitions for BILD Design System Tokens
+ * TypeScript definitions for ${pipelineConfig.identity.name} Tokens
  * Auto-generated - Do not edit directly
  */
 
@@ -8042,7 +8041,7 @@ export type SizeValue = string;
   }
 
   // createTheme utility with embedded token data
-  let createThemeJs = getJsFileHeader() + `// Theme factory for BILD Design System
+  let createThemeJs = getJsFileHeader() + `// Theme factory for ${pipelineConfig.identity.name}
 // Supports multi-brand, multi-mode token combinations
 
 // Embedded token data for all brand/mode combinations
@@ -8363,7 +8362,7 @@ export default ${themeName};
   writeJsFile(path.join(themesDir, 'index.d.ts'), themesIdxDts);
 
   // Update root index to include themes
-  rootIdx = getJsFileHeader() + `// BILD Design System Tokens\n\n`;
+  rootIdx = getJsFileHeader() + `// ${pipelineConfig.identity.name} Tokens\n\n`;
   rootIdx += `export * as primitives from './primitives/index.js';\n`;
   rootIdx += `export * as brands from './brands/index.js';\n`;
   rootIdx += `export * as themes from './themes/index.js';\n`;
@@ -8382,7 +8381,7 @@ export default ${themeName};
   fs.mkdirSync(reactDir, { recursive: true });
 
   // ThemeContext.js
-  const themeContextJs = getJsFileHeader() + `// React Context for BILD Design System Theme
+  const themeContextJs = getJsFileHeader() + `// React Context for ${pipelineConfig.identity.name} Theme
 
 import { createContext } from 'react';
 
@@ -8484,7 +8483,7 @@ export default useBreakpoint;
   writeJsFile(path.join(reactDir, 'useBreakpoint.js'), useBreakpointJs);
 
   // ThemeProvider.js
-  const themeProviderJs = getJsFileHeader() + `// ThemeProvider component for BILD Design System
+  const themeProviderJs = getJsFileHeader() + `// ThemeProvider component for ${pipelineConfig.identity.name}
 
 import { createElement, useState, useMemo, useEffect } from 'react';
 import { ThemeContext } from './ThemeContext.js';
@@ -8570,7 +8569,7 @@ export default ThemeProvider;
   writeJsFile(path.join(reactDir, 'ThemeProvider.js'), themeProviderJs);
 
   // React index.js
-  const reactIndexJs = getJsFileHeader() + `// React bindings for BILD Design System
+  const reactIndexJs = getJsFileHeader() + `// React bindings for ${pipelineConfig.identity.name}
 
 export { ThemeContext } from './ThemeContext.js';
 export { ThemeProvider } from './ThemeProvider.js';
@@ -8587,7 +8586,7 @@ export {
 
   // React TypeScript definitions
   const reactIndexDts = `/**
- * TypeScript definitions for BILD Design System React bindings
+ * TypeScript definitions for ${pipelineConfig.identity.name} React bindings
  * Auto-generated - Do not edit directly
  */
 
@@ -9056,7 +9055,7 @@ async function generateSCSSMixinsAndFunctions() {
   const scssDir = path.join(DIST_DIR, 'scss');
 
   // Generate _functions.scss
-  const functionsContent = `// BILD Design System - SCSS Functions
+  const functionsContent = `// ${pipelineConfig.identity.name} - SCSS Functions
 // Auto-generated - Do not edit directly
 
 @use 'sass:map';
@@ -9123,7 +9122,7 @@ async function generateSCSSMixinsAndFunctions() {
   fs.writeFileSync(path.join(scssDir, '_functions.scss'), functionsContent);
 
   // Generate _mixins.scss
-  const mixinsContent = `// BILD Design System - SCSS Mixins
+  const mixinsContent = `// ${pipelineConfig.identity.name} - SCSS Mixins
 // Auto-generated - Do not edit directly
 
 @use 'sass:map';
@@ -9217,21 +9216,19 @@ async function generateSCSSMixinsAndFunctions() {
 
   // Generate abstracts/_breakpoints.scss
   const abstractsDir = path.join(scssDir, 'abstracts');
-  const breakpointsContent = `// BILD Design System - Breakpoint Configuration
+  // Generate SCSS breakpoint variables from config
+  const bpEntries = Object.entries(pipelineConfig.modes.breakpoints);
+  const bpVarsStr = bpEntries.map(([name, { minWidth }]) => `$breakpoint-${name}: ${minWidth}px;`).join('\n');
+  const bpMapStr = bpEntries.map(([name]) => `  ${name}: $breakpoint-${name},`).join('\n');
+  const breakpointsContent = `// ${pipelineConfig.identity.name} - Breakpoint Configuration
 // Auto-generated - Do not edit directly
 
 // Breakpoint values
-$breakpoint-xs: 320px;
-$breakpoint-sm: 390px;
-$breakpoint-md: 600px;
-$breakpoint-lg: 1024px;
+${bpVarsStr}
 
 // Breakpoints map
 $breakpoints: (
-  xs: $breakpoint-xs,
-  sm: $breakpoint-sm,
-  md: $breakpoint-md,
-  lg: $breakpoint-lg,
+${bpMapStr}
 );
 `;
 
@@ -9247,7 +9244,7 @@ async function generateSCSSBundles() {
   for (const brand of BRANDS) {
     const isColorBrand = COLOR_BRANDS.includes(brand);
 
-    let bundleContent = `// BILD Design System - ${brand.charAt(0).toUpperCase() + brand.slice(1)} Bundle
+    let bundleContent = `// ${pipelineConfig.identity.name} - ${brand.charAt(0).toUpperCase() + brand.slice(1)} Bundle
 // Auto-generated - Do not edit directly
 //
 // Usage:
@@ -9302,7 +9299,7 @@ async function generateSCSSBundles() {
 async function generateSCSSIndex() {
   const scssDir = path.join(DIST_DIR, 'scss');
 
-  const indexContent = `// BILD Design System - SCSS Tokens
+  const indexContent = `// ${pipelineConfig.identity.name} - SCSS Tokens
 // Auto-generated - Do not edit directly
 //
 // Usage (recommended - use brand bundle):
@@ -9342,7 +9339,7 @@ function generateSCSSFileHeader(fileName, brand, context) {
   const lines = [
     'Do not edit directly, this file was auto-generated.',
     '',
-    `BILD Design System Tokens v${version}`,
+    `${pipelineConfig.identity.name} Tokens v${version}`,
   ];
 
   if (brand) {
@@ -9582,7 +9579,7 @@ function scssToCamelCase(str) {
  */
 async function main() {
   console.log('🎨 ============================================');
-  console.log('   BILD Design System - Token Build v2');
+  console.log(`   ${pipelineConfig.identity.name} - Token Build v2`);
   console.log('   ============================================\n');
 
   // Clean dist
