@@ -31,10 +31,10 @@ package com.bild.designsystem.shared
  * ```
  */
 enum class Density {
-    /** Dense UI with reduced padding and spacing */
-    Dense,
-    /** Standard/default spacing */
+    /** Default UI spacing */
     Default,
-    /** Spacious UI with increased padding and spacing */
+    /** Dense UI spacing */
+    Dense,
+    /** Spacious UI spacing */
     Spacious
 }

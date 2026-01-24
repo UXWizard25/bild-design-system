@@ -2647,8 +2647,8 @@ async function generateResponsiveFile(dir, baseName, brand, breakpointConfig, op
     throw new Error('No breakpoint files found');
   }
 
-  // Extract header from first file
-  const firstFile = breakpointFiles.xs || breakpointFiles.sm || breakpointFiles.md || breakpointFiles.lg;
+  // Extract header from first available file
+  const firstFile = BREAKPOINTS.map(bp => breakpointFiles[bp]).find(f => f);
   const headerMatch = firstFile.match(/^\/\*\*[\s\S]*?\*\//);
   const header = headerMatch ? headerMatch[0].replace(/Breakpoint: \w+/, 'Responsive (Media Queries)') : '';
 
@@ -2718,8 +2718,8 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
     throw new Error('No breakpoint files found');
   }
 
-  // Extract header from first file
-  const firstFile = breakpointFiles.xs || breakpointFiles.sm || breakpointFiles.md || breakpointFiles.lg;
+  // Extract header from first available file
+  const firstFile = BREAKPOINTS.map(bp => breakpointFiles[bp]).find(f => f);
   const headerMatch = firstFile.match(/^\/\*\*[\s\S]*?\*\//);
   let header = headerMatch ? headerMatch[0] : '';
   header = header.replace(/Breakpoint: \w+/, 'Responsive (Media Queries)');
@@ -2733,8 +2733,8 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
     breakpointVarMaps[bp] = parseVariablesToMap(extractRootVariables(content));
   }
 
-  // Get base values (XS)
-  const baseVars = breakpointVarMaps.xs || breakpointVarMaps.sm || breakpointVarMaps.md || breakpointVarMaps.lg;
+  // Get base values (first breakpoint)
+  const baseVars = BREAKPOINTS.map(bp => breakpointVarMaps[bp]).find(v => v);
 
   // Generate responsive CSS with media queries (Dual-Axis: Breakpoints use ContentBrand)
   // Uses dual selectors for Shadow DOM compatibility
@@ -2786,27 +2786,18 @@ async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
  */
 async function generateComponentBreakpointResponsive(dir, componentName, brand, breakpointConfig) {
   const breakpointFiles = {};
-  const fileMapping = {
-    xs: null,
-    sm: null,
-    md: null,
-    lg: null
-  };
 
-  // Find breakpoint files by pattern
+  // Find breakpoint files by pattern (dynamic from config)
   const files = fs.readdirSync(dir).filter(f => f.includes('-breakpoint-') && f.endsWith('.css'));
 
-  for (const file of files) {
-    if (file.includes('-xs-')) fileMapping.xs = file;
-    else if (file.includes('-sm-')) fileMapping.sm = file;
-    else if (file.includes('-md-')) fileMapping.md = file;
-    else if (file.includes('-lg-')) fileMapping.lg = file;
-  }
-
-  // Read all breakpoint files
-  for (const [bp, fileName] of Object.entries(fileMapping)) {
-    if (fileName) {
-      const filePath = path.join(dir, fileName);
+  for (const bp of BREAKPOINTS) {
+    // Match both "-{bp}.css" (new format) and "-{bp}-..." (legacy format)
+    const bpFile = files.find(f => {
+      const match = f.match(new RegExp(`-breakpoint-${bp}(?:[.-]|$)`));
+      return match !== null;
+    });
+    if (bpFile) {
+      const filePath = path.join(dir, bpFile);
       if (fs.existsSync(filePath)) {
         breakpointFiles[bp] = fs.readFileSync(filePath, 'utf-8');
       }
@@ -2817,8 +2808,8 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
     throw new Error('No breakpoint files found');
   }
 
-  // Extract header from first file
-  const firstFile = breakpointFiles.xs || breakpointFiles.sm || breakpointFiles.md || breakpointFiles.lg;
+  // Extract header from first available file
+  const firstFile = BREAKPOINTS.map(bp => breakpointFiles[bp]).find(f => f);
   const headerMatch = firstFile.match(/^\/\*\*[\s\S]*?\*\//);
   let header = headerMatch ? headerMatch[0] : '';
   header = header.replace(/breakpoint: \w+/i, 'Responsive (Media Queries)');
@@ -2832,8 +2823,8 @@ async function generateComponentBreakpointResponsive(dir, componentName, brand, 
     breakpointVarMaps[bp] = parseVariablesToMap(extractRootVariables(content));
   }
 
-  // Get base values (XS)
-  const baseVars = breakpointVarMaps.xs || breakpointVarMaps.sm || breakpointVarMaps.md || breakpointVarMaps.lg;
+  // Get base values (first breakpoint)
+  const baseVars = BREAKPOINTS.map(bp => breakpointVarMaps[bp]).find(v => v);
 
   // Generate responsive CSS with media queries (Dual-Axis: Component breakpoints use ContentBrand)
   // Uses dual selectors for Shadow DOM compatibility
@@ -4828,6 +4819,18 @@ object ${brandPascal}Theme {
 }
 
 /**
+ * Generates dynamic Density enum body from config
+ */
+function generateAndroidDensityEnum() {
+  const entries = DENSITY_MODES.map(mode => {
+    const modePascal = mode.charAt(0).toUpperCase() + mode.slice(1);
+    return `    /** ${modePascal} UI spacing */\n    ${modePascal}`;
+  }).join(',\n');
+  return `enum class Density {\n${entries}\n}`;
+}
+
+
+/**
  * Generates the shared Density enum file
  * Creates: dist/android/compose/shared/Density.kt
  */
@@ -4859,14 +4862,7 @@ package ${ANDROID_PKG}.shared
  * }
  * \`\`\`
  */
-enum class Density {
-    /** Dense UI with reduced padding and spacing */
-    Dense,
-    /** Standard/default spacing */
-    Default,
-    /** Spacious UI with increased padding and spacing */
-    Spacious
-}
+${generateAndroidDensityEnum()}
 `;
 }
 
@@ -4919,11 +4915,11 @@ package ${ANDROID_PKG}.shared
  * @see <a href="https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes">Material 3 Window Size Classes</a>
  */
 enum class WindowSizeClass {
-    /** Phones in portrait mode (width < 600dp, maps to sm: 390px breakpoint) */
+    /** Phones in portrait mode (width < 600dp) */
     Compact,
-    /** Small tablets, foldables in portrait (600dp ≤ width < 840dp, maps to md: 600px breakpoint) */
+    /** Small tablets, foldables in portrait (600dp ≤ width < 840dp) */
     Medium,
-    /** Large tablets, desktops (width ≥ 840dp, maps to lg: 1024px breakpoint) */
+    /** Large tablets, desktops (width ≥ 840dp) */
     Expanded
 }
 `;
@@ -6423,6 +6419,31 @@ async function generateSwiftUISharedFiles() {
   let successful = 0;
 
   // Generate Enums.swift (Density, SizeClass, ColorBrand, ContentBrand)
+  // All enum cases are dynamically generated from pipeline.config.js
+
+  // Generate Density enum cases from config
+  const densityCases = DENSITY_MODES
+    .map(d => d === 'default' ? '    case `default`' : `    case ${d}`)
+    .join('\n');
+
+  // SizeClass is an Apple HIG constant (compact/regular) - not design-system-specific
+  const sizeClassCases = '    case compact\n    case regular';
+
+  // Generate ColorBrand enum cases from config
+  const colorBrandCases = COLOR_BRANDS
+    .map(b => `    case ${b}`)
+    .join('\n');
+
+  // Generate ContentBrand enum cases from config
+  const contentBrandCases = CONTENT_BRANDS
+    .map(b => `    case ${b}`)
+    .join('\n');
+
+  // Generate Brand (all) enum cases from config
+  const allBrandCases = BRANDS
+    .map(b => `    case ${b}`)
+    .join('\n');
+
   const enumsContent = generateFileHeader({
     fileName: 'Enums.swift',
     commentStyle: 'line',
@@ -6433,40 +6454,31 @@ import Foundation
 
 /// UI density modes for the ${pipelineConfig.identity.name}
 public enum Density: String, CaseIterable, Sendable {
-    case dense
-    case \`default\`
-    case spacious
+${densityCases}
 }
 
 /// Size class for responsive layouts
 /// Maps to iOS UITraitCollection.horizontalSizeClass
 public enum SizeClass: String, CaseIterable, Sendable {
-    case compact   // Phones (Portrait), small screens - maps to xs/sm breakpoints
-    case regular   // Tablets, Phones (Landscape) - maps to md/lg breakpoints
+${sizeClassCases}
 }
 
 /// Color brands - defines the color palette and effects
 /// Only brands with their own color schemes are included
 public enum ColorBrand: String, CaseIterable, Sendable {
-    case bild
-    case sportbild
-    // Note: Advertorial uses BILD or SportBILD colors
+${colorBrandCases}
 }
 
 /// Content brands - defines sizing, typography, and layout tokens
 /// All brands including those without own color schemes
 public enum ContentBrand: String, CaseIterable, Sendable {
-    case bild
-    case sportbild
-    case advertorial
+${contentBrandCases}
 }
 
 /// Legacy: Combined brand enum for backwards compatibility
 @available(*, deprecated, message: "Use ColorBrand and ContentBrand for dual-axis theming")
 public enum Brand: String, CaseIterable, Sendable {
-    case bild
-    case sportbild
-    case advertorial
+${allBrandCases}
 }
 `;
   fs.writeFileSync(path.join(sharedDir, 'Enums.swift'), enumsContent, 'utf8');

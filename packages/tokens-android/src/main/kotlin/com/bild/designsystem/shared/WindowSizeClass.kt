@@ -46,10 +46,10 @@ package com.bild.designsystem.shared
  * @see <a href="https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes">Material 3 Window Size Classes</a>
  */
 enum class WindowSizeClass {
-    /** Phones in portrait mode (width < 600dp, maps to sm: 390px breakpoint) */
+    /** Phones in portrait mode (width < 600dp) */
     Compact,
-    /** Small tablets, foldables in portrait (600dp ≤ width < 840dp, maps to md: 600px breakpoint) */
+    /** Small tablets, foldables in portrait (600dp ≤ width < 840dp) */
     Medium,
-    /** Large tablets, desktops (width ≥ 840dp, maps to lg: 1024px breakpoint) */
+    /** Large tablets, desktops (width ≥ 840dp) */
     Expanded
 }

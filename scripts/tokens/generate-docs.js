@@ -744,8 +744,7 @@ ${generateBreakpointTableRows()}
 function generateSpacingDocs() {
   // Load semantic spacing tokens from breakpoints (xs is base reference)
   const firstBp = Object.keys(BREAKPOINTS)[0];
-  const firstBpWidth = BREAKPOINTS[firstBp].minWidth;
-  const spacingPath = path.join(TOKENS_DIR, `brands/${DEFAULT_BRAND}/breakpoints/breakpoint-${firstBp}-${firstBpWidth}px.json`);
+  const spacingPath = path.join(TOKENS_DIR, `brands/${DEFAULT_BRAND}/breakpoints/breakpoint-${firstBp}.json`);
   const spacingData = loadTokens(spacingPath);
 
   if (!spacingData || !spacingData.Semantic || !spacingData.Semantic.Space) {
