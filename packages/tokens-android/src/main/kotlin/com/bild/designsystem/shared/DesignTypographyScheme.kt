@@ -79,4 +79,5 @@ interface DesignTypographyScheme {
     val label3bold: DesignTextStyle
     val label3uppercaseBold: DesignTextStyle
     val quote: DesignTextStyle
+    val testStyle: DesignTextStyle
 }

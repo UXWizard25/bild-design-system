@@ -368,6 +368,7 @@ public protocol DesignTypographyScheme: Sendable {
     var label3bold: TextStyle { get }
     var label3uppercaseBold: TextStyle { get }
     var quote: TextStyle { get }
+    var testStyle: TextStyle { get }
 }
 
 /// Unified density scheme protocol for all content brands

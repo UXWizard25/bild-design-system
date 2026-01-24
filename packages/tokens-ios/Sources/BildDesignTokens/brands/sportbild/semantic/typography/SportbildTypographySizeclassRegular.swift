@@ -394,4 +394,13 @@ public struct SportbildTypographyRegular: SportbildTypographyScheme, DesignTypog
         textCase: .original,
         textDecoration: .none
     )
+    public let testStyle = TextStyle(
+        fontFamily: "Inter",
+        fontWeight: .regular,
+        fontSize: 17,
+        lineHeight: 1.2000000476837158,
+        letterSpacing: 0,
+        textCase: .original,
+        textDecoration: .none
+    )
 }

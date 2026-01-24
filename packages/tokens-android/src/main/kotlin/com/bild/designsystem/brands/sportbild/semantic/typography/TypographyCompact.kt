@@ -112,6 +112,7 @@ interface SportbildTypographyScheme : DesignTypographyScheme {
     override val label3uppercaseBold: DesignTextStyle
     /** Use this text style for sections of text that are inside a fieldset with a quotation given by a person in an interview or a section of text from a larger body of text that need to be emphasized. */
     override val quote: DesignTextStyle
+    override val testStyle: DesignTextStyle
 }
 
 /**
@@ -494,6 +495,15 @@ object SportbildTypographyCompact : SportbildTypographyScheme {
         fontSize = 16.sp,
         lineHeight = 20.8.sp,
         letterSpacing = (0).sp,
+        textCase = DesignTextCase.Original,
+        textDecoration = TextDecoration.None
+    )
+    override val testStyle = DesignTextStyle(
+        fontFamily = "Inter",
+        fontWeight = FontWeight.Normal,
+        fontSize = 17.sp,
+        lineHeight = 1.2000000476837158.sp,
+        letterSpacing = 0.sp,
         textCase = DesignTextCase.Original,
         textDecoration = TextDecoration.None
     )

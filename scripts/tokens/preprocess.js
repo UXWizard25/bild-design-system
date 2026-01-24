@@ -1358,6 +1358,39 @@ function processComponentTokens(collections, aliasLookup) {
 }
 
 /**
+ * Resolves a direct lineHeight value from Figma textStyle format to an absolute px number.
+ *
+ * Figma exports lineHeight in three formats:
+ * - { unit: "PIXELS", value: N } → absolute px value
+ * - { unit: "PERCENT", value: N } → percentage of fontSize (e.g., 140 = 140%)
+ * - { unit: "AUTO" } → browser default (no explicit lineHeight)
+ *
+ * @param {object} lineHeightObj - The lineHeight object from Figma textStyle
+ * @param {number|null} fontSize - The resolved fontSize (needed for PERCENT conversion)
+ * @returns {number|null} - Absolute px value or null (for AUTO/unresolvable)
+ */
+function resolveDirectLineHeight(lineHeightObj, fontSize) {
+  if (!lineHeightObj || typeof lineHeightObj !== 'object') return null;
+
+  switch (lineHeightObj.unit) {
+    case 'PIXELS':
+      return typeof lineHeightObj.value === 'number' ? lineHeightObj.value : null;
+
+    case 'PERCENT':
+      if (fontSize != null && typeof fontSize === 'number' && typeof lineHeightObj.value === 'number') {
+        return roundNumericValue(fontSize * (lineHeightObj.value / 100));
+      }
+      return null;
+
+    case 'AUTO':
+      return null;
+
+    default:
+      return null;
+  }
+}
+
+/**
  * Processes Typography Composite Tokens (textStyles)
  * Generates Brand × Breakpoint matrix
  * Separates component-specific typography into component folders
@@ -1453,6 +1486,14 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
               resolvedStyle.fontStyle = 'italic';
             }
           }
+        }
+
+        // Fallback: Direct fontSize/lineHeight values (not in boundVariables)
+        if (resolvedStyle.fontSize === null && typeof textStyle.fontSize === 'number') {
+          resolvedStyle.fontSize = textStyle.fontSize;
+        }
+        if (resolvedStyle.lineHeight === null && textStyle.lineHeight != null) {
+          resolvedStyle.lineHeight = resolveDirectLineHeight(textStyle.lineHeight, resolvedStyle.fontSize);
         }
 
         // Normalize fontWeight/fontStyle (fix Figma binding issues)
@@ -1576,6 +1617,14 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
                 resolvedStyle.fontStyle = 'italic';
               }
             }
+          }
+
+          // Fallback: Direct fontSize/lineHeight values (not in boundVariables)
+          if (resolvedStyle.fontSize === null && typeof textStyle.fontSize === 'number') {
+            resolvedStyle.fontSize = textStyle.fontSize;
+          }
+          if (resolvedStyle.lineHeight === null && textStyle.lineHeight != null) {
+            resolvedStyle.lineHeight = resolveDirectLineHeight(textStyle.lineHeight, resolvedStyle.fontSize);
           }
 
           // Normalize fontWeight/fontStyle (fix Figma binding issues)

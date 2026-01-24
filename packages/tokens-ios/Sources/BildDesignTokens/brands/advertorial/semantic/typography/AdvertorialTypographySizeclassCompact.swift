@@ -100,6 +100,7 @@ public protocol AdvertorialTypographyScheme: DesignTypographyScheme {
     var label3uppercaseBold: TextStyle { get }
     /// Use this text style for sections of text that are inside a fieldset with a quotation given by a person in an interview or a section of text from a larger body of text that need to be emphasized.
     var quote: TextStyle { get }
+    var testStyle: TextStyle { get }
 }
 
 /// Compact typography implementation
@@ -481,6 +482,15 @@ public struct AdvertorialTypographyCompact: AdvertorialTypographyScheme, DesignT
         fontWeight: .heavy,
         fontSize: 16,
         lineHeight: 20.8,
+        letterSpacing: 0,
+        textCase: .original,
+        textDecoration: .none
+    )
+    public let testStyle = TextStyle(
+        fontFamily: "Lucida Grande",
+        fontWeight: .regular,
+        fontSize: 17,
+        lineHeight: 1.2000000476837158,
         letterSpacing: 0,
         textCase: .original,
         textDecoration: .none

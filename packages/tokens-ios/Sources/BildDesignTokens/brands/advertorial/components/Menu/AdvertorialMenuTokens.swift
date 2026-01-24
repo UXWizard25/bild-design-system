@@ -48,7 +48,7 @@ public enum AdvertorialMenuTokens {
         var menuShadowVisibility: Color { get }
         var heyInputShadowVisibility: Color { get }
         var appTopbarTitleFontSize: CGFloat { get }
-        var appTopbarStageTitleHeight: CGFloat { get }
+        var appTopbarStageTitleLineHeight: CGFloat { get }
         var iOsappTopBarHeightSize: CGFloat { get }
         var iOsappTopBarLeftInlineSpace: CGFloat { get }
         var iOsappTopBarRightInlineSpace: CGFloat { get }
@@ -88,7 +88,7 @@ public enum AdvertorialMenuTokens {
             public let menuShadowVisibility: Color = Color(hex: 0x000000, alpha: 0.10)
             public let heyInputShadowVisibility: Color = Color(hex: 0x000000, alpha: 0.00)
             public let appTopbarTitleFontSize: CGFloat = 12
-            public let appTopbarStageTitleHeight: CGFloat = 14
+            public let appTopbarStageTitleLineHeight: CGFloat = 14
             public let iOsappTopBarHeightSize: CGFloat = 44
             public let iOsappTopBarLeftInlineSpace: CGFloat = 12
             public let iOsappTopBarRightInlineSpace: CGFloat = 16
@@ -118,7 +118,7 @@ public enum AdvertorialMenuTokens {
             public let menuShadowVisibility: Color = Color(hex: 0x000000, alpha: 0.00)
             public let heyInputShadowVisibility: Color = Color(hex: 0x000000, alpha: 0.10)
             public let appTopbarTitleFontSize: CGFloat = 14
-            public let appTopbarStageTitleHeight: CGFloat = 17
+            public let appTopbarStageTitleLineHeight: CGFloat = 17
             public let iOsappTopBarHeightSize: CGFloat = 48
             public let iOsappTopBarLeftInlineSpace: CGFloat = 19
             public let iOsappTopBarRightInlineSpace: CGFloat = 19

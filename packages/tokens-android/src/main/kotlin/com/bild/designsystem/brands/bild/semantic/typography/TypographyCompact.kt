@@ -112,6 +112,7 @@ interface BildTypographyScheme : DesignTypographyScheme {
     override val label3uppercaseBold: DesignTextStyle
     /** Use this text style for sections of text that are inside a fieldset with a quotation given by a person in an interview or a section of text from a larger body of text that need to be emphasized. */
     override val quote: DesignTextStyle
+    override val testStyle: DesignTextStyle
 }
 
 /**
@@ -494,6 +495,15 @@ object BildTypographyCompact : BildTypographyScheme {
         fontSize = 16.sp,
         lineHeight = 16.sp,
         letterSpacing = (0).sp,
+        textCase = DesignTextCase.Original,
+        textDecoration = TextDecoration.None
+    )
+    override val testStyle = DesignTextStyle(
+        fontFamily = "Gotham XNarrow",
+        fontWeight = FontWeight.Normal,
+        fontSize = 21.sp,
+        lineHeight = 1.2000000476837158.sp,
+        letterSpacing = 0.sp,
         textCase = DesignTextCase.Original,
         textDecoration = TextDecoration.None
     )

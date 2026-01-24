@@ -84,7 +84,7 @@ object MenuTokens {
             val menuShadowVisibility: Color
             val heyInputShadowVisibility: Color
             val appTopbarTitleFontSize: TextUnit
-            val appTopbarStageTitleHeight: TextUnit
+            val appTopbarStageTitleLineHeight: TextUnit
             val iOsappTopBarHeightSize: Dp
             val iOsappTopBarLeftInlineSpace: Dp
             val iOsappTopBarRightInlineSpace: Dp
@@ -112,7 +112,7 @@ object MenuTokens {
             override val menuShadowVisibility = Color(0x1A000000)
             override val heyInputShadowVisibility = Color(0x00000000)
             override val appTopbarTitleFontSize = 12.sp
-            override val appTopbarStageTitleHeight = 14.sp
+            override val appTopbarStageTitleLineHeight = 14.sp
             override val iOsappTopBarHeightSize = 44.dp
             override val iOsappTopBarLeftInlineSpace = 12.dp
             override val iOsappTopBarRightInlineSpace = 16.dp
@@ -139,7 +139,7 @@ object MenuTokens {
             override val menuShadowVisibility = Color(0x1A000000)
             override val heyInputShadowVisibility = Color(0x00000000)
             override val appTopbarTitleFontSize = 14.sp
-            override val appTopbarStageTitleHeight = 17.sp
+            override val appTopbarStageTitleLineHeight = 17.sp
             override val iOsappTopBarHeightSize = 48.dp
             override val iOsappTopBarLeftInlineSpace = 19.dp
             override val iOsappTopBarRightInlineSpace = 19.dp
@@ -166,7 +166,7 @@ object MenuTokens {
             override val menuShadowVisibility = Color(0x00000000)
             override val heyInputShadowVisibility = Color(0x1A000000)
             override val appTopbarTitleFontSize = 14.sp
-            override val appTopbarStageTitleHeight = 17.sp
+            override val appTopbarStageTitleLineHeight = 17.sp
             override val iOsappTopBarHeightSize = 48.dp
             override val iOsappTopBarLeftInlineSpace = 19.dp
             override val iOsappTopBarRightInlineSpace = 19.dp

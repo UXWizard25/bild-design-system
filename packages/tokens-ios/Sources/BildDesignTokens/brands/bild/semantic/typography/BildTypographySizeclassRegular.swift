@@ -394,4 +394,13 @@ public struct BildTypographyRegular: BildTypographyScheme, DesignTypographySchem
         textCase: .original,
         textDecoration: .none
     )
+    public let testStyle = TextStyle(
+        fontFamily: "Gotham XNarrow",
+        fontWeight: .regular,
+        fontSize: 21,
+        lineHeight: 1.2000000476837158,
+        letterSpacing: 0,
+        textCase: .original,
+        textDecoration: .none
+    )
 }
