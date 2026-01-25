@@ -2508,8 +2508,10 @@ async function convertToResponsiveCSS() {
     // Process semantic breakpoints
     const semanticBreakpointsDir = path.join(brandDir, 'semantic', 'breakpoints');
     if (fs.existsSync(semanticBreakpointsDir)) {
+      // Use first breakpoint from config (dynamic) and match both filename formats
+      const firstBp = BREAKPOINTS[0];
       const breakpointFiles = fs.readdirSync(semanticBreakpointsDir)
-        .filter(f => f.includes('-xs-') && f.endsWith('.css'));
+        .filter(f => (f.includes(`-${firstBp}-`) || f.includes(`-${firstBp}.`)) && f.endsWith('.css'));
 
       for (const baseFile of breakpointFiles) {
         totalConversions++;
@@ -2703,9 +2705,9 @@ async function generateResponsiveFile(dir, baseName, brand, breakpointConfig, op
 async function generateResponsiveBreakpointFile(dir, brand, breakpointConfig) {
   const breakpointFiles = {};
 
-  // Read all breakpoint files
+  // Read all breakpoint files (match both formats: -bp- and -bp.)
   for (const bp of BREAKPOINTS) {
-    const files = fs.readdirSync(dir).filter(f => f.includes(`-${bp}-`) && f.endsWith('.css'));
+    const files = fs.readdirSync(dir).filter(f => (f.includes(`-${bp}-`) || f.includes(`-${bp}.`)) && f.endsWith('.css'));
     if (files.length > 0) {
       const filePath = path.join(dir, files[0]);
       if (fs.existsSync(filePath)) {
