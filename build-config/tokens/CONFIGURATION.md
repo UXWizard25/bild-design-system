@@ -6,36 +6,42 @@
 
 ## Overview
 
-The token pipeline uses a **hybrid configuration strategy**:
+The token pipeline uses **explicit Mode ID → Key mappings** for stability:
 
-| Source | What is extracted |
+| Source | What is configured |
 |--------|-------------------|
-| **Figma (automatic)** | Brands, Modes, Mode IDs, Token values |
-| **pipeline.config.js (manual)** | Collection IDs, Breakpoint pixels, Platform settings |
+| **pipeline.config.js** | Mode ID → Key mappings, Collection IDs, Breakpoints, Platform settings |
+| **Figma (validated)** | Token values (validated against configured Mode IDs) |
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                       CONFIGURATION ARCHITECTURE                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  Figma Source (bild-design-system-raw-data.json)                            │
-│  ════════════════════════════════════════════════                           │
-│  ✅ Auto-discovered at build time:                                          │
-│     • Brand names (BILD, SportBILD, Advertorial)                            │
-│     • Color modes (Light, Dark)                                             │
-│     • Density modes (default, dense, spacious)                              │
-│     • Breakpoint modes (XS, SM, MD, LG)                                     │
-│     • Mode IDs (18038:0, 588:0, etc.)                                       │
-│     • Default brand (from defaultModeId)                                    │
-│     • ColorBrands vs ContentBrands (from collection membership)             │
-│                                                                             │
-│  pipeline.config.js                                                         │
-│  ════════════════════════════════════════════════                           │
-│  ⚙️  Manual configuration required:                                         │
-│     • Collection IDs (stable Figma references)                              │
-│     • Breakpoint minWidth values (320px, 390px, etc.)                       │
+│  pipeline.config.js (Source of Truth for Structure)                         │
+│  ════════════════════════════════════════════════════                        │
+│  ⚙️  Explicitly configured:                                                  │
+│     • Mode ID → Key mappings (stable references)                            │
+│       - Brands: '18038:0' → 'bild', '18094:0' → 'sportbild'                 │
+│       - Color modes: '588:0' → 'light', '592:1' → 'dark'                    │
+│       - Density: '5695:2' → 'default', '5695:1' → 'dense'                   │
+│       - Breakpoints: '7017:0' → { key: 'xs', minWidth: 320 }                │
+│     • Collection IDs (Figma references)                                     │
 │     • Platform settings (CSS unit, native mappings)                         │
 │     • Output paths and package names                                        │
+│                                                                             │
+│  Figma Source (bild-design-system-raw-data.json)                            │
+│  ════════════════════════════════════════════════                           │
+│  ✅ Validated at build time:                                                 │
+│     • Mode IDs must exist in Figma (build fails otherwise)                  │
+│     • Unmapped Figma modes trigger warnings                                 │
+│     • Token values are processed per configured mappings                    │
+│                                                                             │
+│  Why Mode IDs instead of Names?                                             │
+│  ════════════════════════════════════════════════════                        │
+│  • Mode IDs are stable (only change when mode is deleted/recreated)         │
+│  • Mode names can be freely renamed by designers                            │
+│  • Prevents silent breaking changes from Figma renames                      │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -62,58 +68,74 @@ The pipeline expects these Figma Variable Collections:
 
 **Important:** Collection names can be anything, but the **Collection IDs** must be correctly configured in `pipeline.config.js`.
 
-### 2. Mode Naming Conventions
+### 2. Mode ID → Key Mapping
 
-The pipeline extracts **keys** from Figma mode names:
+The pipeline uses **explicit ID → Key mappings** in `pipeline.config.js`:
 
-```
-Figma Mode Name    →    Extracted Key
-─────────────────────────────────────────
-"BILD"             →    "bild"
-"SportBILD"        →    "sportbild"
-"Light"            →    "light"
-"Dark"             →    "dark"
-"XS - 320px"       →    "xs"
-"SM - 390px"       →    "sm"
-"default"          →    "default"
-"dense"            →    "dense"
-```
-
-**Rule:** The first word segment (before space/hyphen) is used as the key, in lowercase.
-
-### 3. Dual-Axis Brand Detection
-
-The pipeline automatically detects which brands have which properties:
-
-```
-BrandColorMapping Collection          BrandTokenMapping Collection
-┌─────────────────────────────┐      ┌─────────────────────────────┐
-│ Modes:                      │      │ Modes:                      │
-│   • BILD                    │      │   • BILD                    │
-│   • SportBILD               │      │   • SportBILD               │
-│                             │      │   • Advertorial             │
-└─────────────────────────────┘      └─────────────────────────────┘
-         ↓                                      ↓
-   COLOR_BRANDS =                        CONTENT_BRANDS =
-   ['bild', 'sportbild']                 ['bild', 'sportbild', 'advertorial']
+```javascript
+modes: {
+  brands: {
+    color: {
+      '18212:0': 'bild',       // Figma Mode ID → Pipeline Key
+      '18212:1': 'sportbild',
+    },
+    content: {
+      '18038:0': 'bild',
+      '18094:0': 'sportbild',
+      '18094:1': 'advertorial',
+    },
+    default: 'bild',
+  },
+  colorModes: {
+    '588:0': 'light',
+    '592:1': 'dark',
+  },
+  // ...
+}
 ```
 
-**Result:** Advertorial has its own sizing/typography but no own colors (inherits from BILD or SportBILD).
+**Why Mode IDs?**
+- Mode IDs are stable in Figma (only change when mode is deleted/recreated)
+- Mode names can be freely renamed by designers without breaking the build
+- Explicit mapping prevents silent breaking changes
 
-### 4. Default Brand Detection
+**Finding Mode IDs:** Look in `bild-design-system-raw-data.json` under `collections[].modes[].modeId`
 
-The default brand is extracted from `defaultModeId` of the BrandTokenMapping collection:
+### 3. Dual-Axis Brand Configuration
 
-```json
-{
-  "id": "VariableCollectionId:18038:10593",
-  "name": "BrandTokenMapping",
-  "defaultModeId": "18038:0",  // ← This mode becomes the default
-  "modes": [
-    { "name": "BILD", "modeId": "18038:0" },  // ← Match → DEFAULT_BRAND = "bild"
-    { "name": "SportBILD", "modeId": "18094:0" },
-    { "name": "Advertorial", "modeId": "18094:1" }
-  ]
+Brands are explicitly configured in two separate mappings:
+
+```javascript
+modes: {
+  brands: {
+    // BrandColorMapping collection — brands with own colors
+    color: {
+      '18212:0': 'bild',
+      '18212:1': 'sportbild',
+      // Advertorial NOT here → inherits colors from parent
+    },
+    // BrandTokenMapping collection — brands with own sizing/typography
+    content: {
+      '18038:0': 'bild',
+      '18094:0': 'sportbild',
+      '18094:1': 'advertorial',  // Has own sizing, but no own colors
+    },
+  },
+}
+```
+
+**Result:** Advertorial has its own sizing/typography but inherits colors from BILD or SportBILD via Dual-Axis.
+
+### 4. Default Brand Configuration
+
+The default brand is explicitly set in config:
+
+```javascript
+modes: {
+  brands: {
+    // ...mappings...
+    default: 'bild',  // Explicitly configured, not auto-detected
+  },
 }
 ```
 
@@ -143,22 +165,52 @@ source: {
 
 **How to find IDs:** In the Figma export JSON under `collections[].id`.
 
-### 2. Breakpoint Min-Width (REQUIRED)
+### 2. Mode ID Mappings (REQUIRED)
+
+All mode mappings use Figma Mode ID → Pipeline Key format:
 
 ```javascript
 modes: {
+  // Brand mappings
+  brands: {
+    color: {
+      '18212:0': 'bild',       // "BILD" in Figma
+      '18212:1': 'sportbild',  // "SportBILD" in Figma
+    },
+    content: {
+      '18038:0': 'bild',
+      '18094:0': 'sportbild',
+      '18094:1': 'advertorial',
+    },
+    default: 'bild',
+  },
+
+  // Color mode mappings
+  colorModes: {
+    '588:0': 'light',   // "Light" in Figma
+    '592:1': 'dark',    // "Dark" in Figma
+  },
+
+  // Density mode mappings
+  densityModes: {
+    '5695:2': 'default',
+    '5695:1': 'dense',
+    '5695:3': 'spacious',
+  },
+
+  // Breakpoint mappings (include minWidth for CSS)
   breakpoints: {
-    xs: { minWidth: 320, deviceName: 'Mobile (default)' },
-    sm: { minWidth: 390, deviceName: 'Large Mobile' },
-    md: { minWidth: 600, deviceName: 'Tablet' },
-    lg: { minWidth: 1024, deviceName: 'Desktop' },
+    '7017:0':  { key: 'xs', minWidth: 320, deviceName: 'Mobile (default)' },
+    '16706:1': { key: 'sm', minWidth: 390, deviceName: 'Large Mobile' },
+    '7015:1':  { key: 'md', minWidth: 600, deviceName: 'Tablet' },
+    '7015:2':  { key: 'lg', minWidth: 1024, deviceName: 'Desktop' },
   },
 }
 ```
 
-**Why manual:** Figma doesn't store CSS @media query values.
+**When to change:** When modes are deleted and recreated in Figma (IDs change).
 
-**Important:** The keys (xs, sm, md, lg) must match the extracted Figma mode keys.
+**How to find Mode IDs:** In the Figma export JSON under `collections[].modes[].modeId`.
 
 ### 3. Platform Settings (OPTIONAL)
 
@@ -219,20 +271,23 @@ packages: {
 
 ---
 
-## What is NOT Configured
+## What is Validated (Not Configured)
 
-These values are **automatically extracted from Figma**:
+These values are **validated against Figma** at build time:
 
-| Value | Source |
-|-------|--------|
-| Brand names | BrandTokenMapping/BrandColorMapping modes |
-| ColorBrands list | BrandColorMapping modes |
-| ContentBrands list | BrandTokenMapping modes |
-| Default brand | BrandTokenMapping defaultModeId |
-| Color modes (light/dark) | ColorMode collection modes |
-| Density modes | Density collection modes |
-| Breakpoint keys | BreakpointMode collection modes |
-| Mode IDs | All collections modes[].modeId |
+| Value | Validation |
+|-------|------------|
+| Mode IDs | Must exist in Figma (build fails if missing) |
+| Token values | Processed from Figma per configured mappings |
+| Collection structure | Must contain configured mode IDs |
+
+**Build-time warnings:**
+- Unmapped Figma modes (modes in Figma not in config) trigger warnings
+- This helps detect new modes that may need to be added to config
+
+**Build-time errors:**
+- Missing Mode IDs (configured IDs not found in Figma) fail the build
+- This prevents silent failures from stale configuration
 
 ---
 
@@ -269,33 +324,37 @@ The pipeline extracts the first letter-block from Figma mode names:
 
 ```
 Cause:   Collection ID in pipeline.config.js doesn't match Figma.
-Solution: Open bild-design-system-raw-data.json and copy the current ID.
+Solution: Open bild-design-system-raw-data.json and copy the current ID
+         from collections[].id
 ```
 
-### Problem: "Brand not in collection"
+### Problem: "Mode ID not found in Figma"
 
 ```
-Cause:   Brand mode was renamed or removed in Figma.
-Solution: No action needed - automatically detected.
-         Check build output for "Discovering modes" lines.
+Cause:   A configured Mode ID was deleted/recreated in Figma.
+Solution: Find the new Mode ID in bild-design-system-raw-data.json under
+         collections[].modes[].modeId and update pipeline.config.js
+
+Example error:
+  ❌ Color brands: Mode ID "18212:0" (key: bild) not found in Figma!
 ```
 
-### Problem: Breakpoint key mismatch
+### Problem: "Figma has unmapped modes" warning
 
 ```
-Cause:   Figma mode name extracts different key than in config.
-Solution: Adjust modes.breakpoints keys to match extracted keys.
+Cause:   New mode was added in Figma but not in pipeline.config.js.
+Solution: If intentional, add the Mode ID → Key mapping to config.
+         If not needed, the warning can be ignored.
 
-Example:
-  Figma: "Extra Small - 320px"  →  extracts: "extra"
-  Config must be: { extra: { minWidth: 320 } }
+Example warning:
+  ⚠️  Content brands: Figma has unmapped modes: "NewBrand" (18094:2)
 ```
 
 ### Problem: Advertorial has no colors
 
 ```
-This is correct! Advertorial is only in BrandTokenMapping, not in
-BrandColorMapping. It inherits colors from BILD or SportBILD via the
+This is correct! Advertorial is only in modes.brands.content, not in
+modes.brands.color. It inherits colors from BILD or SportBILD via the
 Dual-Axis architecture (data-color-brand + data-content-brand).
 ```
 
@@ -308,11 +367,15 @@ Dual-Axis architecture (data-color-brand + data-content-brand).
 | New collection created | Add collection ID to config |
 | Collection renamed | None (ID stays stable) |
 | Collection deleted/recreated | Update collection ID in config |
-| New brand mode | None (auto-discovered) |
-| Brand mode renamed | None (auto-discovered) |
-| New color/density mode | None (auto-discovered) |
-| New breakpoint mode | Add minWidth to config |
+| New brand mode | Add Mode ID → Key mapping to config |
+| Brand mode renamed | None (Mode ID stays stable) ✅ |
+| Brand mode deleted/recreated | Update Mode ID mapping in config |
+| New color/density mode | Add Mode ID → Key mapping to config |
+| Mode renamed | None (Mode ID stays stable) ✅ |
+| New breakpoint mode | Add Mode ID → Key + minWidth to config |
 | Token added/changed | None (auto-processed) |
+
+**Key benefit:** Mode renames in Figma don't break the build anymore.
 
 ---
 
@@ -321,7 +384,7 @@ Dual-Axis architecture (data-color-brand + data-content-brand).
 After `npm run build:tokens` you should see:
 
 ```
-🔍 Discovering modes from Figma source...
+🔗 Loading mode mappings from config...
    ✓ Color modes: light, dark
    ✓ Density modes: default, dense, spacious
    ✓ Breakpoints: xs, sm, md, lg
@@ -329,4 +392,15 @@ After `npm run build:tokens` you should see:
    ✓ Color brands: bild, sportbild
 ```
 
-This output confirms that auto-discovery is working correctly.
+This output confirms that all configured Mode IDs were found in Figma.
+
+**If there are problems:**
+
+```
+🔗 Loading mode mappings from config...
+   ✓ Color modes: light, dark
+   ❌ Density modes: Mode ID "INVALID:0" (key: default) not found in Figma!
+   ⚠️  Density modes: Figma has unmapped modes: "default" (5695:2)
+
+❌ Build failed: Some configured Mode IDs were not found in Figma.
+```

@@ -75,41 +75,75 @@ module.exports = {
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // BRANDS — Auto-discovered from Figma source
+  // MODES — Explicit Mode ID → Key mappings
   //
-  // Brand lists (colorBrands, contentBrands, defaultBrand) are now automatically
-  // extracted from BrandColorMapping and BrandTokenMapping collections at build time.
+  // All modes are explicitly mapped from Figma Mode IDs to pipeline keys.
+  // This provides stability: renaming modes in Figma won't break the build.
   //
-  // ⚠️  NAMING CONSTRAINT: Brand names must NOT contain hyphens ('-').
-  //     Use camelCase or single words (e.g., 'sportbild', 'myBrand').
-  //     Reason: Brand names become CSS custom property segments
-  //     (e.g., --density-{brand}-...). Hyphens make parsing ambiguous.
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // MODES — Breakpoint configuration (semantic values not in Figma)
+  // Mode IDs are stable in Figma and only change when a mode is deleted
+  // and recreated. Mode names can be freely changed by designers.
   //
-  // Mode lists (color modes, density modes) are auto-discovered from Figma.
-  // Only breakpoint minWidth values need manual configuration (not in Figma).
+  // ⚠️  NAMING CONSTRAINT: All keys must NOT contain hyphens ('-').
+  //     Use camelCase or single words.
+  //     Reason: Keys become CSS custom property segments.
   //
-  // ⚠️  NAMING CONSTRAINT: All mode names and breakpoint keys must NOT contain
-  //     hyphens ('-'). Use camelCase or single words.
+  // To find Mode IDs: Look in bild-design-system-raw-data.json under
+  // collections[].modes[].modeId
   // ═══════════════════════════════════════════════════════════════════════════
   modes: {
     /**
-     * Breakpoints with min-width values in px.
-     * The first breakpoint (xs) is the base — no @media query generated.
-     * All subsequent breakpoints generate @media (min-width: Npx) queries.
-     * deviceName is used in documentation and release notes.
+     * Brand mappings (Figma Mode ID → Pipeline Key)
      *
-     * Note: Keys (xs, sm, md, lg) are extracted from Figma mode names.
-     * Only minWidth and deviceName need to be configured here.
+     * colorBrands: Brands with their own color palette (from BrandColorMapping)
+     * contentBrands: Brands with their own sizing/typography (from BrandTokenMapping)
+     * default: Default brand key (used for fallbacks)
+     */
+    brands: {
+      // BrandColorMapping collection modes
+      color: {
+        '18212:0': 'bild',       // "BILD"
+        '18212:1': 'sportbild',  // "SportBILD"
+      },
+      // BrandTokenMapping collection modes
+      content: {
+        '18038:0': 'bild',        // "BILD"
+        '18094:0': 'sportbild',   // "SportBILD"
+        '18094:1': 'advertorial', // "Advertorial"
+      },
+      default: 'bild',
+    },
+
+    /**
+     * Color mode mappings (Figma Mode ID → Pipeline Key)
+     * From ColorMode collection
+     */
+    colorModes: {
+      '588:0': 'light',  // "Light"
+      '592:1': 'dark',   // "Dark"
+    },
+
+    /**
+     * Density mode mappings (Figma Mode ID → Pipeline Key)
+     * From Density collection
+     */
+    densityModes: {
+      '5695:2': 'default',   // "default"
+      '5695:1': 'dense',     // "dense"
+      '5695:3': 'spacious',  // "spacious"
+    },
+
+    /**
+     * Breakpoint mappings (Figma Mode ID → Key + CSS config)
+     * From BreakpointMode collection
+     *
+     * minWidth: CSS @media (min-width) value in px
+     * deviceName: Human-readable name for docs/release notes
      */
     breakpoints: {
-      xs: { minWidth: 320, deviceName: 'Mobile (default)' },
-      sm: { minWidth: 390, deviceName: 'Large Mobile' },
-      md: { minWidth: 600, deviceName: 'Tablet' },
-      lg: { minWidth: 1024, deviceName: 'Desktop' },
+      '7017:0':  { key: 'xs', minWidth: 320, deviceName: 'Mobile (default)' },   // "XS - 320px"
+      '16706:1': { key: 'sm', minWidth: 390, deviceName: 'Large Mobile' },       // "SM - 390px (compact)"
+      '7015:1':  { key: 'md', minWidth: 600, deviceName: 'Tablet' },             // "MD - 600px"
+      '7015:2':  { key: 'lg', minWidth: 1024, deviceName: 'Desktop' },           // "LG - 1024px (regular)"
     },
   },
 

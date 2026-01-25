@@ -24,19 +24,22 @@ const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 const INPUT_JSON_PATH = path.join(__dirname, '../..', pipelineConfig.source.inputDir, pipelineConfig.source.inputFile);
 const OUTPUT_DIR = path.join(__dirname, '../..', pipelineConfig.source.outputDir);
 
-// Mode mappings - populated by discoverModes() after loading source file
-// These are discovered from the Figma source, not hardcoded in config
+// Mode mappings - loaded from config and validated against Figma source
+// These are explicitly configured in pipeline.config.js (ID → Key mappings)
 let BRANDS = {};       // { figmaName: modeId } - for collection mode matching
 let BREAKPOINTS = {};  // { key: modeId } - xs, sm, md, lg
 let COLOR_MODES = {};  // { key: modeId } - light, dark
 let DENSITY_MODES = {}; // { key: modeId } - default, dense, spacious
 
-// Brand lists - discovered from BrandTokenMapping and BrandColorMapping collections
-let COLOR_BRANDS = [];   // Brands with own colors (from BrandColorMapping)
-let CONTENT_BRANDS = []; // Brands with own sizing/typography (from BrandTokenMapping)
-let DEFAULT_BRAND = '';  // Default brand (first mode in BrandTokenMapping)
+// Reverse mappings (modeId → key) for lookups
+let MODE_ID_TO_KEY = {}; // { modeId: key } - for any mode type
+
+// Brand lists - from config modes.brands
+let COLOR_BRANDS = [];   // Brands with own colors (from config modes.brands.color)
+let CONTENT_BRANDS = []; // Brands with own sizing/typography (from config modes.brands.content)
+let DEFAULT_BRAND = '';  // Default brand (from config modes.brands.default)
 let ALL_BRANDS = [];     // Union of COLOR_BRANDS and CONTENT_BRANDS
-let BRAND_INFO = {};     // Maps key → { figmaName } for each brand
+let BRAND_INFO = {};     // Maps key → { figmaName, modeId } for each brand
 
 // Collection IDs (from config)
 const COLLECTION_IDS = pipelineConfig.source.collections;
@@ -93,24 +96,59 @@ function loadPluginTokens() {
 }
 
 /**
- * Normalizes a mode name to a key format
- * Examples: "BILD" → "bild", "Light" → "light", "XS - 320px" → "xs"
+ * Loads mode mappings from config and validates against Figma collections.
+ * Uses explicit ID → Key mappings from pipeline.config.js for stability.
+ *
+ * This approach ensures that renaming modes in Figma won't break the build.
+ * Mode IDs are stable unless a mode is deleted and recreated.
  */
-function normalizeToKey(name) {
-  // Extract the first word/segment before any separator
-  const match = name.match(/^([A-Za-z]+)/);
-  if (match) {
-    return match[1].toLowerCase();
-  }
-  return name.toLowerCase();
-}
+function loadModes(collections) {
+  console.log('🔗 Loading mode mappings from config...');
 
-/**
- * Discovers mode information from Figma collections
- * This replaces the hardcoded config values with auto-extracted data
- */
-function discoverModes(collections) {
-  console.log('🔍 Discovering modes from Figma source...');
+  const modesConfig = pipelineConfig.modes;
+  let hasErrors = false;
+
+  // Helper: Build a lookup of modeId → figmaName from a collection
+  function buildFigmaModeLookup(collection) {
+    const lookup = {};
+    if (collection) {
+      collection.modes.forEach(m => {
+        lookup[m.modeId] = m.name;
+      });
+    }
+    return lookup;
+  }
+
+  // Helper: Load mappings and validate against Figma
+  function loadMappings(configMapping, figmaLookup, typeName) {
+    const result = {};
+    const keys = [];
+    const configuredIds = Object.keys(configMapping);
+    const figmaIds = Object.keys(figmaLookup);
+
+    // Check each configured ID exists in Figma
+    for (const [modeId, keyOrConfig] of Object.entries(configMapping)) {
+      const key = typeof keyOrConfig === 'object' ? keyOrConfig.key : keyOrConfig;
+
+      if (!figmaLookup[modeId]) {
+        console.error(`   ❌ ${typeName}: Mode ID "${modeId}" (key: ${key}) not found in Figma!`);
+        hasErrors = true;
+      } else {
+        result[key] = modeId;
+        keys.push(key);
+        MODE_ID_TO_KEY[modeId] = key;
+      }
+    }
+
+    // Warn about Figma modes not in config (won't break, but might be intentional)
+    const unmappedIds = figmaIds.filter(id => !configuredIds.includes(id));
+    if (unmappedIds.length > 0) {
+      const unmappedNames = unmappedIds.map(id => `"${figmaLookup[id]}" (${id})`).join(', ');
+      console.warn(`   ⚠️  ${typeName}: Figma has unmapped modes: ${unmappedNames}`);
+    }
+
+    return { result, keys };
+  }
 
   // Find collections by ID
   const colorModeCollection = collections.find(c => c.id === COLLECTION_IDS.COLOR_MODE);
@@ -119,64 +157,97 @@ function discoverModes(collections) {
   const brandTokenCollection = collections.find(c => c.id === COLLECTION_IDS.BRAND_TOKEN_MAPPING);
   const brandColorCollection = collections.find(c => c.id === COLLECTION_IDS.BRAND_COLOR_MAPPING);
 
-  // Discover COLOR_MODES from ColorMode collection
-  if (colorModeCollection) {
-    colorModeCollection.modes.forEach(mode => {
-      const key = normalizeToKey(mode.name);
-      COLOR_MODES[key] = mode.modeId;
-    });
+  // Load COLOR_MODES
+  if (modesConfig.colorModes) {
+    const figmaLookup = buildFigmaModeLookup(colorModeCollection);
+    const { result } = loadMappings(modesConfig.colorModes, figmaLookup, 'Color modes');
+    COLOR_MODES = result;
     console.log(`   ✓ Color modes: ${Object.keys(COLOR_MODES).join(', ')}`);
   }
 
-  // Discover DENSITY_MODES from Density collection
-  if (densityCollection) {
-    densityCollection.modes.forEach(mode => {
-      const key = normalizeToKey(mode.name);
-      DENSITY_MODES[key] = mode.modeId;
-    });
+  // Load DENSITY_MODES
+  if (modesConfig.densityModes) {
+    const figmaLookup = buildFigmaModeLookup(densityCollection);
+    const { result } = loadMappings(modesConfig.densityModes, figmaLookup, 'Density modes');
+    DENSITY_MODES = result;
     console.log(`   ✓ Density modes: ${Object.keys(DENSITY_MODES).join(', ')}`);
   }
 
-  // Discover BREAKPOINTS from BreakpointMode collection
-  // Merge with minWidth from config
-  const breakpointMinWidths = pipelineConfig.modes?.breakpoints || {};
-  if (breakpointCollection) {
-    breakpointCollection.modes.forEach(mode => {
-      const key = normalizeToKey(mode.name);
-      BREAKPOINTS[key] = mode.modeId;
-    });
+  // Load BREAKPOINTS
+  if (modesConfig.breakpoints) {
+    const figmaLookup = buildFigmaModeLookup(breakpointCollection);
+    const { result } = loadMappings(modesConfig.breakpoints, figmaLookup, 'Breakpoints');
+    BREAKPOINTS = result;
     console.log(`   ✓ Breakpoints: ${Object.keys(BREAKPOINTS).join(', ')}`);
   }
 
-  // Discover CONTENT_BRANDS from BrandTokenMapping collection
-  if (brandTokenCollection) {
-    brandTokenCollection.modes.forEach(mode => {
-      const key = normalizeToKey(mode.name);
-      CONTENT_BRANDS.push(key);
-      // BRANDS maps Figma names to mode IDs for legacy compatibility
-      BRANDS[mode.name] = mode.modeId;
-      // BRAND_INFO maps keys to figmaName for iteration
-      BRAND_INFO[key] = { figmaName: mode.name };
-    });
-    // Default brand is the first mode (defaultModeId)
-    const defaultMode = brandTokenCollection.modes.find(m => m.modeId === brandTokenCollection.defaultModeId);
-    DEFAULT_BRAND = defaultMode ? normalizeToKey(defaultMode.name) : CONTENT_BRANDS[0];
-    console.log(`   ✓ Content brands: ${CONTENT_BRANDS.join(', ')} (default: ${DEFAULT_BRAND})`);
+  // Load CONTENT_BRANDS from config modes.brands.content
+  if (modesConfig.brands?.content) {
+    const figmaLookup = buildFigmaModeLookup(brandTokenCollection);
+    for (const [modeId, key] of Object.entries(modesConfig.brands.content)) {
+      if (!figmaLookup[modeId]) {
+        console.error(`   ❌ Content brands: Mode ID "${modeId}" (key: ${key}) not found in Figma!`);
+        hasErrors = true;
+      } else {
+        CONTENT_BRANDS.push(key);
+        BRANDS[figmaLookup[modeId]] = modeId; // figmaName → modeId
+        BRAND_INFO[key] = { figmaName: figmaLookup[modeId], modeId };
+        MODE_ID_TO_KEY[modeId] = key;
+      }
+    }
+    // Warn about unmapped brands in Figma
+    const configuredIds = Object.keys(modesConfig.brands.content);
+    const unmappedIds = Object.keys(figmaLookup).filter(id => !configuredIds.includes(id));
+    if (unmappedIds.length > 0) {
+      const unmappedNames = unmappedIds.map(id => `"${figmaLookup[id]}" (${id})`).join(', ');
+      console.warn(`   ⚠️  Content brands: Figma has unmapped modes: ${unmappedNames}`);
+    }
   }
 
-  // Discover COLOR_BRANDS from BrandColorMapping collection
-  if (brandColorCollection) {
-    brandColorCollection.modes.forEach(mode => {
-      const key = normalizeToKey(mode.name);
-      COLOR_BRANDS.push(key);
-      // Also add to BRANDS map (may override with different modeId, but name matching handles this)
-      BRANDS[mode.name] = mode.modeId;
-    });
-    console.log(`   ✓ Color brands: ${COLOR_BRANDS.join(', ')}`);
+  // Load COLOR_BRANDS from config modes.brands.color
+  if (modesConfig.brands?.color) {
+    const figmaLookup = buildFigmaModeLookup(brandColorCollection);
+    for (const [modeId, key] of Object.entries(modesConfig.brands.color)) {
+      if (!figmaLookup[modeId]) {
+        console.error(`   ❌ Color brands: Mode ID "${modeId}" (key: ${key}) not found in Figma!`);
+        hasErrors = true;
+      } else {
+        COLOR_BRANDS.push(key);
+        BRANDS[figmaLookup[modeId]] = modeId; // figmaName → modeId
+        // Update BRAND_INFO if not already set by content brands
+        if (!BRAND_INFO[key]) {
+          BRAND_INFO[key] = { figmaName: figmaLookup[modeId], modeId };
+        }
+        MODE_ID_TO_KEY[modeId] = key;
+      }
+    }
+    // Warn about unmapped brands in Figma
+    const configuredIds = Object.keys(modesConfig.brands.color);
+    const unmappedIds = Object.keys(figmaLookup).filter(id => !configuredIds.includes(id));
+    if (unmappedIds.length > 0) {
+      const unmappedNames = unmappedIds.map(id => `"${figmaLookup[id]}" (${id})`).join(', ');
+      console.warn(`   ⚠️  Color brands: Figma has unmapped modes: ${unmappedNames}`);
+    }
   }
 
-  // Compute ALL_BRANDS as union of content and color brands
+  // Set DEFAULT_BRAND from config
+  DEFAULT_BRAND = modesConfig.brands?.default || CONTENT_BRANDS[0];
+  console.log(`   ✓ Content brands: ${CONTENT_BRANDS.join(', ')} (default: ${DEFAULT_BRAND})`);
+  console.log(`   ✓ Color brands: ${COLOR_BRANDS.join(', ')}`);
+
+  // Compute ALL_BRANDS as union
   ALL_BRANDS = [...new Set([...CONTENT_BRANDS, ...COLOR_BRANDS])];
+
+  // Fail build if any mode IDs were missing
+  if (hasErrors) {
+    console.error('\n❌ Build failed: Some configured Mode IDs were not found in Figma.');
+    console.error('   Please check pipeline.config.js and update the Mode ID mappings.');
+    console.error('   To find current Mode IDs, look in the Figma export JSON under');
+    console.error('   collections[].modes[].modeId\n');
+    process.exit(1);
+  }
+
+  console.log('');
 }
 
 /**
@@ -2780,8 +2851,8 @@ function main() {
   // Load plugin tokens
   const pluginData = loadPluginTokens();
 
-  // Discover modes from Figma source (replaces hardcoded config values)
-  discoverModes(pluginData.collections);
+  // Load mode mappings from config and validate against Figma
+  loadModes(pluginData.collections);
 
   // Create alias lookup
   console.log('🔍 Creating Alias Lookup...');

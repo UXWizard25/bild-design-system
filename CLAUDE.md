@@ -6,38 +6,61 @@
 
 ## Development Principles
 
-> **IMPORTANT:** When implementing new features or modifying the pipeline, always prefer **dynamic, discoverable approaches** over hardcoded values.
+> **IMPORTANT:** The pipeline uses **explicit Mode ID → Key mappings** for stability. Mode IDs are stable in Figma, while mode names can be freely renamed by designers.
 
-### Prefer Dynamic Over Hardcoded
+### Configuration Philosophy
 
-| ❌ Avoid | ✅ Prefer |
-|----------|----------|
-| Hardcoded brand lists in config | Auto-discover from Figma collections |
-| Hardcoded mode IDs in config | Extract from Figma source at build time |
-| Manual mode name mappings | Derive keys from Figma mode names |
-| Duplicate information in multiple places | Single source of truth with discovery |
+| Aspect | Approach | Rationale |
+|--------|----------|-----------|
+| Mode mappings | Explicit ID → Key in config | Stable against Figma renames |
+| Token values | From Figma, validated | Single source of truth for values |
+| Collection IDs | Explicit in config | Stable Figma references |
+| Breakpoint pixels | Explicit in config | Not stored in Figma |
 
-### Why This Matters
+### Why Mode IDs Over Names
 
-1. **Reduces maintenance burden** — Changes in Figma automatically propagate
-2. **Prevents sync issues** — No manual config updates when Figma changes
-3. **Enables flexibility** — Adding brands/modes requires only Figma changes
-4. **Self-documenting** — Build output shows what was discovered
+1. **Prevents breaking changes** — Renaming modes in Figma won't break the build
+2. **Build-time validation** — Missing Mode IDs fail fast with clear errors
+3. **Explicit is better** — Clear mapping from Figma structure to pipeline keys
+4. **Self-documenting** — Config shows exactly what Figma modes are expected
 
-### Current Auto-Discovery
+### Mode ID → Key Mapping
 
-The pipeline automatically extracts from Figma source:
-- Brand names and lists (COLOR_BRANDS, CONTENT_BRANDS)
-- Default brand (from `defaultModeId`)
-- Color modes (light, dark)
-- Density modes (default, dense, spacious)
-- Breakpoint keys (xs, sm, md, lg)
-- All mode IDs
+The pipeline uses explicit mappings in `pipeline.config.js`:
 
-Only **semantic values not in Figma** require manual configuration:
-- Breakpoint min-width pixel values (CSS @media queries)
-- Collection IDs (stable Figma references)
-- Platform-specific mappings (iOS SizeClass, Android WindowSizeClass)
+```javascript
+modes: {
+  brands: {
+    color: {
+      '18212:0': 'bild',       // Figma Mode ID → Pipeline Key
+      '18212:1': 'sportbild',
+    },
+    content: {
+      '18038:0': 'bild',
+      '18094:0': 'sportbild',
+      '18094:1': 'advertorial',
+    },
+    default: 'bild',
+  },
+  colorModes: {
+    '588:0': 'light',
+    '592:1': 'dark',
+  },
+  densityModes: {
+    '5695:2': 'default',
+    '5695:1': 'dense',
+    '5695:3': 'spacious',
+  },
+  breakpoints: {
+    '7017:0':  { key: 'xs', minWidth: 320, deviceName: 'Mobile' },
+    '16706:1': { key: 'sm', minWidth: 390, deviceName: 'Large Mobile' },
+    '7015:1':  { key: 'md', minWidth: 600, deviceName: 'Tablet' },
+    '7015:2':  { key: 'lg', minWidth: 1024, deviceName: 'Desktop' },
+  },
+}
+```
+
+**Finding Mode IDs:** Look in `bild-design-system-raw-data.json` under `collections[].modes[].modeId`
 
 See `build-config/tokens/CONFIGURATION.md` for full configuration documentation.
 
@@ -1426,9 +1449,9 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify density alias endpoints | `preprocess.js` → `getDeepAliasInfo()` with `acceptDensityEndpoint` option |
 | Add semantic density to bundle | `bundles.js` → `buildBrandTokens()` |
 | Modify native density token filter | `build.js` → `nativeTokenFilter()` (controls which tokens are in SizingScheme) |
-| Add new brand | **In Figma only** — add mode to BrandTokenMapping and/or BrandColorMapping collection. Auto-discovered at build time. |
-| Add new color/density mode | **In Figma only** — add mode to ColorMode or Density collection. Auto-discovered at build time. |
-| Add new breakpoint | **In Figma + config** — add mode to BreakpointMode collection, then add minWidth to `pipeline.config.js` |
+| Add new brand | **Figma + config** — add mode in Figma, then add Mode ID → Key mapping to `pipeline.config.js` → `modes.brands` |
+| Add new color/density mode | **Figma + config** — add mode in Figma, then add Mode ID → Key mapping to `pipeline.config.js` |
+| Add new breakpoint | **Figma + config** — add mode in Figma, then add Mode ID → Key + minWidth to `pipeline.config.js` → `modes.breakpoints` |
 | Change collection IDs | `pipeline.config.js` → `source.collections` (when Figma collections are recreated) |
 | Enable/disable platform | `build.js` (toggle flags) |
 | Switch CSS font-size unit (px/rem) | `style-dictionary.config.js` → `FONT_SIZE_UNIT` constant (`'px'` or `'rem'`) |
