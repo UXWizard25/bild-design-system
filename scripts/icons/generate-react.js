@@ -13,9 +13,10 @@
 const fs = require('fs');
 const path = require('path');
 const { PATHS: SHARED_PATHS } = require('./paths');
+const config = require('../../build-config/tokens/pipeline.config.js');
 
 // ============================================================================
-// CONFIGURATION
+// CONFIGURATION (from pipeline.config.js)
 // ============================================================================
 
 const PATHS = {
@@ -23,6 +24,11 @@ const PATHS = {
   output: SHARED_PATHS.reactSrc,
   config: path.resolve(__dirname, '../../build-config/icons/svgr.config.js'),
 };
+
+// Get configuration from central config
+const iconConfig = config.icons;
+const reactConfig = iconConfig.platforms.react;
+const sizingConfig = iconConfig.sizing;
 
 // ============================================================================
 // LOGGING UTILITIES
@@ -41,13 +47,14 @@ const log = {
 // ============================================================================
 
 /**
- * Convert kebab-case to PascalCase with Icon prefix
+ * Convert kebab-case to PascalCase with configurable prefix
  * add -> IconAdd
  * arrow-left -> IconArrowLeft
  * 2-liga-logo -> Icon2LigaLogo
  *
  * Following Heroicons naming convention (industry best practice)
  * for clarity and to avoid naming collisions with other components.
+ * Prefix is configurable via icons.platforms.react.componentPrefix
  */
 function toPascalCase(str) {
   const pascalCase = str
@@ -55,10 +62,10 @@ function toPascalCase(str) {
     .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join('');
 
-  // Always prefix with 'Icon' for clarity and consistency
+  // Prefix from config (default: 'Icon') for clarity and consistency
   // This follows the Heroicons naming convention (e.g., ArrowLeftIcon)
   // but uses prefix instead of suffix for better IDE autocomplete grouping
-  return 'Icon' + pascalCase;
+  return reactConfig.componentPrefix + pascalCase;
 }
 
 /**
@@ -128,11 +135,15 @@ async function loadSvgr() {
 
 /**
  * Generate React component template
+ * Uses defaultSize from config
  */
 function generateComponentTemplate(componentName, svgContent) {
+  // Get default size from config
+  const defaultSize = sizingConfig.defaultSize;
+
   // Extract viewBox from SVG
   const viewBoxMatch = svgContent.match(/viewBox="([^"]+)"/);
-  const viewBox = viewBoxMatch ? viewBoxMatch[1] : '0 0 24 24';
+  const viewBox = viewBoxMatch ? viewBoxMatch[1] : `0 0 ${defaultSize} ${defaultSize}`;
 
   // Extract inner content (everything inside <svg>...</svg>)
   const innerMatch = svgContent.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);
@@ -146,7 +157,7 @@ function generateComponentTemplate(componentName, svgContent) {
 export interface ${componentName}Props extends Omit<React.SVGProps<SVGSVGElement>, 'color'> {
   /**
    * Icon size (width and height)
-   * @default 24
+   * @default ${defaultSize}
    */
   size?: number | string;
   /**
@@ -174,7 +185,7 @@ export interface ${componentName}Props extends Omit<React.SVGProps<SVGSVGElement
 const ${componentName} = React.forwardRef<SVGSVGElement, ${componentName}Props>(
   (
     {
-      size = 24,
+      size = ${defaultSize},
       color = 'currentColor',
       'aria-label': ariaLabel,
       'aria-hidden': ariaHidden = true,
@@ -243,9 +254,11 @@ async function generateComponent(filename) {
 
 /**
  * Generate index.ts with all exports
+ * Uses system name from config
  */
 function generateIndex(components) {
   const successfulComponents = components.filter(c => c.success);
+  const systemName = config.identity.name;
 
   // Named exports
   const namedExports = successfulComponents
@@ -258,7 +271,7 @@ function generateIndex(components) {
     .join('\n');
 
   const indexContent = `/**
- * BILD Design System Icons - React Components
+ * ${systemName} Icons - React Components
  *
  * Auto-generated from SVG icons. Do not edit manually.
  * Generated at: ${new Date().toISOString()}
@@ -290,10 +303,11 @@ export const ICON_COUNT = ${successfulComponents.length};
 
 /**
  * Generate package.json for the react directory
+ * Uses package name from config
  */
 function generatePackageJson() {
   const packageJson = {
-    name: '@marioschmidt/design-system-icons-react',
+    name: config.packages.iconsReact.npm,
     private: true,
     main: './index.js',
     module: './index.mjs',

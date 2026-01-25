@@ -20,6 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PATHS: SHARED_PATHS, cleanDir, ensureDir } = require('./paths');
+const config = require('../../build-config/tokens/pipeline.config.js');
 
 // ============================================================================
 // CONFIGURATION
@@ -202,7 +203,11 @@ ${iconNames.map(name => `  '${name}',`).join('\n')}
 export type IconName = typeof ICON_NAMES[number];
 `;
 
-  const outputPath = path.join(PATHS.root, 'packages/components/core/src/icons.ts');
+  const stencilPath = config.icons.outputs.stencilTypesPath;
+  if (!stencilPath) {
+    return null; // Skip if disabled in config
+  }
+  const outputPath = path.join(PATHS.root, stencilPath);
   fs.writeFileSync(outputPath, content, 'utf8');
 
   return outputPath;
@@ -215,7 +220,7 @@ export type IconName = typeof ICON_NAMES[number];
 async function main() {
   const startTime = Date.now();
 
-  log.header('BILD Design System - Icon Build Pipeline');
+  log.header(`${config.identity.name} - Icon Build Pipeline`);
 
   // Check for input files
   log.step('Checking input directory...');
@@ -277,9 +282,13 @@ async function main() {
   log.success(`Created manifest.json with ${manifest.icons.length} icons`);
 
   // Generate TypeScript file for Stencil components
-  log.step('Generating icons.ts for Stencil...');
-  const iconsTsPath = generateIconsTs(manifest.icons);
-  log.success(`Created ${path.relative(PATHS.root, iconsTsPath)}`);
+  if (config.icons.outputs.stencilTypesPath) {
+    log.step('Generating icons.ts for Stencil...');
+    const iconsTsPath = generateIconsTs(manifest.icons);
+    if (iconsTsPath) {
+      log.success(`Created ${path.relative(PATHS.root, iconsTsPath)}`);
+    }
+  }
 
   // Final summary
   log.header('Build Summary');

@@ -10,6 +10,7 @@
  */
 
 const path = require('path');
+const config = require('../tokens/pipeline.config.js');
 
 module.exports = {
   multipass: true,
@@ -48,8 +49,8 @@ module.exports = {
         prefix: (node, info) => {
           // Extract icon name from file path (without extension)
           const basename = path.basename(info.path || '', '.svg');
-          // Remove 'icon-' prefix if present
-          return basename.replace(/^icon-/, '');
+          // Remove configured prefix if present (e.g., 'icon-')
+          return basename.replace(config.icons.svg.inputPrefixStrip, '');
         },
         prefixIds: true,
         prefixClassNames: true,

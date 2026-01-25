@@ -13,9 +13,10 @@
 const fs = require('fs');
 const path = require('path');
 const { PATHS: SHARED_PATHS } = require('./paths');
+const config = require('../../build-config/tokens/pipeline.config.js');
 
 // ============================================================================
-// CONFIGURATION
+// CONFIGURATION (from pipeline.config.js)
 // ============================================================================
 
 const PATHS = {
@@ -24,14 +25,21 @@ const PATHS = {
   kotlin: SHARED_PATHS.androidKotlin,
 };
 
+// Get configuration from central config
+const iconConfig = config.icons;
+const androidConfig = iconConfig.platforms.android;
+const sizingConfig = iconConfig.sizing;
+const namingConfig = iconConfig.naming;
+const packageConfig = config.packages.icons.android;
+
 const ANDROID_CONFIG = {
-  // Default size in dp
-  width: 24,
-  height: 24,
-  // Use theme attribute for color
-  fillColor: '?attr/colorOnSurface',
-  // Float precision
-  floatPrecision: 2,
+  // Default size in dp (from config)
+  width: sizingConfig.defaultSize,
+  height: sizingConfig.defaultSize,
+  // Use theme attribute for color (from config)
+  fillColor: androidConfig.fillColor,
+  // Float precision (from config)
+  floatPrecision: androidConfig.floatPrecision,
 };
 
 // ============================================================================
@@ -52,9 +60,11 @@ const log = {
 
 /**
  * Convert to Android resource naming: add -> ic_add
+ * Uses resourcePrefix from config (default: 'ic_')
  */
 function toAndroidName(name) {
-  return `ic_${name.replace(/-/g, '_')}`;
+  const prefix = androidConfig.resourcePrefix;
+  return `${prefix}${name.replace(/-/g, '_')}`;
 }
 
 /**
@@ -275,10 +285,23 @@ function generateAttrsXml() {
 }
 
 /**
- * Generate BildIcons.kt for Jetpack Compose
+ * Generate Kotlin extension file for Jetpack Compose
  * Provides type-safe access to icons following Material Icons convention.
+ * Uses naming from config (e.g., BildIcons, BildIcon, BildIconSize)
  */
 function generateKotlinExtension(icons) {
+  // Get dynamic names from config
+  const prefix = namingConfig.prefix;  // e.g., 'Bild'
+  const iconsObjectName = `${prefix}Icons`;  // e.g., 'BildIcons'
+  const iconFunctionName = `${prefix}Icon`;  // e.g., 'BildIcon'
+  const iconSizeObjectName = `${prefix}IconSize`;  // e.g., 'BildIconSize'
+  const iconButtonFunctionName = `${prefix}IconButton`;  // e.g., 'BildIconButton'
+  const kotlinPackage = packageConfig.namespace;  // e.g., 'de.bild.design.icons'
+  const systemName = config.identity.name;  // e.g., 'BILD Design System'
+
+  // Get size presets from config
+  const sizePresets = sizingConfig.presets;
+
   const iconProperties = icons
     .filter(i => i.success)
     .map(i => {
@@ -301,10 +324,10 @@ function generateKotlinExtension(icons) {
   const kotlinContent = `// GENERATED CODE - DO NOT MODIFY BY HAND
 // Generated at: ${new Date().toISOString()}
 //
-// BILD Design System Icons - Jetpack Compose Extension
+// ${systemName} Icons - Jetpack Compose Extension
 // To regenerate, run: npm run build:icons:android
 
-package de.bild.design.icons
+package ${kotlinPackage}
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -320,7 +343,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * BILD Design System Icons for Jetpack Compose
+ * ${systemName} Icons for Jetpack Compose
  *
  * Provides type-safe access to all design system icons following
  * the Material Icons naming convention (PascalCase).
@@ -328,27 +351,27 @@ import androidx.compose.ui.unit.dp
  * Usage:
  * \`\`\`kotlin
  * // Simple usage with convenience function
- * BildIcon(BildIcons.Add, contentDescription = "Add item")
+ * ${iconFunctionName}(${iconsObjectName}.Add, contentDescription = "Add item")
  *
  * // With custom size and color
- * BildIcon(
- *     icon = BildIcons.ArrowLeft,
+ * ${iconFunctionName}(
+ *     icon = ${iconsObjectName}.ArrowLeft,
  *     contentDescription = "Go back",
  *     size = 32.dp,
  *     tint = MaterialTheme.colorScheme.primary
  * )
  *
  * // Decorative icon (no content description)
- * BildIcon(BildIcons.Decoration, contentDescription = null)
+ * ${iconFunctionName}(${iconsObjectName}.Decoration, contentDescription = null)
  *
  * // Direct ImageVector usage for custom composables
  * Icon(
- *     imageVector = BildIcons.Menu,
+ *     imageVector = ${iconsObjectName}.Menu,
  *     contentDescription = "Menu"
  * )
  * \`\`\`
  */
-object BildIcons {
+object ${iconsObjectName} {
 ${iconProperties}
 
     /**
@@ -368,54 +391,54 @@ ${iconList}
 /**
  * Standard icon sizes following Material Design guidelines
  */
-object BildIconSize {
-    /** Extra small icon (16dp) */
-    val XS: Dp = 16.dp
-    /** Small icon (20dp) */
-    val SM: Dp = 20.dp
-    /** Medium icon (24dp) - Default */
-    val MD: Dp = 24.dp
-    /** Large icon (32dp) */
-    val LG: Dp = 32.dp
-    /** Extra large icon (48dp) */
-    val XL: Dp = 48.dp
+object ${iconSizeObjectName} {
+    /** Extra small icon (${sizePresets.xs}dp) */
+    val XS: Dp = ${sizePresets.xs}.dp
+    /** Small icon (${sizePresets.sm}dp) */
+    val SM: Dp = ${sizePresets.sm}.dp
+    /** Medium icon (${sizePresets.md}dp) - Default */
+    val MD: Dp = ${sizePresets.md}.dp
+    /** Large icon (${sizePresets.lg}dp) */
+    val LG: Dp = ${sizePresets.lg}.dp
+    /** Extra large icon (${sizePresets.xl}dp) */
+    val XL: Dp = ${sizePresets.xl}.dp
 }
 
 /**
- * BILD Design System Icon composable with convenience parameters.
+ * ${systemName} Icon composable with convenience parameters.
  *
  * This is the recommended way to use icons in your Compose UI.
  * It provides consistent sizing, coloring, and accessibility handling.
  *
- * @param icon The icon to display from [BildIcons]
+ * @param icon The icon to display from [${iconsObjectName}]
  * @param contentDescription Text for accessibility. Pass null for decorative icons.
  * @param modifier Modifier to be applied to the icon
- * @param size Icon size (default: 24.dp)
+ * @param size Icon size (default: ${sizingConfig.defaultSize}.dp)
  * @param tint Icon color (default: LocalContentColor)
  *
  * Example:
  * \`\`\`kotlin
  * // Semantic icon (has meaning)
- * BildIcon(BildIcons.Add, contentDescription = "Add item")
+ * ${iconFunctionName}(${iconsObjectName}.Add, contentDescription = "Add item")
  *
  * // Decorative icon (purely visual)
- * BildIcon(BildIcons.Star, contentDescription = null)
+ * ${iconFunctionName}(${iconsObjectName}.Star, contentDescription = null)
  *
  * // With custom styling
- * BildIcon(
- *     icon = BildIcons.Heart,
+ * ${iconFunctionName}(
+ *     icon = ${iconsObjectName}.Heart,
  *     contentDescription = "Favorite",
- *     size = BildIconSize.LG,
+ *     size = ${iconSizeObjectName}.LG,
  *     tint = Color.Red
  * )
  * \`\`\`
  */
 @Composable
-fun BildIcon(
+fun ${iconFunctionName}(
     icon: ImageVector,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    size: Dp = BildIconSize.MD,
+    size: Dp = ${iconSizeObjectName}.MD,
     tint: Color = LocalContentColor.current
 ) {
     Icon(
@@ -427,34 +450,34 @@ fun BildIcon(
 }
 
 /**
- * BILD Design System Icon button convenience composable.
+ * ${systemName} Icon button convenience composable.
  *
  * Wraps an icon in a clickable IconButton with proper accessibility.
  *
- * @param icon The icon to display from [BildIcons]
+ * @param icon The icon to display from [${iconsObjectName}]
  * @param contentDescription Text for accessibility (required for buttons)
  * @param onClick Action to perform when clicked
  * @param modifier Modifier to be applied to the button
- * @param size Icon size (default: 24.dp)
+ * @param size Icon size (default: ${sizingConfig.defaultSize}.dp)
  * @param tint Icon color (default: LocalContentColor)
  * @param enabled Whether the button is enabled
  *
  * Example:
  * \`\`\`kotlin
- * BildIconButton(
- *     icon = BildIcons.Close,
+ * ${iconButtonFunctionName}(
+ *     icon = ${iconsObjectName}.Close,
  *     contentDescription = "Close dialog",
  *     onClick = { onDismiss() }
  * )
  * \`\`\`
  */
 @Composable
-fun BildIconButton(
+fun ${iconButtonFunctionName}(
     icon: ImageVector,
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    size: Dp = BildIconSize.MD,
+    size: Dp = ${iconSizeObjectName}.MD,
     tint: Color = LocalContentColor.current,
     enabled: Boolean = true
 ) {
@@ -463,7 +486,7 @@ fun BildIconButton(
         modifier = modifier,
         enabled = enabled
     ) {
-        BildIcon(
+        ${iconFunctionName}(
             icon = icon,
             contentDescription = contentDescription,
             size = size,
@@ -478,9 +501,11 @@ fun BildIconButton(
     fs.mkdirSync(PATHS.kotlin, { recursive: true });
   }
 
-  const kotlinPath = path.join(PATHS.kotlin, 'BildIcons.kt');
+  // Use dynamic filename based on config prefix
+  const kotlinFilename = `${iconsObjectName}.kt`;
+  const kotlinPath = path.join(PATHS.kotlin, kotlinFilename);
   fs.writeFileSync(kotlinPath, kotlinContent, 'utf8');
-  return kotlinPath;
+  return { path: kotlinPath, filename: kotlinFilename };
 }
 
 // ============================================================================
@@ -543,8 +568,8 @@ async function main() {
 
   // Generate Kotlin extension for Compose
   log.step('Generating Kotlin extension for Compose...');
-  generateKotlinExtension(results);
-  log.success('Created BildIcons.kt');
+  const kotlinResult = generateKotlinExtension(results);
+  log.success(`Created ${kotlinResult.filename}`);
 
   // Summary
   console.log('\n========================================');

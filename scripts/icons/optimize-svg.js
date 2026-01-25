@@ -13,6 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PATHS: SHARED_PATHS, ensureDir } = require('./paths');
+const config = require('../../build-config/tokens/pipeline.config.js');
 
 // ============================================================================
 // CONFIGURATION
@@ -139,11 +140,13 @@ function getSvgFiles() {
 
 /**
  * Transform icon name: icon-add.svg -> add
+ * Strip prefix is configurable via icons.svg.inputPrefixStrip
  */
 function transformIconName(filename) {
+  const inputPrefixStrip = config.icons.svg.inputPrefixStrip;
   return filename
     .replace(/\.svg$/, '')
-    .replace(/^icon-/, '');
+    .replace(inputPrefixStrip, '');
 }
 
 /**

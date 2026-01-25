@@ -17,9 +17,10 @@
 const fs = require('fs');
 const path = require('path');
 const { PATHS: SHARED_PATHS } = require('./paths');
+const config = require('../../build-config/tokens/pipeline.config.js');
 
 // ============================================================================
-// CONFIGURATION
+// CONFIGURATION (from pipeline.config.js)
 // ============================================================================
 
 const PATHS = {
@@ -27,6 +28,12 @@ const PATHS = {
   output: SHARED_PATHS.ios,
   swift: SHARED_PATHS.iosSwift,
 };
+
+// Get configuration from central config
+const iconConfig = config.icons;
+const iosConfig = iconConfig.platforms.ios;
+const sizingConfig = iconConfig.sizing;
+const namingConfig = iconConfig.naming;
 
 // ============================================================================
 // LOGGING UTILITIES
@@ -84,6 +91,7 @@ function getSvgFiles() {
 
 /**
  * Generate Contents.json for an imageset
+ * Uses author and renderingIntent from config
  */
 function generateImagesetContents(svgFilename) {
   return {
@@ -94,23 +102,24 @@ function generateImagesetContents(svgFilename) {
       },
     ],
     info: {
-      author: 'bild-design-system-icons',
+      author: namingConfig.author,
       version: 1,
     },
     properties: {
       'preserves-vector-representation': true,
-      'template-rendering-intent': 'template',
+      'template-rendering-intent': iosConfig.renderingIntent,
     },
   };
 }
 
 /**
  * Generate Contents.json for the Icons folder
+ * Uses author from config
  */
 function generateFolderContents() {
   return {
     info: {
-      author: 'bild-design-system-icons',
+      author: namingConfig.author,
       version: 1,
     },
     properties: {
@@ -121,11 +130,12 @@ function generateFolderContents() {
 
 /**
  * Generate Contents.json for the root xcassets
+ * Uses author from config
  */
 function generateXcassetsContents() {
   return {
     info: {
-      author: 'bild-design-system-icons',
+      author: namingConfig.author,
       version: 1,
     },
   };
@@ -193,8 +203,18 @@ function generateIOSAsset(filename) {
 
 /**
  * Generate Swift extension for easy icon access
+ * Uses naming, sizing from config
  */
 function generateSwiftExtension(icons) {
+  // Get dynamic names from config
+  const prefix = namingConfig.prefix;  // e.g., 'Bild'
+  const iconEnumName = `${prefix}Icon`;  // e.g., 'BildIcon'
+  const systemName = config.identity.name;  // e.g., 'BILD Design System'
+
+  // Get size presets from config
+  const sizePresets = sizingConfig.presets;
+  const defaultSize = sizingConfig.defaultSize;
+
   const iconCases = icons
     .filter(i => i.success)
     .map(i => `    case ${i.name} = "${i.name}"`)
@@ -205,33 +225,33 @@ function generateSwiftExtension(icons) {
     .map(i => `        case .${i.name}: return "${i.originalName}"`)
     .join('\n');
 
-  return `// GENERATED CODE - DO NOT MODIFY BY HAND
+  return { content: `// GENERATED CODE - DO NOT MODIFY BY HAND
 // Generated at: ${new Date().toISOString()}
 //
-// BILD Design System Icons - Swift Extension
+// ${systemName} Icons - Swift Extension
 // To regenerate, run: npm run build:icons:ios
 
 import SwiftUI
 
-// MARK: - BildIcon Enum
+// MARK: - ${iconEnumName} Enum
 
-/// BILD Design System Icon names
+/// ${systemName} Icon names
 ///
 /// Usage:
 /// \`\`\`swift
 /// // Simple usage with convenience method
-/// BildIcon.add.icon()
+/// ${iconEnumName}.add.icon()
 ///
 /// // With custom size and color
-/// BildIcon.arrowLeft.icon(size: 32, color: .blue)
+/// ${iconEnumName}.arrowLeft.icon(size: 32, color: .blue)
 ///
 /// // Using the raw Image for more control
-/// BildIcon.menu.image
+/// ${iconEnumName}.menu.image
 ///     .resizable()
-///     .frame(width: 24, height: 24)
+///     .frame(width: ${defaultSize}, height: ${defaultSize})
 ///     .foregroundColor(.primary)
 /// \`\`\`
-public enum BildIcon: String, CaseIterable, Sendable {
+public enum ${iconEnumName}: String, CaseIterable, Sendable {
 ${iconCases}
 
     /// The image for this icon (use for custom configurations)
@@ -249,34 +269,34 @@ ${iconPreviewCases}
 
 // MARK: - Convenience Modifiers
 
-public extension BildIcon {
+public extension ${iconEnumName} {
     /// Standard icon sizes following SF Symbols conventions
     enum Size: CGFloat, Sendable {
-        /// Extra small icon (16pt)
-        case xs = 16
-        /// Small icon (20pt)
-        case sm = 20
-        /// Medium icon (24pt) - Default
-        case md = 24
-        /// Large icon (32pt)
-        case lg = 32
-        /// Extra large icon (48pt)
-        case xl = 48
+        /// Extra small icon (${sizePresets.xs}pt)
+        case xs = ${sizePresets.xs}
+        /// Small icon (${sizePresets.sm}pt)
+        case sm = ${sizePresets.sm}
+        /// Medium icon (${sizePresets.md}pt) - Default
+        case md = ${sizePresets.md}
+        /// Large icon (${sizePresets.lg}pt)
+        case lg = ${sizePresets.lg}
+        /// Extra large icon (${sizePresets.xl}pt)
+        case xl = ${sizePresets.xl}
     }
 
     /// Creates an icon view with specified size and color
     ///
     /// - Parameters:
-    ///   - size: The icon size in points (default: 24)
+    ///   - size: The icon size in points (default: ${defaultSize})
     ///   - color: The icon color (default: .primary)
     /// - Returns: A configured icon view
     ///
     /// Example:
     /// \`\`\`swift
-    /// BildIcon.add.icon(size: 32, color: .blue)
+    /// ${iconEnumName}.add.icon(size: 32, color: .blue)
     /// \`\`\`
     @ViewBuilder
-    func icon(size: CGFloat = 24, color: Color = .primary) -> some View {
+    func icon(size: CGFloat = ${defaultSize}, color: Color = .primary) -> some View {
         image
             .resizable()
             .renderingMode(.template)
@@ -293,7 +313,7 @@ public extension BildIcon {
     ///
     /// Example:
     /// \`\`\`swift
-    /// BildIcon.menu.icon(size: .lg, color: .red)
+    /// ${iconEnumName}.menu.icon(size: .lg, color: .red)
     /// \`\`\`
     @ViewBuilder
     func icon(size: Size, color: Color = .primary) -> some View {
@@ -303,23 +323,23 @@ public extension BildIcon {
 
 // MARK: - Button Convenience
 
-public extension BildIcon {
+public extension ${iconEnumName} {
     /// Creates a button with this icon
     ///
     /// - Parameters:
-    ///   - size: The icon size in points (default: 24)
+    ///   - size: The icon size in points (default: ${defaultSize})
     ///   - color: The icon color (default: .primary)
     ///   - action: The action to perform when tapped
     /// - Returns: A button with the icon
     ///
     /// Example:
     /// \`\`\`swift
-    /// BildIcon.close.button {
+    /// ${iconEnumName}.close.button {
     ///     dismiss()
     /// }
     /// \`\`\`
     func button(
-        size: CGFloat = 24,
+        size: CGFloat = ${defaultSize},
         color: Color = .primary,
         action: @escaping () -> Void
     ) -> some View {
@@ -331,23 +351,23 @@ public extension BildIcon {
 
 // MARK: - Accessibility
 
-public extension BildIcon {
+public extension ${iconEnumName} {
     /// Creates an accessible icon with a label for screen readers
     ///
     /// - Parameters:
     ///   - label: The accessibility label for screen readers
-    ///   - size: The icon size in points (default: 24)
+    ///   - size: The icon size in points (default: ${defaultSize})
     ///   - color: The icon color (default: .primary)
     /// - Returns: An accessible icon view
     ///
     /// Example:
     /// \`\`\`swift
-    /// BildIcon.add.accessibleIcon(label: "Add item")
+    /// ${iconEnumName}.add.accessibleIcon(label: "Add item")
     /// \`\`\`
     @ViewBuilder
     func accessibleIcon(
         label: String,
-        size: CGFloat = 24,
+        size: CGFloat = ${defaultSize},
         color: Color = .primary
     ) -> some View {
         icon(size: size, color: color)
@@ -359,11 +379,11 @@ public extension BildIcon {
     /// Use for icons that are purely decorative and don't convey meaning.
     ///
     /// - Parameters:
-    ///   - size: The icon size in points (default: 24)
+    ///   - size: The icon size in points (default: ${defaultSize})
     ///   - color: The icon color (default: .primary)
     /// - Returns: A decorative icon view hidden from accessibility
     @ViewBuilder
-    func decorativeIcon(size: CGFloat = 24, color: Color = .primary) -> some View {
+    func decorativeIcon(size: CGFloat = ${defaultSize}, color: Color = .primary) -> some View {
         icon(size: size, color: color)
             .accessibilityHidden(true)
     }
@@ -373,11 +393,11 @@ public extension BildIcon {
 // MARK: - Previews
 
 /// Preview provider for all icons
-struct BildIconPreviews: PreviewProvider {
+struct ${iconEnumName}Previews: PreviewProvider {
     static var previews: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 16) {
-                ForEach(BildIcon.allCases, id: \\.self) { icon in
+                ForEach(${iconEnumName}.allCases, id: \\.self) { icon in
                     VStack(spacing: 8) {
                         icon.icon(size: .md)
                         Text(icon.displayName)
@@ -394,20 +414,20 @@ struct BildIconPreviews: PreviewProvider {
 }
 
 /// Preview for icon sizes
-struct BildIconSizePreviews: PreviewProvider {
+struct ${iconEnumName}SizePreviews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 24) {
             HStack(spacing: 24) {
-                BildIcon.add.icon(size: .xs)
-                BildIcon.add.icon(size: .sm)
-                BildIcon.add.icon(size: .md)
-                BildIcon.add.icon(size: .lg)
-                BildIcon.add.icon(size: .xl)
+                ${iconEnumName}.add.icon(size: .xs)
+                ${iconEnumName}.add.icon(size: .sm)
+                ${iconEnumName}.add.icon(size: .md)
+                ${iconEnumName}.add.icon(size: .lg)
+                ${iconEnumName}.add.icon(size: .xl)
             }
             HStack(spacing: 24) {
-                BildIcon.add.icon(size: .md, color: .red)
-                BildIcon.add.icon(size: .md, color: .blue)
-                BildIcon.add.icon(size: .md, color: .green)
+                ${iconEnumName}.add.icon(size: .md, color: .red)
+                ${iconEnumName}.add.icon(size: .md, color: .blue)
+                ${iconEnumName}.add.icon(size: .md, color: .green)
             }
         }
         .padding()
@@ -415,7 +435,7 @@ struct BildIconSizePreviews: PreviewProvider {
     }
 }
 #endif
-`;
+`, filename: `${iconEnumName}.swift` };
 }
 
 // ============================================================================
@@ -479,13 +499,13 @@ async function main() {
 
   // Generate Swift extension
   log.step('Generating Swift extension...');
-  const swiftContent = generateSwiftExtension(results);
+  const swiftResult = generateSwiftExtension(results);
   if (!fs.existsSync(PATHS.swift)) {
     fs.mkdirSync(PATHS.swift, { recursive: true });
   }
-  const swiftPath = path.join(PATHS.swift, 'BildIcon.swift');
-  fs.writeFileSync(swiftPath, swiftContent, 'utf8');
-  log.success('Created BildIcon.swift');
+  const swiftPath = path.join(PATHS.swift, swiftResult.filename);
+  fs.writeFileSync(swiftPath, swiftResult.content, 'utf8');
+  log.success(`Created ${swiftResult.filename}`);
 
   // Summary
   console.log('\n========================================');
