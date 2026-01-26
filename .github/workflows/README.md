@@ -382,7 +382,7 @@ The workflow requires:
 
 ### Configuration Reference
 
-All pipeline settings are centralized in `build-config/tokens/pipeline.config.js`:
+All pipeline settings are centralized in `build-config/pipeline.config.js`:
 
 | Category | Settings |
 |----------|----------|
@@ -409,7 +409,7 @@ In CI (`CI=true`), validation runs in **strict mode**:
 CI: 'true'  # Set by GitHub automatically
 ```
 
-📖 See [PIPELINE-CONFIG.md](../../build-config/tokens/PIPELINE-CONFIG.md) for full configuration documentation.
+📖 See [PIPELINE-CONFIG.md](../../build-config/PIPELINE-CONFIG.md) for full configuration documentation.
 
 ---
 

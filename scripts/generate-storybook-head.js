@@ -16,7 +16,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const pipelineConfig = require('../build-config/tokens/pipeline.config.js');
+const pipelineConfig = require('../build-config/pipeline.config.js');
 
 const PREVIEW_HEAD_PATH = path.join(__dirname, '../build-config/storybook/preview-head.html');
 

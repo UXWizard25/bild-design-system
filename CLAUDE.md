@@ -66,7 +66,7 @@ npm run publish:vue            # npm publish -w @marioschmidt/design-system-vue
 
 **Source of Truth:** `packages/tokens/src/bild-design-system-raw-data.json` (Figma Export via CodeBridge Plugin)
 
-**Pipeline Configuration:** `build-config/tokens/pipeline.config.js` (single source of truth for all pipeline settings)
+**Pipeline Configuration:** `build-config/pipeline.config.js` (single source of truth for all pipeline settings)
 
 **Platform Documentation:**
 - Web: `packages/tokens/docs/css.md`, `packages/tokens/docs/js.md`
@@ -83,7 +83,7 @@ npm run publish:vue            # npm publish -w @marioschmidt/design-system-vue
 
 ### Configuration Hub
 
-All configurable values are centralized in **`build-config/tokens/pipeline.config.js`**:
+All configurable values are centralized in **`build-config/pipeline.config.js`**:
 
 | Category | Example Settings |
 |----------|------------------|
@@ -103,7 +103,7 @@ When adding new features or scripts:
 
 1. **Read from config first**: Check if the value already exists in `pipeline.config.js`
    ```javascript
-   const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
+   const pipelineConfig = require('../../build-config/pipeline.config.js');
    const brands = pipelineConfig.allBrands;  // ✅ Dynamic from config
    // NOT: const brands = ['bild', 'sportbild'];  // ❌ Hardcoded
    ```
@@ -146,7 +146,7 @@ validation: {
 }
 ```
 
-📖 See `build-config/tokens/PIPELINE-CONFIG.md` for full configuration documentation.
+📖 See `build-config/PIPELINE-CONFIG.md` for full configuration documentation.
 
 ---
 
@@ -1101,7 +1101,7 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 
 | File | Purpose |
 |------|---------|
-| `build-config/tokens/pipeline.config.js` | **Single source of truth** for all pipeline settings (brands, modes, paths, packages) |
+| `build-config/pipeline.config.js` | **Single source of truth** for all pipeline settings (brands, modes, paths, packages) |
 | `scripts/tokens/preprocess.js` | Figma JSON → Style Dictionary format + direct lineHeight resolution (PIXELS/PERCENT/AUTO) + lineHeight ratio enrichment |
 | `scripts/tokens/build.js` | Orchestrates Style Dictionary builds + JS output generation + CSS optimizations |
 | `build-config/tokens/style-dictionary.config.js` | Custom transforms & formats |
@@ -1456,7 +1456,7 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Task | Files to Modify |
 |------|-----------------|
 | Change token values | In Figma (Source of Truth) |
-| Modify pipeline configuration | `build-config/tokens/pipeline.config.js` (single source of truth) |
+| Modify pipeline configuration | `build-config/pipeline.config.js` (single source of truth) |
 | Modify output format | `style-dictionary.config.js` |
 | Change alias resolution | `preprocess.js` |
 | Modify density alias endpoints | `preprocess.js` → `getDeepAliasInfo()` with `acceptDensityEndpoint` option |

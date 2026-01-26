@@ -6,7 +6,7 @@ import { createRequire } from 'module';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-const pipelineConfig = require('../tokens/pipeline.config.js');
+const pipelineConfig = require('../pipeline.config.js');
 
 /**
  * Resolve package path helper (ESM-compatible for Storybook 10)

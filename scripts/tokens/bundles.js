@@ -35,7 +35,7 @@
 const fs = require('fs');
 const path = require('path');
 const { glob } = require('glob');
-const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
+const pipelineConfig = require('../../build-config/pipeline.config.js');
 
 const DIST_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensDist);
 const CSS_DIR = path.join(DIST_DIR, 'css');

@@ -15,6 +15,7 @@ on:
       - 'packages/components/vue/src/**'
       - 'scripts/tokens/**'
       - 'scripts/fix-vue-imports.js'
+      - 'build-config/pipeline.config.js'
       - 'build-config/tokens/**'
       - 'build-config/stencil/**'
       - 'package.json'
@@ -78,7 +79,7 @@ jobs:
         id: config
         run: |
           echo "📋 Reading pipeline configuration..."
-          CONFIG="build-config/tokens/pipeline.config.js"
+          CONFIG="build-config/pipeline.config.js"
           echo "default_brand=$(node -p "require('./$CONFIG').brands.defaultBrand")" >> $GITHUB_OUTPUT
           echo "✅ Config loaded"
 

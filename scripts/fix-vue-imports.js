@@ -14,7 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const pipelineConfig = require('../build-config/tokens/pipeline.config.js');
+const pipelineConfig = require('../build-config/pipeline.config.js');
 
 const COMPONENTS_PKG = pipelineConfig.packages.components;
 const VUE_COMPONENTS_FILE = path.join(__dirname, '../packages/components/vue/src/components.ts');

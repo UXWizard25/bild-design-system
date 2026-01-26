@@ -3,7 +3,7 @@ import { reactOutputTarget } from '@stencil/react-output-target';
 import { vueOutputTarget } from '@stencil/vue-output-target';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const pipelineConfig = require('../tokens/pipeline.config.js');
+const pipelineConfig = require('../pipeline.config.js');
 
 const NAMESPACE = pipelineConfig.stencil.namespace;
 const COMPONENTS_PKG = pipelineConfig.packages.components;

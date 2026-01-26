@@ -37,7 +37,7 @@ jobs:
         id: config
         run: |
           echo "📋 Reading pipeline configuration..."
-          CONFIG="build-config/tokens/pipeline.config.js"
+          CONFIG="build-config/pipeline.config.js"
           echo "source_file=$(node -p "require('./$CONFIG').source.inputFile")" >> $GITHUB_OUTPUT
           echo "source_dir=$(node -p "require('./$CONFIG').source.inputDir")" >> $GITHUB_OUTPUT
           echo "✅ Config loaded"

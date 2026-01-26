@@ -19,7 +19,7 @@ const {
   findAffectedComponents,
   DEFAULT_COMPONENTS_DIR
 } = require('./scan-component-refs');
-const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
+const pipelineConfig = require('../../build-config/pipeline.config.js');
 
 // =============================================================================
 // CONSTANTS
