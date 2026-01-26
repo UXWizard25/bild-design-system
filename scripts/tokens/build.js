@@ -20,39 +20,45 @@ const customConfig = require('../../build-config/tokens/style-dictionary.config.
 const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 
 // Paths (derived from config)
-const TOKENS_DIR = path.join(__dirname, '../..', pipelineConfig.source.outputDir);
-const DIST_DIR = path.join(__dirname, '../..', pipelineConfig.output.distDir);
+const TOKENS_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensIntermediate);
+const DIST_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensDist);
 
 // Native platform output directories (derived from config)
-const IOS_DIST_DIR = path.join(__dirname, '../..', pipelineConfig.platforms.ios.outputDir);
-const ANDROID_DIST_DIR = path.join(__dirname, '../..', pipelineConfig.platforms.android.outputDir);
+const IOS_DIST_DIR = path.join(__dirname, '../..', pipelineConfig.paths.iosOutput);
+const ANDROID_DIST_DIR = path.join(__dirname, '../..', pipelineConfig.paths.androidOutput);
 
-// Brands and breakpoints (derived from config)
-const BRANDS = pipelineConfig.brands.all;
-const COLOR_BRANDS = pipelineConfig.brands.colorBrands;
-const CONTENT_BRANDS = pipelineConfig.brands.contentBrands;
-const BREAKPOINTS = Object.keys(pipelineConfig.modes.breakpoints);
-const NON_BASE_BREAKPOINTS = BREAKPOINTS.slice(1); // All except first (mobile-first base)
-const BREAKPOINT_VALUES = Object.fromEntries(
-  Object.entries(pipelineConfig.modes.breakpoints).map(([key, bp]) => [key, bp.minWidth])
-); // e.g. { xs: 320, sm: 390, md: 600, lg: 1024 }
-const COLOR_MODES = pipelineConfig.modes.color;
-const DENSITY_MODES = pipelineConfig.modes.density;
+// Load metadata from preprocess.js (contains derived colorBrands/contentBrands from Figma)
+const metadataPath = path.join(TOKENS_DIR, 'metadata.json');
+let METADATA = { colorBrands: [], contentBrands: [], allBrands: [] };
+if (fs.existsSync(metadataPath)) {
+  METADATA = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+}
+
+// Brands and breakpoints (derived from config + metadata)
+const BRANDS = pipelineConfig.allBrands;
+const COLOR_BRANDS = METADATA.colorBrands.length > 0 ? METADATA.colorBrands : BRANDS.filter(b => b !== 'advertorial');
+const CONTENT_BRANDS = METADATA.contentBrands.length > 0 ? METADATA.contentBrands : BRANDS;
+const BREAKPOINTS = pipelineConfig.breakpoints;
+const BASE_BREAKPOINT = pipelineConfig.baseBreakpoint;
+const NON_BASE_BREAKPOINTS = BREAKPOINTS.filter(bp => bp !== BASE_BREAKPOINT);
+const BREAKPOINT_VALUES = pipelineConfig.breakpointMinWidths; // e.g. { xs: 320, sm: 390, md: 600, lg: 1024 }
+const COLOR_MODES = pipelineConfig.colorModes;   // ['light', 'dark']
+const DENSITY_MODES = pipelineConfig.densityModes; // ['default', 'dense', 'spacious']
 
 // Platform output toggles (derived from config)
 const COMPOSE_ENABLED = pipelineConfig.platforms.android.enabled;
 const SWIFTUI_ENABLED = pipelineConfig.platforms.ios.enabled;
-const SCSS_ENABLED = pipelineConfig.platforms.scss.enabled;
-const JS_ENABLED = pipelineConfig.platforms.js.enabled;
+const SCSS_ENABLED = false; // SCSS output disabled - remove this line to enable
+const JS_ENABLED = false;   // JS output disabled - remove this line to enable
 
 // CSS data-attribute names (derived from config)
-const DATA_ATTRS = pipelineConfig.platforms.css.dataAttributes;
+const DATA_ATTRS = pipelineConfig.css.dataAttributes;
 
-// Token type toggles (derived from config)
-const BOOLEAN_TOKENS_ENABLED = pipelineConfig.output.booleanTokens;
+// Token type toggles (defaults - can be made configurable if needed)
+const BOOLEAN_TOKENS_ENABLED = false;
 
-// Figma description comment toggles per platform (derived from config)
-const SHOW_DESCRIPTIONS = pipelineConfig.output.showDescriptions;
+// Figma description comment toggles per platform (defaults - can be made configurable if needed)
+const SHOW_DESCRIPTIONS = { css: false, scss: false, js: false, ios: true, android: true };
 
 // iOS: Size class mapping (derived from config)
 // Invert config (sizeClass→breakpoint) to get (breakpoint→sizeClass)
@@ -2447,11 +2453,10 @@ async function convertToResponsiveCSS() {
   console.log('\n📱 Converting to Responsive CSS with Media Queries:\n');
 
   // Build breakpoint config from pipeline config
-  // First breakpoint is the base (no media query), rest get min-width values
+  // Base breakpoint has no media query, rest get min-width values
   const breakpointConfig = {};
-  const bpKeys = Object.keys(pipelineConfig.modes.breakpoints);
-  bpKeys.forEach((bp, i) => {
-    breakpointConfig[bp] = i === 0 ? null : `${pipelineConfig.modes.breakpoints[bp].minWidth}px`;
+  BREAKPOINTS.forEach(bp => {
+    breakpointConfig[bp] = bp === BASE_BREAKPOINT ? null : `${BREAKPOINT_VALUES[bp]}px`;
   });
 
   let totalConversions = 0;
@@ -9195,9 +9200,8 @@ async function generateSCSSMixinsAndFunctions() {
   // Generate abstracts/_breakpoints.scss
   const abstractsDir = path.join(scssDir, 'abstracts');
   // Generate SCSS breakpoint variables from config
-  const bpEntries = Object.entries(pipelineConfig.modes.breakpoints);
-  const bpVarsStr = bpEntries.map(([name, { minWidth }]) => `$breakpoint-${name}: ${minWidth}px;`).join('\n');
-  const bpMapStr = bpEntries.map(([name]) => `  ${name}: $breakpoint-${name},`).join('\n');
+  const bpVarsStr = BREAKPOINTS.map(name => `$breakpoint-${name}: ${BREAKPOINT_VALUES[name]}px;`).join('\n');
+  const bpMapStr = BREAKPOINTS.map(name => `  ${name}: $breakpoint-${name},`).join('\n');
   const breakpointsContent = `// ${pipelineConfig.identity.name} - Breakpoint Configuration
 // Auto-generated - Do not edit directly
 

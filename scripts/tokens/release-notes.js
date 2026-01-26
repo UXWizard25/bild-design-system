@@ -998,9 +998,9 @@ function generateBreakingChangesSection(diff, options = {}) {
 // =============================================================================
 
 // Known brands and modes for matrix display (from pipeline config)
-const KNOWN_BRANDS = pipelineConfig.brands.all;
-const KNOWN_MODES = pipelineConfig.modes.color;
-const KNOWN_BREAKPOINTS = Object.keys(pipelineConfig.modes.breakpoints);
+const KNOWN_BRANDS = pipelineConfig.allBrands;
+const KNOWN_MODES = pipelineConfig.colorModes;
+const KNOWN_BREAKPOINTS = pipelineConfig.breakpoints;
 
 /**
  * Format a color change with inline delta
@@ -1867,7 +1867,7 @@ function generateDynamicChecklist(diff, options = {}) {
     md += '### 👁️ Visual Review\n\n';
     if (changedCategories.has('colors')) {
       for (const mode of KNOWN_MODES) {
-        const displayName = pipelineConfig.modes.colorDisplayNames[mode] || mode;
+        const displayName = pipelineConfig.colorModeDisplayNames[mode] || mode;
         md += `- [ ] Color changes verified in **${displayName}** mode\n`;
       }
     }
@@ -2114,12 +2114,12 @@ function generateGitHubRelease(diff, options = {}) {
   md += '### 📦 Installation\n\n';
   md += '```bash\n';
   md += '# Design Tokens (CSS, JS, iOS, Android)\n';
-  md += `npm install ${pipelineConfig.packages.tokens.npm}@${version}\n\n`;
+  md += `npm install ${pipelineConfig.packages.tokens}@${version}\n\n`;
   md += '# Web Components (Stencil)\n';
-  md += `npm install ${pipelineConfig.packages.components.npm}@${version}\n\n`;
+  md += `npm install ${pipelineConfig.packages.components}@${version}\n\n`;
   md += '# React / Vue Wrappers\n';
-  md += `npm install ${pipelineConfig.packages.react.npm}@${version}\n`;
-  md += `npm install ${pipelineConfig.packages.vue.npm}@${version}\n`;
+  md += `npm install ${pipelineConfig.packages.react}@${version}\n`;
+  md += `npm install ${pipelineConfig.packages.vue}@${version}\n`;
   md += '```\n\n';
 
   // Get grouped data
@@ -2363,14 +2363,14 @@ function generateGitHubRelease(diff, options = {}) {
     md += `| Package Size | ${packageSize} |\n`;
   }
   md += '| Platforms | CSS, SCSS, JS, Swift, Kotlin, JSON |\n';
-  md += `| Brands | ${pipelineConfig.brands.all.map(b => pipelineConfig.brands.displayNames[b] || b).join(', ')} |\n`;
+  md += `| Brands | ${pipelineConfig.allBrands.map(b => pipelineConfig.brandDisplayNames[b] || b).join(', ')} |\n`;
   md += '\n';
 
   // Links
   md += '### 🔗 Links\n\n';
   md += `- [📖 Documentation](https://github.com/${repo}#readme)\n`;
-  md += `- [📦 Tokens on npm](https://www.npmjs.com/package/${pipelineConfig.packages.tokens.npm})\n`;
-  md += `- [📦 Components on npm](https://www.npmjs.com/package/${pipelineConfig.packages.components.npm})\n`;
+  md += `- [📦 Tokens on npm](https://www.npmjs.com/package/${pipelineConfig.packages.tokens})\n`;
+  md += `- [📦 Components on npm](https://www.npmjs.com/package/${pipelineConfig.packages.components})\n`;
   md += `- [🐛 Report Issue](https://github.com/${repo}/issues)\n`;
 
   return md;

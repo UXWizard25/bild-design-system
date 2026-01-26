@@ -1024,9 +1024,10 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 
 | File | Purpose |
 |------|---------|
+| `build-config/tokens/pipeline.config.js` | **Single source of truth** for all pipeline settings (brands, modes, paths, packages) |
 | `scripts/tokens/preprocess.js` | Figma JSON → Style Dictionary format + direct lineHeight resolution (PIXELS/PERCENT/AUTO) + lineHeight ratio enrichment |
 | `scripts/tokens/build.js` | Orchestrates Style Dictionary builds + JS output generation + CSS optimizations |
-| `build-config/tokens/style-dictionary.config.js` | Custom transforms & formats + `FONT_SIZE_UNIT` toggle (`'px'`/`'rem'`) |
+| `build-config/tokens/style-dictionary.config.js` | Custom transforms & formats |
 | `scripts/tokens/bundles.js` | CSS bundle generation |
 | `scripts/tokens/generate-docs.js` | Auto-generates Storybook MDX documentation from token JSON files |
 
@@ -1034,7 +1035,7 @@ The PR comment includes an **Affected Stencil Components** section that shows wh
 
 | Setting | Location | Current | Options | Affects |
 |---------|----------|---------|---------|---------|
-| `FONT_SIZE_UNIT` | `style-dictionary.config.js` | `'px'` | `'px'` / `'rem'` | CSS font-size values + fallbacks |
+| `fontSizeUnit` | `pipeline.config.js` → `css` | `'px'` | `'px'` / `'rem'` | CSS font-size values + fallbacks |
 
 **CSS Typography Unit Behavior:**
 
@@ -1378,16 +1379,18 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Task | Files to Modify |
 |------|-----------------|
 | Change token values | In Figma (Source of Truth) |
+| Modify pipeline configuration | `build-config/tokens/pipeline.config.js` (single source of truth) |
 | Modify output format | `style-dictionary.config.js` |
 | Change alias resolution | `preprocess.js` |
 | Modify density alias endpoints | `preprocess.js` → `getDeepAliasInfo()` with `acceptDensityEndpoint` option |
 | Add semantic density to bundle | `bundles.js` → `buildBrandTokens()` |
 | Modify native density token filter | `build.js` → `nativeTokenFilter()` (controls which tokens are in SizingScheme) |
-| Add new brand | `build.js` (BRANDS arrays, lines 27-29), `preprocess.js`, `bundles.js`. See "Native Platform Code Generation" section below |
-| Add new breakpoint | `preprocess.js`, `build.js` |
-| Add new density mode | `preprocess.js`, `build.js`, `bundles.js` |
-| Enable/disable platform | `build.js` (toggle flags) |
-| Switch CSS font-size unit (px/rem) | `style-dictionary.config.js` → `FONT_SIZE_UNIT` constant (`'px'` or `'rem'`) |
+| Add new brand | `pipeline.config.js` → `brands` section (add brand with `figmaName`). See "Native Platform Code Generation" section below |
+| Add new breakpoint | `pipeline.config.js` → `modes.breakpoints` section |
+| Add new density mode | `pipeline.config.js` → `modes.density` section |
+| Add new color mode | `pipeline.config.js` → `modes.color` section |
+| Enable/disable platform | `pipeline.config.js` → `platforms.{ios/android}.enabled` |
+| Switch CSS font-size unit (px/rem) | `pipeline.config.js` → `css.fontSizeUnit` (`'px'` or `'rem'`) |
 | Modify CSS lineHeight ratio enrichment | `preprocess.js` → `enrichLineHeightTokensWithRatio()` |
 | Modify direct lineHeight resolution (PIXELS/PERCENT/AUTO) | `preprocess.js` → `resolveDirectLineHeight()` |
 | Modify component token pattern | `style-dictionary.config.js` |

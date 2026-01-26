@@ -6,11 +6,11 @@ import { vueOutputTarget } from '@stencil/vue-output-target';
 const pipelineConfig = require('../tokens/pipeline.config.js');
 
 const NAMESPACE = pipelineConfig.stencil.namespace;
-const COMPONENTS_PKG = pipelineConfig.packages.components.npm;
-const SRC_DIR = `../../${pipelineConfig.components.srcDir}`;
+const COMPONENTS_PKG = pipelineConfig.packages.components;
+const SRC_DIR = `../../${pipelineConfig.paths.componentsSrc}`;
 const DIST_DIR = '../../packages/components/core/dist';
-const DEFAULT_BRAND = pipelineConfig.brands.defaultBrand;
-const TOKENS_DIST = `../../${pipelineConfig.output.distDir}`;
+const DEFAULT_BRAND = pipelineConfig.defaultBrand;
+const TOKENS_DIST = `../../${pipelineConfig.paths.tokensDist}`;
 
 export const config: Config = {
   namespace: NAMESPACE,
@@ -60,6 +60,6 @@ export const config: Config = {
   },
   devServer: {
     reloadStrategy: 'pageReload',
-    port: pipelineConfig.stencil.devServerPort,
+    port: 3333,  // Default Stencil dev server port
   },
 };
