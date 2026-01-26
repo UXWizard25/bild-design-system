@@ -4,14 +4,20 @@
  * Pipeline Configuration Validator
  *
  * Validates pipeline.config.js for:
- * - Required fields and correct types
- * - Cross-references between sections (brands in modes, etc.)
+ * - Required fields and correct types in rawConfig sections
+ * - Derived values are correctly computed
+ * - Cross-references between sections (brands ↔ modes, etc.)
  * - File/directory existence (optional, with --check-paths flag)
  * - Figma ID format consistency
+ * - No hyphens in mode/brand names (breaks CSS custom property parsing)
  *
  * Usage:
  *   node scripts/validate-pipeline-config.js              # Structure validation only
  *   node scripts/validate-pipeline-config.js --check-paths # Also check file paths exist
+ *
+ * Config Structure (rawConfig + derived):
+ *   rawConfig sections: identity, brands, modes, figma, css, platforms, paths, packages, stencil, deployment, validation
+ *   derived values: allBrands, colorBrands, contentBrands, colorModes, densityModes, breakpoints, etc.
  */
 
 const fs = require('fs');
@@ -65,7 +71,7 @@ function assertNumber(val, path, min = 0) {
  */
 function assertNoHyphens(val, path) {
   if (typeof val === 'string' && val.includes('-')) {
-    error(`${path}: must not contain hyphens ('-'). Use camelCase or single words (e.g., 'extraLarge' instead of 'extra-large'). Hyphens in mode/brand names break CSS custom property parsing and native camelCase conversion.`);
+    error(`${path}: must not contain hyphens ('-'). Use camelCase or single words. Hyphens break CSS custom property parsing and native camelCase conversion.`);
   }
 }
 
@@ -88,243 +94,278 @@ function validateIdentity(config) {
   ok('identity section valid');
 }
 
-function validateSource(config, checkPaths) {
-  console.log('\n📋 source:');
-  const src = config.source;
-  if (!src) return error('source: section missing');
+function validateBrands(config) {
+  console.log('\n📋 brands (rawConfig):');
+  const brands = config.brands;
+  if (!brands) return error('brands: section missing');
 
-  assertString(src.inputFile, 'source.inputFile');
-  assertString(src.inputDir, 'source.inputDir');
-  assertString(src.outputDir, 'source.outputDir');
+  // Validate each brand definition
+  const brandKeys = Object.keys(brands);
+  if (brandKeys.length === 0) return error('brands: must have at least one brand');
 
-  // Check directories end with /
-  if (src.inputDir && !src.inputDir.endsWith('/')) {
-    warn('source.inputDir: should end with /');
+  let hasDefault = false;
+  for (const key of brandKeys) {
+    assertNoHyphens(key, `brands.${key}`);
+    const brand = brands[key];
+    assertObject(brand, `brands.${key}`);
+    if (!brand) continue;
+
+    assertString(brand.figmaName, `brands.${key}.figmaName`);
+    assertArray(brand.axes, `brands.${key}.axes`, 1);
+
+    if (brand.axes) {
+      for (const axis of brand.axes) {
+        if (!['color', 'content'].includes(axis)) {
+          error(`brands.${key}.axes: '${axis}' must be 'color' or 'content'`);
+        }
+      }
+    }
+
+    if (brand.isDefault) {
+      if (hasDefault) error('brands: only one brand can have isDefault: true');
+      hasDefault = true;
+    }
   }
-  if (src.outputDir && !src.outputDir.endsWith('/')) {
-    warn('source.outputDir: should end with /');
+
+  if (!hasDefault) warn('brands: no brand has isDefault: true');
+
+  ok('brands section valid');
+}
+
+function validateDerivedBrands(config) {
+  console.log('\n📋 brands (derived):');
+
+  // Check derived arrays exist
+  assertArray(config.allBrands, 'allBrands', 1);
+  assertArray(config.colorBrands, 'colorBrands', 1);
+  assertArray(config.contentBrands, 'contentBrands', 1);
+  assertString(config.defaultBrand, 'defaultBrand');
+  assertObject(config.brandToFigmaName, 'brandToFigmaName');
+  assertObject(config.figmaNameToBrand, 'figmaNameToBrand');
+  assertObject(config.brandDisplayNames, 'brandDisplayNames');
+
+  // Cross-reference checks
+  if (config.allBrands && config.defaultBrand) {
+    if (!config.allBrands.includes(config.defaultBrand)) {
+      error(`defaultBrand '${config.defaultBrand}' not in allBrands`);
+    }
   }
+
+  if (config.allBrands && config.colorBrands) {
+    for (const b of config.colorBrands) {
+      if (!config.allBrands.includes(b)) {
+        error(`colorBrands: '${b}' not in allBrands`);
+      }
+    }
+  }
+
+  if (config.allBrands && config.contentBrands) {
+    for (const b of config.contentBrands) {
+      if (!config.allBrands.includes(b)) {
+        error(`contentBrands: '${b}' not in allBrands`);
+      }
+    }
+  }
+
+  // Validate derived matches rawConfig
+  if (config.brands && config.allBrands) {
+    const rawBrandKeys = Object.keys(config.brands);
+    if (rawBrandKeys.length !== config.allBrands.length) {
+      error(`allBrands length (${config.allBrands.length}) doesn't match brands keys (${rawBrandKeys.length})`);
+    }
+    for (const key of rawBrandKeys) {
+      if (!config.allBrands.includes(key)) {
+        error(`allBrands missing brand key '${key}'`);
+      }
+    }
+  }
+
+  ok('derived brands valid');
+}
+
+function validateModes(config) {
+  console.log('\n📋 modes (rawConfig):');
+  const modes = config.modes;
+  if (!modes) return error('modes: section missing');
+
+  // Validate color modes
+  assertObject(modes.color, 'modes.color');
+  if (modes.color) {
+    const colorKeys = Object.keys(modes.color);
+    if (colorKeys.length < 2) error('modes.color: need at least 2 color modes (light/dark)');
+
+    let hasDefault = false;
+    for (const key of colorKeys) {
+      assertNoHyphens(key, `modes.color.${key}`);
+      const mode = modes.color[key];
+      assertObject(mode, `modes.color.${key}`);
+      if (mode) {
+        assertString(mode.figmaId, `modes.color.${key}.figmaId`);
+        if (mode.isDefault) {
+          if (hasDefault) error('modes.color: only one mode can have isDefault: true');
+          hasDefault = true;
+        }
+      }
+    }
+    if (!hasDefault) warn('modes.color: no mode has isDefault: true');
+  }
+
+  // Validate density modes
+  assertObject(modes.density, 'modes.density');
+  if (modes.density) {
+    const densityKeys = Object.keys(modes.density);
+    if (densityKeys.length < 1) error('modes.density: need at least 1 density mode');
+
+    let hasDefault = false;
+    for (const key of densityKeys) {
+      assertNoHyphens(key, `modes.density.${key}`);
+      const mode = modes.density[key];
+      assertObject(mode, `modes.density.${key}`);
+      if (mode) {
+        assertString(mode.figmaId, `modes.density.${key}.figmaId`);
+        if (mode.isDefault) {
+          if (hasDefault) error('modes.density: only one mode can have isDefault: true');
+          hasDefault = true;
+        }
+      }
+    }
+    if (!hasDefault) warn('modes.density: no mode has isDefault: true');
+  }
+
+  // Validate breakpoints
+  assertObject(modes.breakpoints, 'modes.breakpoints');
+  if (modes.breakpoints) {
+    const bpKeys = Object.keys(modes.breakpoints);
+    if (bpKeys.length < 2) error('modes.breakpoints: need at least 2 breakpoints');
+
+    let prevWidth = 0;
+    let hasBase = false;
+    for (const key of bpKeys) {
+      assertNoHyphens(key, `modes.breakpoints.${key}`);
+      const bp = modes.breakpoints[key];
+      assertObject(bp, `modes.breakpoints.${key}`);
+      if (bp) {
+        assertNumber(bp.minWidth, `modes.breakpoints.${key}.minWidth`, 1);
+        assertString(bp.figmaId, `modes.breakpoints.${key}.figmaId`);
+
+        if (bp.minWidth <= prevWidth) {
+          error(`modes.breakpoints.${key}.minWidth (${bp.minWidth}) must be > previous (${prevWidth})`);
+        }
+        prevWidth = bp.minWidth;
+
+        if (bp.isBase) {
+          if (hasBase) error('modes.breakpoints: only one breakpoint can have isBase: true');
+          hasBase = true;
+        }
+      }
+    }
+    if (!hasBase) warn('modes.breakpoints: no breakpoint has isBase: true (first will be used)');
+  }
+
+  ok('modes section valid');
+}
+
+function validateDerivedModes(config) {
+  console.log('\n📋 modes (derived):');
+
+  // Check derived arrays exist
+  assertArray(config.colorModes, 'colorModes', 2);
+  assertString(config.defaultColorMode, 'defaultColorMode');
+  assertObject(config.colorModeIds, 'colorModeIds');
+  assertObject(config.colorModeDisplayNames, 'colorModeDisplayNames');
+
+  assertArray(config.densityModes, 'densityModes', 1);
+  assertString(config.defaultDensity, 'defaultDensity');
+  assertObject(config.densityModeIds, 'densityModeIds');
+  assertObject(config.densityDisplayNames, 'densityDisplayNames');
+
+  assertArray(config.breakpoints, 'breakpoints', 2);
+  assertString(config.baseBreakpoint, 'baseBreakpoint');
+  assertObject(config.breakpointModeIds, 'breakpointModeIds');
+  assertObject(config.breakpointMinWidths, 'breakpointMinWidths');
+
+  // Cross-reference checks
+  if (config.colorModes && config.defaultColorMode) {
+    if (!config.colorModes.includes(config.defaultColorMode)) {
+      error(`defaultColorMode '${config.defaultColorMode}' not in colorModes`);
+    }
+  }
+
+  if (config.densityModes && config.defaultDensity) {
+    if (!config.densityModes.includes(config.defaultDensity)) {
+      error(`defaultDensity '${config.defaultDensity}' not in densityModes`);
+    }
+  }
+
+  if (config.breakpoints && config.baseBreakpoint) {
+    if (!config.breakpoints.includes(config.baseBreakpoint)) {
+      error(`baseBreakpoint '${config.baseBreakpoint}' not in breakpoints`);
+    }
+  }
+
+  ok('derived modes valid');
+}
+
+function validateFigma(config) {
+  console.log('\n📋 figma:');
+  const figma = config.figma;
+  if (!figma) return error('figma: section missing');
+
+  assertString(figma.inputFile, 'figma.inputFile');
+  assertString(figma.componentPrefix, 'figma.componentPrefix');
 
   // Validate collections
-  assertObject(src.collections, 'source.collections');
-  if (src.collections) {
+  assertObject(figma.collections, 'figma.collections');
+  if (figma.collections) {
     const requiredCollections = [
       'FONT_PRIMITIVE', 'COLOR_PRIMITIVE', 'SIZE_PRIMITIVE', 'SPACE_PRIMITIVE',
       'DENSITY', 'BRAND_TOKEN_MAPPING', 'BRAND_COLOR_MAPPING',
       'BREAKPOINT_MODE', 'COLOR_MODE',
     ];
     for (const col of requiredCollections) {
-      if (!src.collections[col]) error(`source.collections.${col}: missing`);
-      else if (!src.collections[col].startsWith('VariableCollectionId:')) {
-        warn(`source.collections.${col}: expected to start with 'VariableCollectionId:'`);
+      if (!figma.collections[col]) {
+        error(`figma.collections.${col}: missing`);
+      } else if (!figma.collections[col].startsWith('VariableCollectionId:')) {
+        warn(`figma.collections.${col}: expected to start with 'VariableCollectionId:'`);
       }
     }
   }
 
-  // Validate modes
-  assertObject(src.modes, 'source.modes');
-  if (src.modes) {
-    assertObject(src.modes.brands, 'source.modes.brands');
-    assertObject(src.modes.breakpoints, 'source.modes.breakpoints');
-    assertObject(src.modes.colorModes, 'source.modes.colorModes');
-    assertObject(src.modes.densityModes, 'source.modes.densityModes');
-
-    // Validate no hyphens in mode keys
-    if (src.modes.brands) {
-      for (const key of Object.keys(src.modes.brands)) {
-        assertNoHyphens(key, `source.modes.brands: key '${key}'`);
-      }
-    }
-    if (src.modes.breakpoints) {
-      for (const key of Object.keys(src.modes.breakpoints)) {
-        assertNoHyphens(key, `source.modes.breakpoints: key '${key}'`);
-      }
-    }
-    if (src.modes.colorModes) {
-      for (const key of Object.keys(src.modes.colorModes)) {
-        assertNoHyphens(key, `source.modes.colorModes: key '${key}'`);
-      }
-    }
-    if (src.modes.densityModes) {
-      for (const key of Object.keys(src.modes.densityModes)) {
-        assertNoHyphens(key, `source.modes.densityModes: key '${key}'`);
-      }
-    }
-  }
-
-  // Validate pathConventions
-  assertObject(src.pathConventions, 'source.pathConventions');
-  if (src.pathConventions) {
-    assertString(src.pathConventions.componentPrefix, 'source.pathConventions.componentPrefix');
-  }
-
-  // Check file paths if requested
-  if (checkPaths) {
-    const inputPath = path.join(ROOT_DIR, src.inputDir, src.inputFile);
-    if (!fs.existsSync(inputPath)) {
-      warn(`source.inputFile: ${inputPath} does not exist`);
-    }
-    const outputPath = path.join(ROOT_DIR, src.outputDir);
-    if (!fs.existsSync(outputPath)) {
-      warn(`source.outputDir: ${outputPath} does not exist (created during build)`);
-    }
-  }
-
-  ok('source section valid');
+  ok('figma section valid');
 }
 
-function validateBrands(config) {
-  console.log('\n📋 brands:');
-  const brands = config.brands;
-  if (!brands) return error('brands: section missing');
+function validateCss(config) {
+  console.log('\n📋 css:');
+  const css = config.css;
+  if (!css) return error('css: section missing');
 
-  assertArray(brands.all, 'brands.all');
-  assertArray(brands.colorBrands, 'brands.colorBrands');
-  assertArray(brands.contentBrands, 'brands.contentBrands');
-  assertString(brands.defaultBrand, 'brands.defaultBrand');
-  assertObject(brands.displayNames, 'brands.displayNames');
-
-  // Validate no hyphens in brand names
-  if (brands.all && Array.isArray(brands.all)) {
-    for (const b of brands.all) {
-      assertNoHyphens(b, `brands.all: '${b}'`);
-    }
+  assertString(css.fontSizeUnit, 'css.fontSizeUnit');
+  if (css.fontSizeUnit && !['px', 'rem'].includes(css.fontSizeUnit)) {
+    error("css.fontSizeUnit: must be 'px' or 'rem'");
   }
 
-  // Cross-reference checks
-  if (brands.all && brands.defaultBrand) {
-    if (!brands.all.includes(brands.defaultBrand)) {
-      error(`brands.defaultBrand '${brands.defaultBrand}' not in brands.all`);
-    }
-  }
+  assertNumber(css.remBase, 'css.remBase', 1);
 
-  if (brands.all && brands.colorBrands) {
-    for (const b of brands.colorBrands) {
-      if (!brands.all.includes(b)) {
-        error(`brands.colorBrands: '${b}' not in brands.all`);
+  assertObject(css.dataAttributes, 'css.dataAttributes');
+  if (css.dataAttributes) {
+    const required = ['colorBrand', 'contentBrand', 'theme', 'density'];
+    for (const attr of required) {
+      assertString(css.dataAttributes[attr], `css.dataAttributes.${attr}`);
+      if (css.dataAttributes[attr] && !css.dataAttributes[attr].startsWith('data-')) {
+        warn(`css.dataAttributes.${attr}: should start with 'data-'`);
       }
     }
   }
 
-  if (brands.all && brands.contentBrands) {
-    for (const b of brands.contentBrands) {
-      if (!brands.all.includes(b)) {
-        error(`brands.contentBrands: '${b}' not in brands.all`);
-      }
-    }
+  // fallbackStrategy is optional
+  if (css.fallbackStrategy) {
+    assertObject(css.fallbackStrategy, 'css.fallbackStrategy');
+    assertBoolean(css.fallbackStrategy.primitiveRefs, 'css.fallbackStrategy.primitiveRefs');
+    assertBoolean(css.fallbackStrategy.semanticRefs, 'css.fallbackStrategy.semanticRefs');
+    assertBoolean(css.fallbackStrategy.componentRefs, 'css.fallbackStrategy.componentRefs');
   }
 
-  if (brands.all && brands.displayNames) {
-    for (const b of brands.all) {
-      if (!brands.displayNames[b]) {
-        warn(`brands.displayNames: missing display name for '${b}'`);
-      }
-    }
-  }
-
-  // Cross-reference with source.modes.brands
-  if (config.source && config.source.modes && config.source.modes.brands && brands.all) {
-    const sourceBrands = Object.keys(config.source.modes.brands);
-    for (const b of brands.all) {
-      if (!sourceBrands.includes(b)) {
-        error(`brands.all: '${b}' not found in source.modes.brands`);
-      }
-    }
-  }
-
-  ok('brands section valid');
-}
-
-function validateModes(config) {
-  console.log('\n📋 modes:');
-  const modes = config.modes;
-  if (!modes) return error('modes: section missing');
-
-  assertArray(modes.color, 'modes.color', 2);
-  assertArray(modes.density, 'modes.density', 1);
-  assertObject(modes.breakpoints, 'modes.breakpoints');
-
-  // Validate no hyphens in mode names
-  if (modes.color && Array.isArray(modes.color)) {
-    for (const c of modes.color) {
-      assertNoHyphens(c, `modes.color: '${c}'`);
-    }
-  }
-  if (modes.density && Array.isArray(modes.density)) {
-    for (const d of modes.density) {
-      assertNoHyphens(d, `modes.density: '${d}'`);
-    }
-  }
-
-  // Validate breakpoints structure
-  if (modes.breakpoints) {
-    const bpKeys = Object.keys(modes.breakpoints);
-    if (bpKeys.length < 2) error('modes.breakpoints: need at least 2 breakpoints');
-
-    for (const key of bpKeys) {
-      assertNoHyphens(key, `modes.breakpoints: key '${key}'`);
-    }
-
-    let prevWidth = 0;
-    for (const [key, bp] of Object.entries(modes.breakpoints)) {
-      assertNumber(bp.minWidth, `modes.breakpoints.${key}.minWidth`, 1);
-      if (bp.minWidth <= prevWidth) {
-        error(`modes.breakpoints.${key}.minWidth (${bp.minWidth}) must be > previous (${prevWidth})`);
-      }
-      prevWidth = bp.minWidth;
-    }
-  }
-
-  // Validate density display names cover all density modes
-  if (modes.densityDisplayNames && modes.density) {
-    for (const d of modes.density) {
-      if (!modes.densityDisplayNames[d]) {
-        warn(`modes.densityDisplayNames: missing display name for '${d}'`);
-      }
-    }
-  }
-
-  // Validate color display names cover all color modes
-  if (modes.colorDisplayNames && modes.color) {
-    for (const c of modes.color) {
-      if (!modes.colorDisplayNames[c]) {
-        warn(`modes.colorDisplayNames: missing display name for '${c}'`);
-      }
-    }
-  }
-
-  // Cross-reference with source.modes.breakpoints
-  if (config.source && config.source.modes && config.source.modes.breakpoints && modes.breakpoints) {
-    const sourceBreakpoints = Object.keys(config.source.modes.breakpoints);
-    const configBreakpoints = Object.keys(modes.breakpoints);
-    for (const bp of configBreakpoints) {
-      if (!sourceBreakpoints.includes(bp)) {
-        error(`modes.breakpoints: '${bp}' not in source.modes.breakpoints`);
-      }
-    }
-  }
-
-  // Cross-reference with source.modes.colorModes
-  if (config.source && config.source.modes && config.source.modes.colorModes && modes.color) {
-    const sourceColorModes = Object.keys(config.source.modes.colorModes);
-    for (const c of modes.color) {
-      if (!sourceColorModes.includes(c)) {
-        error(`modes.color: '${c}' not in source.modes.colorModes`);
-      }
-    }
-  }
-
-  // Cross-reference with source.modes.densityModes
-  if (config.source && config.source.modes && config.source.modes.densityModes && modes.density) {
-    const sourceDensityModes = Object.keys(config.source.modes.densityModes);
-    for (const d of modes.density) {
-      if (!sourceDensityModes.includes(d)) {
-        error(`modes.density: '${d}' not in source.modes.densityModes`);
-      }
-    }
-  }
-
-  ok('modes section valid');
+  ok('css section valid');
 }
 
 function validatePlatforms(config, checkPaths) {
@@ -332,71 +373,43 @@ function validatePlatforms(config, checkPaths) {
   const platforms = config.platforms;
   if (!platforms) return error('platforms: section missing');
 
-  // CSS Platform
+  // CSS Platform (only enabled flag, settings are in css section)
   if (platforms.css) {
     assertBoolean(platforms.css.enabled, 'platforms.css.enabled');
-    if (platforms.css.enabled) {
-      assertString(platforms.css.fontSizeUnit, 'platforms.css.fontSizeUnit');
-      if (!['px', 'rem'].includes(platforms.css.fontSizeUnit)) {
-        error("platforms.css.fontSizeUnit: must be 'px' or 'rem'");
-      }
-      assertNumber(platforms.css.remBase, 'platforms.css.remBase', 1);
-      assertObject(platforms.css.dataAttributes, 'platforms.css.dataAttributes');
-      if (platforms.css.dataAttributes) {
-        const required = ['colorBrand', 'contentBrand', 'theme', 'density'];
-        for (const attr of required) {
-          assertString(platforms.css.dataAttributes[attr], `platforms.css.dataAttributes.${attr}`);
-        }
-      }
-      assertObject(platforms.css.fallbackStrategy, 'platforms.css.fallbackStrategy');
-    }
   }
 
   // iOS Platform
-  if (platforms.ios && platforms.ios.enabled) {
-    assertString(platforms.ios.moduleName, 'platforms.ios.moduleName');
-    assertString(platforms.ios.outputDir, 'platforms.ios.outputDir');
-    assertObject(platforms.ios.sizeClasses, 'platforms.ios.sizeClasses');
+  if (platforms.ios) {
+    assertBoolean(platforms.ios.enabled, 'platforms.ios.enabled');
+    if (platforms.ios.enabled) {
+      assertString(platforms.ios.moduleName, 'platforms.ios.moduleName');
+      assertObject(platforms.ios.sizeClasses, 'platforms.ios.sizeClasses');
 
-    // Validate sizeClass references valid breakpoints
-    if (platforms.ios.sizeClasses && config.modes && config.modes.breakpoints) {
-      const bpKeys = Object.keys(config.modes.breakpoints);
-      for (const [cls, bp] of Object.entries(platforms.ios.sizeClasses)) {
-        if (!bpKeys.includes(bp)) {
-          error(`platforms.ios.sizeClasses.${cls}: '${bp}' not in modes.breakpoints`);
+      // Validate sizeClass references valid breakpoints
+      if (platforms.ios.sizeClasses && config.breakpoints) {
+        for (const [cls, bp] of Object.entries(platforms.ios.sizeClasses)) {
+          if (!config.breakpoints.includes(bp)) {
+            error(`platforms.ios.sizeClasses.${cls}: '${bp}' not in breakpoints`);
+          }
         }
-      }
-    }
-
-    if (checkPaths) {
-      const iosPath = path.join(ROOT_DIR, platforms.ios.outputDir);
-      if (!fs.existsSync(iosPath)) {
-        warn(`platforms.ios.outputDir: ${iosPath} does not exist (created during build)`);
       }
     }
   }
 
   // Android Platform
-  if (platforms.android && platforms.android.enabled) {
-    assertString(platforms.android.packageName, 'platforms.android.packageName');
-    assertString(platforms.android.mavenCoordinates, 'platforms.android.mavenCoordinates');
-    assertString(platforms.android.outputDir, 'platforms.android.outputDir');
-    assertObject(platforms.android.sizeClasses, 'platforms.android.sizeClasses');
+  if (platforms.android) {
+    assertBoolean(platforms.android.enabled, 'platforms.android.enabled');
+    if (platforms.android.enabled) {
+      assertString(platforms.android.packageName, 'platforms.android.packageName');
+      assertObject(platforms.android.sizeClasses, 'platforms.android.sizeClasses');
 
-    // Validate sizeClass references valid breakpoints
-    if (platforms.android.sizeClasses && config.modes && config.modes.breakpoints) {
-      const bpKeys = Object.keys(config.modes.breakpoints);
-      for (const [cls, bp] of Object.entries(platforms.android.sizeClasses)) {
-        if (!bpKeys.includes(bp)) {
-          error(`platforms.android.sizeClasses.${cls}: '${bp}' not in modes.breakpoints`);
+      // Validate sizeClass references valid breakpoints
+      if (platforms.android.sizeClasses && config.breakpoints) {
+        for (const [cls, bp] of Object.entries(platforms.android.sizeClasses)) {
+          if (!config.breakpoints.includes(bp)) {
+            error(`platforms.android.sizeClasses.${cls}: '${bp}' not in breakpoints`);
+          }
         }
-      }
-    }
-
-    if (checkPaths) {
-      const androidPath = path.join(ROOT_DIR, platforms.android.outputDir);
-      if (!fs.existsSync(androidPath)) {
-        warn(`platforms.android.outputDir: ${androidPath} does not exist (created during build)`);
       }
     }
   }
@@ -404,19 +417,39 @@ function validatePlatforms(config, checkPaths) {
   ok('platforms section valid');
 }
 
-function validateOutput(config) {
-  console.log('\n📋 output:');
-  const output = config.output;
-  if (!output) return error('output: section missing');
+function validatePaths(config, checkPaths) {
+  console.log('\n📋 paths:');
+  const paths = config.paths;
+  if (!paths) return error('paths: section missing');
 
-  assertString(output.distDir, 'output.distDir');
-  if (output.distDir && !output.distDir.endsWith('/')) {
-    warn('output.distDir: should end with /');
+  assertString(paths.tokensInput, 'paths.tokensInput');
+  assertString(paths.tokensIntermediate, 'paths.tokensIntermediate');
+  assertString(paths.tokensDist, 'paths.tokensDist');
+  assertString(paths.iosOutput, 'paths.iosOutput');
+  assertString(paths.androidOutput, 'paths.androidOutput');
+  assertString(paths.componentsSrc, 'paths.componentsSrc');
+
+  if (checkPaths) {
+    const inputPath = path.join(ROOT_DIR, paths.tokensInput);
+    if (!fs.existsSync(inputPath)) {
+      warn(`paths.tokensInput: ${inputPath} does not exist`);
+    }
+
+    // Check if input file exists
+    if (config.figma && config.figma.inputFile) {
+      const inputFilePath = path.join(ROOT_DIR, paths.tokensInput, config.figma.inputFile);
+      if (!fs.existsSync(inputFilePath)) {
+        warn(`figma.inputFile: ${inputFilePath} does not exist`);
+      }
+    }
+
+    const componentsSrcPath = path.join(ROOT_DIR, paths.componentsSrc);
+    if (!fs.existsSync(componentsSrcPath)) {
+      warn(`paths.componentsSrc: ${componentsSrcPath} does not exist`);
+    }
   }
 
-  assertObject(output.showDescriptions, 'output.showDescriptions');
-
-  ok('output section valid');
+  ok('paths section valid');
 }
 
 function validatePackages(config) {
@@ -424,14 +457,25 @@ function validatePackages(config) {
   const packages = config.packages;
   if (!packages) return error('packages: section missing');
 
-  const requiredPackages = ['tokens', 'components', 'react', 'vue', 'icons', 'iconsReact'];
+  const requiredPackages = ['tokens', 'components', 'react', 'vue'];
+  const optionalPackages = ['icons', 'iconsReact'];
+
   for (const pkg of requiredPackages) {
     if (!packages[pkg]) {
       error(`packages.${pkg}: missing`);
     } else {
-      assertString(packages[pkg].npm, `packages.${pkg}.npm`);
-      if (packages[pkg].npm && !packages[pkg].npm.startsWith('@')) {
-        warn(`packages.${pkg}.npm: scoped package names should start with '@'`);
+      assertString(packages[pkg], `packages.${pkg}`);
+      if (packages[pkg] && !packages[pkg].startsWith('@')) {
+        warn(`packages.${pkg}: scoped package names should start with '@'`);
+      }
+    }
+  }
+
+  for (const pkg of optionalPackages) {
+    if (packages[pkg]) {
+      assertString(packages[pkg], `packages.${pkg}`);
+      if (!packages[pkg].startsWith('@')) {
+        warn(`packages.${pkg}: scoped package names should start with '@'`);
       }
     }
   }
@@ -445,35 +489,22 @@ function validateStencil(config) {
   if (!stencil) return error('stencil: section missing');
 
   assertString(stencil.namespace, 'stencil.namespace');
-  assertNumber(stencil.devServerPort, 'stencil.devServerPort', 1024);
+  assertString(stencil.componentPrefix, 'stencil.componentPrefix');
+
+  // devServerPort is optional
+  if (stencil.devServerPort !== undefined) {
+    assertNumber(stencil.devServerPort, 'stencil.devServerPort', 1024);
+  }
 
   if (stencil.namespace && !/^[a-z][a-z0-9-]*$/.test(stencil.namespace)) {
     warn('stencil.namespace: should be lowercase alphanumeric with hyphens');
   }
 
+  if (stencil.componentPrefix && !stencil.componentPrefix.endsWith('-')) {
+    warn("stencil.componentPrefix: should end with '-' (e.g., 'ds-')");
+  }
+
   ok('stencil section valid');
-}
-
-function validateComponents(config, checkPaths) {
-  console.log('\n📋 components:');
-  const components = config.components;
-  if (!components) return error('components: section missing');
-
-  assertString(components.prefix, 'components.prefix');
-  assertString(components.srcDir, 'components.srcDir');
-
-  if (components.prefix && !components.prefix.endsWith('-')) {
-    warn("components.prefix: should end with '-' (e.g., 'ds-')");
-  }
-
-  if (checkPaths) {
-    const srcPath = path.join(ROOT_DIR, components.srcDir);
-    if (!fs.existsSync(srcPath)) {
-      warn(`components.srcDir: ${srcPath} does not exist`);
-    }
-  }
-
-  ok('components section valid');
 }
 
 function validateDeployment(config) {
@@ -492,12 +523,32 @@ function validateDeployment(config) {
   ok('deployment section valid');
 }
 
+function validateValidationSection(config) {
+  console.log('\n📋 validation:');
+  const validation = config.validation;
+  if (!validation) {
+    warn('validation: section missing (optional)');
+    return;
+  }
+
+  if (validation.strict !== undefined) {
+    assertBoolean(validation.strict, 'validation.strict');
+  }
+
+  if (validation.warnUnknownFigmaModes !== undefined) {
+    assertBoolean(validation.warnUnknownFigmaModes, 'validation.warnUnknownFigmaModes');
+  }
+
+  ok('validation section valid');
+}
+
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 function main() {
   const checkPaths = process.argv.includes('--check-paths');
 
   console.log('🔍 Validating pipeline.config.js...');
+  console.log('   Config structure: rawConfig + derived values');
   if (checkPaths) console.log('   (with file path checks)');
 
   // Load config
@@ -510,16 +561,22 @@ function main() {
   }
 
   // Run all validators
+  // rawConfig sections
   validateIdentity(config);
-  validateSource(config, checkPaths);
   validateBrands(config);
   validateModes(config);
+  validateFigma(config);
+  validateCss(config);
   validatePlatforms(config, checkPaths);
-  validateOutput(config);
+  validatePaths(config, checkPaths);
   validatePackages(config);
   validateStencil(config);
-  validateComponents(config, checkPaths);
   validateDeployment(config);
+  validateValidationSection(config);
+
+  // derived values
+  validateDerivedBrands(config);
+  validateDerivedModes(config);
 
   // Report results
   console.log('\n' + '═'.repeat(60));
