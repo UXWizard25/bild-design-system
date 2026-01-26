@@ -36,9 +36,21 @@ const fs = require('fs');
 const path = require('path');
 const { glob } = require('glob');
 
-const DIST_DIR = path.join(__dirname, '../..', 'packages/tokens/dist');
+// Load centralized pipeline configuration
+const config = require('../../build-config/tokens/pipeline.config.js');
+
+// ============================================================================
+// CONFIGURATION (from pipeline.config.js)
+// ============================================================================
+
+const DIST_DIR = path.join(__dirname, '../..', config.output.distDir);
 const CSS_DIR = path.join(DIST_DIR, 'css');
-const BRANDS = ['bild', 'sportbild', 'advertorial'];
+
+// Brands (derived from config)
+const COLOR_BRANDS = Object.values(config.modes.brands.color);
+const CONTENT_BRANDS = Object.values(config.modes.brands.content);
+const BRANDS = [...new Set([...COLOR_BRANDS, ...CONTENT_BRANDS])];
+
 const rootPackageJson = require('../../package.json');
 const tokensPackageJson = require('../../packages/tokens/package.json');
 

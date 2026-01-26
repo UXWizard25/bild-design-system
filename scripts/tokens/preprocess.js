@@ -17,53 +17,46 @@
 const fs = require('fs');
 const path = require('path');
 
-// Paths
-const INPUT_JSON_PATH = path.join(__dirname, '../../packages/tokens/src/bild-design-system-raw-data.json');
-const OUTPUT_DIR = path.join(__dirname, '../../packages/tokens/.tokens');
+// Load centralized pipeline configuration
+const config = require('../../build-config/tokens/pipeline.config.js');
 
-// Brand and mode mappings
-const BRANDS = {
-  BILD: '18038:0',
-  SportBILD: '18094:0',
-  Advertorial: '18094:1'
-};
+// ============================================================================
+// CONFIGURATION (from pipeline.config.js)
+// ============================================================================
 
-const BREAKPOINTS = {
-  xs: '7017:0',
-  sm: '16706:1',
-  md: '7015:1',
-  lg: '7015:2'
-};
+// Paths (derived from config)
+const INPUT_JSON_PATH = path.join(__dirname, '../..', config.source.inputDir, config.source.inputFile);
+const OUTPUT_DIR = path.join(__dirname, '../..', config.source.outputDir);
 
-const COLOR_MODES = {
-  light: '588:0',
-  dark: '592:1'
-};
+// Component token prefix
+const COMPONENT_PREFIX = config.source.pathConventions.componentPrefix;
 
-const DENSITY_MODES = {
-  default: '5695:2',
-  dense: '5695:1',
-  spacious: '5695:3'
-};
+// Brand and mode mappings (inverted: key → modeId for lookups)
+// Config stores modeId → key, we need key → modeId for Figma lookups
+const BRANDS = Object.fromEntries(
+  Object.entries(config.modes.brands.content).map(([modeId, key]) => [key, modeId])
+);
 
-// Collection IDs (stable)
-const COLLECTION_IDS = {
-  FONT_PRIMITIVE: 'VariableCollectionId:470:1450',
-  COLOR_PRIMITIVE: 'VariableCollectionId:539:2238',
-  SIZE_PRIMITIVE: 'VariableCollectionId:4072:1817',
-  SPACE_PRIMITIVE: 'VariableCollectionId:2726:12077',
-  DENSITY: 'VariableCollectionId:5695:5841',
-  BRAND_TOKEN_MAPPING: 'VariableCollectionId:18038:10593',
-  BRAND_COLOR_MAPPING: 'VariableCollectionId:18212:14495',
-  BREAKPOINT_MODE: 'VariableCollectionId:7017:25696',
-  COLOR_MODE: 'VariableCollectionId:588:1979'
-};
+const BREAKPOINTS = Object.fromEntries(
+  Object.entries(config.modes.breakpoints).map(([modeId, cfg]) => [cfg.key, modeId])
+);
+
+const COLOR_MODES = Object.fromEntries(
+  Object.entries(config.modes.colorModes).map(([modeId, key]) => [key, modeId])
+);
+
+const DENSITY_MODES = Object.fromEntries(
+  Object.entries(config.modes.densityModes).map(([modeId, key]) => [key, modeId])
+);
+
+// Collection IDs (from config)
+const COLLECTION_IDS = config.source.collections;
 
 /**
  * Checks if a token path represents a component token
  */
 function isComponentToken(tokenPath) {
-  return tokenPath.startsWith('Component/');
+  return tokenPath.startsWith(COMPONENT_PREFIX);
 }
 
 /**
@@ -71,8 +64,9 @@ function isComponentToken(tokenPath) {
  * Example: "Component/Button/Primary/buttonPrimaryBgColor" → "Button"
  */
 function getComponentName(tokenPath) {
+  const prefixWithoutSlash = COMPONENT_PREFIX.replace(/\/$/, '');
   const parts = tokenPath.split('/');
-  if (parts[0] === 'Component' && parts.length >= 2) {
+  if (parts[0] === prefixWithoutSlash && parts.length >= 2) {
     return parts[1];
   }
   return null;
@@ -333,7 +327,7 @@ function getDeepAliasInfo(variableId, aliasLookup, collections, context = {}, op
     const tokenPath = variable.name || '';
     // Component tokens are identified by path prefix - they should NOT be treated as semantic endpoints
     // Everything else in ColorMode/BreakpointMode collections IS the semantic level
-    const isComponentToken = tokenPath.startsWith('Component/');
+    const isComponentToken = tokenPath.startsWith(COMPONENT_PREFIX);
 
     // Check if we've reached a primitive - ALWAYS endpoint
     if (isPrimitiveCollection(variable.collectionId)) {
@@ -1406,8 +1400,8 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
   };
 
   // Separate component and semantic typography
-  const semanticTextStyles = textStyles.filter(ts => !ts.name.startsWith('Component/'));
-  const componentTextStyles = textStyles.filter(ts => ts.name.startsWith('Component/'));
+  const semanticTextStyles = textStyles.filter(ts => !ts.name.startsWith(COMPONENT_PREFIX));
+  const componentTextStyles = textStyles.filter(ts => ts.name.startsWith(COMPONENT_PREFIX));
 
   console.log(`  ℹ️  ${semanticTextStyles.length} semantic styles, ${componentTextStyles.length} component styles`);
 
@@ -1719,8 +1713,8 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
   };
 
   // Separate component and semantic effects
-  const semanticEffectStyles = effectStyles.filter(es => !es.name.startsWith('Component/'));
-  const componentEffectStyles = effectStyles.filter(es => es.name.startsWith('Component/'));
+  const semanticEffectStyles = effectStyles.filter(es => !es.name.startsWith(COMPONENT_PREFIX));
+  const componentEffectStyles = effectStyles.filter(es => es.name.startsWith(COMPONENT_PREFIX));
 
   console.log(`  ℹ️  ${semanticEffectStyles.length} semantic styles, ${componentEffectStyles.length} component styles`);
 

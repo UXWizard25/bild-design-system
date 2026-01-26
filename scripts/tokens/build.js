@@ -13,60 +13,67 @@ const StyleDictionary = require('style-dictionary').default;
 const fs = require('fs');
 const path = require('path');
 
-// Import custom config
+// Import custom config and centralized pipeline configuration
 const customConfig = require('../../build-config/tokens/style-dictionary.config.js');
+const config = require('../../build-config/tokens/pipeline.config.js');
 
-const TOKENS_DIR = path.join(__dirname, '../../packages/tokens/.tokens');
-const DIST_DIR = path.join(__dirname, '../../packages/tokens/dist');
+// ============================================================================
+// CONFIGURATION (from pipeline.config.js)
+// ============================================================================
+
+// Paths (derived from config)
+const TOKENS_DIR = path.join(__dirname, '../..', config.source.outputDir);
+const DIST_DIR = path.join(__dirname, '../..', config.output.distDir);
 
 // Native platform output directories (separate packages for SPM/Maven distribution)
-const IOS_DIST_DIR = path.join(__dirname, '../../packages/tokens-ios/Sources/BildDesignTokens');
-const ANDROID_DIST_DIR = path.join(__dirname, '../../packages/tokens-android/src/main/kotlin/com/bild/designsystem');
+const IOS_DIST_DIR = path.join(__dirname, '../..', config.platforms.ios.outputDir);
+const ANDROID_DIST_DIR = path.join(__dirname, '../..', config.platforms.android.outputDir);
 
-// Brands and breakpoints
-const BRANDS = ['bild', 'sportbild', 'advertorial'];
-const COLOR_BRANDS = ['bild', 'sportbild'];  // Brands with their own color tokens
-const CONTENT_BRANDS = ['bild', 'sportbild', 'advertorial'];  // All brands (for sizing/typography)
-const BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
-const COLOR_MODES = ['light', 'dark'];
-const DENSITY_MODES = ['default', 'dense', 'spacious'];
+// Brands and modes (derived from config)
+const COLOR_BRANDS = Object.values(config.modes.brands.color);
+const CONTENT_BRANDS = Object.values(config.modes.brands.content);
+const BRANDS = [...new Set([...COLOR_BRANDS, ...CONTENT_BRANDS])];
+const BREAKPOINTS = Object.values(config.modes.breakpoints).map(b => b.key);
+const COLOR_MODES = Object.values(config.modes.colorModes);
+const DENSITY_MODES = Object.values(config.modes.densityModes);
 
-// Platform output toggles - set to false to disable output generation
-const COMPOSE_ENABLED = true;
-const SWIFTUI_ENABLED = true;       // SwiftUI output in dist/ios/
-const SCSS_ENABLED = false;         // SCSS output in dist/scss/
-const JS_ENABLED = false;           // JS/ESM output in dist/js/ and dist/js.min/
+// Platform output toggles (from config)
+const COMPOSE_ENABLED = config.platforms.android.enabled;
+const SWIFTUI_ENABLED = config.platforms.ios.enabled;
+const SCSS_ENABLED = config.platforms.scss.enabled;
+const JS_ENABLED = config.platforms.js.enabled;
 
-// Token type toggles - set to false to exclude from all platform outputs
-const BOOLEAN_TOKENS_ENABLED = false;
+// Token type toggles (from config)
+const BOOLEAN_TOKENS_ENABLED = config.output.booleanTokens;
 
-// Figma description comment toggles per platform
-// Controls whether token.comment (from Figma descriptions) is output as code comments
-// Does NOT affect: file headers, section comments, or structural comments
-const SHOW_DESCRIPTIONS = {
-  css: false,      // Disabled - cleaner CSS output
-  scss: true,      // Enabled for SCSS
-  js: true,        // Enabled for JS
-  ios: true,       // Enabled for iOS/Swift
-  android: true    // Enabled for Android/Kotlin
-};
+// Figma description comment toggles per platform (from config)
+const SHOW_DESCRIPTIONS = config.output.showDescriptions;
 
 // iOS: Uses 2 size classes (Apple HIG)
-// Maps sm (390px) → compact, lg (1024px) → regular
-const IOS_BREAKPOINTS = ['sm', 'lg'];
-const IOS_SIZE_CLASS_MAPPING = {
-  sm: 'compact',
-  lg: 'regular'
-};
+// Invert mapping: config has sizeClass → breakpoint, we need breakpoint → sizeClass
+const IOS_SIZE_CLASS_MAPPING = Object.fromEntries(
+  Object.entries(config.platforms.ios.sizeClasses).map(([cls, bp]) => [bp, cls])
+);
+const IOS_BREAKPOINTS = Object.values(config.platforms.ios.sizeClasses);
 
 // Android: Uses 3 size classes (Material 3 WindowSizeClass)
-// Maps sm (390px) → Compact (<600dp), md (600px) → Medium (600-839dp), lg (1024px) → Expanded (≥840dp)
-const ANDROID_BREAKPOINTS = ['sm', 'md', 'lg'];
-const ANDROID_SIZE_CLASS_MAPPING = {
-  sm: 'compact',
-  md: 'medium',
-  lg: 'expanded'
-};
+// Invert mapping: config has sizeClass → breakpoint, we need breakpoint → sizeClass
+const ANDROID_SIZE_CLASS_MAPPING = Object.fromEntries(
+  Object.entries(config.platforms.android.sizeClasses).map(([cls, bp]) => [bp, cls])
+);
+const ANDROID_BREAKPOINTS = Object.values(config.platforms.android.sizeClasses);
+
+// Android package namespace (from config)
+const ANDROID_PACKAGE = config.platforms.android.packageName;
+
+/**
+ * Generates Android package path from config base package
+ * @param {string} [subpackage] - Optional subpackage path (e.g., 'shared', 'brands.bild')
+ * @returns {string} Full package path (e.g., 'com.bild.designsystem.shared')
+ */
+function androidPkg(subpackage = '') {
+  return subpackage ? `${ANDROID_PACKAGE}.${subpackage}` : ANDROID_PACKAGE;
+}
 
 // Package.json references for dynamic header generation
 const tokensPackageJson = require('../../packages/tokens/package.json');
@@ -729,7 +736,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
           options: {
             outputReferences: false,
             packageName: (() => {
-              const basePkg = 'com.bild.designsystem';
+              const basePkg = ANDROID_PACKAGE;
               if (buildPath.includes('/shared/')) {
                 return `${basePkg}.shared`;
               }
@@ -1032,7 +1039,7 @@ function createTypographyConfig(brand, breakpoint) {
             destination: `Typography${getSizeClassName(breakpoint, 'android').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'android').slice(1)}.kt`,
             format: 'compose/typography-scheme',
             options: {
-              packageName: `com.bild.designsystem.brands.${brand}.semantic.typography`,
+              packageName: `${ANDROID_PACKAGE}.brands.${brand}.semantic.typography`,
               brand: brandName,
               breakpoint,
               sizeClass: getSizeClassName(breakpoint, 'android'),
@@ -1147,7 +1154,7 @@ function createSharedDensityConfig(densityMode) {
             destination: `Density${modePascal}.kt`,
             format: 'compose/shared-density',
             options: {
-              packageName: 'com.bild.designsystem.shared',
+              packageName: `${ANDROID_PACKAGE}.shared`,
               densityMode: modePascal,
               showDescriptions: SHOW_DESCRIPTIONS.android
             }
@@ -1516,7 +1523,7 @@ function createComponentTypographyConfig(sourceFile, brand, componentName, fileN
             destination: `${componentName}Typography${getSizeClassName(breakpoint, 'android').charAt(0).toUpperCase() + getSizeClassName(breakpoint, 'android').slice(1)}.kt`,
             format: 'compose/typography',
             options: {
-              packageName: `com.bild.designsystem.brands.${brand}.components.${componentName.toLowerCase()}`,
+              packageName: `${ANDROID_PACKAGE}.brands.${brand}.components.${componentName.toLowerCase()}`,
               brand: brand,
               mode: getSizeClassName(breakpoint, 'android'),
               componentName,
@@ -3331,13 +3338,13 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   const imports = ['import androidx.compose.runtime.Immutable'];
   if (needsComposable) {
     imports.push('import androidx.compose.runtime.Composable');
-    imports.push('import com.bild.designsystem.shared.DesignSystemTheme');
+    imports.push(`import ${ANDROID_PACKAGE}.shared.DesignSystemTheme`);
   }
   if (hasDensityTokens) {
-    imports.push('import com.bild.designsystem.shared.Density');
+    imports.push(`import ${ANDROID_PACKAGE}.shared.Density`);
   }
   if (needsWindowSizeClass) {
-    imports.push('import com.bild.designsystem.shared.WindowSizeClass');
+    imports.push(`import ${ANDROID_PACKAGE}.shared.WindowSizeClass`);
   }
   if (hasColor) imports.push('import androidx.compose.ui.graphics.Color');
   if (hasFontStyle) imports.push('import androidx.compose.ui.text.font.FontStyle');
@@ -3351,14 +3358,14 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   if (hasDesignTextStyle || hasTypographyTokens) {
     imports.push('import androidx.compose.ui.text.font.FontWeight');
     imports.push('import androidx.compose.ui.text.style.TextDecoration');
-    imports.push('import com.bild.designsystem.shared.DesignTextStyle');
-    imports.push('import com.bild.designsystem.shared.DesignTextCase');
+    imports.push(`import ${ANDROID_PACKAGE}.shared.DesignTextStyle`);
+    imports.push(`import ${ANDROID_PACKAGE}.shared.DesignTextCase`);
   }
 
   // Check if effects use ShadowStyle
   if (hasEffectsTokens) {
-    imports.push('import com.bild.designsystem.shared.ShadowStyle');
-    imports.push('import com.bild.designsystem.shared.DropShadow');
+    imports.push(`import ${ANDROID_PACKAGE}.shared.ShadowStyle`);
+    imports.push(`import ${ANDROID_PACKAGE}.shared.DropShadow`);
   }
 
   let output = generateFileHeader({
@@ -3370,7 +3377,7 @@ function generateAggregatedComponentFile(brand, componentName, tokenGroups) {
   });
 
   output += `
-package com.bild.designsystem.brands.${brand}.components.${componentName.toLowerCase()}
+package ${ANDROID_PACKAGE}.brands.${brand}.components.${componentName.toLowerCase()}
 
 ${imports.join('\n')}
 
@@ -3594,19 +3601,19 @@ object ${componentName}Tokens {
             val density = DesignSystemTheme.density
             return when (sizeClass) {
                 WindowSizeClass.Compact -> when (density) {
-                    com.bild.designsystem.shared.Density.Dense -> CompactDense
-                    com.bild.designsystem.shared.Density.Default -> CompactDefault
-                    com.bild.designsystem.shared.Density.Spacious -> CompactSpacious
+                    ${ANDROID_PACKAGE}.shared.Density.Dense -> CompactDense
+                    ${ANDROID_PACKAGE}.shared.Density.Default -> CompactDefault
+                    ${ANDROID_PACKAGE}.shared.Density.Spacious -> CompactSpacious
                 }
                 WindowSizeClass.Medium -> when (density) {
-                    com.bild.designsystem.shared.Density.Dense -> MediumDense
-                    com.bild.designsystem.shared.Density.Default -> MediumDefault
-                    com.bild.designsystem.shared.Density.Spacious -> MediumSpacious
+                    ${ANDROID_PACKAGE}.shared.Density.Dense -> MediumDense
+                    ${ANDROID_PACKAGE}.shared.Density.Default -> MediumDefault
+                    ${ANDROID_PACKAGE}.shared.Density.Spacious -> MediumSpacious
                 }
                 WindowSizeClass.Expanded -> when (density) {
-                    com.bild.designsystem.shared.Density.Dense -> ExpandedDense
-                    com.bild.designsystem.shared.Density.Default -> ExpandedDefault
-                    com.bild.designsystem.shared.Density.Spacious -> ExpandedSpacious
+                    ${ANDROID_PACKAGE}.shared.Density.Dense -> ExpandedDense
+                    ${ANDROID_PACKAGE}.shared.Density.Default -> ExpandedDefault
+                    ${ANDROID_PACKAGE}.shared.Density.Spacious -> ExpandedSpacious
                 }
             }
         }
@@ -3671,9 +3678,9 @@ object ${componentName}Tokens {
          */
         @Composable
         fun current(): DensityTokens = when (DesignSystemTheme.density) {
-            com.bild.designsystem.shared.Density.Dense -> Dense
-            com.bild.designsystem.shared.Density.Default -> Default
-            com.bild.designsystem.shared.Density.Spacious -> Spacious
+            ${ANDROID_PACKAGE}.shared.Density.Dense -> Dense
+            ${ANDROID_PACKAGE}.shared.Density.Default -> Default
+            ${ANDROID_PACKAGE}.shared.Density.Spacious -> Spacious
         }
 
         /**
@@ -4679,14 +4686,14 @@ function generateThemeProviderFile(brand, hasColors = true) {
 
   // For brands without colors, we need to use a shared color scheme (BildColorScheme)
   const colorImports = hasColors
-    ? `import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}ColorScheme
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}LightColors
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}DarkColors`
+    ? `import ${ANDROID_PACKAGE}.brands.${brand}.semantic.${brandPascal}ColorScheme
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.${brandPascal}LightColors
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.${brandPascal}DarkColors`
     : `// ${brandPascal} uses shared color schemes from other brands (e.g., Bild, Sportbild)
 // Import the color scheme you want to use:
-import com.bild.designsystem.bild.semantic.BildColorScheme
-import com.bild.designsystem.bild.semantic.BildLightColors
-import com.bild.designsystem.bild.semantic.BildDarkColors`;
+import ${ANDROID_PACKAGE}.bild.semantic.BildColorScheme
+import ${ANDROID_PACKAGE}.bild.semantic.BildLightColors
+import ${ANDROID_PACKAGE}.bild.semantic.BildDarkColors`;
 
   const colorSchemeType = hasColors ? `${brandPascal}ColorScheme` : 'BildColorScheme';
   const defaultLightColors = hasColors ? `${brandPascal}LightColors` : 'BildLightColors';
@@ -4707,7 +4714,7 @@ import com.bild.designsystem.bild.semantic.BildDarkColors`;
   });
 
   output += `
-package com.bild.designsystem.brands.${brand}.theme`;
+package ${ANDROID_PACKAGE}.brands.${brand}.theme`;
 
   return output + `
 
@@ -4717,11 +4724,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 ${colorImports}
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}SizingScheme
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}SizingCompact
-import com.bild.designsystem.brands.${brand}.semantic.${brandPascal}SizingRegular
-import com.bild.designsystem.shared.Density
-import com.bild.designsystem.shared.WindowSizeClass
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.${brandPascal}SizingScheme
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.${brandPascal}SizingCompact
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.${brandPascal}SizingRegular
+import ${ANDROID_PACKAGE}.shared.Density
+import ${ANDROID_PACKAGE}.shared.WindowSizeClass
 
 // ══════════════════════════════════════════════════════════════════════════════
 // COMPOSITION LOCALS
@@ -4889,7 +4896,7 @@ function generateSharedDensityFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 /**
  * UI density for spacing adjustments`;
@@ -4933,7 +4940,7 @@ function generateSharedWindowSizeClassFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 /**
  * Window size class for responsive layouts (Material 3 compliant)`;
@@ -4998,7 +5005,7 @@ function generateColorBrandEnumFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 /**
  * Color brands in the BILD Design System`;
@@ -5047,7 +5054,7 @@ function generateContentBrandEnumFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 /**
  * Content brands in the BILD Design System`;
@@ -5118,7 +5125,7 @@ function generateDesignColorSchemeFile() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
@@ -5196,7 +5203,7 @@ function generateDesignSizingSchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
@@ -5228,7 +5235,7 @@ function generateSharedDesignTextStyleFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.TextStyle
@@ -5341,7 +5348,7 @@ function generateSharedDesignTypographySchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Stable
 
@@ -5383,7 +5390,7 @@ function generateSharedDropShadowFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -5424,7 +5431,7 @@ function generateSharedShadowStyleFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
@@ -5503,7 +5510,7 @@ function generateSharedDesignEffectsSchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Stable
 
@@ -5643,7 +5650,7 @@ function generateSharedDesignDensitySchemeFile() {
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
@@ -5683,33 +5690,33 @@ function generateDesignSystemThemeFile() {
   // Files are in semantic/color/ directory so package includes .color
   const colorImports = COLOR_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.brands.${brand}.semantic.color.${brandPascal}LightColors
-import com.bild.designsystem.brands.${brand}.semantic.color.${brandPascal}DarkColors`;
+    return `import ${ANDROID_PACKAGE}.brands.${brand}.semantic.color.${brandPascal}LightColors
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.color.${brandPascal}DarkColors`;
   }).join('\n');
 
   // Generate sizing imports for all content brands (Material 3: Compact, Medium, Expanded)
   // Files are in semantic/sizeclass/ directory so package includes .sizeclass
   const sizingImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.brands.${brand}.semantic.sizeclass.${brandPascal}SizingCompact
-import com.bild.designsystem.brands.${brand}.semantic.sizeclass.${brandPascal}SizingMedium
-import com.bild.designsystem.brands.${brand}.semantic.sizeclass.${brandPascal}SizingExpanded`;
+    return `import ${ANDROID_PACKAGE}.brands.${brand}.semantic.sizeclass.${brandPascal}SizingCompact
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.sizeclass.${brandPascal}SizingMedium
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.sizeclass.${brandPascal}SizingExpanded`;
   }).join('\n');
 
   // Generate typography imports for all content brands (Material 3: Compact, Medium, Expanded)
   // Files are in semantic/typography/ directory so package includes .typography
   const typographyImports = CONTENT_BRANDS.map(brand => {
     const brandPascal = brand.charAt(0).toUpperCase() + brand.slice(1);
-    return `import com.bild.designsystem.brands.${brand}.semantic.typography.${brandPascal}TypographyCompact
-import com.bild.designsystem.brands.${brand}.semantic.typography.${brandPascal}TypographyMedium
-import com.bild.designsystem.brands.${brand}.semantic.typography.${brandPascal}TypographyExpanded`;
+    return `import ${ANDROID_PACKAGE}.brands.${brand}.semantic.typography.${brandPascal}TypographyCompact
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.typography.${brandPascal}TypographyMedium
+import ${ANDROID_PACKAGE}.brands.${brand}.semantic.typography.${brandPascal}TypographyExpanded`;
   }).join('\n');
 
   // Density imports (brand-independent, like Effects)
   const densityImports = `// Density is brand-independent (same values across all brands)
-import com.bild.designsystem.shared.DensityDefault
-import com.bild.designsystem.shared.DensityDense
-import com.bild.designsystem.shared.DensitySpacious`;
+import ${ANDROID_PACKAGE}.shared.DensityDefault
+import ${ANDROID_PACKAGE}.shared.DensityDense
+import ${ANDROID_PACKAGE}.shared.DensitySpacious`;
 
   // Generate color selection cases
   const colorCases = COLOR_BRANDS.map(brand => {
@@ -5753,7 +5760,7 @@ import com.bild.designsystem.shared.DensitySpacious`;
   });
 
   return output + `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -6088,7 +6095,7 @@ async function consolidateComposePrimitives() {
   });
 
   output += `
-package com.bild.designsystem.shared
+package ${ANDROID_PACKAGE}.shared
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -6259,7 +6266,7 @@ async function aggregateComposeSemantics() {
       });
 
       output += `
-package com.bild.designsystem.brands.${brand}.semantic
+package ${ANDROID_PACKAGE}.brands.${brand}.semantic
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp

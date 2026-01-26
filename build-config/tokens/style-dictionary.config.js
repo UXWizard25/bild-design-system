@@ -9,8 +9,11 @@ const path = require('path');
 const tokensPackageJson = require('../../packages/tokens/package.json');
 const rootPackageJson = require('../../package.json');
 
+// Load centralized pipeline configuration
+const config = require('./pipeline.config.js');
+
 // ============================================================================
-// CSS OUTPUT CONFIGURATION
+// CSS OUTPUT CONFIGURATION (from pipeline.config.js)
 // ============================================================================
 
 /**
@@ -21,7 +24,10 @@ const rootPackageJson = require('../../package.json');
  * Note: lineHeight is always unitless (ratio-based), independent of this setting.
  * Note: Native platforms (iOS/Android) are unaffected by this setting.
  */
-const FONT_SIZE_UNIT = 'px';
+const FONT_SIZE_UNIT = config.platforms.css.fontSizeUnit;
+
+// CSS data-attribute names (from config)
+const DATA_ATTR = config.platforms.css.dataAttributes;
 
 // ============================================================================
 // FILE HEADER GENERATORS
@@ -158,7 +164,7 @@ function getContextString(options) {
 function getBrandAttribute(modeType, filePath = '') {
   // Theme-dependent tokens (colors, effects) use ColorBrand axis
   if (modeType === 'theme') {
-    return 'data-color-brand';
+    return DATA_ATTR.colorBrand;
   }
 
   // File path fallback for cases without modeType
@@ -169,12 +175,12 @@ function getBrandAttribute(modeType, filePath = '') {
         lowerPath.includes('colormode-') ||
         lowerPath.includes('effects-light') ||
         lowerPath.includes('effects-dark')) {
-      return 'data-color-brand';
+      return DATA_ATTR.colorBrand;
     }
   }
 
   // Everything else (breakpoints, typography, density) uses ContentBrand axis
-  return 'data-content-brand';
+  return DATA_ATTR.contentBrand;
 }
 
 /**
@@ -1332,7 +1338,7 @@ const cssEffectClassesFormat = ({ dictionary, options }) => {
   // Uses dual selector for Shadow DOM compatibility
   const brandLowercase = brand.toLowerCase();
   const brandAttr = getBrandAttribute('theme'); // Effects use ColorBrand axis
-  const attrSelector = `[${brandAttr}="${brandLowercase}"][data-theme="${colorMode}"]`;
+  const attrSelector = `[${brandAttr}="${brandLowercase}"][${DATA_ATTR.theme}="${colorMode}"]`;
 
   // Helper: Convert shadow token to CSS box-shadow value string
   // Outputs var() references for ALL properties that have aliases (color, offsetX, offsetY, radius, spread)
@@ -2192,18 +2198,18 @@ const cssThemedVariablesFormat = ({ dictionary, options, file }) => {
 
   if (brand && mode) {
     // Specific brand + mode combination
-    const dataMode = modeType === 'theme' ? 'data-theme' :
+    const dataMode = modeType === 'theme' ? DATA_ATTR.theme :
                      modeType === 'breakpoint' ? 'data-breakpoint' :
-                     modeType === 'density' ? 'data-density' : 'data-mode';
+                     modeType === 'density' ? DATA_ATTR.density : 'data-mode';
     selector = `[${brandAttr}="${brand}"][${dataMode}="${mode}"]`;
   } else if (brand) {
     // Brand only
     selector = `[${brandAttr}="${brand}"]`;
   } else if (mode) {
     // Mode only
-    const dataMode = modeType === 'theme' ? 'data-theme' :
+    const dataMode = modeType === 'theme' ? DATA_ATTR.theme :
                      modeType === 'breakpoint' ? 'data-breakpoint' :
-                     modeType === 'density' ? 'data-density' : 'data-mode';
+                     modeType === 'density' ? DATA_ATTR.density : 'data-mode';
     selector = `[${dataMode}="${mode}"]`;
   } else {
     // Fallback to root if no brand/mode specified
@@ -2393,18 +2399,18 @@ const cssThemedVariablesWithAliasFormat = ({ dictionary, options, file }) => {
   const brandAttr = getBrandAttribute(modeType, file.destination);
 
   if (brand && mode) {
-    const dataMode = modeType === 'theme' ? 'data-theme' :
+    const dataMode = modeType === 'theme' ? DATA_ATTR.theme :
                      modeType === 'breakpoint' ? 'data-breakpoint' :
-                     modeType === 'density' ? 'data-density' : 'data-mode';
+                     modeType === 'density' ? DATA_ATTR.density : 'data-mode';
     const attrSelector = `[${brandAttr}="${brand}"][${dataMode}="${mode}"]`;
     selector = buildDualSelector(attrSelector);
   } else if (brand) {
     const attrSelector = `[${brandAttr}="${brand}"]`;
     selector = buildDualSelector(attrSelector);
   } else if (mode) {
-    const dataMode = modeType === 'theme' ? 'data-theme' :
+    const dataMode = modeType === 'theme' ? DATA_ATTR.theme :
                      modeType === 'breakpoint' ? 'data-breakpoint' :
-                     modeType === 'density' ? 'data-density' : 'data-mode';
+                     modeType === 'density' ? DATA_ATTR.density : 'data-mode';
     const attrSelector = `[${dataMode}="${mode}"]`;
     selector = buildDualSelector(attrSelector);
   } else {
