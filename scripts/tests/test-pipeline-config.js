@@ -21,7 +21,7 @@ const { execSync } = require('child_process');
 
 // Test Configuration
 const ROOT_DIR = path.join(__dirname, '../..');
-const ORIGINAL_CONFIG_PATH = path.join(ROOT_DIR, 'build-config/tokens/pipeline.config.js');
+const ORIGINAL_CONFIG_PATH = path.join(ROOT_DIR, 'build-config/pipeline.config.js');
 const ORIGINAL_FIGMA_PATH = path.join(ROOT_DIR, 'packages/tokens/src/bild-design-system-raw-data.json');
 const DIST_CSS_DIR = path.join(ROOT_DIR, 'packages/tokens/dist/css');
 const DIST_IOS_DIR = path.join(ROOT_DIR, 'packages/tokens-ios/Sources/BildDesignTokens');

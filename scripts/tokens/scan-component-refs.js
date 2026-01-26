@@ -15,7 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
+const pipelineConfig = require('../../build-config/pipeline.config.js');
 
 // =============================================================================
 // CONSTANTS

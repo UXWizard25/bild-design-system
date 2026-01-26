@@ -17,7 +17,7 @@ const path = require('path');
 const customConfig = require('../../build-config/tokens/style-dictionary.config.js');
 
 // Pipeline Configuration
-const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
+const pipelineConfig = require('../../build-config/pipeline.config.js');
 
 // Paths (derived from config)
 const TOKENS_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensIntermediate);

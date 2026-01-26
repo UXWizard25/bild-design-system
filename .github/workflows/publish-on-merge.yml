@@ -24,6 +24,7 @@ on:
       - 'scripts/tokens/preprocess.js'
       - 'scripts/tokens/bundles.js'
       # Build Config
+      - 'build-config/pipeline.config.js'
       - 'build-config/tokens/**'
 
 permissions:
@@ -69,7 +70,7 @@ jobs:
         id: config
         run: |
           echo "📋 Reading pipeline configuration..."
-          CONFIG="build-config/tokens/pipeline.config.js"
+          CONFIG="build-config/pipeline.config.js"
           echo "tokens_npm=$(node -p "require('./$CONFIG').packages.tokens")" >> $GITHUB_OUTPUT
           echo "components_npm=$(node -p "require('./$CONFIG').packages.components")" >> $GITHUB_OUTPUT
           echo "react_npm=$(node -p "require('./$CONFIG').packages.react")" >> $GITHUB_OUTPUT

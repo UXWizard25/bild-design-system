@@ -6,7 +6,7 @@ import { bildLightTheme, bildDarkTheme } from './themes';
 import { DocsContainer } from './DocsContainer';
 
 // Pipeline config values inlined for browser context.
-// Keep in sync with: build-config/tokens/pipeline.config.js
+// Keep in sync with: build-config/pipeline.config.js
 // (preview.ts runs in browser where Node.js 'module' package is unavailable)
 const DATA_ATTRS = {
   colorBrand: 'data-color-brand',

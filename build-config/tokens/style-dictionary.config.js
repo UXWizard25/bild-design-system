@@ -10,7 +10,7 @@ const tokensPackageJson = require('../../packages/tokens/package.json');
 const rootPackageJson = require('../../package.json');
 
 // Pipeline Configuration
-const pipelineConfig = require('./pipeline.config.js');
+const pipelineConfig = require('../pipeline.config.js');
 
 // ============================================================================
 // CSS OUTPUT CONFIGURATION (derived from pipeline.config.js)

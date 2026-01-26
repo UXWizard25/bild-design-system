@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_PATH = path.join(__dirname, '../build-config/tokens/pipeline.config.js');
+const CONFIG_PATH = path.join(__dirname, '../build-config/pipeline.config.js');
 const ROOT_DIR = path.join(__dirname, '..');
 
 let errors = [];

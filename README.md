@@ -84,8 +84,8 @@ Both pipelines use the **CodeBridge Figma Plugin** for automated exports.
 
 | File | Purpose |
 |------|---------|
-| [pipeline.config.js](./build-config/tokens/pipeline.config.js) | **Single source of truth** for all pipeline settings (brands, modes, paths) |
-| [PIPELINE-CONFIG.md](./build-config/tokens/PIPELINE-CONFIG.md) | Configuration documentation and setup guide |
+| [pipeline.config.js](./build-config/pipeline.config.js) | **Single source of truth** for all pipeline settings (brands, modes, paths) |
+| [PIPELINE-CONFIG.md](./build-config/PIPELINE-CONFIG.md) | Configuration documentation and setup guide |
 | [CLAUDE.md](./CLAUDE.md) | AI assistant context with full architecture details |
 
 ---
@@ -500,7 +500,7 @@ npm run build:storybook    # Build static site
 
 - Changes to build scripts (`scripts/`)
 - Configuration changes (`build-config/`)
-- Pipeline configuration (`build-config/tokens/pipeline.config.js` - single source of truth)
+- Pipeline configuration (`build-config/pipeline.config.js` - single source of truth)
 - Workflow adjustments (`.github/workflows/`)
 - Documentation updates
 - Stencil component development (`packages/components/core/src/`)
