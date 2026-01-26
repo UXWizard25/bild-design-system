@@ -1,27 +1,193 @@
 /**
- * Multi-Design-System Pipeline Configuration
+ * ╔═══════════════════════════════════════════════════════════════════════════╗
+ * ║          MULTI-DESIGN-SYSTEM PIPELINE CONFIGURATION                       ║
+ * ╚═══════════════════════════════════════════════════════════════════════════╝
  *
  * This file is the SINGLE SOURCE OF TRUTH for all pipeline settings.
  * To adapt for a different design system, modify this file + Figma export JSON.
  *
- * Architecture invariants (NOT configurable - enforced by pipeline):
- * - 4-Layer Hierarchy (Primitives → Mapping → Semantic → Components)
- * - Dual-Axis Architecture (ColorBrand + ContentBrand)
- * - Shadow DOM support (:host() selectors always generated)
- * - Effects are brand-independent (only light/dark)
- * - Density is brand-independent (shared across brands)
- * - lineHeight as unitless ratio (CSS best practice)
- * - var() reference chains with conditional fallbacks
- * - @media queries for responsive breakpoints (mobile-first)
+ * ┌───────────────────────────────────────────────────────────────────────────┐
+ * │                        FILE STRUCTURE OVERVIEW                            │
+ * ├───────────────────────────────────────────────────────────────────────────┤
+ * │                                                                           │
+ * │   ┌─────────────────────┐                                                 │
+ * │   │  ✅ rawConfig       │ ← EDIT THIS: All user-configurable values      │
+ * │   │     (lines ~50-380) │   Identity, brands, modes, paths, packages     │
+ * │   └──────────┬──────────┘                                                 │
+ * │              │                                                            │
+ * │              ▼ auto-derives                                               │
+ * │   ┌─────────────────────┐                                                 │
+ * │   │  ❌ derived         │ ← DO NOT EDIT: Auto-computed from rawConfig    │
+ * │   │     (lines ~385-475)│   Arrays, lookups, defaults - stay in sync     │
+ * │   └──────────┬──────────┘                                                 │
+ * │              │                                                            │
+ * │              ▼ uses                                                       │
+ * │   ┌─────────────────────┐                                                 │
+ * │   │  ❌ Runtime funcs   │ ← DO NOT EDIT: Figma validation functions      │
+ * │   │     (lines ~480-555)│   deriveColorBrands, deriveContentBrands, etc. │
+ * │   └─────────────────────┘                                                 │
+ * │                                                                           │
+ * └───────────────────────────────────────────────────────────────────────────┘
  *
- * File structure:
- * 1. rawConfig - User-configurable values
- * 2. derived - Auto-computed values from rawConfig (no manual sync needed)
- * 3. Runtime functions - Require Figma data (deriveColorBrands, etc.)
+ * ┌───────────────────────────────────────────────────────────────────────────┐
+ * │                         FIGMA DEPENDENCIES                                │
+ * ├───────────────────────────────────────────────────────────────────────────┤
+ * │                                                                           │
+ * │  This pipeline requires a specific Figma Variable structure.              │
+ * │  Changes in Figma require corresponding updates here:                     │
+ * │                                                                           │
+ * │  Figma Change                    Config Update Required                   │
+ * │  ────────────────────────────────────────────────────────────────────     │
+ * │  Renamed collection              → figma.collections.{COLLECTION_ID}      │
+ * │  Renamed mode (e.g., "Light")    → modes.color.{mode}.figmaId             │
+ * │  Renamed brand (e.g., "BILD")    → brands.{key}.figmaName                 │
+ * │  Added new brand                 → brands.{newKey} + axes property        │
+ * │  Added new breakpoint            → modes.breakpoints.{bp} + minWidth      │
+ * │  Added new density mode          → modes.density.{mode} + figmaId         │
+ * │  Changed collection IDs          → figma.collections (after recreate)     │
+ * │                                                                           │
+ * │  ⚠️  Collection IDs are STABLE unless you delete and recreate the        │
+ * │      collection in Figma. Mode IDs change when modes are reordered.       │
+ * │                                                                           │
+ * │  Required Figma Collections (Layer 0-2):                                  │
+ * │  ──────────────────────────────────────────────────────────────────────   │
+ * │  • _FontPrimitive      - Font families, weights (Layer 0)                 │
+ * │  • _ColorPrimitive     - Color palette hex values (Layer 0)               │
+ * │  • _SpacePrimitive     - Spacing scale in px (Layer 0)                    │
+ * │  • _SizePrimitive      - Size scale in px (Layer 0)                       │
+ * │  • Density             - Spacing variants per density mode (Layer 1)      │
+ * │  • BrandTokenMapping   - Brand sizing/typography mapping (Layer 1)        │
+ * │  • BrandColorMapping   - Brand color mapping (Layer 1) [optional/brand]   │
+ * │  • BreakpointMode      - Responsive breakpoint tokens (Layer 2)           │
+ * │  • ColorMode           - Light/dark semantic tokens (Layer 2)             │
+ * │  • Component/*         - Component-specific tokens (Layer 3)              │
+ * │                                                                           │
+ * └───────────────────────────────────────────────────────────────────────────┘
+ *
+ * ┌───────────────────────────────────────────────────────────────────────────┐
+ * │                    SETUP FOR A NEW DESIGN SYSTEM                          │
+ * ├───────────────────────────────────────────────────────────────────────────┤
+ * │                                                                           │
+ * │  1. IDENTITY (required)                                                   │
+ * │     └── Update: name, shortName, copyright, repositoryUrl                 │
+ * │                                                                           │
+ * │  2. FIGMA EXPORT (required)                                               │
+ * │     └── Export from Figma using CodeBridge Plugin                         │
+ * │     └── Place JSON in paths.tokensInput directory                         │
+ * │     └── Update: figma.inputFile with filename                             │
+ * │                                                                           │
+ * │  3. COLLECTION IDs (required)                                             │
+ * │     └── Open Figma Variables panel → each collection → copy ID            │
+ * │     └── Update: figma.collections.* with your IDs                         │
+ * │                                                                           │
+ * │  4. BRANDS (required)                                                     │
+ * │     └── Define each brand with figmaName matching Figma mode name         │
+ * │     └── Set axes: ['color', 'content'] or ['content'] only                │
+ * │     └── Mark one brand with isDefault: true                               │
+ * │                                                                           │
+ * │  5. MODES (required)                                                      │
+ * │     └── Update figmaId for each color/density/breakpoint mode             │
+ * │     └── Update minWidth for breakpoints to match your design              │
+ * │                                                                           │
+ * │  6. PATHS (adjust if needed)                                              │
+ * │     └── Update output directories if using different structure            │
+ * │                                                                           │
+ * │  7. PACKAGES (adjust if needed)                                           │
+ * │     └── Update npm/Maven package names for your organization              │
+ * │                                                                           │
+ * └───────────────────────────────────────────────────────────────────────────┘
+ *
+ * ┌───────────────────────────────────────────────────────────────────────────┐
+ * │                      EXTENDING MODES / BRANDS                             │
+ * ├───────────────────────────────────────────────────────────────────────────┤
+ * │                                                                           │
+ * │  ADDING A NEW BRAND (full brand with own colors):                         │
+ * │  ─────────────────────────────────────────────────────────────────────    │
+ * │  1. In Figma: Add mode to BrandColorMapping AND BrandTokenMapping         │
+ * │  2. In config:                                                            │
+ * │     brands: {                                                             │
+ * │       newbrand: {                                                         │
+ * │         figmaName: 'NewBrand',    // Exact Figma mode name                │
+ * │         axes: ['color', 'content'], // Supports both axes                 │
+ * │       },                                                                  │
+ * │     }                                                                     │
+ * │  3. Run build - pipeline auto-generates all outputs                       │
+ * │                                                                           │
+ * │  ADDING A CONTENT-ONLY BRAND (inherits colors from another brand):        │
+ * │  ─────────────────────────────────────────────────────────────────────    │
+ * │  1. In Figma: Add mode to BrandTokenMapping ONLY (not BrandColorMapping)  │
+ * │  2. In config:                                                            │
+ * │     brands: {                                                             │
+ * │       specialcontent: {                                                   │
+ * │         figmaName: 'SpecialContent',                                      │
+ * │         axes: ['content'],        // Content only - inherits colors       │
+ * │       },                                                                  │
+ * │     }                                                                     │
+ * │                                                                           │
+ * │  ADDING A NEW COLOR MODE (e.g., high-contrast):                           │
+ * │  ─────────────────────────────────────────────────────────────────────    │
+ * │  1. In Figma: Add mode to ColorMode collection                            │
+ * │  2. In config:                                                            │
+ * │     modes.color: {                                                        │
+ * │       highcontrast: { figmaId: '123:4' }, // ID from Figma                │
+ * │     }                                                                     │
+ * │                                                                           │
+ * │  ADDING A NEW DENSITY MODE (e.g., compact):                               │
+ * │  ─────────────────────────────────────────────────────────────────────    │
+ * │  1. In Figma: Add mode to Density collection                              │
+ * │  2. In config:                                                            │
+ * │     modes.density: {                                                      │
+ * │       compact: { figmaId: '123:5' },                                      │
+ * │     }                                                                     │
+ * │                                                                           │
+ * │  ADDING A NEW BREAKPOINT:                                                 │
+ * │  ─────────────────────────────────────────────────────────────────────    │
+ * │  1. In Figma: Add mode to BreakpointMode collection                       │
+ * │  2. In config:                                                            │
+ * │     modes.breakpoints: {                                                  │
+ * │       xl: { figmaId: '123:6', minWidth: 1440 },                           │
+ * │     }                                                                     │
+ * │  3. Update platforms.ios.sizeClasses / platforms.android.sizeClasses      │
+ * │     to map the new breakpoint to native size classes                      │
+ * │                                                                           │
+ * └───────────────────────────────────────────────────────────────────────────┘
+ *
+ * ┌───────────────────────────────────────────────────────────────────────────┐
+ * │                    ARCHITECTURE INVARIANTS                                │
+ * │                    (NOT configurable - enforced by pipeline)              │
+ * ├───────────────────────────────────────────────────────────────────────────┤
+ * │                                                                           │
+ * │  • 4-Layer Hierarchy: Primitives → Mapping → Semantic → Components        │
+ * │  • Dual-Axis Architecture: ColorBrand (colors/effects) is separate        │
+ * │    from ContentBrand (sizing/typography)                                  │
+ * │  • Shadow DOM support: :host() selectors always generated for CSS         │
+ * │  • Effects are brand-independent: Only vary by light/dark mode            │
+ * │  • Density is brand-independent: Shared spacing across all brands         │
+ * │  • CSS lineHeight: Always unitless ratio (CSS best practice)              │
+ * │  • CSS var() chains: References use var(--token, fallback) pattern        │
+ * │  • Mobile-first: @media queries use min-width (smallest = base)           │
+ * │  • Native platforms: iOS uses 2 size classes, Android uses 3              │
+ * │                                                                           │
+ * └───────────────────────────────────────────────────────────────────────────┘
  */
 
 // =============================================================================
-// RAW CONFIG - User-configurable values
+// ✅ RAW CONFIG - EDIT THIS SECTION
+// =============================================================================
+// All user-configurable values are defined here.
+// Changes here automatically propagate to derived values and all build scripts.
+//
+// Sections:
+// - identity     → System name, copyright, URLs
+// - brands       → Brand definitions with dual-axis support
+// - modes        → Color modes, density, breakpoints
+// - figma        → Figma collection IDs and file settings
+// - css          → CSS-specific output options
+// - platforms    → Enable/disable iOS, Android; native mappings
+// - paths        → Directory paths for input/output
+// - packages     → npm/Maven package names
+// - stencil      → Web Components configuration
+// - deployment   → Hosting settings
 // =============================================================================
 
 const rawConfig = {
@@ -407,8 +573,11 @@ const rawConfig = {
 };
 
 // =============================================================================
-// DERIVED VALUES - Auto-computed from rawConfig
-// These values are derived automatically - no manual synchronization needed.
+// ❌ DERIVED VALUES - DO NOT EDIT
+// =============================================================================
+// These values are AUTO-COMPUTED from rawConfig above.
+// Any manual changes will be overwritten or cause inconsistencies.
+// To change these values, modify the corresponding rawConfig property instead.
 // =============================================================================
 
 const allBrands = Object.keys(rawConfig.brands);
@@ -520,26 +689,25 @@ const derived = {
 };
 
 // =============================================================================
-// RUNTIME FUNCTIONS - Require Figma collection data
+// ❌ RUNTIME FUNCTIONS - DO NOT EDIT
+// =============================================================================
+// These functions are used by the pipeline to validate Figma data against config.
+// They should not be modified unless you understand the full pipeline architecture.
 //
-// These functions derive and VALIDATE colorBrands/contentBrands from Figma data.
-//
-// The pipeline uses TWO sources for axis membership:
-//
-// 1. STATIC (from config): derived.colorBrands, derived.contentBrands
-//    - Derived from brands[].axes property in rawConfig
+// How validation works:
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. STATIC source (from config): derived.colorBrands, derived.contentBrands
+//    - Derived from brands[].axes property in rawConfig (edit rawConfig instead)
 //    - Available immediately without Figma data
-//    - Used by scripts that run without Figma context (build.js, bundles.js)
+//    - Used by: build.js, bundles.js, storybook
 //
-// 2. RUNTIME (from Figma): deriveColorBrands(), deriveContentBrands()
+// 2. RUNTIME source (from Figma): deriveColorBrands(), deriveContentBrands()
 //    - Validates against actual BrandColorMapping/BrandTokenMapping collections
-//    - Used by preprocess.js which has Figma data
-//    - Writes to metadata.json for downstream scripts
+//    - Used by: preprocess.js (has access to Figma JSON)
+//    - Writes to: metadata.json for downstream validation
 //
-// This dual approach enables:
-// - Clear documentation in config (which axes each brand should support)
-// - Runtime validation (detect mismatches between config and Figma)
-// - Safe fallbacks when Figma data isn't available
+// If config doesn't match Figma, build.js will warn:
+//    "⚠️  Config colorBrands [...] differs from Figma [...]"
 // =============================================================================
 
 /**
