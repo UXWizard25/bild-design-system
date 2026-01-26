@@ -52,8 +52,8 @@
   "license": "MIT",
   "devDependencies": {
     "@stencil/core": "^4.41.1",
-    "@stencil/react-output-target": "^1.2.0",
-    "@stencil/vue-output-target": "^0.11.8",
+    "@stencil/react-output-target": "^1.4.0",
+    "@stencil/vue-output-target": "^0.13.0",
     "@svgr/core": "^8.1.0",
     "@types/react": "^19.2.8",
     "glob": "^13.0.0",
