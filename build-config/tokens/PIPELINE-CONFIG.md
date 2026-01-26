@@ -12,6 +12,8 @@
 - [Extending Modes and Brands](#extending-modes-and-brands)
 - [Architecture Invariants](#architecture-invariants)
 - [Configuration Reference](#configuration-reference)
+  - [Validation Flow](#validation-flow)
+  - [Validation Configuration](#validation-configuration)
 
 ---
 
@@ -37,6 +39,7 @@ The configuration file is divided into three sections:
 │   │  - packages             │    (npm/Maven package names)                  │
 │   │  - stencil              │    (Web Components config)                    │
 │   │  - deployment           │    (Storybook base path)                      │
+│   │  - validation           │    (strict mode, warnings)                    │
 │   └────────────┬────────────┘                                               │
 │                │                                                            │
 │                ▼ auto-derives                                               │
@@ -415,27 +418,94 @@ The design system uses **two independent axes** for brand selection:
 
 ### Validation Flow
 
-The pipeline validates that `rawConfig` matches Figma data:
+The pipeline performs **bidirectional validation** between config and Figma data:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           VALIDATION FLOW                                   │
+│                      BIDIRECTIONAL VALIDATION                               │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  1. rawConfig.brands[].axes                                                 │
-│     └── Defines which axes each brand SHOULD support                        │
+│  CONFIG → FIGMA (Critical Errors)                                           │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│  These cause build to ABORT in strict mode:                                 │
 │                                                                             │
-│  2. preprocess.js reads Figma JSON                                          │
-│     └── Calls deriveColorBrands() / deriveContentBrands()                   │
-│     └── Writes actual findings to metadata.json                             │
+│  • Brand axes mismatch                                                      │
+│    Config: axes: ['color', 'content']                                       │
+│    Figma: Brand not found in BrandColorMapping → ERROR                      │
 │                                                                             │
-│  3. build.js compares config vs metadata                                    │
-│     └── If mismatch: "⚠️ Config colorBrands [...] differs from Figma [...]" │
+│  • Collection ID not found                                                  │
+│    Config: BRAND_COLOR_MAPPING: 'VariableCollectionId:xxx'                  │
+│    Figma: Collection doesn't exist → ERROR                                  │
 │                                                                             │
-│  This catches configuration drift between Figma and config early.           │
+│  • Mode ID not found                                                        │
+│    Config: light: { figmaId: '588:0' }                                      │
+│    Figma: Mode ID not in ColorMode collection → ERROR                       │
+│                                                                             │
+│  FIGMA → CONFIG (Warnings)                                                  │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│  These are logged as warnings (never abort):                                │
+│                                                                             │
+│  • Unknown Figma mode                                                       │
+│    Figma: BrandColorMapping has mode 'NewBrand'                             │
+│    Config: No brand with figmaName: 'NewBrand' → WARNING                    │
+│    Effect: Mode is IGNORED during build                                     │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+### Validation Configuration
+
+```javascript
+validation: {
+  /**
+   * Strict mode - abort build on critical Config ↔ Figma mismatches.
+   * Auto-enabled when CI environment variable is set.
+   *
+   * Recommended:
+   * - Local development: false (allows incremental work)
+   * - CI/CD pipeline: true (prevents broken deployments)
+   */
+  strict: process.env.CI === 'true',
+
+  /**
+   * Warn about Figma modes not defined in config.
+   * Always a warning, never an error (even in strict mode).
+   */
+  warnUnknownFigmaModes: true,
+},
+```
+
+### Validation Error Examples
+
+**Error: Brand axis mismatch**
+```
+❌ Brand 'newbrand' has axes: ['color'] but 'NewBrand' not found in BrandColorMapping.
+   Available modes: BILD, SportBILD
+   Fix: Either add 'NewBrand' mode to BrandColorMapping in Figma, or remove 'color' from axes.
+```
+
+**Error: Mode ID not found**
+```
+❌ Color mode 'dark' has figmaId '999:0' not found in ColorMode collection.
+   Available mode IDs: 588:0 (Light), 592:1 (Dark)
+   Fix: Update figmaId in config to match Figma.
+```
+
+**Warning: Unknown Figma mode**
+```
+⚠️ Figma BrandColorMapping has mode 'TestBrand' not defined in config.
+   This mode will be IGNORED during build.
+   Fix: Add a brand with figmaName: 'TestBrand' and axes: ['color', ...] to config.
+```
+
+### Strict Mode Behavior
+
+| Scenario | strict: false | strict: true (CI) |
+|----------|---------------|-------------------|
+| Critical error (axes mismatch) | ⚠️ Warning, build continues | ❌ Build aborted |
+| Critical error (ID not found) | ⚠️ Warning, build continues | ❌ Build aborted |
+| Unknown Figma mode | ⚠️ Warning | ⚠️ Warning |
+| No errors | ✅ Build succeeds | ✅ Build succeeds |
 
 ---
 
@@ -454,6 +524,8 @@ The pipeline validates that `rawConfig` matches Figma data:
 | `css.fontSizeUnit` | `'px'` or `'rem'` |
 | `platforms.ios.enabled` | Enable/disable iOS output |
 | `platforms.android.enabled` | Enable/disable Android output |
+| `validation.strict` | Abort build on critical errors |
+| `validation.warnUnknownFigmaModes` | Warn about unconfigured Figma modes |
 
 ### Build Commands
 

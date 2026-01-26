@@ -34,11 +34,37 @@ const BRANDS = pipelineConfig.allBrands;
 const COLOR_BRANDS = pipelineConfig.colorBrands;
 const CONTENT_BRANDS = pipelineConfig.contentBrands;
 
+// Validation settings (from config)
+const VALIDATION_STRICT = pipelineConfig.validation?.strict ?? (process.env.CI === 'true');
+
 // Validate against metadata.json if it exists (written by preprocess.js from Figma data)
 const metadataPath = path.join(TOKENS_DIR, 'metadata.json');
 if (fs.existsSync(metadataPath)) {
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-  // Warn if config doesn't match Figma data
+
+  // Check preprocess.js validation results
+  if (metadata.validation) {
+    if (!metadata.validation.valid) {
+      console.log('\n⚠️  Config ↔ Figma validation found errors during preprocessing:');
+      metadata.validation.errors.forEach((error, i) => {
+        console.log(`   ${i + 1}. ${error.split('\n')[0]}`);
+      });
+      console.log('');
+
+      if (VALIDATION_STRICT && !metadata.validation.strictMode) {
+        // preprocess.js ran in non-strict but build.js is in strict mode
+        console.error('❌ Build aborted: validation.strict is enabled but preprocess had errors.');
+        console.error('   Run preprocess.js again with CI=true or set validation.strict: true.\n');
+        process.exit(1);
+      }
+    }
+
+    if (metadata.validation.warnings?.length > 0) {
+      console.log(`⚠️  ${metadata.validation.warnings.length} validation warning(s) from preprocessing (see preprocess output for details)\n`);
+    }
+  }
+
+  // Additional check: compare config-derived values vs Figma-derived values
   const configColorSet = new Set(COLOR_BRANDS);
   const figmaColorSet = new Set(metadata.colorBrands || []);
   const configContentSet = new Set(CONTENT_BRANDS);
@@ -51,9 +77,17 @@ if (fs.existsSync(metadataPath)) {
 
   if (colorMismatch) {
     console.warn(`⚠️  Config colorBrands [${COLOR_BRANDS.join(', ')}] differs from Figma [${metadata.colorBrands?.join(', ') || 'none'}]`);
+    if (VALIDATION_STRICT) {
+      console.error('   ❌ Build aborted in strict mode. Fix the mismatch or disable strict mode.\n');
+      process.exit(1);
+    }
   }
   if (contentMismatch) {
     console.warn(`⚠️  Config contentBrands [${CONTENT_BRANDS.join(', ')}] differs from Figma [${metadata.contentBrands?.join(', ') || 'none'}]`);
+    if (VALIDATION_STRICT) {
+      console.error('   ❌ Build aborted in strict mode. Fix the mismatch or disable strict mode.\n');
+      process.exit(1);
+    }
   }
 }
 const BREAKPOINTS = pipelineConfig.breakpoints;

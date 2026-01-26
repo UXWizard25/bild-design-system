@@ -41,6 +41,10 @@ const COLLECTION_IDS = pipelineConfig.figma.collections;
 const COMPONENT_PREFIX = pipelineConfig.figma.componentPrefix;
 const COMPONENT_PREFIX_SEGMENT = COMPONENT_PREFIX.replace(/\/$/, ''); // 'Component' (without trailing slash)
 
+// Validation settings (from config)
+const VALIDATION_STRICT = pipelineConfig.validation?.strict ?? (process.env.CI === 'true');
+const VALIDATION_WARN_UNKNOWN = pipelineConfig.validation?.warnUnknownFigmaModes ?? true;
+
 /**
  * Checks if a token path represents a component token
  */
@@ -77,6 +81,261 @@ function getCollectionType(collectionId) {
     default:
       return null;
   }
+}
+
+/**
+ * Validates Config ↔ Figma synchronization (bidirectional validation)
+ *
+ * Critical errors (abort in strict mode):
+ * - Brand in config.axes but not found in Figma collection
+ * - Collection ID in config not found in Figma export
+ * - Mode ID in config not found in Figma collection
+ * - figmaName in config doesn't match any mode name in collection
+ *
+ * Warnings (always, never abort):
+ * - Additional mode in Figma not defined in config
+ *
+ * @param {Array} collections - Figma collections array from plugin export
+ * @returns {{ errors: string[], warnings: string[], valid: boolean }}
+ */
+function validateConfigAgainstFigma(collections) {
+  const errors = [];
+  const warnings = [];
+
+  console.log('\n🔍 Validating Config ↔ Figma synchronization...\n');
+
+  // Create collection ID → collection map for fast lookup
+  const collectionMap = new Map(collections.map(c => [c.id, c]));
+
+  // ---------------------------------------------------------------------------
+  // 1. Validate Collection IDs exist
+  // ---------------------------------------------------------------------------
+  const collectionNames = {
+    FONT_PRIMITIVE: '_FontPrimitive',
+    COLOR_PRIMITIVE: '_ColorPrimitive',
+    SIZE_PRIMITIVE: '_SizePrimitive',
+    SPACE_PRIMITIVE: '_SpacePrimitive',
+    DENSITY: 'Density',
+    BRAND_TOKEN_MAPPING: 'BrandTokenMapping',
+    BRAND_COLOR_MAPPING: 'BrandColorMapping',
+    BREAKPOINT_MODE: 'BreakpointMode',
+    COLOR_MODE: 'ColorMode',
+  };
+
+  Object.entries(COLLECTION_IDS).forEach(([key, id]) => {
+    if (!collectionMap.has(id)) {
+      errors.push(`Collection ID not found in Figma: ${collectionNames[key] || key} (${id})`);
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // 2. Validate Brand axes against Figma collections
+  // ---------------------------------------------------------------------------
+  const brandColorCollection = collectionMap.get(COLLECTION_IDS.BRAND_COLOR_MAPPING);
+  const brandTokenCollection = collectionMap.get(COLLECTION_IDS.BRAND_TOKEN_MAPPING);
+
+  const figmaColorModes = brandColorCollection?.modes?.map(m => m.name) || [];
+  const figmaContentModes = brandTokenCollection?.modes?.map(m => m.name) || [];
+
+  // Check each brand's axes
+  ALL_BRANDS.forEach(brandKey => {
+    const brand = pipelineConfig.brands[brandKey];
+    const figmaName = brand.figmaName;
+    const axes = brand.axes || [];
+
+    // Check color axis
+    if (axes.includes('color')) {
+      if (!figmaColorModes.includes(figmaName)) {
+        errors.push(
+          `Brand '${brandKey}' has axes: ['color'] but '${figmaName}' not found in BrandColorMapping.\n` +
+          `   Available modes: ${figmaColorModes.join(', ') || 'none'}\n` +
+          `   Fix: Either add '${figmaName}' mode to BrandColorMapping in Figma, or remove 'color' from axes.`
+        );
+      }
+    }
+
+    // Check content axis
+    if (axes.includes('content')) {
+      if (!figmaContentModes.includes(figmaName)) {
+        errors.push(
+          `Brand '${brandKey}' has axes: ['content'] but '${figmaName}' not found in BrandTokenMapping.\n` +
+          `   Available modes: ${figmaContentModes.join(', ') || 'none'}\n` +
+          `   Fix: Either add '${figmaName}' mode to BrandTokenMapping in Figma, or remove 'content' from axes.`
+        );
+      }
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // 3. Check for unknown Figma modes not in config (Figma → Config)
+  // ---------------------------------------------------------------------------
+  if (VALIDATION_WARN_UNKNOWN) {
+    const configColorFigmaNames = ALL_BRANDS
+      .filter(b => pipelineConfig.brands[b].axes?.includes('color'))
+      .map(b => pipelineConfig.brands[b].figmaName);
+    const configContentFigmaNames = ALL_BRANDS
+      .filter(b => pipelineConfig.brands[b].axes?.includes('content'))
+      .map(b => pipelineConfig.brands[b].figmaName);
+
+    figmaColorModes.forEach(mode => {
+      if (!configColorFigmaNames.includes(mode)) {
+        warnings.push(
+          `Figma BrandColorMapping has mode '${mode}' not defined in config.\n` +
+          `   This mode will be IGNORED during build.\n` +
+          `   Fix: Add a brand with figmaName: '${mode}' and axes: ['color', ...] to config.`
+        );
+      }
+    });
+
+    figmaContentModes.forEach(mode => {
+      if (!configContentFigmaNames.includes(mode)) {
+        warnings.push(
+          `Figma BrandTokenMapping has mode '${mode}' not defined in config.\n` +
+          `   This mode will be IGNORED during build.\n` +
+          `   Fix: Add a brand with figmaName: '${mode}' and axes: ['content', ...] to config.`
+        );
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. Validate Color Mode IDs
+  // ---------------------------------------------------------------------------
+  const colorModeCollection = collectionMap.get(COLLECTION_IDS.COLOR_MODE);
+  if (colorModeCollection) {
+    const figmaColorModeIds = new Set(colorModeCollection.modes.map(m => m.modeId));
+    const figmaColorModeNames = Object.fromEntries(
+      colorModeCollection.modes.map(m => [m.modeId, m.name])
+    );
+
+    Object.entries(pipelineConfig.modes.color).forEach(([modeKey, modeConfig]) => {
+      const figmaId = modeConfig.figmaId;
+      if (!figmaColorModeIds.has(figmaId)) {
+        errors.push(
+          `Color mode '${modeKey}' has figmaId '${figmaId}' not found in ColorMode collection.\n` +
+          `   Available mode IDs: ${colorModeCollection.modes.map(m => `${m.modeId} (${m.name})`).join(', ')}\n` +
+          `   Fix: Update figmaId in config to match Figma.`
+        );
+      }
+    });
+
+    // Warn about unknown color modes in Figma
+    if (VALIDATION_WARN_UNKNOWN) {
+      const configColorModeIds = new Set(
+        Object.values(pipelineConfig.modes.color).map(m => m.figmaId)
+      );
+      colorModeCollection.modes.forEach(mode => {
+        if (!configColorModeIds.has(mode.modeId)) {
+          warnings.push(
+            `Figma ColorMode has mode '${mode.name}' (${mode.modeId}) not defined in config.\n` +
+            `   This mode will be IGNORED during build.`
+          );
+        }
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 5. Validate Density Mode IDs
+  // ---------------------------------------------------------------------------
+  const densityCollection = collectionMap.get(COLLECTION_IDS.DENSITY);
+  if (densityCollection) {
+    const figmaDensityModeIds = new Set(densityCollection.modes.map(m => m.modeId));
+
+    Object.entries(pipelineConfig.modes.density).forEach(([modeKey, modeConfig]) => {
+      const figmaId = modeConfig.figmaId;
+      if (!figmaDensityModeIds.has(figmaId)) {
+        errors.push(
+          `Density mode '${modeKey}' has figmaId '${figmaId}' not found in Density collection.\n` +
+          `   Available mode IDs: ${densityCollection.modes.map(m => `${m.modeId} (${m.name})`).join(', ')}\n` +
+          `   Fix: Update figmaId in config to match Figma.`
+        );
+      }
+    });
+
+    // Warn about unknown density modes in Figma
+    if (VALIDATION_WARN_UNKNOWN) {
+      const configDensityModeIds = new Set(
+        Object.values(pipelineConfig.modes.density).map(m => m.figmaId)
+      );
+      densityCollection.modes.forEach(mode => {
+        if (!configDensityModeIds.has(mode.modeId)) {
+          warnings.push(
+            `Figma Density has mode '${mode.name}' (${mode.modeId}) not defined in config.\n` +
+            `   This mode will be IGNORED during build.`
+          );
+        }
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 6. Validate Breakpoint Mode IDs
+  // ---------------------------------------------------------------------------
+  const breakpointCollection = collectionMap.get(COLLECTION_IDS.BREAKPOINT_MODE);
+  if (breakpointCollection) {
+    const figmaBreakpointModeIds = new Set(breakpointCollection.modes.map(m => m.modeId));
+
+    Object.entries(pipelineConfig.modes.breakpoints).forEach(([modeKey, modeConfig]) => {
+      const figmaId = modeConfig.figmaId;
+      if (!figmaBreakpointModeIds.has(figmaId)) {
+        errors.push(
+          `Breakpoint '${modeKey}' has figmaId '${figmaId}' not found in BreakpointMode collection.\n` +
+          `   Available mode IDs: ${breakpointCollection.modes.map(m => `${m.modeId} (${m.name})`).join(', ')}\n` +
+          `   Fix: Update figmaId in config to match Figma.`
+        );
+      }
+    });
+
+    // Warn about unknown breakpoint modes in Figma
+    if (VALIDATION_WARN_UNKNOWN) {
+      const configBreakpointModeIds = new Set(
+        Object.values(pipelineConfig.modes.breakpoints).map(m => m.figmaId)
+      );
+      breakpointCollection.modes.forEach(mode => {
+        if (!configBreakpointModeIds.has(mode.modeId)) {
+          warnings.push(
+            `Figma BreakpointMode has mode '${mode.name}' (${mode.modeId}) not defined in config.\n` +
+            `   This mode will be IGNORED during build.`
+          );
+        }
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Output results
+  // ---------------------------------------------------------------------------
+  if (warnings.length > 0) {
+    console.log(`   ⚠️  ${warnings.length} warning(s):\n`);
+    warnings.forEach((warning, i) => {
+      console.log(`   ${i + 1}. ${warning}\n`);
+    });
+  }
+
+  if (errors.length > 0) {
+    console.log(`   ❌ ${errors.length} critical error(s):\n`);
+    errors.forEach((error, i) => {
+      console.log(`   ${i + 1}. ${error}\n`);
+    });
+
+    if (VALIDATION_STRICT) {
+      console.log(`\n   💥 STRICT MODE: Build aborted due to Config ↔ Figma mismatch.`);
+      console.log(`   Set validation.strict: false in pipeline.config.js to continue with warnings.\n`);
+    } else {
+      console.log(`   ⚠️  NON-STRICT MODE: Continuing with errors (may cause unexpected output).\n`);
+    }
+  }
+
+  if (errors.length === 0 && warnings.length === 0) {
+    console.log(`   ✅ Config and Figma are in sync.\n`);
+  }
+
+  return {
+    errors,
+    warnings,
+    valid: errors.length === 0,
+  };
 }
 
 /**
@@ -2671,6 +2930,16 @@ function main() {
   // Load plugin tokens
   const pluginData = loadPluginTokens();
 
+  // Validate Config ↔ Figma synchronization (bidirectional validation)
+  const validationResult = validateConfigAgainstFigma(pluginData.collections);
+
+  // Abort build in strict mode if critical errors found
+  if (!validationResult.valid && VALIDATION_STRICT) {
+    console.error('❌ Build aborted due to validation errors in strict mode.');
+    console.error('   Run with CI=false or set validation.strict: false to continue with warnings.\n');
+    process.exit(1);
+  }
+
   // Create alias lookup
   console.log('🔍 Creating Alias Lookup...');
   const aliasLookup = createAliasLookup(pluginData.collections);
@@ -2689,6 +2958,12 @@ function main() {
     colorBrands,
     contentBrands,
     allBrands: ALL_BRANDS,
+    validation: {
+      valid: validationResult.valid,
+      strictMode: VALIDATION_STRICT,
+      errors: validationResult.errors,
+      warnings: validationResult.warnings,
+    },
   };
   const metadataPath = path.join(OUTPUT_DIR, 'metadata.json');
   fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');

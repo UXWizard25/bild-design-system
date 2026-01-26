@@ -413,6 +413,44 @@ const rawConfig = {
      */
     storybookBasePath: '/bild-design-system/',
   },
+
+  // ===========================================================================
+  // VALIDATION
+  // Build-time validation settings for Config ↔ Figma synchronization.
+  // ===========================================================================
+  validation: {
+    /**
+     * Strict mode - abort build on critical Config ↔ Figma mismatches.
+     *
+     * When enabled, the build will FAIL (exit code 1) if:
+     * - Brand in config.axes not found in Figma collection
+     * - Collection ID in config not found in Figma export
+     * - Mode ID in config not found in Figma collection
+     *
+     * When disabled, these are logged as warnings but build continues.
+     *
+     * Recommended:
+     * - Local development: false (allows incremental work)
+     * - CI/CD pipeline: true (prevents broken deployments)
+     *
+     * Auto-detection: Defaults to true when CI environment variable is set.
+     */
+    strict: process.env.CI === 'true',
+
+    /**
+     * Warn about Figma modes not defined in config.
+     *
+     * When true, logs a warning if Figma contains brand modes that
+     * are not configured in the brands section. This catches cases
+     * where designers add new brands but developers haven't updated
+     * the config yet.
+     *
+     * This is always a warning, never an error (even in strict mode),
+     * because extra Figma modes don't break the build - they're just
+     * ignored.
+     */
+    warnUnknownFigmaModes: true,
+  },
 };
 
 // =============================================================================
