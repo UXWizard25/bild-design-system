@@ -66,10 +66,87 @@ npm run publish:vue            # npm publish -w @marioschmidt/design-system-vue
 
 **Source of Truth:** `packages/tokens/src/bild-design-system-raw-data.json` (Figma Export via CodeBridge Plugin)
 
+**Pipeline Configuration:** `build-config/tokens/pipeline.config.js` (single source of truth for all pipeline settings)
+
 **Platform Documentation:**
 - Web: `packages/tokens/docs/css.md`, `packages/tokens/docs/js.md`
 - iOS: `packages/tokens-ios/README.md`, `packages/tokens-ios/Documentation/USAGE.md`
 - Android: `packages/tokens-android/README.md`, `packages/tokens-android/docs/USAGE.md`
+
+---
+
+## Single-Source-of-Truth Principle
+
+> **⚠️ IMPORTANT: Guidance for AI Assistants and Developers**
+>
+> This pipeline follows a **single-source-of-truth** architecture. When implementing new features or modifying scripts, always prioritize reading configuration values from `pipeline.config.js` instead of hardcoding them.
+
+### Configuration Hub
+
+All configurable values are centralized in **`build-config/tokens/pipeline.config.js`**:
+
+| Category | Example Settings |
+|----------|------------------|
+| **Identity** | System name, copyright, repository URL |
+| **Brands** | Brand definitions with `figmaName` and `axes` property |
+| **Modes** | Color modes, density modes, breakpoints with Figma IDs |
+| **Figma** | Collection IDs, input file, component prefix |
+| **CSS** | `fontSizeUnit` (`px`/`rem`), data-attribute names |
+| **Platforms** | iOS/Android enable/disable, size class mappings |
+| **Paths** | Input/output directories |
+| **Packages** | npm/Maven package names |
+| **Validation** | Strict mode, warning settings |
+
+### Guidelines for Future Development
+
+When adding new features or scripts:
+
+1. **Read from config first**: Check if the value already exists in `pipeline.config.js`
+   ```javascript
+   const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
+   const brands = pipelineConfig.allBrands;  // ✅ Dynamic from config
+   // NOT: const brands = ['bild', 'sportbild'];  // ❌ Hardcoded
+   ```
+
+2. **Add new settings to config**: If a value should be configurable, add it to `rawConfig` section
+   ```javascript
+   // In pipeline.config.js → rawConfig
+   myFeature: {
+     enabled: true,
+     maxItems: 100,
+   },
+   ```
+
+3. **Use derived values**: Complex calculations should go in the `derived` section
+   ```javascript
+   // In pipeline.config.js → derived
+   myDerivedValue: Object.keys(rawConfig.brands).filter(...),
+   ```
+
+4. **Document in PIPELINE-CONFIG.md**: Add new settings to the configuration reference
+
+### Benefits
+
+- **Easy adaptation**: Other design systems can fork and modify only `pipeline.config.js`
+- **Consistency**: All scripts use the same source for brands, modes, paths
+- **Validation**: Config ↔ Figma mismatches are caught at build time
+- **Discoverability**: All settings in one place with JSDoc comments
+
+### Validation
+
+The pipeline includes **bidirectional validation** between config and Figma:
+
+- **Config → Figma**: Ensures brands/modes defined in config exist in Figma
+- **Figma → Config**: Warns about Figma modes not defined in config
+
+```javascript
+validation: {
+  strict: process.env.CI === 'true',  // Auto-enabled in CI
+  warnUnknownFigmaModes: true,        // Warn about unconfigured Figma modes
+}
+```
+
+📖 See `build-config/tokens/PIPELINE-CONFIG.md` for full configuration documentation.
 
 ---
 
@@ -1439,6 +1516,9 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify iOS icon generation | `scripts/icons/generate-ios.js` |
 | Modify Android icon generation | `scripts/icons/generate-android.js` |
 | Change icon CI/CD triggers | `.github/workflows/publish-icons-on-merge.yml` → `paths` |
+| Enable/disable validation strict mode | `pipeline.config.js` → `validation.strict` |
+| Configure unknown Figma mode warnings | `pipeline.config.js` → `validation.warnUnknownFigmaModes` |
+| Modify validation logic | `preprocess.js` → `validateConfigAgainstFigma()` function |
 
 ---
 
@@ -1459,13 +1539,21 @@ The Android code generation is **mostly dynamic** and automatically adapts to to
 
 ### Adding a New Brand
 
-To add a new brand, update these arrays in `build.js` (lines 27-29):
+To add a new brand, update `pipeline.config.js` → `brands` section:
 
 ```javascript
-const BRANDS = ['bild', 'sportbild', 'advertorial', 'newbrand'];
-const COLOR_BRANDS = ['bild', 'sportbild', 'newbrand'];  // If brand has own colors
-const CONTENT_BRANDS = ['bild', 'sportbild', 'advertorial', 'newbrand'];
+brands: {
+  // ... existing brands
+  newbrand: {
+    figmaName: 'NewBrand',           // Exact name in Figma (case-sensitive)
+    axes: ['color', 'content'],      // Which axes this brand supports
+  },
+},
 ```
+
+The `axes` property determines which token collections the brand appears in:
+- `['color', 'content']` - Full brand with own colors AND sizing/typography
+- `['content']` - Content-only brand (inherits colors from another brand, like Advertorial)
 
 Everything else (enums, theme provider, imports) will be auto-generated.
 

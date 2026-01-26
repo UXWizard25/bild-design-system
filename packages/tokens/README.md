@@ -915,8 +915,13 @@ grep "Space2x" dist/ios/shared/Spaceprimitive.swift
 **Allowed (Pipeline Development):**
 - ✅ Changes to build scripts (`scripts/`)
 - ✅ Changes to configuration (`build-config/`)
+- ✅ Pipeline configuration (`build-config/tokens/pipeline.config.js` - single source of truth)
 - ✅ Workflow adjustments (`.github/workflows/`)
 - ✅ Documentation
+
+**Configuration:**
+- All pipeline settings are centralized in `build-config/tokens/pipeline.config.js`
+- See [PIPELINE-CONFIG.md](../../build-config/tokens/PIPELINE-CONFIG.md) for full documentation
 
 ---
 
