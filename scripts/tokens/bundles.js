@@ -37,9 +37,9 @@ const path = require('path');
 const { glob } = require('glob');
 const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 
-const DIST_DIR = path.join(__dirname, '../..', pipelineConfig.output.distDir);
+const DIST_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensDist);
 const CSS_DIR = path.join(DIST_DIR, 'css');
-const BRANDS = pipelineConfig.brands.all;
+const BRANDS = pipelineConfig.allBrands;
 const rootPackageJson = require('../../package.json');
 const tokensPackageJson = require('../../packages/tokens/package.json');
 

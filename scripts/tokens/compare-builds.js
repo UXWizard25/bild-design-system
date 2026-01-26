@@ -15,10 +15,10 @@ const path = require('path');
 const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 
 // Derive dynamic patterns from config
-const COLOR_MODES = pipelineConfig.modes.color;
-const BREAKPOINT_KEYS = Object.keys(pipelineConfig.modes.breakpoints);
-const DENSITY_MODES = pipelineConfig.modes.density;
-const COMPONENT_PREFIX = pipelineConfig.source.pathConventions.componentPrefix;
+const COLOR_MODES = pipelineConfig.colorModes;
+const BREAKPOINT_KEYS = pipelineConfig.breakpoints;
+const DENSITY_MODES = pipelineConfig.densityModes;
+const COMPONENT_PREFIX = pipelineConfig.figma.componentPrefix;
 const COLOR_MODES_PATTERN = COLOR_MODES.join('|');
 const BREAKPOINT_PATTERN = BREAKPOINT_KEYS.join('|');
 const DENSITY_PATTERN = DENSITY_MODES.join('|');

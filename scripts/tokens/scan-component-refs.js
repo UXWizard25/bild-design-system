@@ -21,8 +21,8 @@ const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 // CONSTANTS
 // =============================================================================
 
-const COMPONENT_PREFIX = pipelineConfig.components.prefix;
-const DEFAULT_COMPONENTS_DIR = path.join(__dirname, '../../', pipelineConfig.components.srcDir);
+const COMPONENT_PREFIX = pipelineConfig.stencil.componentPrefix;
+const DEFAULT_COMPONENTS_DIR = path.join(__dirname, '../../', pipelineConfig.paths.componentsSrc);
 
 // =============================================================================
 // SCANNER FUNCTIONS

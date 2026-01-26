@@ -380,4 +380,37 @@ The workflow requires:
 
 ---
 
-**Last updated**: 2025-12-09
+### Configuration Reference
+
+All pipeline settings are centralized in `build-config/tokens/pipeline.config.js`:
+
+| Category | Settings |
+|----------|----------|
+| **Identity** | System name, copyright, repository URL |
+| **Brands** | Brand definitions with `figmaName` and `axes` (color/content) |
+| **Modes** | Color modes, density modes, breakpoints with Figma IDs |
+| **Validation** | `strict` mode (auto-enabled in CI), warning settings |
+| **Platforms** | iOS/Android enable/disable, size class mappings |
+| **Paths** | Input/output directories |
+
+#### Build Validation
+
+The token build performs **bidirectional validation** between config and Figma:
+
+- **Config → Figma**: Verifies brands/modes in config exist in Figma
+- **Figma → Config**: Warns about Figma modes not defined in config
+
+In CI (`CI=true`), validation runs in **strict mode**:
+- Critical errors (missing brands/modes) abort the build
+- Warnings are logged but don't fail the build
+
+```yaml
+# Strict mode is auto-enabled in GitHub Actions
+CI: 'true'  # Set by GitHub automatically
+```
+
+📖 See [PIPELINE-CONFIG.md](../../build-config/tokens/PIPELINE-CONFIG.md) for full configuration documentation.
+
+---
+
+**Last updated**: 2026-01-26

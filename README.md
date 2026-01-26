@@ -80,6 +80,14 @@ Both pipelines use the **CodeBridge Figma Plugin** for automated exports.
 | Android Compose | [packages/tokens-android/docs/USAGE.md](./packages/tokens-android/docs/USAGE.md) |
 | iOS SwiftUI | [packages/tokens-ios/Documentation/USAGE.md](./packages/tokens-ios/Documentation/USAGE.md) |
 
+### ⚙️ Configuration
+
+| File | Purpose |
+|------|---------|
+| [pipeline.config.js](./build-config/tokens/pipeline.config.js) | **Single source of truth** for all pipeline settings (brands, modes, paths) |
+| [PIPELINE-CONFIG.md](./build-config/tokens/PIPELINE-CONFIG.md) | Configuration documentation and setup guide |
+| [CLAUDE.md](./CLAUDE.md) | AI assistant context with full architecture details |
+
 ---
 
 ## 🏗️ Architecture
@@ -492,6 +500,7 @@ npm run build:storybook    # Build static site
 
 - Changes to build scripts (`scripts/`)
 - Configuration changes (`build-config/`)
+- Pipeline configuration (`build-config/tokens/pipeline.config.js` - single source of truth)
 - Workflow adjustments (`.github/workflows/`)
 - Documentation updates
 - Stencil component development (`packages/components/core/src/`)

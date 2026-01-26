@@ -1,324 +1,670 @@
 /**
  * Multi-Design-System Pipeline Configuration
  *
- * This file contains ALL system-specific values for the token pipeline.
- * To adapt the pipeline for a different design system, only this file
- * needs to be modified (plus the Figma export JSON).
+ * SINGLE SOURCE OF TRUTH for all pipeline settings.
+ * To adapt for a different design system, modify rawConfig below + Figma export JSON.
  *
- * Architecture invariants (NOT configurable):
- * - 4-Layer Hierarchy (Primitives → Mapping → Semantic → Components)
- * - Dual-Axis Architecture (ColorBrand + ContentBrand)
- * - Shadow DOM support (:host() selectors always generated)
- * - Effects are brand-independent (only light/dark)
- * - Density is brand-independent (shared across brands)
- * - Typography composite structure (fontFamily, fontWeight, fontSize, lineHeight, letterSpacing, textCase, textDecoration)
- * - Shadow composite structure (color, offsetX, offsetY, radius, spread)
- * - lineHeight as unitless ratio (CSS best practice)
- * - var() reference chains with conditional fallbacks
- * - @media queries for responsive breakpoints
+ * 📖 Full documentation: ./PIPELINE-CONFIG.md
+ *
+ * File structure:
+ * ───────────────────────────────────────────────────────────────────────────
+ *   ✅ rawConfig        → EDIT THIS: All user-configurable values
+ *   ❌ derived          → DO NOT EDIT: Auto-computed from rawConfig
+ *   ❌ Runtime funcs    → DO NOT EDIT: Figma validation functions
+ * ───────────────────────────────────────────────────────────────────────────
  */
 
-module.exports = {
-  // ═══════════════════════════════════════════════════════════════════════════
-  // IDENTITY — Who is this design system?
-  // ═══════════════════════════════════════════════════════════════════════════
+// =============================================================================
+// ✅ RAW CONFIG - EDIT THIS SECTION
+// =============================================================================
+// All user-configurable values are defined here.
+// Changes here automatically propagate to derived values and all build scripts.
+//
+// Sections:
+// - identity     → System name, copyright, URLs
+// - brands       → Brand definitions with dual-axis support
+// - modes        → Color modes, density, breakpoints
+// - figma        → Figma collection IDs and file settings
+// - css          → CSS-specific output options
+// - platforms    → Enable/disable iOS, Android; native mappings
+// - paths        → Directory paths for input/output
+// - packages     → npm/Maven package names
+// - stencil      → Web Components configuration
+// - deployment   → Hosting settings
+// =============================================================================
+
+const rawConfig = {
+  // ===========================================================================
+  // IDENTITY
+  // Used in generated file headers, documentation, and package metadata.
+  // ===========================================================================
   identity: {
-    /** Display name used in file headers and documentation */
+    /** Full display name shown in generated file headers and documentation */
     name: 'BILD Design System',
-    /** Short identifier used in paths and IDs */
+
+    /** Short identifier used in paths, CSS class prefixes, and IDs */
     shortName: 'bild',
-    /** Copyright holder for generated file headers */
+
+    /** Copyright holder for license headers in generated files */
     copyright: 'Axel Springer Deutschland GmbH',
-    /** Repository URL for documentation links */
+
+    /** Repository URL for documentation links and package.json repository field */
     repositoryUrl: 'https://github.com/UXWizard25/bild-design-system',
   },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SOURCE — Where do tokens come from? (Figma binding)
-  // ═══════════════════════════════════════════════════════════════════════════
-  source: {
-    /** Figma export filename (CodeBridge Plugin output) */
+  // ===========================================================================
+  // BRANDS - Dual-Axis Architecture
+  //
+  // The design system uses TWO INDEPENDENT AXES for brand selection:
+  //
+  //   ColorBrand axis (data-color-brand)
+  //   └── Controls: colors, effects, shadows
+  //   └── Figma: BrandColorMapping collection
+  //   └── Options: bild, sportbild
+  //
+  //   ContentBrand axis (data-content-brand)
+  //   └── Controls: sizing, typography, spacing
+  //   └── Figma: BrandTokenMapping collection
+  //   └── Options: bild, sportbild, advertorial
+  //
+  // This enables combinations like:
+  //   data-color-brand="bild" + data-content-brand="advertorial"
+  //   → Advertorial content styled with BILD colors
+  //
+  // Each brand key becomes an identifier used in:
+  // - File paths: brands/{key}/...
+  // - CSS selectors: [data-color-brand="{key}"], [data-content-brand="{key}"]
+  // - Native enums: ColorBrand.{Key}, ContentBrand.{Key}
+  // - JS exports: brands.{key}
+  //
+  // ⚠️  NAMING CONSTRAINT: Keys must NOT contain hyphens ('-').
+  //     Use camelCase or single words (e.g., 'sportbild', 'myBrand').
+  //     Reason: Keys become CSS custom property segments where hyphens
+  //     are used as delimiters, making parsing ambiguous.
+  // ===========================================================================
+  brands: {
+    /**
+     * BILD - Main brand (supports both axes)
+     *
+     * @property {string} figmaName - Exact mode name in Figma (case-sensitive).
+     *           Used to match modes across BrandTokenMapping and BrandColorMapping
+     *           collections. Must match exactly what appears in Figma.
+     * @property {boolean} isDefault - This brand is used for:
+     *           - Native CompositionLocal/Environment defaults
+     *           - JS createTheme() fallback brand
+     *           - Default selection in Storybook toolbar
+     * @property {string[]} axes - Which axes this brand supports:
+     *           - 'color': Has entry in BrandColorMapping (own colors/effects)
+     *           - 'content': Has entry in BrandTokenMapping (own sizing/typography)
+     *           Note: These are validated against Figma data at build time.
+     */
+    bild: {
+      figmaName: 'BILD',
+      isDefault: true,
+      axes: ['color', 'content'],
+    },
+
+    /**
+     * SportBILD - Sports brand variant (supports both axes)
+     */
+    sportbild: {
+      figmaName: 'SportBILD',
+      axes: ['color', 'content'],
+    },
+
+    /**
+     * Advertorial - Advertising content brand (content axis only)
+     *
+     * This brand has NO entry in BrandColorMapping - it inherits colors
+     * from the ColorBrand axis (either BILD or SportBILD colors).
+     * It has its OWN sizing/typography in BrandTokenMapping.
+     *
+     * Usage example:
+     *   data-color-brand="bild" data-content-brand="advertorial"
+     *   → Advertorial sizing with BILD red colors
+     */
+    advertorial: {
+      figmaName: 'Advertorial',
+      axes: ['content'],
+    },
+  },
+
+  // ===========================================================================
+  // MODES
+  // Defines all theming axes: color themes, density variants, and breakpoints.
+  //
+  // ⚠️  NAMING CONSTRAINT: All mode keys must NOT contain hyphens ('-').
+  //     Use camelCase or single words.
+  //     Reason: Mode names are embedded in CSS custom property names
+  //     (e.g., --density-{mode}-stack-space-resp-md). Hyphens make it
+  //     impossible to distinguish mode boundaries from token segments.
+  // ===========================================================================
+  modes: {
+    /**
+     * Color/theme modes (light/dark theming)
+     * Controls semantic color tokens and effects.
+     *
+     * @property {string} figmaId - Mode ID from ColorMode collection in Figma.
+     *           Found in Figma: Variables → ColorMode collection → mode settings.
+     * @property {boolean} [isDefault] - Initial theme for:
+     *           - JS createTheme() default colorMode parameter
+     *           - SSR/initial page render
+     *           - Storybook initial state
+     */
+    color: {
+      light: { figmaId: '588:0', isDefault: true },
+      dark: { figmaId: '592:1' },
+    },
+
+    /**
+     * Density modes for spacing variants
+     * Controls stack-space, inline-space, and component-specific spacing.
+     *
+     * @property {string} figmaId - Mode ID from Density collection in Figma.
+     * @property {boolean} [isDefault] - Initial density for:
+     *           - JS createTheme() default density parameter
+     *           - Native CompositionLocal defaults
+     */
+    density: {
+      default: { figmaId: '5695:2', isDefault: true },
+      dense: { figmaId: '5695:1' },
+      spacious: { figmaId: '5695:3' },
+    },
+
+    /**
+     * Responsive breakpoints for @media queries
+     * Order in this object determines the cascade order in CSS.
+     * The breakpoint with isBase=true is the mobile-first base (no @media query).
+     *
+     * @property {string} figmaId - Mode ID from BreakpointMode collection in Figma.
+     * @property {number} minWidth - CSS min-width value in pixels for @media query.
+     *           Example: minWidth: 600 → @media (min-width: 600px) { }
+     * @property {boolean} [isBase] - If true, this breakpoint is the mobile-first base:
+     *           - No @media query generated (styles apply by default)
+     *           - Used as reference for responsive token comparisons
+     *           - Typically the smallest breakpoint (mobile)
+     */
+    breakpoints: {
+      xs: { figmaId: '7017:0', minWidth: 320, isBase: true },
+      sm: { figmaId: '16706:1', minWidth: 390 },
+      md: { figmaId: '7015:1', minWidth: 600 },
+      lg: { figmaId: '7015:2', minWidth: 1024 },
+    },
+  },
+
+  // ===========================================================================
+  // FIGMA
+  // Figma-specific identifiers. These are stable references tied to the
+  // specific Figma file structure. They change only if collections are
+  // renamed or recreated in Figma.
+  // ===========================================================================
+  figma: {
+    /**
+     * Figma export filename (CodeBridge Plugin output)
+     * This file is placed in paths.tokensInput directory.
+     */
     inputFile: 'bild-design-system-raw-data.json',
-    /** Directory containing the input file (relative to repo root) */
-    inputDir: 'packages/tokens/src/',
-    /** Directory for preprocessed Style Dictionary tokens (relative to repo root) */
-    outputDir: 'packages/tokens/.tokens/',
 
     /**
      * Figma Variable Collection IDs
-     * These are stable references tied to the specific Figma file.
-     * They change only if collections are recreated in Figma.
+     * Found in Figma: Variables panel → Collection settings → ID
+     * These IDs are stable unless collections are deleted and recreated.
      */
     collections: {
+      /** Font families, weights - Layer 0 primitive */
       FONT_PRIMITIVE: 'VariableCollectionId:470:1450',
+      /** Color palette (hex values) - Layer 0 primitive */
       COLOR_PRIMITIVE: 'VariableCollectionId:539:2238',
+      /** Size scale (px values) - Layer 0 primitive */
       SIZE_PRIMITIVE: 'VariableCollectionId:4072:1817',
+      /** Spacing scale (px values) - Layer 0 primitive */
       SPACE_PRIMITIVE: 'VariableCollectionId:2726:12077',
+      /** Density variants - Layer 1 mapping (brand-independent) */
       DENSITY: 'VariableCollectionId:5695:5841',
+      /** Brand token mapping (sizing, typography) - Layer 1 mapping */
       BRAND_TOKEN_MAPPING: 'VariableCollectionId:18038:10593',
+      /** Brand color mapping - Layer 1 mapping (determines colorBrands) */
       BRAND_COLOR_MAPPING: 'VariableCollectionId:18212:14495',
+      /** Responsive breakpoints - Layer 2 semantic */
       BREAKPOINT_MODE: 'VariableCollectionId:7017:25696',
+      /** Light/dark themes - Layer 2 semantic */
       COLOR_MODE: 'VariableCollectionId:588:1979',
     },
 
     /**
-     * Figma Variable Mode IDs
-     * These map mode names to Figma's internal mode identifiers.
-     * They change if modes are renamed or recreated in Figma.
-     * ⚠️  Keys must NOT contain hyphens — same constraint as modes/brands sections.
+     * Token path prefix that identifies Component tokens (Layer 3)
+     * Tokens with paths starting with this prefix are treated as component tokens.
+     * Example: "Component/Button/primary-bg" → component token for Button
      */
-    modes: {
-      brands: {
-        bild: { modeId: '18038:0', figmaName: 'BILD' },
-        sportbild: { modeId: '18094:0', figmaName: 'SportBILD' },
-        advertorial: { modeId: '18094:1', figmaName: 'Advertorial' },
-      },
-      breakpoints: {
-        xs: '7017:0',
-        sm: '16706:1',
-        md: '7015:1',
-        lg: '7015:2',
-      },
-      colorModes: {
-        light: '588:0',
-        dark: '592:1',
-      },
-      densityModes: {
-        default: '5695:2',
-        dense: '5695:1',
-        spacious: '5695:3',
-      },
-    },
+    componentPrefix: 'Component/',
+  },
+
+  // ===========================================================================
+  // CSS
+  // CSS-specific output configuration.
+  // ===========================================================================
+  css: {
+    /**
+     * CSS font-size output unit
+     * - 'px': Traditional pixel values (e.g., "21px") - predictable, design-accurate
+     * - 'rem': Accessibility-friendly relative units (e.g., "1.3125rem") - scales with user preference
+     *
+     * Note: lineHeight is ALWAYS unitless (ratio) regardless of this setting.
+     * Note: Native platforms (iOS/Android) are unaffected - they always use pt/dp.
+     */
+    fontSizeUnit: 'px',
 
     /**
-     * Token path conventions
-     * How the pipeline identifies different token types from Figma paths.
+     * Base font size for rem calculations (browser default: 16px)
+     * Only used when fontSizeUnit is 'rem'.
+     * Example: 21px with remBase 16 → 1.3125rem
      */
-    pathConventions: {
-      /** Tokens starting with this prefix are treated as Component tokens (Layer 3) */
-      componentPrefix: 'Component/',
-    },
-  },
+    remBase: 16,
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // BRANDS — Which brands does this design system support?
-  //
-  // ⚠️  NAMING CONSTRAINT: Brand names must NOT contain hyphens ('-').
-  //     Use camelCase or single words (e.g., 'sportbild', 'myBrand').
-  //     Reason: Brand names become CSS custom property segments
-  //     (e.g., --density-{brand}-...). Hyphens make parsing ambiguous.
-  // ═══════════════════════════════════════════════════════════════════════════
-  brands: {
-    /** All brands (superset) — no hyphens allowed in names */
-    all: ['bild', 'sportbild', 'advertorial'],
-    /** ColorBrand axis: brands with own colors + effects */
-    colorBrands: ['bild', 'sportbild'],
-    /** ContentBrand axis: brands with own sizing/typography */
-    contentBrands: ['bild', 'sportbild', 'advertorial'],
-    /** Default brand for fallbacks and CompositionLocal defaults */
-    defaultBrand: 'bild',
-    /** Display names for UI (toolbar labels, documentation) */
-    displayNames: { bild: 'BILD', sportbild: 'SportBILD', advertorial: 'Advertorial' },
-  },
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // MODES — Which modes/variants does the system support?
-  //
-  // ⚠️  NAMING CONSTRAINT: All mode names and breakpoint keys must NOT contain
-  //     hyphens ('-'). Use camelCase or single words.
-  //     Examples: 'light', 'dark', 'highContrast' (NOT 'high-contrast')
-  //              'xs', 'sm', 'extraLarge' (NOT 'extra-large')
-  //              'default', 'extraDense' (NOT 'extra-dense')
-  //     Reason: Mode names are embedded in CSS custom property names
-  //     (e.g., --density-{mode}-stack-space-resp-md). Hyphens in mode names
-  //     make it impossible to distinguish mode boundaries from token segments.
-  //     They also break camelCase conversion for JS/Swift/Kotlin output.
-  // ═══════════════════════════════════════════════════════════════════════════
-  modes: {
-    /** Color modes (theme) — no hyphens allowed */
-    color: ['light', 'dark'],
-    /** Density modes — no hyphens allowed */
-    density: ['default', 'dense', 'spacious'],
-    /** Display names for density modes (UI labels, Storybook toolbar) */
-    densityDisplayNames: { default: 'Default', dense: 'Dense', spacious: 'Spacious' },
-    /** Display names for color modes (release notes, documentation) */
-    colorDisplayNames: { light: 'Light', dark: 'Dark' },
     /**
-     * Breakpoints with min-width values in px.
-     * The first breakpoint (xs) is the base — no @media query generated.
-     * All subsequent breakpoints generate @media (min-width: Npx) queries.
-     * deviceName is used in documentation and release notes.
-     * ⚠️  Keys must NOT contain hyphens (same constraint as mode names).
+     * HTML data-attribute names for CSS selector targeting
+     * These appear in generated CSS selectors like [data-color-brand="bild"].
+     * Also used in Storybook toolbar controls and native platform bindings.
      */
-    breakpoints: {
-      xs: { minWidth: 320, deviceName: 'Mobile (default)' },
-      sm: { minWidth: 390, deviceName: 'Large Mobile' },
-      md: { minWidth: 600, deviceName: 'Tablet' },
-      lg: { minWidth: 1024, deviceName: 'Desktop' },
+    dataAttributes: {
+      /** Attribute for color/effects brand selection */
+      colorBrand: 'data-color-brand',
+      /** Attribute for content/sizing/typography brand selection */
+      contentBrand: 'data-content-brand',
+      /** Attribute for light/dark theme selection */
+      theme: 'data-theme',
+      /** Attribute for density mode selection */
+      density: 'data-density',
     },
   },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // PLATFORMS — Which platform outputs are generated?
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
+  // PLATFORMS
+  // Enable/disable platform outputs and platform-specific settings.
+  // ===========================================================================
   platforms: {
+    /**
+     * CSS/Web output
+     * Generates: primitives.css, theme files, component files, bundles
+     */
     css: {
       enabled: true,
-      /**
-       * CSS font-size output unit.
-       * - 'px': Traditional pixel values (e.g., "21px")
-       * - 'rem': Accessibility-friendly relative units (e.g., "1.3125rem")
-       * Note: lineHeight is always unitless (ratio), independent of this.
-       * Note: Native platforms are unaffected by this setting.
-       */
-      fontSizeUnit: 'px',
-      /** Base font size for rem calculation (browser default: 16) */
-      remBase: 16,
-      /**
-       * HTML data-attribute names for theme switching.
-       * These appear in CSS selectors like [data-color-brand="bild"].
-       */
-      dataAttributes: {
-        colorBrand: 'data-color-brand',
-        contentBrand: 'data-content-brand',
-        theme: 'data-theme',
-        density: 'data-density',
-      },
-      /**
-       * CSS var() fallback strategy per reference type.
-       * true = include fallback value (split-loading safety)
-       * false = no fallback (fail visible for config errors)
-       */
-      fallbackStrategy: {
-        primitiveRefs: true,
-        semanticRefs: false,
-        componentRefs: false,
-      },
     },
 
-    scss: {
-      enabled: false,
-    },
-
-    js: {
-      enabled: false,
-      /** Generate React ThemeProvider, useTheme, useBreakpoint? */
-      react: true,
-    },
-
+    /**
+     * iOS/Swift output (Swift Package Manager)
+     * Generates: Swift structs, protocols, theme provider
+     */
     ios: {
       enabled: true,
-      /** Swift Package Manager module name */
+
+      /** Swift Package Manager module name (import BildDesignTokens) */
       moduleName: 'BildDesignTokens',
-      /** Output directory for generated Swift files (relative to repo root) */
-      outputDir: 'packages/tokens-ios/Sources/BildDesignTokens/',
+
       /**
-       * iOS SizeClass mapping (Apple HIG: 2 classes)
-       * Maps SizeClass names to breakpoint keys from modes.breakpoints
+       * iOS SizeClass to breakpoint mapping (Apple HIG: 2 size classes)
+       * Maps UIUserInterfaceSizeClass values to breakpoint keys.
+       * Used in DesignSystemTheme for responsive token resolution.
        */
       sizeClasses: {
+        /** UIUserInterfaceSizeClass.compact → uses 'sm' breakpoint tokens */
         compact: 'sm',
+        /** UIUserInterfaceSizeClass.regular → uses 'lg' breakpoint tokens */
         regular: 'lg',
       },
     },
 
+    /**
+     * Android/Kotlin output (Maven/Gradle)
+     * Generates: Kotlin objects, interfaces, Compose theme provider
+     */
     android: {
       enabled: true,
-      /** Kotlin package namespace */
+
+      /** Kotlin package namespace (package com.bild.designsystem) */
       packageName: 'com.bild.designsystem',
-      /** Maven group:artifact ID for publishing */
-      mavenCoordinates: 'de.bild.design:tokens',
-      /** Output directory for generated Kotlin files (relative to repo root) */
-      outputDir: 'packages/tokens-android/src/main/kotlin/com/bild/designsystem/',
+
       /**
-       * Android WindowSizeClass mapping (Material 3: 3 classes)
-       * Maps WindowSizeClass names to breakpoint keys from modes.breakpoints
+       * Android WindowSizeClass to breakpoint mapping (Material 3: 3 size classes)
+       * Maps WindowSizeClass values to breakpoint keys.
+       * Used in DesignSystemTheme for responsive token resolution.
        */
       sizeClasses: {
+        /** WindowWidthSizeClass.Compact (<600dp) → uses 'sm' breakpoint tokens */
         compact: 'sm',
+        /** WindowWidthSizeClass.Medium (600-839dp) → uses 'md' breakpoint tokens */
         medium: 'md',
+        /** WindowWidthSizeClass.Expanded (≥840dp) → uses 'lg' breakpoint tokens */
         expanded: 'lg',
       },
     },
   },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // OUTPUT — How is the output structured?
-  // ═══════════════════════════════════════════════════════════════════════════
-  output: {
-    /** Distribution output directory (relative to repo root) */
-    distDir: 'packages/tokens/dist/',
-    /**
-     * Whether to include Figma description comments per platform.
-     * Controls token.comment output as code comments.
-     * Does NOT affect file headers, section comments, or structural comments.
-     */
-    showDescriptions: {
-      css: false,
-      scss: true,
-      js: true,
-      ios: true,
-      android: true,
-    },
-    /** Include boolean/visibility tokens in output? */
-    booleanTokens: false,
+  // ===========================================================================
+  // PATHS
+  // Directory paths relative to repository root.
+  // Centrally defined for consistency across all scripts.
+  // ===========================================================================
+  paths: {
+    /** Input directory containing Figma export JSON */
+    tokensInput: 'packages/tokens/src/',
+
+    /** Intermediate directory for preprocessed Style Dictionary tokens */
+    tokensIntermediate: 'packages/tokens/.tokens/',
+
+    /** Distribution directory for built token outputs (css/, json/) */
+    tokensDist: 'packages/tokens/dist/',
+
+    /** iOS Swift output directory */
+    iosOutput: 'packages/tokens-ios/Sources/BildDesignTokens/',
+
+    /** Android Kotlin output directory */
+    androidOutput: 'packages/tokens-android/src/main/kotlin/com/bild/designsystem/',
+
+    /** Stencil Web Components source directory */
+    componentsSrc: 'packages/components/core/src',
   },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // PACKAGES — npm/Maven/SPM package identifiers
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
+  // PACKAGES
+  // Package identifiers for npm, Maven, and SPM registries.
+  // ===========================================================================
   packages: {
-    tokens: {
-      /** npm package name for web tokens */
-      npm: '@marioschmidt/design-system-tokens',
-    },
-    components: {
-      /** npm package name for Stencil Web Components */
-      npm: '@marioschmidt/design-system-components',
-    },
-    react: {
-      /** npm package name for React wrappers */
-      npm: '@marioschmidt/design-system-react',
-    },
-    vue: {
-      /** npm package name for Vue 3 wrappers */
-      npm: '@marioschmidt/design-system-vue',
-    },
-    icons: {
-      /** npm package name for SVG icons */
-      npm: '@marioschmidt/design-system-icons',
-    },
-    iconsReact: {
-      /** npm package name for React icon components */
-      npm: '@marioschmidt/design-system-icons-react',
-    },
+    /** npm package: @scope/design-system-tokens */
+    tokens: '@marioschmidt/design-system-tokens',
+
+    /** npm package: @scope/design-system-components (Stencil) */
+    components: '@marioschmidt/design-system-components',
+
+    /** npm package: @scope/design-system-react (React wrappers) */
+    react: '@marioschmidt/design-system-react',
+
+    /** npm package: @scope/design-system-vue (Vue 3 wrappers) */
+    vue: '@marioschmidt/design-system-vue',
   },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // STENCIL — Web Component library configuration
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
+  // STENCIL
+  // Stencil Web Components library configuration.
+  // ===========================================================================
   stencil: {
-    /** Web Component namespace (used as tag prefix: <bds-button>, loader name, etc.) */
+    /**
+     * Web Component namespace
+     * Used as: tag prefix (<bds-button>), loader name (bds.esm.js), dist folder
+     */
     namespace: 'bds',
-    /** Dev server port for Stencil */
-    devServerPort: 3333,
+
+    /**
+     * Component tag prefix for source files
+     * Used to identify component CSS files: ds-button.css, ds-card.css
+     */
+    componentPrefix: 'ds-',
   },
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // COMPONENTS — Component library structure
-  // ═══════════════════════════════════════════════════════════════════════════
-  components: {
-    /** Tag prefix for web components (e.g., 'ds-' → <ds-button>) */
-    prefix: 'ds-',
-    /** Source directory for component source files (relative to repo root) */
-    srcDir: 'packages/components/core/src',
-  },
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DEPLOYMENT — Hosting and URL configuration
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===========================================================================
+  // DEPLOYMENT
+  // Hosting and deployment configuration.
+  // ===========================================================================
   deployment: {
-    /** Base path for Storybook on GitHub Pages (must match repo name) */
+    /**
+     * Base path for Storybook on GitHub Pages
+     * Must match the repository name for correct asset loading.
+     * Example: '/bild-design-system/' for https://user.github.io/bild-design-system/
+     */
     storybookBasePath: '/bild-design-system/',
   },
+
+  // ===========================================================================
+  // VALIDATION
+  // Build-time validation settings for Config ↔ Figma synchronization.
+  // ===========================================================================
+  validation: {
+    /**
+     * Strict mode - abort build on critical Config ↔ Figma mismatches.
+     *
+     * When enabled, the build will FAIL (exit code 1) if:
+     * - Brand in config.axes not found in Figma collection
+     * - Collection ID in config not found in Figma export
+     * - Mode ID in config not found in Figma collection
+     *
+     * When disabled, these are logged as warnings but build continues.
+     *
+     * Recommended:
+     * - Local development: false (allows incremental work)
+     * - CI/CD pipeline: true (prevents broken deployments)
+     *
+     * Auto-detection: Defaults to true when CI environment variable is set.
+     */
+    strict: process.env.CI === 'true',
+
+    /**
+     * Warn about Figma modes not defined in config.
+     *
+     * When true, logs a warning if Figma contains brand modes that
+     * are not configured in the brands section. This catches cases
+     * where designers add new brands but developers haven't updated
+     * the config yet.
+     *
+     * This is always a warning, never an error (even in strict mode),
+     * because extra Figma modes don't break the build - they're just
+     * ignored.
+     */
+    warnUnknownFigmaModes: true,
+  },
+};
+
+// =============================================================================
+// ❌ DERIVED VALUES - DO NOT EDIT
+// =============================================================================
+// These values are AUTO-COMPUTED from rawConfig above.
+// Any manual changes will be overwritten or cause inconsistencies.
+// To change these values, modify the corresponding rawConfig property instead.
+// =============================================================================
+
+const allBrands = Object.keys(rawConfig.brands);
+const colorModes = Object.keys(rawConfig.modes.color);
+const densityModes = Object.keys(rawConfig.modes.density);
+const breakpoints = Object.keys(rawConfig.modes.breakpoints);
+
+const derived = {
+  // ---------------------------------------------------------------------------
+  // Brand-derived values
+  // ---------------------------------------------------------------------------
+
+  /** All brand keys: ['bild', 'sportbild', 'advertorial'] */
+  allBrands,
+
+  /** Default brand key (has isDefault: true) */
+  defaultBrand: allBrands.find(b => rawConfig.brands[b].isDefault) || allBrands[0],
+
+  /**
+   * ColorBrands - Brands that support the COLOR axis (own colors/effects)
+   * Derived from brands with axes: ['color', ...] in config.
+   * These brands have entries in BrandColorMapping in Figma.
+   * @example ['bild', 'sportbild']
+   */
+  colorBrands: allBrands.filter(b => rawConfig.brands[b].axes?.includes('color')),
+
+  /**
+   * ContentBrands - Brands that support the CONTENT axis (own sizing/typography)
+   * Derived from brands with axes: ['content', ...] in config.
+   * These brands have entries in BrandTokenMapping in Figma.
+   * @example ['bild', 'sportbild', 'advertorial']
+   */
+  contentBrands: allBrands.filter(b => rawConfig.brands[b].axes?.includes('content')),
+
+  /** Brand key → Figma display name mapping */
+  brandToFigmaName: Object.fromEntries(
+    allBrands.map(key => [key, rawConfig.brands[key].figmaName])
+  ),
+
+  /** Figma display name → brand key (reverse lookup) */
+  figmaNameToBrand: Object.fromEntries(
+    allBrands.map(key => [rawConfig.brands[key].figmaName, key])
+  ),
+
+  /** Display names for UI (equals figmaName) */
+  brandDisplayNames: Object.fromEntries(
+    allBrands.map(key => [key, rawConfig.brands[key].figmaName])
+  ),
+
+  // ---------------------------------------------------------------------------
+  // Color mode-derived values
+  // ---------------------------------------------------------------------------
+
+  /** All color mode keys: ['light', 'dark'] */
+  colorModes,
+
+  /** Default color mode key (has isDefault: true) */
+  defaultColorMode: colorModes.find(m => rawConfig.modes.color[m].isDefault) || colorModes[0],
+
+  /** Color mode key → Figma mode ID mapping */
+  colorModeIds: Object.fromEntries(
+    colorModes.map(key => [key, rawConfig.modes.color[key].figmaId])
+  ),
+
+  /** Display names for color modes */
+  colorModeDisplayNames: Object.fromEntries(
+    colorModes.map(key => [key, key.charAt(0).toUpperCase() + key.slice(1)])
+  ),
+
+  // ---------------------------------------------------------------------------
+  // Density mode-derived values
+  // ---------------------------------------------------------------------------
+
+  /** All density mode keys: ['default', 'dense', 'spacious'] */
+  densityModes,
+
+  /** Default density mode key (has isDefault: true) */
+  defaultDensity: densityModes.find(m => rawConfig.modes.density[m].isDefault) || densityModes[0],
+
+  /** Density mode key → Figma mode ID mapping */
+  densityModeIds: Object.fromEntries(
+    densityModes.map(key => [key, rawConfig.modes.density[key].figmaId])
+  ),
+
+  /** Display names for density modes */
+  densityDisplayNames: Object.fromEntries(
+    densityModes.map(key => [key, key.charAt(0).toUpperCase() + key.slice(1)])
+  ),
+
+  // ---------------------------------------------------------------------------
+  // Breakpoint-derived values
+  // ---------------------------------------------------------------------------
+
+  /** All breakpoint keys in order: ['xs', 'sm', 'md', 'lg'] */
+  breakpoints,
+
+  /** Base breakpoint key (has isBase: true, no @media query) */
+  baseBreakpoint: breakpoints.find(bp => rawConfig.modes.breakpoints[bp].isBase) || breakpoints[0],
+
+  /** Breakpoint key → Figma mode ID mapping */
+  breakpointModeIds: Object.fromEntries(
+    breakpoints.map(key => [key, rawConfig.modes.breakpoints[key].figmaId])
+  ),
+
+  /** Breakpoint key → minWidth in px */
+  breakpointMinWidths: Object.fromEntries(
+    breakpoints.map(key => [key, rawConfig.modes.breakpoints[key].minWidth])
+  ),
+};
+
+// =============================================================================
+// ❌ RUNTIME FUNCTIONS - DO NOT EDIT
+// =============================================================================
+// These functions are used by the pipeline to validate Figma data against config.
+// They should not be modified unless you understand the full pipeline architecture.
+//
+// How validation works:
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. STATIC source (from config): derived.colorBrands, derived.contentBrands
+//    - Derived from brands[].axes property in rawConfig (edit rawConfig instead)
+//    - Available immediately without Figma data
+//    - Used by: build.js, bundles.js, storybook
+//
+// 2. RUNTIME source (from Figma): deriveColorBrands(), deriveContentBrands()
+//    - Validates against actual BrandColorMapping/BrandTokenMapping collections
+//    - Used by: preprocess.js (has access to Figma JSON)
+//    - Writes to: metadata.json for downstream validation
+//
+// If config doesn't match Figma, build.js will warn:
+//    "⚠️  Config colorBrands [...] differs from Figma [...]"
+// =============================================================================
+
+/**
+ * Derives colorBrands from Figma collections (RUNTIME VALIDATION).
+ * Validates which brands actually have entries in BrandColorMapping.
+ *
+ * Use case: preprocess.js validates that config.axes matches Figma structure.
+ *
+ * @param {Array} collections - Figma collections array from plugin export
+ * @returns {string[]} Brand keys that exist in BrandColorMapping
+ *
+ * @example
+ * const colorBrands = deriveColorBrands(pluginData.collections);
+ * // Returns: ['bild', 'sportbild'] (advertorial not included - no own colors)
+ */
+function deriveColorBrands(collections) {
+  const collection = collections.find(c => c.id === rawConfig.figma.collections.BRAND_COLOR_MAPPING);
+  if (!collection) return [];
+  return allBrands.filter(brandKey =>
+    collection.modes.some(m => m.name === rawConfig.brands[brandKey].figmaName)
+  );
+}
+
+/**
+ * Derives contentBrands from Figma collections (RUNTIME VALIDATION).
+ * Validates which brands actually have entries in BrandTokenMapping.
+ *
+ * Use case: preprocess.js validates that config.axes matches Figma structure.
+ *
+ * @param {Array} collections - Figma collections array from plugin export
+ * @returns {string[]} Brand keys that exist in BrandTokenMapping
+ *
+ * @example
+ * const contentBrands = deriveContentBrands(pluginData.collections);
+ * // Returns: ['bild', 'sportbild', 'advertorial']
+ */
+function deriveContentBrands(collections) {
+  const collection = collections.find(c => c.id === rawConfig.figma.collections.BRAND_TOKEN_MAPPING);
+  if (!collection) return [];
+  return allBrands.filter(brandKey =>
+    collection.modes.some(m => m.name === rawConfig.brands[brandKey].figmaName)
+  );
+}
+
+/**
+ * Checks if a brand has BrandColorMapping (i.e., is a colorBrand).
+ * Used during token processing to skip color generation for inherited brands.
+ *
+ * @param {Array} collections - Figma collections array
+ * @param {string} brandKey - Brand key to check (e.g., 'advertorial')
+ * @returns {boolean} True if brand exists in BrandColorMapping
+ *
+ * @example
+ * if (!hasBrandColorMapping(collections, 'advertorial')) {
+ *   // Skip color token generation for advertorial
+ * }
+ */
+function hasBrandColorMapping(collections, brandKey) {
+  const figmaName = rawConfig.brands[brandKey]?.figmaName || brandKey;
+  const collection = collections.find(c => c.id === rawConfig.figma.collections.BRAND_COLOR_MAPPING);
+  return collection?.modes.some(m => m.name === figmaName) ?? false;
+}
+
+// =============================================================================
+// EXPORT - Flat structure for easy destructuring
+// =============================================================================
+
+module.exports = {
+  // Raw config sections (spread for flat access)
+  ...rawConfig,
+
+  // Derived values (spread for flat access)
+  ...derived,
+
+  // Runtime functions
+  deriveColorBrands,
+  deriveContentBrands,
+  hasBrandColorMapping,
 };

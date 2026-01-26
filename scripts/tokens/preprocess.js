@@ -20,28 +20,30 @@ const path = require('path');
 // Pipeline Configuration
 const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 
-// Paths (derived from config)
-const INPUT_JSON_PATH = path.join(__dirname, '../..', pipelineConfig.source.inputDir, pipelineConfig.source.inputFile);
-const OUTPUT_DIR = path.join(__dirname, '../..', pipelineConfig.source.outputDir);
+// Paths (from config)
+const INPUT_JSON_PATH = path.join(__dirname, '../..', pipelineConfig.paths.tokensInput, pipelineConfig.figma.inputFile);
+const OUTPUT_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensIntermediate);
 
-// Brand and mode mappings (derived from config)
-// BRANDS maps Figma display names → mode IDs (used for collection mode matching)
-const BRANDS = Object.fromEntries(
-  Object.entries(pipelineConfig.source.modes.brands).map(([key, { figmaName, modeId }]) => [figmaName, modeId])
-);
+// Mode ID mappings (derived values from config)
+const BREAKPOINTS = pipelineConfig.breakpointModeIds;      // { xs: '7017:0', sm: '16706:1', ... }
+const COLOR_MODES = pipelineConfig.colorModeIds;           // { light: '588:0', dark: '592:1' }
+const DENSITY_MODES = pipelineConfig.densityModeIds;       // { default: '5695:2', ... }
 
-const BREAKPOINTS = pipelineConfig.source.modes.breakpoints;
-
-const COLOR_MODES = pipelineConfig.source.modes.colorModes;
-
-const DENSITY_MODES = pipelineConfig.source.modes.densityModes;
+// Brand mappings (derived values from config)
+const ALL_BRANDS = pipelineConfig.allBrands;               // ['bild', 'sportbild', 'advertorial']
+const BRAND_TO_FIGMA_NAME = pipelineConfig.brandToFigmaName; // { bild: 'BILD', ... }
+const FIGMA_NAME_TO_BRAND = pipelineConfig.figmaNameToBrand; // { 'BILD': 'bild', ... }
 
 // Collection IDs (from config)
-const COLLECTION_IDS = pipelineConfig.source.collections;
+const COLLECTION_IDS = pipelineConfig.figma.collections;
 
 // Component token path prefix (from config, e.g. 'Component/')
-const COMPONENT_PREFIX = pipelineConfig.source.pathConventions.componentPrefix;
+const COMPONENT_PREFIX = pipelineConfig.figma.componentPrefix;
 const COMPONENT_PREFIX_SEGMENT = COMPONENT_PREFIX.replace(/\/$/, ''); // 'Component' (without trailing slash)
+
+// Validation settings (from config)
+const VALIDATION_STRICT = pipelineConfig.validation?.strict ?? (process.env.CI === 'true');
+const VALIDATION_WARN_UNKNOWN = pipelineConfig.validation?.warnUnknownFigmaModes ?? true;
 
 /**
  * Checks if a token path represents a component token
@@ -79,6 +81,261 @@ function getCollectionType(collectionId) {
     default:
       return null;
   }
+}
+
+/**
+ * Validates Config ↔ Figma synchronization (bidirectional validation)
+ *
+ * Critical errors (abort in strict mode):
+ * - Brand in config.axes but not found in Figma collection
+ * - Collection ID in config not found in Figma export
+ * - Mode ID in config not found in Figma collection
+ * - figmaName in config doesn't match any mode name in collection
+ *
+ * Warnings (always, never abort):
+ * - Additional mode in Figma not defined in config
+ *
+ * @param {Array} collections - Figma collections array from plugin export
+ * @returns {{ errors: string[], warnings: string[], valid: boolean }}
+ */
+function validateConfigAgainstFigma(collections) {
+  const errors = [];
+  const warnings = [];
+
+  console.log('\n🔍 Validating Config ↔ Figma synchronization...\n');
+
+  // Create collection ID → collection map for fast lookup
+  const collectionMap = new Map(collections.map(c => [c.id, c]));
+
+  // ---------------------------------------------------------------------------
+  // 1. Validate Collection IDs exist
+  // ---------------------------------------------------------------------------
+  const collectionNames = {
+    FONT_PRIMITIVE: '_FontPrimitive',
+    COLOR_PRIMITIVE: '_ColorPrimitive',
+    SIZE_PRIMITIVE: '_SizePrimitive',
+    SPACE_PRIMITIVE: '_SpacePrimitive',
+    DENSITY: 'Density',
+    BRAND_TOKEN_MAPPING: 'BrandTokenMapping',
+    BRAND_COLOR_MAPPING: 'BrandColorMapping',
+    BREAKPOINT_MODE: 'BreakpointMode',
+    COLOR_MODE: 'ColorMode',
+  };
+
+  Object.entries(COLLECTION_IDS).forEach(([key, id]) => {
+    if (!collectionMap.has(id)) {
+      errors.push(`Collection ID not found in Figma: ${collectionNames[key] || key} (${id})`);
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // 2. Validate Brand axes against Figma collections
+  // ---------------------------------------------------------------------------
+  const brandColorCollection = collectionMap.get(COLLECTION_IDS.BRAND_COLOR_MAPPING);
+  const brandTokenCollection = collectionMap.get(COLLECTION_IDS.BRAND_TOKEN_MAPPING);
+
+  const figmaColorModes = brandColorCollection?.modes?.map(m => m.name) || [];
+  const figmaContentModes = brandTokenCollection?.modes?.map(m => m.name) || [];
+
+  // Check each brand's axes
+  ALL_BRANDS.forEach(brandKey => {
+    const brand = pipelineConfig.brands[brandKey];
+    const figmaName = brand.figmaName;
+    const axes = brand.axes || [];
+
+    // Check color axis
+    if (axes.includes('color')) {
+      if (!figmaColorModes.includes(figmaName)) {
+        errors.push(
+          `Brand '${brandKey}' has axes: ['color'] but '${figmaName}' not found in BrandColorMapping.\n` +
+          `   Available modes: ${figmaColorModes.join(', ') || 'none'}\n` +
+          `   Fix: Either add '${figmaName}' mode to BrandColorMapping in Figma, or remove 'color' from axes.`
+        );
+      }
+    }
+
+    // Check content axis
+    if (axes.includes('content')) {
+      if (!figmaContentModes.includes(figmaName)) {
+        errors.push(
+          `Brand '${brandKey}' has axes: ['content'] but '${figmaName}' not found in BrandTokenMapping.\n` +
+          `   Available modes: ${figmaContentModes.join(', ') || 'none'}\n` +
+          `   Fix: Either add '${figmaName}' mode to BrandTokenMapping in Figma, or remove 'content' from axes.`
+        );
+      }
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // 3. Check for unknown Figma modes not in config (Figma → Config)
+  // ---------------------------------------------------------------------------
+  if (VALIDATION_WARN_UNKNOWN) {
+    const configColorFigmaNames = ALL_BRANDS
+      .filter(b => pipelineConfig.brands[b].axes?.includes('color'))
+      .map(b => pipelineConfig.brands[b].figmaName);
+    const configContentFigmaNames = ALL_BRANDS
+      .filter(b => pipelineConfig.brands[b].axes?.includes('content'))
+      .map(b => pipelineConfig.brands[b].figmaName);
+
+    figmaColorModes.forEach(mode => {
+      if (!configColorFigmaNames.includes(mode)) {
+        warnings.push(
+          `Figma BrandColorMapping has mode '${mode}' not defined in config.\n` +
+          `   This mode will be IGNORED during build.\n` +
+          `   Fix: Add a brand with figmaName: '${mode}' and axes: ['color', ...] to config.`
+        );
+      }
+    });
+
+    figmaContentModes.forEach(mode => {
+      if (!configContentFigmaNames.includes(mode)) {
+        warnings.push(
+          `Figma BrandTokenMapping has mode '${mode}' not defined in config.\n` +
+          `   This mode will be IGNORED during build.\n` +
+          `   Fix: Add a brand with figmaName: '${mode}' and axes: ['content', ...] to config.`
+        );
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. Validate Color Mode IDs
+  // ---------------------------------------------------------------------------
+  const colorModeCollection = collectionMap.get(COLLECTION_IDS.COLOR_MODE);
+  if (colorModeCollection) {
+    const figmaColorModeIds = new Set(colorModeCollection.modes.map(m => m.modeId));
+    const figmaColorModeNames = Object.fromEntries(
+      colorModeCollection.modes.map(m => [m.modeId, m.name])
+    );
+
+    Object.entries(pipelineConfig.modes.color).forEach(([modeKey, modeConfig]) => {
+      const figmaId = modeConfig.figmaId;
+      if (!figmaColorModeIds.has(figmaId)) {
+        errors.push(
+          `Color mode '${modeKey}' has figmaId '${figmaId}' not found in ColorMode collection.\n` +
+          `   Available mode IDs: ${colorModeCollection.modes.map(m => `${m.modeId} (${m.name})`).join(', ')}\n` +
+          `   Fix: Update figmaId in config to match Figma.`
+        );
+      }
+    });
+
+    // Warn about unknown color modes in Figma
+    if (VALIDATION_WARN_UNKNOWN) {
+      const configColorModeIds = new Set(
+        Object.values(pipelineConfig.modes.color).map(m => m.figmaId)
+      );
+      colorModeCollection.modes.forEach(mode => {
+        if (!configColorModeIds.has(mode.modeId)) {
+          warnings.push(
+            `Figma ColorMode has mode '${mode.name}' (${mode.modeId}) not defined in config.\n` +
+            `   This mode will be IGNORED during build.`
+          );
+        }
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 5. Validate Density Mode IDs
+  // ---------------------------------------------------------------------------
+  const densityCollection = collectionMap.get(COLLECTION_IDS.DENSITY);
+  if (densityCollection) {
+    const figmaDensityModeIds = new Set(densityCollection.modes.map(m => m.modeId));
+
+    Object.entries(pipelineConfig.modes.density).forEach(([modeKey, modeConfig]) => {
+      const figmaId = modeConfig.figmaId;
+      if (!figmaDensityModeIds.has(figmaId)) {
+        errors.push(
+          `Density mode '${modeKey}' has figmaId '${figmaId}' not found in Density collection.\n` +
+          `   Available mode IDs: ${densityCollection.modes.map(m => `${m.modeId} (${m.name})`).join(', ')}\n` +
+          `   Fix: Update figmaId in config to match Figma.`
+        );
+      }
+    });
+
+    // Warn about unknown density modes in Figma
+    if (VALIDATION_WARN_UNKNOWN) {
+      const configDensityModeIds = new Set(
+        Object.values(pipelineConfig.modes.density).map(m => m.figmaId)
+      );
+      densityCollection.modes.forEach(mode => {
+        if (!configDensityModeIds.has(mode.modeId)) {
+          warnings.push(
+            `Figma Density has mode '${mode.name}' (${mode.modeId}) not defined in config.\n` +
+            `   This mode will be IGNORED during build.`
+          );
+        }
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 6. Validate Breakpoint Mode IDs
+  // ---------------------------------------------------------------------------
+  const breakpointCollection = collectionMap.get(COLLECTION_IDS.BREAKPOINT_MODE);
+  if (breakpointCollection) {
+    const figmaBreakpointModeIds = new Set(breakpointCollection.modes.map(m => m.modeId));
+
+    Object.entries(pipelineConfig.modes.breakpoints).forEach(([modeKey, modeConfig]) => {
+      const figmaId = modeConfig.figmaId;
+      if (!figmaBreakpointModeIds.has(figmaId)) {
+        errors.push(
+          `Breakpoint '${modeKey}' has figmaId '${figmaId}' not found in BreakpointMode collection.\n` +
+          `   Available mode IDs: ${breakpointCollection.modes.map(m => `${m.modeId} (${m.name})`).join(', ')}\n` +
+          `   Fix: Update figmaId in config to match Figma.`
+        );
+      }
+    });
+
+    // Warn about unknown breakpoint modes in Figma
+    if (VALIDATION_WARN_UNKNOWN) {
+      const configBreakpointModeIds = new Set(
+        Object.values(pipelineConfig.modes.breakpoints).map(m => m.figmaId)
+      );
+      breakpointCollection.modes.forEach(mode => {
+        if (!configBreakpointModeIds.has(mode.modeId)) {
+          warnings.push(
+            `Figma BreakpointMode has mode '${mode.name}' (${mode.modeId}) not defined in config.\n` +
+            `   This mode will be IGNORED during build.`
+          );
+        }
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Output results
+  // ---------------------------------------------------------------------------
+  if (warnings.length > 0) {
+    console.log(`   ⚠️  ${warnings.length} warning(s):\n`);
+    warnings.forEach((warning, i) => {
+      console.log(`   ${i + 1}. ${warning}\n`);
+    });
+  }
+
+  if (errors.length > 0) {
+    console.log(`   ❌ ${errors.length} critical error(s):\n`);
+    errors.forEach((error, i) => {
+      console.log(`   ${i + 1}. ${error}\n`);
+    });
+
+    if (VALIDATION_STRICT) {
+      console.log(`\n   💥 STRICT MODE: Build aborted due to Config ↔ Figma mismatch.`);
+      console.log(`   Set validation.strict: false in pipeline.config.js to continue with warnings.\n`);
+    } else {
+      console.log(`   ⚠️  NON-STRICT MODE: Continuing with errors (may cause unexpected output).\n`);
+    }
+  }
+
+  if (errors.length === 0 && warnings.length === 0) {
+    console.log(`   ✅ Config and Figma are in sync.\n`);
+  }
+
+  return {
+    errors,
+    warnings,
+    valid: errors.length === 0,
+  };
 }
 
 /**
@@ -182,7 +439,7 @@ function processDirectValue(value, resolvedType, tokenPath = '') {
  * Resolves an alias value with context
  * @param {string} variableId - Variable ID
  * @param {Map} aliasLookup - Lookup Map
- * @param {object} context - { brandName, brandModeId, breakpointModeId, colorModeModeId }
+ * @param {object} context - { brandName, breakpointModeId, colorModeModeId, densityModeId }
  * @param {Set} visited - Circular reference protection
  * @param {Array} collections - All collections (for dynamic brand mode lookup)
  */
@@ -226,10 +483,6 @@ function resolveAliasWithContext(variableId, aliasLookup, context = {}, visited 
       if (brandMode) {
         targetModeId = brandMode.modeId;
       }
-    }
-    // Fallback to brandModeId if brand name lookup fails
-    if (!targetModeId && context.brandModeId) {
-      targetModeId = context.brandModeId;
     }
   }
   // Otherwise: take first available mode
@@ -955,10 +1208,11 @@ function processBrandSpecificTokens(collections, aliasLookup) {
     COLLECTION_IDS.COLOR_MODE
   ];
 
-  // Dynamically build outputs from pipeline config
-  const colorBrandsSet = new Set(pipelineConfig.brands.colorBrands);
+  // Dynamically build outputs - colorBrands derived from Figma data
+  const colorBrands = pipelineConfig.deriveColorBrands(collections);
+  const colorBrandsSet = new Set(colorBrands);
   const outputs = {};
-  for (const brand of pipelineConfig.brands.all) {
+  for (const brand of ALL_BRANDS) {
     outputs[brand] = { density: {}, breakpoints: {} };
     if (colorBrandsSet.has(brand)) {
       outputs[brand].color = {};
@@ -976,10 +1230,9 @@ function processBrandSpecificTokens(collections, aliasLookup) {
     else if (collection.id === COLLECTION_IDS.BREAKPOINT_MODE) category = 'breakpoints';
     else if (collection.id === COLLECTION_IDS.COLOR_MODE) category = 'color';
 
-    // For each brand (iterate config brands with Figma mode data)
-    Object.entries(pipelineConfig.source.modes.brands).forEach(([brandKey, { figmaName, modeId: brandModeId }]) => {
-      // Only process brands that are in the configured brand list
-      if (!pipelineConfig.brands.all.includes(brandKey)) return;
+    // For each brand
+    ALL_BRANDS.forEach(brandKey => {
+      const figmaName = BRAND_TO_FIGMA_NAME[brandKey];
 
       // Skip ColorMode for brands without BrandColorMapping
       if (category === 'color' && !hasBrandColorMapping(collections, figmaName)) {
@@ -1019,7 +1272,6 @@ function processBrandSpecificTokens(collections, aliasLookup) {
               // Context with Brand + Mode (needed for both alias resolution and deep alias info)
               const context = {
                 brandName: figmaName,
-                brandModeId,
                 breakpointModeId: collection.id === COLLECTION_IDS.BREAKPOINT_MODE ? mode.modeId : undefined,
                 colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined,
                 // Add modeName for ColorMode deep alias resolution (Light/Dark)
@@ -1101,9 +1353,9 @@ function processBrandOverrides(collections, aliasLookup) {
     COLLECTION_IDS.BRAND_COLOR_MAPPING
   ];
 
-  // Dynamically build outputs from pipeline config
+  // Dynamically build outputs from config
   const outputs = {};
-  for (const brand of pipelineConfig.brands.all) {
+  for (const brand of ALL_BRANDS) {
     outputs[brand] = {};
   }
 
@@ -1113,9 +1365,8 @@ function processBrandOverrides(collections, aliasLookup) {
     console.log(`  📦 ${collection.name}`);
 
     // Each mode is a brand - match by Figma display name
-    Object.entries(pipelineConfig.source.modes.brands).forEach(([brandKey, { figmaName, modeId: brandModeId }]) => {
-      // Only process brands in the configured brand list
-      if (!pipelineConfig.brands.all.includes(brandKey)) return;
+    ALL_BRANDS.forEach(brandKey => {
+      const figmaName = BRAND_TO_FIGMA_NAME[brandKey];
 
       // Find mode by Figma display name (not ID), since each collection has its own mode IDs
       const mode = collection.modes.find(m => m.name === figmaName);
@@ -1135,9 +1386,8 @@ function processBrandOverrides(collections, aliasLookup) {
           let processedValue;
 
           if (modeValue.type === 'VARIABLE_ALIAS') {
-            // Use the GLOBAL brand mode ID for alias resolution
-            // since aliases can point to other collections (e.g. BrandTokenMapping)
-            const context = { brandName: figmaName, brandModeId };
+            // Resolve alias with brand context (brandName is used for dynamic mode lookup)
+            const context = { brandName: figmaName };
             processedValue = resolveAliasWithContext(modeValue.id, aliasLookup, context, new Set(), collections);
           } else {
             processedValue = processDirectValue(modeValue, variable.resolvedType, variable.name);
@@ -1210,7 +1460,7 @@ function processComponentTokens(collections, aliasLookup) {
 
   // Structure: { brand: { componentName: { type-mode: tokens } } }
   const componentOutputs = {};
-  for (const brand of pipelineConfig.brands.all) {
+  for (const brand of ALL_BRANDS) {
     componentOutputs[brand] = {};
   }
 
@@ -1223,9 +1473,8 @@ function processComponentTokens(collections, aliasLookup) {
     console.log(`  📦 ${collection.name} (type: ${collectionType})`);
 
     // For each brand
-    Object.entries(pipelineConfig.source.modes.brands).forEach(([brandKey, { figmaName, modeId: brandModeId }]) => {
-      // Only process brands in the configured brand list
-      if (!pipelineConfig.brands.all.includes(brandKey)) return;
+    ALL_BRANDS.forEach(brandKey => {
+      const figmaName = BRAND_TO_FIGMA_NAME[brandKey];
 
       // Skip ColorMode for brands without BrandColorMapping
       if (collectionType === 'color' && !hasBrandColorMapping(collections, figmaName)) {
@@ -1271,16 +1520,12 @@ function processComponentTokens(collections, aliasLookup) {
                 // Context with Brand + Mode (needed for both alias resolution and deep alias info)
                 const context = {
                   brandName: figmaName,
-                  brandModeId,
                   breakpointModeId: collection.id === COLLECTION_IDS.BREAKPOINT_MODE ? mode.modeId : undefined,
                   colorModeModeId: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.modeId : undefined,
+                  densityModeId: collection.id === COLLECTION_IDS.DENSITY ? mode.modeId : undefined,
                   // Add modeName for ColorMode deep alias resolution (Light/Dark)
                   modeName: collection.id === COLLECTION_IDS.COLOR_MODE ? mode.name : undefined
                 };
-
-                if (collection.id === COLLECTION_IDS.DENSITY) {
-                  context.breakpointModeId = mode.modeId;
-                }
 
                 // Extract DEEP alias info for Component tokens
                 // Component tokens stop at Semantic (ColorMode/BreakpointMode) or Density endpoints
@@ -1396,7 +1641,7 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
 
   const typographyOutputs = {};
   const componentTypographyOutputs = {};
-  pipelineConfig.brands.all.forEach(brand => { componentTypographyOutputs[brand] = {}; });
+  ALL_BRANDS.forEach(brand => { componentTypographyOutputs[brand] = {}; });
 
   // Separate component and semantic typography
   const semanticTextStyles = textStyles.filter(ts => !isComponentToken(ts.name));
@@ -1406,15 +1651,14 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
 
   // Process semantic typography (existing logic)
   // For each brand
-  Object.entries(pipelineConfig.source.modes.brands).forEach(([brandKey, { figmaName, modeId: brandModeId }]) => {
-    if (!pipelineConfig.brands.all.includes(brandKey)) return;
+  ALL_BRANDS.forEach(brandKey => {
+    const figmaName = BRAND_TO_FIGMA_NAME[brandKey];
     console.log(`  🏷️  Brand: ${brandKey}`);
 
     // For each breakpoint
     Object.entries(BREAKPOINTS).forEach(([breakpointName, breakpointModeId]) => {
       const context = {
         brandName: figmaName,
-        brandModeId,
         breakpointModeId
       };
 
@@ -1524,7 +1768,6 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
         tokens,
         brand: brandKey,
         breakpoint: breakpointName,
-        brandModeId,
         breakpointModeId
       };
 
@@ -1536,14 +1779,13 @@ function processTypographyTokens(textStyles, aliasLookup, collections) {
   if (componentTextStyles.length > 0) {
     console.log('\n  🧩 Processing Component Typography:\n');
 
-    Object.entries(pipelineConfig.source.modes.brands).forEach(([brandKey, { figmaName, modeId: brandModeId }]) => {
-      if (!pipelineConfig.brands.all.includes(brandKey)) return;
+    ALL_BRANDS.forEach(brandKey => {
+      const figmaName = BRAND_TO_FIGMA_NAME[brandKey];
       console.log(`  🏷️  Brand: ${brandKey}`);
 
       Object.entries(BREAKPOINTS).forEach(([breakpointName, breakpointModeId]) => {
         const context = {
           brandName: figmaName,
-          brandModeId,
           breakpointModeId
         };
 
@@ -1707,7 +1949,7 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
 
   const effectOutputs = {};
   const componentEffectOutputs = {};
-  pipelineConfig.brands.all.forEach(brand => { componentEffectOutputs[brand] = {}; });
+  ALL_BRANDS.forEach(brand => { componentEffectOutputs[brand] = {}; });
 
   // Separate component and semantic effects
   const semanticEffectStyles = effectStyles.filter(es => !isComponentToken(es.name));
@@ -1717,10 +1959,10 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
 
   // Process semantic effects (existing logic)
   // For each brand (only ColorBrands - skip Advertorial)
-  Object.entries(pipelineConfig.source.modes.brands).forEach(([brandKey, { figmaName, modeId: brandModeId }]) => {
-    if (!pipelineConfig.brands.all.includes(brandKey)) return;
+  ALL_BRANDS.forEach(brandKey => {
+    const figmaName = BRAND_TO_FIGMA_NAME[brandKey];
     // Skip brands without colors (effects belong to ColorBrand axis)
-    if (!pipelineConfig.brands.colorBrands.includes(brandKey)) {
+    if (!pipelineConfig.hasBrandColorMapping(collections, brandKey)) {
       console.log(`  ⏭️  ${brandKey}: Skipped (no ColorBrand - effects inherited from parent)`);
       return;
     }
@@ -1731,7 +1973,6 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
     Object.entries(COLOR_MODES).forEach(([modeName, colorModeModeId]) => {
       const context = {
         brandName: figmaName,
-        brandModeId,
         colorModeModeId,
         modeName  // Add modeName for ColorMode deep alias resolution (Light/Dark)
       };
@@ -1844,7 +2085,6 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
         tokens,
         brand: brandKey,
         colorMode: modeName,
-        brandModeId,
         colorModeModeId
       };
 
@@ -1856,10 +2096,10 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
   if (componentEffectStyles.length > 0) {
     console.log('\n  🧩 Processing Component Effects:\n');
 
-    Object.entries(pipelineConfig.source.modes.brands).forEach(([brandKey, { figmaName, modeId: brandModeId }]) => {
-      if (!pipelineConfig.brands.all.includes(brandKey)) return;
+    ALL_BRANDS.forEach(brandKey => {
+      const figmaName = BRAND_TO_FIGMA_NAME[brandKey];
       // Skip brands without colors (component effects belong to ColorBrand axis)
-      if (!pipelineConfig.brands.colorBrands.includes(brandKey)) {
+      if (!pipelineConfig.hasBrandColorMapping(collections, brandKey)) {
         console.log(`  ⏭️  ${brandKey}: Skipped (no ColorBrand)`);
         return;
       }
@@ -1869,7 +2109,6 @@ function processEffectTokens(effectStyles, aliasLookup, collections) {
       Object.entries(COLOR_MODES).forEach(([modeName, colorModeModeId]) => {
         const context = {
           brandName: figmaName,
-          brandModeId,
           colorModeModeId,
           modeName  // Add modeName for ColorMode deep alias resolution (Light/Dark)
         };
@@ -2120,7 +2359,7 @@ function saveBreakpointDensityMatrix(matrixData) {
   console.log(`   ✅ Semantic: ${path.relative(process.cwd(), semanticFilePath)}`);
 
   // Save component matrices (per brand, per component)
-  const brands = pipelineConfig.brands.all;
+  const brands = ALL_BRANDS;
   for (const brand of brands) {
     for (const [componentName, componentMatrix] of Object.entries(components)) {
       const componentDir = path.join(OUTPUT_DIR, 'brands', brand, 'components', componentName);
@@ -2691,10 +2930,44 @@ function main() {
   // Load plugin tokens
   const pluginData = loadPluginTokens();
 
+  // Validate Config ↔ Figma synchronization (bidirectional validation)
+  const validationResult = validateConfigAgainstFigma(pluginData.collections);
+
+  // Abort build in strict mode if critical errors found
+  if (!validationResult.valid && VALIDATION_STRICT) {
+    console.error('❌ Build aborted due to validation errors in strict mode.');
+    console.error('   Run with CI=false or set validation.strict: false to continue with warnings.\n');
+    process.exit(1);
+  }
+
   // Create alias lookup
   console.log('🔍 Creating Alias Lookup...');
   const aliasLookup = createAliasLookup(pluginData.collections);
   console.log(`   ℹ️  ${aliasLookup.size} variables indexed`);
+
+  // Derive colorBrands and contentBrands from Figma collections
+  console.log('🔍 Deriving brand capabilities from Figma...');
+  const colorBrands = pipelineConfig.deriveColorBrands(pluginData.collections);
+  const contentBrands = pipelineConfig.deriveContentBrands(pluginData.collections);
+  console.log(`   ℹ️  ColorBrands: ${colorBrands.join(', ')}`);
+  console.log(`   ℹ️  ContentBrands: ${contentBrands.join(', ')}`);
+
+  // Write metadata file for downstream scripts (build.js, bundles.js, etc.)
+  const metadata = {
+    generatedAt: new Date().toISOString(),
+    colorBrands,
+    contentBrands,
+    allBrands: ALL_BRANDS,
+    validation: {
+      valid: validationResult.valid,
+      strictMode: VALIDATION_STRICT,
+      errors: validationResult.errors,
+      warnings: validationResult.warnings,
+    },
+  };
+  const metadataPath = path.join(OUTPUT_DIR, 'metadata.json');
+  fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+  console.log(`   ✅ Metadata: ${path.relative(process.cwd(), metadataPath)}`);
 
   // Process classic tokens
   const sharedPrimitives = processSharedPrimitives(pluginData.collections, aliasLookup);

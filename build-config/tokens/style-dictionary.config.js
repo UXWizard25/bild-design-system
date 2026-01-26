@@ -16,10 +16,10 @@ const pipelineConfig = require('./pipeline.config.js');
 // CSS OUTPUT CONFIGURATION (derived from pipeline.config.js)
 // ============================================================================
 
-const FONT_SIZE_UNIT = pipelineConfig.platforms.css.fontSizeUnit;
+const FONT_SIZE_UNIT = pipelineConfig.css.fontSizeUnit;
 const ANDROID_PKG = pipelineConfig.platforms.android.packageName;
-const DATA_ATTRS = pipelineConfig.platforms.css.dataAttributes;
-const REM_BASE = pipelineConfig.platforms.css.remBase;
+const DATA_ATTRS = pipelineConfig.css.dataAttributes;
+const REM_BASE = pipelineConfig.css.remBase;
 
 // ============================================================================
 // FILE HEADER GENERATORS
@@ -2956,7 +2956,7 @@ const swiftuiEnumsFormat = ({ dictionary, options, file }) => {
   });
 
   // Generate Density enum cases from config
-  const densityCases = pipelineConfig.modes.density
+  const densityCases = pipelineConfig.densityModes
     .map(d => d === 'default' ? '    case `default`' : `    case ${d}`)
     .join('\n');
 
@@ -2966,7 +2966,7 @@ const swiftuiEnumsFormat = ({ dictionary, options, file }) => {
     .join('\n');
 
   // Generate Brand enum cases from config
-  const brandCases = pipelineConfig.brands.all
+  const brandCases = pipelineConfig.allBrands
     .map(b => `    case ${b}`)
     .join('\n');
 
@@ -3909,17 +3909,17 @@ public final class DesignSystemTheme: @unchecked Sendable {
     public static let shared = DesignSystemTheme()
 
     // MARK: - Theme State
-    public var brand: Brand = .${pipelineConfig.brands.defaultBrand}
+    public var brand: Brand = .${pipelineConfig.defaultBrand}
     public var isDarkTheme: Bool = false
     public var sizeClass: SizeClass = .${Object.keys(pipelineConfig.platforms.ios.sizeClasses)[0]}
-    public var density: Density = .${pipelineConfig.modes.density.find(d => d === 'default') || pipelineConfig.modes.density[0]}
+    public var density: Density = .${pipelineConfig.defaultDensity === 'default' ? '`default`' : pipelineConfig.defaultDensity}
 
     private init() {}
 
     // MARK: - Factory
 
     public init(
-        brand: Brand = .${pipelineConfig.brands.defaultBrand},
+        brand: Brand = .${pipelineConfig.defaultBrand},
         isDarkTheme: Bool = false,
         sizeClass: SizeClass = .compact,
         density: Density = .default

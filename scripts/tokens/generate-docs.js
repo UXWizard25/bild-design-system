@@ -14,9 +14,9 @@ const fs = require('fs');
 const path = require('path');
 const pipelineConfig = require('../../build-config/tokens/pipeline.config.js');
 
-const TOKENS_DIR = path.join(__dirname, '../../', pipelineConfig.source.outputDir);
+const TOKENS_DIR = path.join(__dirname, '../../', pipelineConfig.paths.tokensIntermediate);
 const DOCS_DIR = path.join(__dirname, '../../apps/docs/stories/foundations');
-const DEFAULT_BRAND = pipelineConfig.brands.defaultBrand;
+const DEFAULT_BRAND = pipelineConfig.defaultBrand;
 const BREAKPOINTS = pipelineConfig.modes.breakpoints;
 
 /**
