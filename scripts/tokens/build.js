@@ -33,6 +33,7 @@ const ANDROID_DIST_DIR = path.join(__dirname, '../..', config.platforms.android.
 const COLOR_BRANDS = Object.values(config.modes.brands.color);
 const CONTENT_BRANDS = Object.values(config.modes.brands.content);
 const BRANDS = [...new Set([...COLOR_BRANDS, ...CONTENT_BRANDS])];
+const DEFAULT_BRAND = config.modes.brands.default;
 const BREAKPOINTS = Object.values(config.modes.breakpoints).map(b => b.key);
 const COLOR_MODES = Object.values(config.modes.colorModes);
 const DENSITY_MODES = Object.values(config.modes.densityModes);
@@ -633,7 +634,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
             outputReferences: false,
             brand: (() => {
               const brandMatch = buildPath.match(/\/brands\/([^/]+)/);
-              return brandMatch ? brandMatch[1] : 'bild';
+              return brandMatch ? brandMatch[1] : DEFAULT_BRAND;
             })(),
             component: (() => {
               const componentMatch = buildPath.match(/\/components\/([^/]+)/);
@@ -1133,8 +1134,8 @@ function createEffectConfig(brand, colorMode) {
  * @param {string} densityMode - 'default', 'dense', or 'spacious'
  */
 function createSharedDensityConfig(densityMode) {
-  // Source: Use bild as reference (values identical across brands)
-  const sourceFile = path.join(TOKENS_DIR, 'brands', 'bild', 'density', `density-${densityMode}.json`);
+  // Source: Use default brand as reference (values identical across brands)
+  const sourceFile = path.join(TOKENS_DIR, 'brands', DEFAULT_BRAND, 'density', `density-${densityMode}.json`);
 
   if (!fs.existsSync(sourceFile)) {
     return null;
@@ -5089,8 +5090,8 @@ ${brandEntries}
  * All color brands implement this interface for polymorphic color access
  */
 function generateDesignColorSchemeFile() {
-  // Read color properties from existing BildColorScheme to ensure consistency
-  const bildColorsPath = path.join(ANDROID_DIST_DIR, 'brands', 'bild', 'semantic', 'color', 'ColorsLight.kt');
+  // Read color properties from existing color scheme to ensure consistency (use default brand as reference)
+  const bildColorsPath = path.join(ANDROID_DIST_DIR, 'brands', DEFAULT_BRAND, 'semantic', 'color', 'ColorsLight.kt');
   let colorProperties = [];
 
   if (fs.existsSync(bildColorsPath)) {
@@ -5166,8 +5167,8 @@ ${propertyDeclarations}
  * Creates: dist/android/compose/shared/DesignSizingScheme.kt
  */
 function generateDesignSizingSchemeFile() {
-  // Read sizing properties from existing BildSizingScheme
-  const bildSizingPath = path.join(ANDROID_DIST_DIR, 'brands', 'bild', 'semantic', 'sizeclass', 'SizingCompact.kt');
+  // Read sizing properties from existing sizing scheme (use default brand as reference)
+  const bildSizingPath = path.join(ANDROID_DIST_DIR, 'brands', DEFAULT_BRAND, 'semantic', 'sizeclass', 'SizingCompact.kt');
   let sizingProperties = [];
 
   if (fs.existsSync(bildSizingPath)) {
@@ -5312,8 +5313,8 @@ data class DesignTextStyle(
  * Creates: dist/android/compose/shared/DesignTypographyScheme.kt
  */
 function generateSharedDesignTypographySchemeFile() {
-  // Read typography properties from existing BildTypographyScheme
-  const bildTypographyPath = path.join(ANDROID_DIST_DIR, 'brands', 'bild', 'semantic', 'typography', 'TypographyCompact.kt');
+  // Read typography properties from existing typography scheme (use default brand as reference)
+  const bildTypographyPath = path.join(ANDROID_DIST_DIR, 'brands', DEFAULT_BRAND, 'semantic', 'typography', 'TypographyCompact.kt');
   let typographyProperties = [];
 
   if (fs.existsSync(bildTypographyPath)) {
@@ -5563,8 +5564,8 @@ interface DesignEffectsScheme {
  * New tokens added in Figma will automatically appear in the interface.
  */
 function generateSharedDesignDensitySchemeFile() {
-  // Read density tokens from source JSON for dynamic interface generation
-  const densitySourcePath = path.join(TOKENS_DIR, 'brands', 'bild', 'density', 'density-default.json');
+  // Read density tokens from source JSON for dynamic interface generation (use default brand as reference)
+  const densitySourcePath = path.join(TOKENS_DIR, 'brands', DEFAULT_BRAND, 'density', 'density-default.json');
   let interfaceProperties = '';
 
   // Local camelCase transformer matching Style Dictionary output
@@ -6737,7 +6738,9 @@ public extension View {
 
   // Generate DesignSystemTheme.swift with dual-axis architecture
   // Dynamically read color properties from generated iOS files (now brand-prefixed)
-  const bildColorsPath = path.join(IOS_DIST_DIR, 'brands', 'bild', 'semantic', 'color', 'BildColorsLight.swift');
+  // Use default brand as reference (use PascalCase for filename prefix)
+  const defaultBrandPascal = DEFAULT_BRAND.charAt(0).toUpperCase() + DEFAULT_BRAND.slice(1);
+  const bildColorsPath = path.join(IOS_DIST_DIR, 'brands', DEFAULT_BRAND, 'semantic', 'color', `${defaultBrandPascal}ColorsLight.swift`);
   let colorProperties = [];
   if (fs.existsSync(bildColorsPath)) {
     const content = fs.readFileSync(bildColorsPath, 'utf8');
@@ -6755,7 +6758,7 @@ public extension View {
 
   // Dynamically read sizing properties with their types (now brand-prefixed)
   // Supported types: CGFloat, String, Bool, Int
-  const bildSizingPath = path.join(IOS_DIST_DIR, 'brands', 'bild', 'semantic', 'sizeclass', 'BildSizingCompact.swift');
+  const bildSizingPath = path.join(IOS_DIST_DIR, 'brands', DEFAULT_BRAND, 'semantic', 'sizeclass', `${defaultBrandPascal}SizingCompact.swift`);
   let sizingProperties = [];
   if (fs.existsSync(bildSizingPath)) {
     const content = fs.readFileSync(bildSizingPath, 'utf8');
@@ -6776,7 +6779,7 @@ public extension View {
   const sizingPropertyDeclarations = sizingProperties.map(prop => `    var ${prop.name}: ${prop.type} { get }`).join('\n');
 
   // Dynamically read effects properties (now brand-prefixed)
-  const bildEffectsPath = path.join(IOS_DIST_DIR, 'brands', 'bild', 'semantic', 'effects', 'BildEffectsLight.swift');
+  const bildEffectsPath = path.join(IOS_DIST_DIR, 'brands', DEFAULT_BRAND, 'semantic', 'effects', `${defaultBrandPascal}EffectsLight.swift`);
   let effectsProperties = [];
   if (fs.existsSync(bildEffectsPath)) {
     const content = fs.readFileSync(bildEffectsPath, 'utf8');
@@ -6792,7 +6795,7 @@ public extension View {
   const effectsPropertyDeclarations = effectsProperties.map(prop => `    var ${prop}: ShadowStyle { get }`).join('\n');
 
   // Dynamically read typography properties from generated iOS files (now brand-prefixed)
-  const bildTypographyPath = path.join(IOS_DIST_DIR, 'brands', 'bild', 'semantic', 'typography', 'BildTypographySizeclassCompact.swift');
+  const bildTypographyPath = path.join(IOS_DIST_DIR, 'brands', DEFAULT_BRAND, 'semantic', 'typography', `${defaultBrandPascal}TypographySizeclassCompact.swift`);
   let typographyProperties = [];
   if (fs.existsSync(bildTypographyPath)) {
     const content = fs.readFileSync(bildTypographyPath, 'utf8');
@@ -7065,7 +7068,7 @@ async function generateSwiftUIThemeProviders() {
   const version = packageJson.version;
 
   // Only generate theme providers for color brands (those with their own color tokens)
-  const COLOR_BRANDS = ['bild', 'sportbild'];
+  // Uses global COLOR_BRANDS from config
 
   for (const brand of COLOR_BRANDS) {
     totalThemes++;
@@ -8049,6 +8052,10 @@ export type SizeValue = string;
   }
 
   // createTheme utility with embedded token data
+  // Content-only brands (brands without their own colors - need color fallback)
+  const contentOnlyBrands = CONTENT_BRANDS.filter(b => !COLOR_BRANDS.includes(b));
+  const contentOnlyBrandsCheck = contentOnlyBrands.map(b => `brand === '${b}'`).join(' || ') || 'false';
+
   let createThemeJs = getJsFileHeader() + `// Theme factory for BILD Design System
 // Supports multi-brand, multi-mode token combinations
 
@@ -8058,41 +8065,41 @@ const tokenData = ${JSON.stringify(tokenLookup, null, 2)};
 /**
  * Create a theme by combining tokens from different modes
  * @param {Object} config - Theme configuration
- * @param {string} config.brand - Brand name ('bild', 'sportbild', 'advertorial')
- * @param {string} config.colorBrand - Color brand for Advertorial ('bild' or 'sportbild')
- * @param {string} config.colorMode - Color mode ('light' or 'dark')
- * @param {string} config.breakpoint - Breakpoint ('xs', 'sm', 'md', 'lg')
- * @param {string} config.density - Density mode ('default', 'dense', 'spacious')
+ * @param {string} config.brand - Brand name (${BRANDS.map(b => `'${b}'`).join(', ')})
+ * @param {string} config.colorBrand - Color brand for content-only brands (${COLOR_BRANDS.map(b => `'${b}'`).join(' or ')})
+ * @param {string} config.colorMode - Color mode (${COLOR_MODES.map(m => `'${m}'`).join(' or ')})
+ * @param {string} config.breakpoint - Breakpoint (${BREAKPOINTS.map(bp => `'${bp}'`).join(', ')})
+ * @param {string} config.density - Density mode (${DENSITY_MODES.map(d => `'${d}'`).join(', ')})
  * @returns {Object} Combined theme object with all tokens
  */
 export function createTheme(config = {}) {
   const {
-    brand = 'bild',
+    brand = '${DEFAULT_BRAND}',
     colorBrand,
-    colorMode = 'light',
-    breakpoint = 'md',
-    density = 'default'
+    colorMode = '${COLOR_MODES[0]}',
+    breakpoint = '${BREAKPOINTS.length > 2 ? BREAKPOINTS[2] : BREAKPOINTS[0]}',
+    density = '${DENSITY_MODES[0]}'
   } = config;
 
-  // Determine color source (for Advertorial dual-axis support)
-  // Advertorial uses BILD or SportBILD colors, defaulting to BILD
-  const effectiveColorBrand = colorBrand || (brand === 'advertorial' ? 'bild' : brand);
+  // Determine color source (for content-only brands without their own colors)
+  // Content-only brands use a color brand, defaulting to '${DEFAULT_BRAND}'
+  const effectiveColorBrand = colorBrand || ((${contentOnlyBrandsCheck}) ? '${DEFAULT_BRAND}' : brand);
 
   // Validate inputs
-  if (!['bild', 'sportbild', 'advertorial'].includes(brand)) {
-    throw new Error(\`Invalid brand: \${brand}. Must be one of: bild, sportbild, advertorial\`);
+  if (!${JSON.stringify(BRANDS)}.includes(brand)) {
+    throw new Error(\\\`Invalid brand: \\\${brand}. Must be one of: ${BRANDS.join(', ')}\\\`);
   }
-  if (!['bild', 'sportbild'].includes(effectiveColorBrand)) {
-    throw new Error(\`Invalid colorBrand: \${effectiveColorBrand}. Must be one of: bild, sportbild\`);
+  if (!${JSON.stringify(COLOR_BRANDS)}.includes(effectiveColorBrand)) {
+    throw new Error(\\\`Invalid colorBrand: \\\${effectiveColorBrand}. Must be one of: ${COLOR_BRANDS.join(', ')}\\\`);
   }
-  if (!['light', 'dark'].includes(colorMode)) {
-    throw new Error(\`Invalid colorMode: \${colorMode}. Must be one of: light, dark\`);
+  if (!${JSON.stringify(COLOR_MODES)}.includes(colorMode)) {
+    throw new Error(\\\`Invalid colorMode: \\\${colorMode}. Must be one of: ${COLOR_MODES.join(', ')}\\\`);
   }
-  if (!['xs', 'sm', 'md', 'lg'].includes(breakpoint)) {
-    throw new Error(\`Invalid breakpoint: \${breakpoint}. Must be one of: xs, sm, md, lg\`);
+  if (!${JSON.stringify(BREAKPOINTS)}.includes(breakpoint)) {
+    throw new Error(\\\`Invalid breakpoint: \\\${breakpoint}. Must be one of: ${BREAKPOINTS.join(', ')}\\\`);
   }
-  if (!['default', 'dense', 'spacious'].includes(density)) {
-    throw new Error(\`Invalid density: \${density}. Must be one of: default, dense, spacious\`);
+  if (!${JSON.stringify(DENSITY_MODES)}.includes(density)) {
+    throw new Error(\\\`Invalid density: \\\${density}. Must be one of: ${DENSITY_MODES.join(', ')}\\\`);
   }
 
   return {
@@ -8114,27 +8121,27 @@ export function createTheme(config = {}) {
 /**
  * Available brands
  */
-export const availableBrands = ['bild', 'sportbild', 'advertorial'];
+export const availableBrands = ${JSON.stringify(BRANDS)};
 
 /**
  * Available color brands (brands with own colors)
  */
-export const colorBrands = ['bild', 'sportbild'];
+export const colorBrands = ${JSON.stringify(COLOR_BRANDS)};
 
 /**
  * Available color modes
  */
-export const colorModes = ['light', 'dark'];
+export const colorModes = ${JSON.stringify(COLOR_MODES)};
 
 /**
  * Available breakpoints
  */
-export const breakpoints = ['xs', 'sm', 'md', 'lg'];
+export const breakpoints = ${JSON.stringify(BREAKPOINTS)};
 
 /**
  * Available density modes
  */
-export const densityModes = ['default', 'dense', 'spacious'];
+export const densityModes = ${JSON.stringify(DENSITY_MODES)};
 
 /**
  * Get token data for a specific combination (lower-level API)
@@ -8235,29 +8242,31 @@ export default ${themeName};
     }
   }
 
-  // Generate Advertorial themes (dual-axis: uses BILD or SportBILD colors)
-  for (const colorBrand of COLOR_BRANDS) {
-    for (const colorMode of COLOR_MODES) {
-      const themeName = `advertorialIn${colorBrand.charAt(0).toUpperCase() + colorBrand.slice(1)}${colorMode.charAt(0).toUpperCase() + colorMode.slice(1)}`;
-      const fileName = `advertorial-in-${colorBrand}-${colorMode}`;
+  // Generate content-only brand themes (dual-axis: uses color brand's colors + content brand's sizing/typography)
+  for (const contentBrand of contentOnlyBrands) {
+    const contentBrandPascal = contentBrand.charAt(0).toUpperCase() + contentBrand.slice(1);
+    for (const colorBrand of COLOR_BRANDS) {
+      for (const colorMode of COLOR_MODES) {
+        const themeName = `${contentBrand}In${colorBrand.charAt(0).toUpperCase() + colorBrand.slice(1)}${colorMode.charAt(0).toUpperCase() + colorMode.slice(1)}`;
+        const fileName = `${contentBrand}-in-${colorBrand}-${colorMode}`;
 
-      // Colors and effects from colorBrand, sizing/typography from advertorial
-      const colorsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'color', `colormode-${colorMode}.json`));
-      const effectsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'semantic', 'effects', `effects-${colorMode}.json`));
+        // Colors and effects from colorBrand, sizing/typography from content brand
+        const colorsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'color', `colormode-${colorMode}.json`));
+        const effectsData = readTokenFile(path.join(TOKENS_DIR, 'brands', colorBrand, 'semantic', 'effects', `effects-${colorMode}.json`));
 
-      const advSpacingDir = path.join(TOKENS_DIR, 'brands', 'advertorial', 'breakpoints');
-      const spacingData = fs.existsSync(advSpacingDir) ?
-        readTokenFile(path.join(advSpacingDir, fs.readdirSync(advSpacingDir).find(f => f.startsWith('breakpoint-md')) || '')) : null;
-      const advTypoData = readTokenFile(path.join(TOKENS_DIR, 'brands', 'advertorial', 'semantic', 'typography', 'typography-md.json'));
-      const advDensityData = readTokenFile(path.join(TOKENS_DIR, 'brands', 'advertorial', 'density', 'density-default.json'));
+        const contentSpacingDir = path.join(TOKENS_DIR, 'brands', contentBrand, 'breakpoints');
+        const spacingData = fs.existsSync(contentSpacingDir) ?
+          readTokenFile(path.join(contentSpacingDir, fs.readdirSync(contentSpacingDir).find(f => f.startsWith('breakpoint-md')) || '')) : null;
+        const contentTypoData = readTokenFile(path.join(TOKENS_DIR, 'brands', contentBrand, 'semantic', 'typography', 'typography-md.json'));
+        const contentDensityData = readTokenFile(path.join(TOKENS_DIR, 'brands', contentBrand, 'density', 'density-default.json'));
 
       const colors = colorsData ? flattenTokens(colorsData) : {};
       const spacing = spacingData ? flattenTokens(spacingData) : {};
-      const density = advDensityData ? flattenTokens(advDensityData) : {};
+      const density = contentDensityData ? flattenTokens(contentDensityData) : {};
 
-      // Extract typography from advertorial (uses last segment only)
+      // Extract typography from content brand (uses last segment only)
       const typography = {};
-      if (advTypoData) {
+      if (contentTypoData) {
         const extractTypo = (obj) => {
           for (const [key, value] of Object.entries(obj)) {
             if (value && typeof value === 'object') {
@@ -8273,7 +8282,7 @@ export default ${themeName};
             }
           }
         };
-        extractTypo(advTypoData);
+        extractTypo(contentTypoData);
       }
 
       // Extract effects from colorBrand (uses last segment only)
@@ -8295,12 +8304,12 @@ export default ${themeName};
         extractFx(effectsData);
       }
 
-      let themeJs = getJsFileHeader() + `// Pre-built theme: Advertorial with ${colorBrand} colors (${colorMode})
-// Dual-axis: Colors from ${colorBrand}, sizing/typography from advertorial
+      let themeJs = getJsFileHeader() + `// Pre-built theme: ${contentBrandPascal} with ${colorBrand} colors (${colorMode})
+// Dual-axis: Colors from ${colorBrand}, sizing/typography from ${contentBrand}
 
 export const ${themeName} = {
   __meta: {
-    brand: 'advertorial',
+    brand: '${contentBrand}',
     colorBrand: '${colorBrand}',
     colorMode: '${colorMode}',
     breakpoint: 'md',
@@ -8323,6 +8332,7 @@ export default ${themeName};
       themeDts += `export declare const ${themeName}: Theme;\n`;
       themeDts += `export default ${themeName};\n`;
       writeJsFile(path.join(themesDir, `${fileName}.d.ts`), themeDts);
+      }
     }
   }
 
@@ -8336,11 +8346,17 @@ export default ${themeName};
   themesIdx += `};\n`;
   writeJsFile(path.join(themesDir, 'index.js'), themesIdx);
 
-  // Themes index types
+  // Themes index types (dynamic from config)
+  const brandUnionType = BRANDS.map(b => `'${b}'`).join(' | ');
+  const colorBrandUnionType = COLOR_BRANDS.map(b => `'${b}'`).join(' | ');
+  const colorModeUnionType = COLOR_MODES.map(m => `'${m}'`).join(' | ');
+  const breakpointUnionType = BREAKPOINTS.map(bp => `'${bp}'`).join(' | ');
+  const densityUnionType = DENSITY_MODES.map(d => `'${d}'`).join(' | ');
+
   let themesIdxDts = TS_HEADER + `import type { TypographyStyle, ShadowLayer } from '../types';\n\n`;
   themesIdxDts += `export interface ThemeMeta {\n`;
-  themesIdxDts += `  brand: string;\n  colorBrand: string;\n  colorMode: 'light' | 'dark';\n`;
-  themesIdxDts += `  breakpoint: 'xs' | 'sm' | 'md' | 'lg';\n  density: 'default' | 'dense' | 'spacious';\n`;
+  themesIdxDts += `  brand: string;\n  colorBrand: string;\n  colorMode: ${colorModeUnionType};\n`;
+  themesIdxDts += `  breakpoint: ${breakpointUnionType};\n  density: ${densityUnionType};\n`;
   themesIdxDts += `}\n\n`;
   themesIdxDts += `export interface Theme {\n`;
   themesIdxDts += `  __meta: ThemeMeta;\n`;
@@ -8351,19 +8367,19 @@ export default ${themeName};
   themesIdxDts += `  density: Record<string, string>;\n`;
   themesIdxDts += `}\n\n`;
   themesIdxDts += `export interface ThemeConfig {\n`;
-  themesIdxDts += `  brand?: 'bild' | 'sportbild' | 'advertorial';\n`;
-  themesIdxDts += `  colorBrand?: 'bild' | 'sportbild';\n`;
-  themesIdxDts += `  colorMode?: 'light' | 'dark';\n`;
-  themesIdxDts += `  breakpoint?: 'xs' | 'sm' | 'md' | 'lg';\n`;
-  themesIdxDts += `  density?: 'default' | 'dense' | 'spacious';\n`;
+  themesIdxDts += `  brand?: ${brandUnionType};\n`;
+  themesIdxDts += `  colorBrand?: ${colorBrandUnionType};\n`;
+  themesIdxDts += `  colorMode?: ${colorModeUnionType};\n`;
+  themesIdxDts += `  breakpoint?: ${breakpointUnionType};\n`;
+  themesIdxDts += `  density?: ${densityUnionType};\n`;
   themesIdxDts += `}\n\n`;
   themesIdxDts += `export declare function createTheme(config?: ThemeConfig): Theme;\n`;
   themesIdxDts += `export declare function getTokens(type: 'colors' | 'spacing' | 'typography' | 'effects' | 'density', key1: string, key2: string): Record<string, any>;\n`;
-  themesIdxDts += `export declare const availableBrands: readonly ['bild', 'sportbild', 'advertorial'];\n`;
-  themesIdxDts += `export declare const colorBrands: readonly ['bild', 'sportbild'];\n`;
-  themesIdxDts += `export declare const colorModes: readonly ['light', 'dark'];\n`;
-  themesIdxDts += `export declare const breakpoints: readonly ['xs', 'sm', 'md', 'lg'];\n`;
-  themesIdxDts += `export declare const densityModes: readonly ['default', 'dense', 'spacious'];\n\n`;
+  themesIdxDts += `export declare const availableBrands: readonly [${BRANDS.map(b => `'${b}'`).join(', ')}];\n`;
+  themesIdxDts += `export declare const colorBrands: readonly [${COLOR_BRANDS.map(b => `'${b}'`).join(', ')}];\n`;
+  themesIdxDts += `export declare const colorModes: readonly [${COLOR_MODES.map(m => `'${m}'`).join(', ')}];\n`;
+  themesIdxDts += `export declare const breakpoints: readonly [${BREAKPOINTS.map(bp => `'${bp}'`).join(', ')}];\n`;
+  themesIdxDts += `export declare const densityModes: readonly [${DENSITY_MODES.map(d => `'${d}'`).join(', ')}];\n\n`;
   themesIdxDts += `// Pre-built themes\n`;
   presetThemes.forEach(t => { themesIdxDts += `export declare const ${t.name}: Theme;\n`; });
   themesIdxDts += `\nexport declare const themes: Record<string, Theme>;\n`;
@@ -8490,35 +8506,34 @@ export default useBreakpoint;
 `;
   writeJsFile(path.join(reactDir, 'useBreakpoint.js'), useBreakpointJs);
 
-  // ThemeProvider.js
+  // ThemeProvider.js (dynamic breakpoints from config)
+  const breakpointValues = Object.values(config.modes.breakpoints).reduce((acc, bp) => {
+    acc[bp.key] = bp.minWidth;
+    return acc;
+  }, {});
+  const breakpointDetectOrder = [...BREAKPOINTS].reverse(); // lg, md, sm, xs for detection
+
   const themeProviderJs = getJsFileHeader() + `// ThemeProvider component for BILD Design System
 
 import { createElement, useState, useMemo, useEffect } from 'react';
 import { ThemeContext } from './ThemeContext.js';
 import { createTheme } from '../themes/createTheme.js';
 
-const BREAKPOINT_VALUES = {
-  xs: 320,
-  sm: 390,
-  md: 600,
-  lg: 1024
-};
+const BREAKPOINT_VALUES = ${JSON.stringify(breakpointValues)};
 
 function detectBreakpoint() {
   if (typeof window === 'undefined') return null;
   const width = window.innerWidth;
-  if (width >= BREAKPOINT_VALUES.lg) return 'lg';
-  if (width >= BREAKPOINT_VALUES.md) return 'md';
-  if (width >= BREAKPOINT_VALUES.sm) return 'sm';
-  return 'xs';
+${breakpointDetectOrder.map(bp => `  if (width >= BREAKPOINT_VALUES['${bp}']) return '${bp}';`).join('\n')}
+  return '${BREAKPOINTS[0]}';
 }
 
 export function ThemeProvider({
-  brand = 'bild',
+  brand = '${DEFAULT_BRAND}',
   colorBrand,
-  colorMode = 'light',
-  breakpoint = 'md',
-  density = 'default',
+  colorMode = '${COLOR_MODES[0]}',
+  breakpoint = '${BREAKPOINTS.length > 2 ? BREAKPOINTS[2] : BREAKPOINTS[0]}',
+  density = '${DENSITY_MODES[0]}',
   autoBreakpoint = false,
   children
 }) {
@@ -8557,11 +8572,12 @@ export function ThemeProvider({
   }, [brand, colorBrand, colorMode, effectiveBreakpoint, density]);
 
   // Context value with additional metadata
+  const contentOnlyBrands = ${JSON.stringify(contentOnlyBrands)};
   const contextValue = useMemo(() => ({
     ...theme,
     // Expose current configuration
     brand,
-    colorBrand: theme.__meta?.colorBrand || colorBrand || (brand === 'advertorial' ? 'bild' : brand),
+    colorBrand: theme.__meta?.colorBrand || colorBrand || (contentOnlyBrands.includes(brand) ? '${DEFAULT_BRAND}' : brand),
     colorMode,
     breakpoint: effectiveBreakpoint,
     density,
@@ -8592,7 +8608,7 @@ export {
 `;
   writeJsFile(path.join(reactDir, 'index.js'), reactIndexJs);
 
-  // React TypeScript definitions
+  // React TypeScript definitions (dynamic types from config)
   const reactIndexDts = `/**
  * TypeScript definitions for BILD Design System React bindings
  * Auto-generated - Do not edit directly
@@ -8601,11 +8617,11 @@ export {
 import { Context, ReactNode } from 'react';
 
 // Brand and mode types
-export type Brand = 'bild' | 'sportbild' | 'advertorial';
-export type ColorBrand = 'bild' | 'sportbild';
-export type ColorMode = 'light' | 'dark';
-export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg';
-export type Density = 'default' | 'dense' | 'spacious';
+export type Brand = ${brandUnionType};
+export type ColorBrand = ${colorBrandUnionType};
+export type ColorMode = ${colorModeUnionType};
+export type Breakpoint = ${breakpointUnionType};
+export type Density = ${densityUnionType};
 
 // Theme context value
 export interface ThemeContextValue {

@@ -19,6 +19,7 @@ const {
   findAffectedComponents,
   DEFAULT_COMPONENTS_DIR
 } = require('./scan-component-refs');
+const config = require('../../build-config/tokens/pipeline.config.js');
 
 // =============================================================================
 // CONSTANTS
@@ -996,10 +997,13 @@ function generateBreakingChangesSection(diff, options = {}) {
 // LAYER 3: VISUAL CHANGES (Modified Tokens with Diff Metrics)
 // =============================================================================
 
-// Known brands and modes for matrix display
-const KNOWN_BRANDS = ['bild', 'sportbild', 'advertorial'];
-const KNOWN_MODES = ['light', 'dark'];
-const KNOWN_BREAKPOINTS = ['xs', 'sm', 'md', 'lg'];
+// Known brands and modes for matrix display (from pipeline.config.js)
+const KNOWN_BRANDS = [...new Set([
+  ...Object.values(config.modes.brands.color),
+  ...Object.values(config.modes.brands.content)
+])];
+const KNOWN_MODES = Object.values(config.modes.colorModes);
+const KNOWN_BREAKPOINTS = Object.values(config.modes.breakpoints).map(b => b.key);
 
 /**
  * Format a color change with inline delta

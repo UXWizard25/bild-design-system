@@ -2124,7 +2124,7 @@ function saveBreakpointDensityMatrix(matrixData) {
   console.log(`   ✅ Semantic: ${path.relative(process.cwd(), semanticFilePath)}`);
 
   // Save component matrices (per brand, per component)
-  const brands = ['bild', 'sportbild', 'advertorial'];
+  const brands = Object.keys(BRANDS);
   for (const brand of brands) {
     for (const [componentName, componentMatrix] of Object.entries(components)) {
       const componentDir = path.join(OUTPUT_DIR, 'brands', brand, 'components', componentName);
