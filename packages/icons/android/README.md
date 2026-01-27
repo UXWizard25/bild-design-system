@@ -32,7 +32,7 @@ Add the dependency to your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("de.bild.design:icons:1.0.0")
+    implementation("de.bild.design:icons:1.0.4")
 }
 ```
 
@@ -132,12 +132,19 @@ Icon(
 
 ## Theming
 
-Icons use `?attr/colorOnSurface` by default for Material 3 compatibility.
+Icons use **static black (`#000000`)** as the default fill color. This ensures build compatibility with AAPT2 and allows full runtime customization.
+
+> **Note:** Earlier versions used `?attr/colorOnSurface` which caused build failures with AAPT2. The static color approach is now standard.
 
 ### Custom Colors
 
 ```xml
-<!-- XML -->
+<!-- XML with Material theming -->
+<ImageView
+    android:src="@drawable/ic_add"
+    app:tint="?attr/colorOnSurface" />
+
+<!-- XML with custom color -->
 <ImageView
     android:src="@drawable/ic_add"
     app:tint="@color/my_custom_color" />

@@ -22,15 +22,26 @@ This repository uses **npm workspaces** to manage multiple packages:
 | Vue | `@marioschmidt/design-system-vue` (npm) | `packages/components/vue/` | `npm run build:vue` |
 | Docs (private) | `@bild/docs` | `apps/docs/` | `npm run build:storybook` |
 
-### Native Token Distribution
+### Native Platform Distribution
 
 Native platforms (iOS/Android) have dedicated packages for platform-native distribution:
+
+**Tokens:**
 
 | Platform | Package | Registry | Auth Required | Installation |
 |----------|---------|----------|---------------|--------------|
 | **Web** | `@marioschmidt/design-system-tokens` | npm | ❌ No | `npm install @marioschmidt/design-system-tokens` |
 | **iOS** | `BildDesignTokens` | GitHub (SPM) | ❌ No (public repo) | Xcode → Add Package → `https://github.com/UXWizard25/bild-design-system.git` |
 | **Android** | `de.bild.design:tokens` | GitHub Packages | ✅ Yes (GitHub Token) | See `packages/tokens-android/README.md` |
+
+**Icons:**
+
+| Platform | Package | Registry | Auth Required | Installation |
+|----------|---------|----------|---------------|--------------|
+| **Web (SVG)** | `@marioschmidt/design-system-icons` | npm | ❌ No | `npm install @marioschmidt/design-system-icons` |
+| **Web (React)** | `@marioschmidt/design-system-icons-react` | npm | ❌ No | `npm install @marioschmidt/design-system-icons-react` |
+| **iOS** | `BildIcons` | GitHub (SPM) | ❌ No (public repo) | Xcode → Add Package → `https://github.com/UXWizard25/bild-design-system.git` |
+| **Android** | `de.bild.design:icons` | GitHub Packages | ✅ Yes (GitHub Token) | See `packages/icons/android/README.md` |
 
 > **Note:** GitHub Packages (Maven) always requires authentication, even for public repositories. Android developers need a GitHub Personal Access Token with `read:packages` scope.
 
@@ -58,7 +69,8 @@ npm run publish:tokens         # npm publish -w @marioschmidt/design-system-toke
 npm run publish:tokens:android # gradle publish (GitHub Packages Maven)
 npm run publish:icons          # npm publish -w @marioschmidt/design-system-icons (SVG)
 npm run publish:icons:react    # npm publish -w @marioschmidt/design-system-icons-react
-npm run publish:icons:all      # Publish both icon npm packages
+npm run publish:icons:android  # gradle publish (GitHub Packages Maven) for icons
+npm run publish:icons:all      # Publish all icon packages (npm + Maven)
 npm run publish:components     # npm publish -w @marioschmidt/design-system-components
 npm run publish:react          # npm publish -w @marioschmidt/design-system-react
 npm run publish:vue            # npm publish -w @marioschmidt/design-system-vue
@@ -866,6 +878,19 @@ After:  <clipPath id="podcast-spotify-clip0_17587_6927">
 | **iOS** | `.icon()`, `.button()`, `.accessibleIcon()` | `BildIcon.Size.xs/sm/md/lg/xl` |
 | **Android** | `BildIcon()`, `BildIconButton()` | `BildIconSize.XS/SM/MD/LG/XL` |
 
+### Android Icon Build Configuration
+
+The Android icons use **static black (`#000000`)** as the default fill color instead of theme attributes. This is required because AAPT2 cannot parse `?attr/colorOnSurface` at build time.
+
+```javascript
+// scripts/icons/generate-android.js
+const ANDROID_CONFIG = {
+  fillColor: '#000000',  // Static color for AAPT2 compatibility
+};
+```
+
+**Theming at runtime:** Use `app:tint` in XML or the `tint` parameter in Compose to apply colors.
+
 ### CI/CD Triggers
 
 The `publish-icons-on-merge.yml` workflow triggers on:
@@ -877,6 +902,46 @@ paths:
   - 'scripts/icons/**'           # Build scripts
 ```
 
+### Manual Workflow Dispatch
+
+The icon workflow supports manual triggering via GitHub Actions UI with options:
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `dry_run` | boolean | Build only, skip publishing |
+| `skip_version_bump` | boolean | Use current version without bumping |
+
+```yaml
+workflow_dispatch:
+  inputs:
+    dry_run:
+      description: 'Dry run (build only, no publish)'
+      type: boolean
+    skip_version_bump:
+      description: 'Skip version bump (use current version)'
+      type: boolean
+```
+
+### Android Publishing Details
+
+The workflow publishes the Android icon package to GitHub Packages (Maven):
+
+```yaml
+- name: Publish Android package to Maven
+  working-directory: packages/icons/android
+  env:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Xmx2048m"
+  run: |
+    rm -rf ~/.gradle/daemon 2>/dev/null || true
+    gradle wrapper --gradle-version=8.7 --no-daemon
+    ./gradlew publish -PVERSION=${{ steps.version.outputs.version }} --no-daemon
+```
+
+**Key Configuration:**
+- Gradle 8.7 wrapper (avoids version conflicts in CI)
+- Daemon disabled (`org.gradle.daemon=false`) for CI stability
+- Version passed via `-PVERSION` parameter for synchronization
+
 ---
 
 ## CI/CD & Automated Versioning
@@ -887,8 +952,10 @@ paths:
 |----------|---------|---------|
 | `build-tokens.yml` | Push to main/develop/claude/** | Build tokens, upload artifacts |
 | `publish-on-merge.yml` | Push to main + token/component paths | Build, version bump, publish to npm |
-| `publish-icons-on-merge.yml` | Push to main + icon paths | Build icons, version bump, publish to npm |
+| `publish-icons-on-merge.yml` | Push to main + icon paths | Build icons, version bump, publish to npm + Maven |
 | `auto-pr-from-figma.yml` | Push to figma-tokens | Create PR with release notes |
+
+> **Note:** `publish-icons-on-merge.yml` now publishes to **three registries**: npm (SVG + React), GitHub Packages Maven (Android), and creates a git tag for iOS SPM.
 
 ### Impact-Based Semantic Versioning
 

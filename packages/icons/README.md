@@ -179,7 +179,7 @@ dependencyResolutionManagement {
 
 // build.gradle.kts
 dependencies {
-    implementation("de.bild.design:icons:1.0.0")
+    implementation("de.bild.design:icons:1.0.4")
 }
 ```
 
@@ -231,6 +231,7 @@ import addIcon from '@marioschmidt/design-system-icons/add.svg';
 ### 🤖 Android
 
 ```xml
+<!-- XML Layout -->
 <ImageView
     android:src="@drawable/ic_add"
     android:layout_width="24dp"
@@ -238,7 +239,22 @@ import addIcon from '@marioschmidt/design-system-icons/add.svg';
     app:tint="?attr/colorOnSurface" />
 ```
 
-Icons automatically use `?attr/colorOnSurface` for Material theming.
+```kotlin
+// Jetpack Compose (recommended)
+import de.bild.design.icons.*
+
+BildIcon(BildIcons.Add, contentDescription = "Add item")
+
+// With custom size and color
+BildIcon(
+    icon = BildIcons.Menu,
+    contentDescription = "Menu",
+    size = BildIconSize.LG,
+    tint = MaterialTheme.colorScheme.primary
+)
+```
+
+Icons use static black fill by default - apply `app:tint` or the `tint` parameter for theming.
 
 ### 🍎 iOS (SwiftUI)
 
