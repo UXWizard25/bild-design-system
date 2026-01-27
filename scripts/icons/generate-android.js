@@ -28,8 +28,9 @@ const ANDROID_CONFIG = {
   // Default size in dp
   width: 24,
   height: 24,
-  // Use theme attribute for color
-  fillColor: '?attr/colorOnSurface',
+  // Use black as default - apps should override via app:tint or Compose tint parameter
+  // Note: ?attr/colorOnSurface doesn't work with AAPT2 during build time
+  fillColor: '#000000',
   // Float precision
   floatPrecision: 2,
 };
@@ -242,23 +243,33 @@ async function generateVectorDrawable(converter, filename) {
  */
 function generateAttrsXml() {
   const attrsContent = `<?xml version="1.0" encoding="utf-8"?>
-<!-- Icon theme attributes for dynamic coloring -->
+<!-- BILD Design System Icons - Usage Guide -->
 <resources>
-    <!-- Define icon tint attribute if not using Material theme -->
     <!--
-    <attr name="iconTint" format="color" />
-    -->
+    Icons are black (#000000) by default. Override the color using:
 
-    <!--
-    Usage in your theme:
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
-        <item name="colorOnSurface">@color/your_icon_color</item>
-    </style>
-
-    Or override per-icon:
+    XML (ImageView):
     <ImageView
         android:src="@drawable/ic_add"
-        app:tint="?attr/colorPrimary" />
+        app:tint="?attr/colorOnSurface" />
+
+    XML (with theme color):
+    <ImageView
+        android:src="@drawable/ic_add"
+        app:tint="?colorPrimary" />
+
+    Jetpack Compose (recommended):
+    BildIcon(
+        icon = BildIcons.Add,
+        contentDescription = "Add",
+        tint = MaterialTheme.colorScheme.onSurface
+    )
+
+    Programmatically:
+    imageView.setColorFilter(
+        ContextCompat.getColor(context, R.color.icon_color),
+        PorterDuff.Mode.SRC_IN
+    )
     -->
 </resources>
 `;
