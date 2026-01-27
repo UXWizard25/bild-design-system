@@ -31,6 +31,20 @@ on:
       - 'build-config/icons/**'
       - 'scripts/icons/**'
 
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build only, no publish)'
+        required: false
+        default: false
+        type: boolean
+      skip_version_bump:
+        description: 'Skip version bump (use current version)'
+        required: false
+        default: false
+        type: boolean
+
 # Prevent concurrent publishes
 concurrency:
   group: icons-publish
@@ -86,29 +100,35 @@ jobs:
           CURRENT_VERSION=$(cat packages/icons/svg/package.json | grep '"version"' | head -1 | sed 's/.*"version": "\(.*\)".*/\1/')
           echo "Current version: $CURRENT_VERSION"
 
-          # Bump patch version
-          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-          MAJOR=${VERSION_PARTS[0]}
-          MINOR=${VERSION_PARTS[1]}
-          PATCH=${VERSION_PARTS[2]}
-          NEW_PATCH=$((PATCH + 1))
-          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-
-          # Check if tag already exists, keep incrementing until we find an unused version
-          while git tag -l "icons-v$NEW_VERSION" | grep -q "icons-v$NEW_VERSION"; do
-            echo "Tag icons-v$NEW_VERSION already exists, incrementing..."
-            NEW_PATCH=$((NEW_PATCH + 1))
+          # Check if version bump should be skipped (manual trigger option)
+          if [ "${{ inputs.skip_version_bump }}" == "true" ]; then
+            echo "Skipping version bump (manual trigger with skip_version_bump=true)"
+            NEW_VERSION="$CURRENT_VERSION"
+          else
+            # Bump patch version
+            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            MAJOR=${VERSION_PARTS[0]}
+            MINOR=${VERSION_PARTS[1]}
+            PATCH=${VERSION_PARTS[2]}
+            NEW_PATCH=$((PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-          done
 
-          echo "New version: $NEW_VERSION"
+            # Check if tag already exists, keep incrementing until we find an unused version
+            while git tag -l "icons-v$NEW_VERSION" | grep -q "icons-v$NEW_VERSION"; do
+              echo "Tag icons-v$NEW_VERSION already exists, incrementing..."
+              NEW_PATCH=$((NEW_PATCH + 1))
+              NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+            done
 
-          # Update all package files (synchronized versions)
-          # npm packages
-          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" packages/icons/svg/package.json
-          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" packages/icons/react/package.json
-          # Android gradle.properties
-          sed -i "s/^VERSION=.*/VERSION=$NEW_VERSION/" packages/icons/android/gradle.properties
+            echo "New version: $NEW_VERSION"
+
+            # Update all package files (synchronized versions)
+            # npm packages
+            sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" packages/icons/svg/package.json
+            sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" packages/icons/react/package.json
+            # Android gradle.properties
+            sed -i "s/^VERSION=.*/VERSION=$NEW_VERSION/" packages/icons/android/gradle.properties
+          fi
 
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "previous_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
@@ -168,7 +188,7 @@ jobs:
       # ========================================
 
       - name: Publish SVG package to npm
-        if: steps.count.outputs.count != '0'
+        if: steps.count.outputs.count != '0' && inputs.dry_run != true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -176,7 +196,7 @@ jobs:
           npm publish -w @marioschmidt/design-system-icons --access public || echo "SVG package publish failed or already exists"
 
       - name: Publish React package to npm
-        if: steps.count.outputs.count != '0'
+        if: steps.count.outputs.count != '0' && inputs.dry_run != true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -188,7 +208,7 @@ jobs:
       # ========================================
 
       - name: Publish Android package to Maven
-        if: steps.count.outputs.android_count != '0'
+        if: steps.count.outputs.android_count != '0' && inputs.dry_run != true
         working-directory: packages/icons/android
         env:
           GITHUB_ACTOR: ${{ github.actor }}
@@ -208,7 +228,7 @@ jobs:
       # ========================================
 
       - name: Commit version bump
-        if: steps.count.outputs.count != '0'
+        if: steps.count.outputs.count != '0' && inputs.dry_run != true && inputs.skip_version_bump != true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -221,7 +241,7 @@ jobs:
           git push || true
 
       - name: Create release tag
-        if: steps.count.outputs.count != '0'
+        if: steps.count.outputs.count != '0' && inputs.dry_run != true
         run: |
           TAG="icons-v${{ steps.version.outputs.version }}"
           git tag -a "$TAG" -m "Icon release ${{ steps.version.outputs.version }}"
@@ -232,7 +252,7 @@ jobs:
       # ========================================
 
       - name: Create GitHub Release
-        if: steps.count.outputs.count != '0'
+        if: steps.count.outputs.count != '0' && inputs.dry_run != true
         uses: actions/github-script@v8
         with:
           script: |
@@ -342,3 +362,28 @@ jobs:
             packages/icons/android/src/main/res/
             packages/icons/ios/Sources/BildIcons/
           retention-days: 90
+
+      # ========================================
+      # Dry Run Summary
+      # ========================================
+
+      - name: Dry run summary
+        if: inputs.dry_run == true
+        run: |
+          echo "## 🧪 Dry Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This was a **dry run** - no packages were published." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| SVG | ${{ steps.count.outputs.svg_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| React | ${{ steps.count.outputs.react_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Android | ${{ steps.count.outputs.android_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| iOS | ${{ steps.count.outputs.ios_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Version" >> $GITHUB_STEP_SUMMARY
+          echo "- Current: \`${{ steps.version.outputs.previous_version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Would publish: \`${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "To publish for real, run this workflow again without the dry_run option." >> $GITHUB_STEP_SUMMARY
