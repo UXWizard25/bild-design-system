@@ -747,6 +747,51 @@ For polymorphic brand access, all brand-specific implementations conform to unif
 
 ---
 
+## CSS Bundle Structure
+
+The CSS output separates **tokens** (CSS Custom Properties) from **utilities** (Typography + Effect classes):
+
+```
+dist/css/
+├── shared/
+│   └── primitives.css           # Color, Space, Size, Font primitives
+│
+├── {brand}/                      # Per-brand modular files
+│   ├── colors.css               # Semantic colors + Effects variables (ColorBrand axis)
+│   ├── sizing.css               # Breakpoints + Density tokens (ContentBrand axis)
+│   ├── utilities.css            # Typography + Effect classes (optional)
+│   └── components/
+│       ├── {component}.css      # Component tokens only
+│       └── {component}-utilities.css  # Component typography + effect classes
+│
+└── bundles/                      # All-in-one bundles
+    ├── {brand}.css              # Full tokens bundle (no classes)
+    └── {brand}-utilities.css    # Full utilities bundle (all classes)
+```
+
+### File Responsibilities
+
+| File | Content | When to Load |
+|------|---------|--------------|
+| `colors.css` | Color tokens, effect variables | Always (ColorBrand axis) |
+| `sizing.css` | Breakpoint tokens, density tokens | Always (ContentBrand axis) |
+| `utilities.css` | `.display-1`, `.shadow-soft-md`, etc. | Only if using utility classes |
+| `{component}.css` | Component-specific CSS Custom Properties | Per component needed |
+| `{component}-utilities.css` | Component typography/effect classes | Only if using classes |
+
+### Bundle Functions
+
+| Function | Output | Description |
+|----------|--------|-------------|
+| `buildBrandColors()` | `colors.css` | Semantic colors + effects variables |
+| `buildBrandSizing()` | `sizing.css` | Breakpoints + density tokens |
+| `buildBrandUtilities()` | `utilities.css` | Typography + effect classes |
+| `buildBrandComponents()` | `components/*.css` | Component tokens + utilities |
+| `buildUtilitiesBundle()` | `{brand}-utilities.css` | Combined utilities |
+| `buildFullBundle()` | `{brand}.css` | All tokens (no classes) |
+
+---
+
 ## Shadow Effects CSS Architecture
 
 Shadow effects use a **mode-agnostic CSS architecture** with full `var()` support for all shadow properties.
@@ -816,7 +861,7 @@ The pipeline uses a **conditional fallback strategy** based on token type:
 | `preprocess.js` | `boundVariables` extraction | Captures all shadow property aliases |
 | `style-dictionary.config.js` | `formatShadowValue()` | Generates `var()` with conditional fallbacks |
 | `build.js` | `optimizeSemanticEffectsCSS()` | Consolidates identical light/dark effects |
-| `bundles.js` | `buildBrandTheme()` | Handles consolidated `effects.css` files |
+| `bundles.js` | `buildBrandColors()` | Handles consolidated `effects.css` files |
 
 ---
 
@@ -1571,7 +1616,7 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Modify output format | `style-dictionary.config.js` |
 | Change alias resolution | `preprocess.js` |
 | Modify density alias endpoints | `preprocess.js` → `getDeepAliasInfo()` with `acceptDensityEndpoint` option |
-| Add semantic density to bundle | `bundles.js` → `buildBrandTokens()` |
+| Add semantic density to bundle | `bundles.js` → `buildBrandSizing()` |
 | Modify native density token filter | `build.js` → `nativeTokenFilter()` (controls which tokens are in SizingScheme) |
 | Add new brand | `pipeline.config.js` → `brands` section (add brand with `figmaName`). See "Native Platform Code Generation" section below |
 | Add new breakpoint | `pipeline.config.js` → `modes.breakpoints` section |
@@ -1592,7 +1637,7 @@ shadowSoftSm         →  .shadow-soft-sm  →  shadowSoftSm
 | Add SCSS token type | `build.js` → `flattenTokensForSCSS()` for value formatting |
 | Modify CSS color optimization | `build.js` → `optimizeComponentColorCSS()` function |
 | Modify CSS effects optimization | `build.js` → `optimizeComponentEffectsCSS()` function |
-| Change CSS bundle structure | `bundles.js` → `buildBrandTokens()`, `buildBrandBundle()` |
+| Change CSS bundle structure | `bundles.js` → `buildBrandColors()`, `buildBrandSizing()`, `buildBrandUtilities()` |
 | Modify CSS Dual-Axis selectors | `style-dictionary.config.js` → `getBrandAttribute()`, `build.js` → optimization functions |
 | Modify token naming conventions | `style-dictionary.config.js` → `nameTransformers`, `build.js` → `toCamelCase()` |
 | Add new Stencil component | `src/components/ds-{name}/ds-{name}.tsx`, `ds-{name}.css` |
@@ -2382,6 +2427,6 @@ npm run build:docs
 | React/Vue components not styled | Missing token CSS | Import `@marioschmidt/design-system-tokens/css/bundles/bild.css` |
 | Vue props not working | Using camelCase in template | Use kebab-case in templates: `card-title` not `cardTitle` |
 | Type definitions missing | Stencil build incomplete | Ensure `npm run build:components` completed successfully |
-| Density tokens not in bundle | `bundles.js` not reading density dir | Check `buildBrandTokens()` includes density directory |
+| Density tokens not in bundle | `bundles.js` not reading density dir | Check `buildBrandSizing()` includes density directory |
 | BreakpointMode aliases resolve to Primitive | `acceptDensityEndpoint` not set | Check `preprocess.js` → `getDeepAliasInfo()` call for BreakpointMode |
 | Density mode not switching | Missing `data-density` attribute | Add `data-density="default\|dense\|spacious"` to container |

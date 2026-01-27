@@ -37,8 +37,9 @@
 
   <!-- Option B: Modular (recommended for optimization) -->
   <link rel="stylesheet" href="css/shared/primitives.css">
-  <link rel="stylesheet" href="css/bild/theme.css">
-  <link rel="stylesheet" href="css/bild/tokens.css">
+  <link rel="stylesheet" href="css/bild/colors.css">
+  <link rel="stylesheet" href="css/bild/sizing.css">
+  <link rel="stylesheet" href="css/bild/utilities.css">  <!-- Optional: Typography + Effect classes -->
   <link rel="stylesheet" href="css/bild/components/button.css">
 </head>
 <body>
@@ -131,25 +132,31 @@ dist/css/
 │   └── primitives.css        # Color, Space, Size, Font primitives
 │
 ├── bundles/                   # All-in-one bundles per brand
-│   ├── bild.css              # (~122 KB)
-│   ├── sportbild.css         # (~124 KB)
-│   └── advertorial.css       # (~81 KB)
+│   ├── bild.css              # (~107 KB) All tokens (no utility classes)
+│   ├── bild-utilities.css    # (~30 KB) All Typography + Effect classes
+│   ├── sportbild.css         # (~109 KB)
+│   ├── sportbild-utilities.css
+│   ├── advertorial.css       # (~69 KB)
+│   └── advertorial-utilities.css
 │
 ├── bild/                      # Modular files
-│   ├── theme.css             # Semantic colors + Effects (light/dark)
-│   ├── tokens.css            # Breakpoints + Typography + Density
-│   └── components/           # Component-specific tokens
-│       ├── button.css
+│   ├── colors.css            # Semantic colors + Effects variables (light/dark)
+│   ├── sizing.css            # Breakpoints + Density tokens
+│   ├── utilities.css         # Typography + Effect classes (optional)
+│   └── components/           # Component-specific files
+│       ├── button.css        # Tokens only
+│       ├── button-utilities.css  # Typography + Effect classes
 │       ├── article.css
-│       ├── teaser.css
-│       └── ... (52 components)
+│       ├── article-utilities.css
+│       └── ... (47 components)
 │
 ├── sportbild/                 # Same structure as bild
 │   └── ...
 │
-└── advertorial/               # ContentBrand only (no theme.css content)
-    ├── theme.css             # Empty (inherits from ColorBrand)
-    ├── tokens.css            # Typography + Breakpoints
+└── advertorial/               # ContentBrand only (no color tokens)
+    ├── colors.css            # Minimal (inherits from ColorBrand)
+    ├── sizing.css            # Breakpoints + Density tokens
+    ├── utilities.css         # Typography classes
     └── components/           # 39 components
 ```
 
@@ -213,10 +220,14 @@ CSS tokens use **kebab-case** with hyphen separation before AND after numbers:
 Best for: Simple projects, quick prototyping.
 
 ```html
+<!-- Tokens only (CSS Custom Properties) -->
 <link rel="stylesheet" href="css/bundles/bild.css">
+
+<!-- Optional: Typography + Effect classes -->
+<link rel="stylesheet" href="css/bundles/bild-utilities.css">
 ```
 
-Contains: Primitives + Theme + Tokens + All Components (~122 KB)
+Contains: Primitives + Colors + Sizing + All Components (~107 KB)
 
 ### Option B: Modular Loading
 
@@ -225,22 +236,25 @@ Best for: Production, optimal bundle size.
 ```html
 <!-- Core (always needed) -->
 <link rel="stylesheet" href="css/shared/primitives.css">
-<link rel="stylesheet" href="css/bild/theme.css">
-<link rel="stylesheet" href="css/bild/tokens.css">
+<link rel="stylesheet" href="css/bild/colors.css">
+<link rel="stylesheet" href="css/bild/sizing.css">
+
+<!-- Optional: Typography + Effect classes -->
+<link rel="stylesheet" href="css/bild/utilities.css">
 
 <!-- Only components you use -->
 <link rel="stylesheet" href="css/bild/components/button.css">
-<link rel="stylesheet" href="css/bild/components/teaser.css">
+<link rel="stylesheet" href="css/bild/components/button-utilities.css">  <!-- Optional -->
 ```
 
-### Option C: Theme + Tokens Only
+### Option C: Colors + Sizing Only
 
 Best for: Using only semantic tokens, no component tokens.
 
 ```html
 <link rel="stylesheet" href="css/shared/primitives.css">
-<link rel="stylesheet" href="css/bild/theme.css">
-<link rel="stylesheet" href="css/bild/tokens.css">
+<link rel="stylesheet" href="css/bild/colors.css">
+<link rel="stylesheet" href="css/bild/sizing.css">
 ```
 
 ---
@@ -273,7 +287,7 @@ Raw design values, brand-independent.
 }
 ```
 
-### 2. Semantic Tokens (theme.css)
+### 2. Semantic Tokens (colors.css)
 
 Meaningful design intent, theme-aware. Uses **ColorBrand** axis.
 
@@ -295,9 +309,9 @@ Meaningful design intent, theme-aware. Uses **ColorBrand** axis.
 }
 ```
 
-### 3. Responsive Tokens (tokens.css)
+### 3. Responsive Tokens (sizing.css)
 
-Breakpoint-aware sizing and typography. Uses **ContentBrand** axis.
+Breakpoint-aware sizing and density. Uses **ContentBrand** axis.
 
 ```css
 /* Base (mobile-first) */
@@ -385,9 +399,9 @@ Tokens only appear in media queries when values change:
 
 Density tokens control spacing intensity across three modes: `default`, `dense`, and `spacious`.
 
-### Semantic Density (tokens.css)
+### Semantic Density (sizing.css)
 
-Semantic density tokens are included in `tokens.css` and define responsive spacing values:
+Semantic density tokens are included in `sizing.css` and define responsive spacing values:
 
 ```css
 /* Constant spacing (no breakpoint dependency) */
@@ -498,7 +512,9 @@ Each component file contains:
 
 ## ✍️ Typography & Effects
 
-### Typography Classes
+Typography and effect classes are in separate **utilities** files (`utilities.css`, `{component}-utilities.css`) to keep the main token bundles lean. Load them only if you need the convenience classes.
+
+### Typography Classes (utilities.css)
 
 Typography tokens are output as CSS classes under **ContentBrand**:
 
@@ -522,7 +538,7 @@ Usage:
 <span class="button-label">Click Me</span>
 ```
 
-### Effect Classes (Mode-Agnostic with var() Support)
+### Effect Classes (utilities.css, Mode-Agnostic with var() Support)
 
 Shadow effects use a **mode-agnostic architecture** where the shadow structure is constant but colors adapt to the theme via CSS Custom Properties:
 
