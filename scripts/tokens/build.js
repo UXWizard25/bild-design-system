@@ -133,6 +133,48 @@ const ANDROID_BREAKPOINTS = Object.keys(ANDROID_SIZE_CLASS_MAPPING);
 const tokensPackageJson = require('../../packages/tokens/package.json');
 const rootPackageJson = require('../../package.json');
 
+// ============================================================================
+// CSS OUTPUT FILENAME MAPPING
+// Transforms internal names to optimized output filenames
+// ============================================================================
+
+/**
+ * Maps internal primitive/semantic names to optimized CSS output filenames
+ * This creates a cleaner, more consistent naming convention:
+ * - Primitives: colorprimitive → color-primitives (explicit suffix)
+ * - Semantics: colors → color-semantics (distinguishes from primitives)
+ *
+ * @param {string} baseName - Internal base name (e.g., 'colorprimitive', 'colors')
+ * @param {string} type - Token type: 'primitive' | 'semantic'
+ * @returns {string} Optimized output filename (without extension)
+ */
+function mapCssOutputName(baseName, type = 'primitive') {
+  // Primitive filename mapping: colorprimitive → color-primitives
+  const primitiveMapping = {
+    'colorprimitive': 'color-primitives',
+    'fontprimitive': 'font-primitives',
+    'sizeprimitive': 'size-primitives',
+    'spaceprimitive': 'space-primitives',
+  };
+
+  // Semantic filename mapping: colors → color-semantics
+  const semanticMapping = {
+    'colors': 'color-semantics',
+    'sizing': 'sizing-semantics',
+  };
+
+  if (type === 'primitive' && primitiveMapping[baseName]) {
+    return primitiveMapping[baseName];
+  }
+
+  if (type === 'semantic' && semanticMapping[baseName]) {
+    return semanticMapping[baseName];
+  }
+
+  // Return unchanged if no mapping exists
+  return baseName;
+}
+
 /**
  * Gets the Style Dictionary version from package.json dependencies
  * @returns {string} Version string (e.g., "4.2.0")
@@ -543,6 +585,9 @@ function isInternalToken(token) {
  * @param {object} cssOptions - CSS-specific options { brand, mode, modeType }
  */
 function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
+  // Support separate CSS filename (for primitives/semantics naming optimization)
+  const cssFileName = cssOptions.cssFileName || fileName;
+
   // Filter to exclude documentation-only tokens and disabled token types
   const tokenFilter = (token) => {
     // Exclude internal Figma tokens (prefixed with _, . or ! in path segments)
@@ -589,7 +634,7 @@ function createStandardPlatformConfig(buildPath, fileName, cssOptions = {}) {
       transformGroup: 'custom/css',
       buildPath: `${buildPath}/`,
       files: [{
-        destination: `${fileName}.css`,
+        destination: `${cssFileName}.css`,
         // Use alias format for CSS to generate var(--primitive, fallback) references
         format: cssOptions.brand || cssOptions.mode ? 'custom/css/themed-variables-with-alias' : 'custom/css/variables-with-alias',
         filter: tokenFilter,
@@ -1312,17 +1357,22 @@ async function buildSharedPrimitives() {
   for (const file of files) {
     const baseName = path.basename(file, '.json');
     const sourcePath = path.join(sharedDir, file);
+    // Map to optimized CSS filename (colorprimitive → color-primitives)
+    const cssFileName = mapCssOutputName(baseName, 'primitive');
 
     // Skip SwiftUI for individual primitives - they'll be consolidated later
     const config = {
       source: [sourcePath],
-      platforms: createStandardPlatformConfig(`${DIST_DIR}/css/shared`, baseName, { skipSwiftUI: true })
+      platforms: createStandardPlatformConfig(`${DIST_DIR}/css/shared`, baseName, {
+        skipSwiftUI: true,
+        cssFileName: cssFileName
+      })
     };
 
     try {
       const sd = new StyleDictionary(config);
       await sd.buildAllPlatforms();
-      console.log(`  ✅ ${baseName}`);
+      console.log(`  ✅ ${baseName} → ${cssFileName}.css`);
       successful++;
     } catch (error) {
       console.error(`  ❌ ${baseName}: ${error.message}`);

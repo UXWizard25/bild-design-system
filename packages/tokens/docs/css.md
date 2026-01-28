@@ -37,8 +37,8 @@
 
   <!-- Option B: Modular (recommended for optimization) -->
   <link rel="stylesheet" href="css/shared/primitives.css">
-  <link rel="stylesheet" href="css/bild/colors.css">
-  <link rel="stylesheet" href="css/bild/sizing.css">
+  <link rel="stylesheet" href="css/bild/color-semantics.css">
+  <link rel="stylesheet" href="css/bild/sizing-semantics.css">
   <link rel="stylesheet" href="css/bild/utilities.css">  <!-- Optional: Typography + Effect classes -->
   <link rel="stylesheet" href="css/bild/components/button.css">
 </head>
@@ -140,8 +140,8 @@ dist/css/
 │   └── advertorial-utilities.css
 │
 ├── bild/                      # Modular files
-│   ├── colors.css            # Semantic colors + Effects variables (light/dark)
-│   ├── sizing.css            # Breakpoints + Density tokens
+│   ├── color-semantics.css   # Semantic colors + Effects variables (light/dark)
+│   ├── sizing-semantics.css  # Breakpoints + Density tokens
 │   ├── utilities.css         # Typography + Effect classes (optional)
 │   └── components/           # Component-specific files
 │       ├── button.css        # Tokens only
@@ -154,8 +154,8 @@ dist/css/
 │   └── ...
 │
 └── advertorial/               # ContentBrand only (no color tokens)
-    ├── colors.css            # Minimal (inherits from ColorBrand)
-    ├── sizing.css            # Breakpoints + Density tokens
+    ├── color-semantics.css   # Minimal (inherits from ColorBrand)
+    ├── sizing-semantics.css  # Breakpoints + Density tokens
     ├── utilities.css         # Typography classes
     └── components/           # 39 components
 ```
@@ -236,8 +236,8 @@ Best for: Production, optimal bundle size.
 ```html
 <!-- Core (always needed) -->
 <link rel="stylesheet" href="css/shared/primitives.css">
-<link rel="stylesheet" href="css/bild/colors.css">
-<link rel="stylesheet" href="css/bild/sizing.css">
+<link rel="stylesheet" href="css/bild/color-semantics.css">
+<link rel="stylesheet" href="css/bild/sizing-semantics.css">
 
 <!-- Optional: Typography + Effect classes -->
 <link rel="stylesheet" href="css/bild/utilities.css">
@@ -253,8 +253,8 @@ Best for: Using only semantic tokens, no component tokens.
 
 ```html
 <link rel="stylesheet" href="css/shared/primitives.css">
-<link rel="stylesheet" href="css/bild/colors.css">
-<link rel="stylesheet" href="css/bild/sizing.css">
+<link rel="stylesheet" href="css/bild/color-semantics.css">
+<link rel="stylesheet" href="css/bild/sizing-semantics.css">
 ```
 
 ---
@@ -287,7 +287,7 @@ Raw design values, brand-independent.
 }
 ```
 
-### 2. Semantic Tokens (colors.css)
+### 2. Semantic Tokens (color-semantics.css)
 
 Meaningful design intent, theme-aware. Uses **ColorBrand** axis.
 
@@ -309,7 +309,7 @@ Meaningful design intent, theme-aware. Uses **ColorBrand** axis.
 }
 ```
 
-### 3. Responsive Tokens (sizing.css)
+### 3. Responsive Tokens (sizing-semantics.css)
 
 Breakpoint-aware sizing and density. Uses **ContentBrand** axis.
 
@@ -399,9 +399,9 @@ Tokens only appear in media queries when values change:
 
 Density tokens control spacing intensity across three modes: `default`, `dense`, and `spacious`.
 
-### Semantic Density (sizing.css)
+### Semantic Density (sizing-semantics.css)
 
-Semantic density tokens are included in `sizing.css` and define responsive spacing values:
+Semantic density tokens are included in `sizing-semantics.css` and define responsive spacing values:
 
 ```css
 /* Constant spacing (no breakpoint dependency) */
