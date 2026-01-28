@@ -5073,5 +5073,6 @@ module.exports = {
     'swiftui/theme-provider': swiftuiThemeProviderFormat,
     'swiftui/component-tokens': swiftuiComponentTokensFormat,
     'swiftui/design-system-theme': swiftuiDesignSystemThemeFormat
-  }
+  },
+  nameTransformers
 };

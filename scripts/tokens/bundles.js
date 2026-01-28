@@ -36,9 +36,11 @@ const fs = require('fs');
 const path = require('path');
 const { glob } = require('glob');
 const pipelineConfig = require('../../build-config/pipeline.config.js');
+const { nameTransformers } = require('../../build-config/tokens/style-dictionary.config.js');
 
 const DIST_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensDist);
 const CSS_DIR = path.join(DIST_DIR, 'css');
+const TOKENS_DIR = path.join(__dirname, '../..', pipelineConfig.paths.tokensIntermediate);
 const BRANDS = pipelineConfig.allBrands;
 const rootPackageJson = require('../../package.json');
 const tokensPackageJson = require('../../packages/tokens/package.json');
@@ -153,6 +155,119 @@ function removeDir(dir) {
     return true;
   }
   return false;
+}
+
+// ============================================================================
+// COMBINED TYPOGRAPHY VARIABLES
+// ============================================================================
+
+/**
+ * Generates combined font shorthand CSS variables from typography composites.
+ * These variables reference existing tokens via var() - no breakpoint logic needed
+ * since the referenced tokens are already responsive.
+ *
+ * @param {string} brand - Brand key (bild, sportbild, advertorial)
+ * @param {string} type - 'semantic' or 'component'
+ * @param {string} [componentName] - Component name (required if type === 'component')
+ * @returns {string} CSS variable declarations
+ */
+function generateCombinedTypographyVariables(brand, type, componentName = null) {
+  let jsonPath;
+  if (type === 'semantic') {
+    jsonPath = path.join(TOKENS_DIR, 'brands', brand, 'semantic', 'typography', 'typography-xs.json');
+  } else {
+    const compLower = componentName.toLowerCase();
+    jsonPath = path.join(TOKENS_DIR, 'brands', brand, 'components', componentName, `${compLower}-typography-xs.json`);
+  }
+
+  if (!fs.existsSync(jsonPath)) {
+    return '';
+  }
+
+  let tokens;
+  try {
+    tokens = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  } catch (e) {
+    console.warn(`  ⚠️  Warning: Could not parse ${jsonPath}`);
+    return '';
+  }
+
+  const flatTokens = flattenTypographyTokens(tokens);
+
+  if (flatTokens.length === 0) {
+    return '';
+  }
+
+  let css = '';
+
+  for (const token of flatTokens) {
+    const varName = nameTransformers.kebab(token.name);
+    const fontValue = buildFontShorthand(token.$value, token.$aliases);
+    if (fontValue) {
+      css += `  --${varName}: ${fontValue};\n`;
+    }
+  }
+
+  return css;
+}
+
+/**
+ * Flattens nested typography token structure to array.
+ * Uses only the leaf token name (e.g., "display1"), not the full path.
+ */
+function flattenTypographyTokens(tokens) {
+  const result = [];
+
+  for (const [key, value] of Object.entries(tokens)) {
+    if (value && value.$type === 'typography' && value.$value) {
+      // Leaf token - use key as name
+      result.push({ name: key, ...value });
+    } else if (value && typeof value === 'object' && !value.$type) {
+      // Nested group - recurse and collect
+      result.push(...flattenTypographyTokens(value));
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Builds CSS font shorthand value from typography composite.
+ * Format: [font-style] font-weight font-size / line-height font-family
+ *
+ * @returns {string|null} Font shorthand value, or null if required aliases missing
+ */
+function buildFontShorthand($value, $aliases) {
+  if (!$aliases) return null;
+
+  // Check required aliases exist
+  const requiredProps = ['fontWeight', 'fontSize', 'lineHeight', 'fontFamily'];
+  for (const prop of requiredProps) {
+    if (!$aliases[prop]?.token) {
+      return null;
+    }
+  }
+
+  const parts = [];
+
+  // 1. font-style (optional - only if italic)
+  const fontStyle = $value?.fontStyle;
+  if (fontStyle && fontStyle.toLowerCase() === 'italic') {
+    parts.push('italic');
+  }
+
+  // 2. font-weight
+  parts.push(`var(--${nameTransformers.kebab($aliases.fontWeight.token)})`);
+
+  // 3. font-size / line-height
+  const fontSize = `var(--${nameTransformers.kebab($aliases.fontSize.token)})`;
+  const lineHeight = `var(--${nameTransformers.kebab($aliases.lineHeight.token)})`;
+  parts.push(`${fontSize} / ${lineHeight}`);
+
+  // 4. font-family
+  parts.push(`var(--${nameTransformers.kebab($aliases.fontFamily.token)})`);
+
+  return parts.join(' ');
 }
 
 // ============================================================================
@@ -368,6 +483,14 @@ async function buildBrandSizing(brand) {
     }
   }
 
+  // 3. Combined Typography Variables (semantic)
+  const combinedTypography = generateCombinedTypographyVariables(brand, 'semantic');
+  if (combinedTypography) {
+    content += '/* === COMBINED TYPOGRAPHY VARIABLES === */\n\n';
+    const selector = `[data-content-brand="${brand}"],\n:host([data-content-brand="${brand}"])`;
+    content += `${selector} {\n${combinedTypography}}\n\n`;
+  }
+
   const outputPath = path.join(brandOutputDir, 'sizing.css');
   fs.writeFileSync(outputPath, content.trim() + '\n');
 
@@ -479,6 +602,14 @@ async function buildBrandComponents(brand) {
         const fileContent = readAndStripHeader(file);
         if (fileContent) componentContent += fileContent + '\n\n';
       }
+    }
+
+    // Combined Typography Variables (component)
+    const combinedTypography = generateCombinedTypographyVariables(brand, 'component', componentName);
+    if (combinedTypography) {
+      componentContent += '/* === COMBINED TYPOGRAPHY VARIABLES === */\n\n';
+      const selector = `[data-content-brand="${brand}"],\n:host([data-content-brand="${brand}"])`;
+      componentContent += `${selector} {\n${combinedTypography}}\n\n`;
     }
 
     // Other tokens
