@@ -754,11 +754,15 @@ The CSS output separates **tokens** (CSS Custom Properties) from **utilities** (
 ```
 dist/css/
 ├── shared/
-│   └── primitives.css           # Color, Space, Size, Font primitives
+│   ├── color-primitives.css     # Color primitive values
+│   ├── font-primitives.css      # Font primitive values
+│   ├── size-primitives.css      # Size primitive values
+│   ├── space-primitives.css     # Space primitive values
+│   └── primitives.css           # All primitives combined
 │
 ├── {brand}/                      # Per-brand modular files
-│   ├── colors.css               # Semantic colors + Effects variables (ColorBrand axis)
-│   ├── sizing.css               # Breakpoints + Density tokens (ContentBrand axis)
+│   ├── color-semantics.css      # Semantic colors + Effects variables (ColorBrand axis)
+│   ├── sizing-semantics.css     # Breakpoints + Density tokens (ContentBrand axis)
 │   ├── utilities.css            # Typography + Effect classes (optional)
 │   └── components/
 │       ├── {component}.css      # Component tokens only
@@ -773,8 +777,8 @@ dist/css/
 
 | File | Content | When to Load |
 |------|---------|--------------|
-| `colors.css` | Color tokens, effect variables | Always (ColorBrand axis) |
-| `sizing.css` | Breakpoint tokens, density tokens | Always (ContentBrand axis) |
+| `color-semantics.css` | Color tokens, effect variables | Always (ColorBrand axis) |
+| `sizing-semantics.css` | Breakpoint tokens, density tokens | Always (ContentBrand axis) |
 | `utilities.css` | `.display-1`, `.shadow-soft-md`, etc. | Only if using utility classes |
 | `{component}.css` | Component-specific CSS Custom Properties | Per component needed |
 | `{component}-utilities.css` | Component typography/effect classes | Only if using classes |
@@ -783,8 +787,8 @@ dist/css/
 
 | Function | Output | Description |
 |----------|--------|-------------|
-| `buildBrandColors()` | `colors.css` | Semantic colors + effects variables |
-| `buildBrandSizing()` | `sizing.css` | Breakpoints + density tokens |
+| `buildBrandColors()` | `color-semantics.css` | Semantic colors + effects variables |
+| `buildBrandSizing()` | `sizing-semantics.css` | Breakpoints + density tokens |
 | `buildBrandUtilities()` | `utilities.css` | Typography + effect classes |
 | `buildBrandComponents()` | `components/*.css` | Component tokens + utilities |
 | `buildUtilitiesBundle()` | `{brand}-utilities.css` | Combined utilities |

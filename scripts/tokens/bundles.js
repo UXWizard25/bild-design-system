@@ -5,21 +5,27 @@
  *
  * dist/css/
  * ├── shared/
- * │   └── primitives.css          ← All primitives (space, size, color, font)
+ * │   ├── color-primitives.css    ← Color primitive values
+ * │   ├── font-primitives.css     ← Font primitive values
+ * │   ├── size-primitives.css     ← Size primitive values
+ * │   ├── space-primitives.css    ← Space primitive values
+ * │   └── primitives.css          ← All primitives combined
  * │
  * ├── bild/
- * │   ├── colors.css              ← Light/Dark colors + effects (data-color-brand)
- * │   ├── sizing.css              ← Breakpoints + Density (data-content-brand)
+ * │   ├── color-semantics.css     ← Light/Dark colors + effects (data-color-brand)
+ * │   ├── sizing-semantics.css    ← Breakpoints + Density (data-content-brand)
+ * │   ├── utilities.css           ← Typography + Effect classes
  * │   └── components/
- * │       └── button.css          ← All button tokens combined
+ * │       ├── button.css          ← Component tokens
+ * │       └── button-utilities.css← Component utility classes
  * │
  * ├── sportbild/                  ← Same structure
- * ├── advertorial/                ← Content tokens only (no color tokens!)
+ * ├── advertorial/                ← Content tokens only (no color-semantics!)
  * │
  * └── bundles/
- *     ├── bild.css                ← Full bundle (primitives + theme + tokens + components)
- *     ├── sportbild.css
- *     └── advertorial.css
+ *     ├── bild.css                ← Full bundle (primitives + semantics + components)
+ *     ├── bild-utilities.css      ← All utility classes combined
+ *     └── ...
  *
  * Dual-Axis Architecture:
  * - ColorBrand (data-color-brand): colors, effects - BILD, SportBILD only
@@ -321,7 +327,7 @@ async function buildBrandColors(brand) {
     }
   }
 
-  const outputPath = path.join(brandOutputDir, 'colors.css');
+  const outputPath = path.join(brandOutputDir, 'color-semantics.css');
   fs.writeFileSync(outputPath, content.trim() + '\n');
 
   return content;
@@ -340,7 +346,7 @@ async function buildBrandSizing(brand) {
   let content = generateHeader(brand, 'sizing');
 
   // Note: Component density tokens are now ONLY in component bundles, not here.
-  // This avoids duplication between sizing.css and component files.
+  // This avoids duplication between sizing-semantics.css and component files.
   // Note: Typography classes moved to utilities.css
 
   // 1. Responsive breakpoint tokens
@@ -368,7 +374,7 @@ async function buildBrandSizing(brand) {
     }
   }
 
-  const outputPath = path.join(brandOutputDir, 'sizing.css');
+  const outputPath = path.join(brandOutputDir, 'sizing-semantics.css');
   fs.writeFileSync(outputPath, content.trim() + '\n');
 
   return content;
@@ -720,11 +726,11 @@ async function buildAllBundles() {
 
     // Colors (Light/Dark + Effects variables)
     const colorsContent = await buildBrandColors(brand);
-    console.log(`     ✅ colors.css (${getFileSize(colorsContent)} KB)`);
+    console.log(`     ✅ color-semantics.css (${getFileSize(colorsContent)} KB)`);
 
     // Sizing (Density + Breakpoints) - NO typography classes
     const sizingContent = await buildBrandSizing(brand);
-    console.log(`     ✅ sizing.css (${getFileSize(sizingContent)} KB)`);
+    console.log(`     ✅ sizing-semantics.css (${getFileSize(sizingContent)} KB)`);
 
     // Utilities (Typography + Effect classes)
     const utilitiesContent = await buildBrandUtilities(brand);
@@ -754,12 +760,16 @@ async function buildAllBundles() {
   console.log('\n📁 Output Structure:');
   console.log('   dist/css/');
   console.log('   ├── shared/');
+  console.log('   │   ├── color-primitives.css');
+  console.log('   │   ├── font-primitives.css');
+  console.log('   │   ├── size-primitives.css');
+  console.log('   │   ├── space-primitives.css');
   console.log('   │   └── primitives.css');
   for (const brand of BRANDS) {
     console.log(`   ├── ${brand}/`);
-    console.log('   │   ├── colors.css         (colors + effects variables)');
-    console.log('   │   ├── sizing.css         (density + breakpoints)');
-    console.log('   │   ├── utilities.css      (typography + effect classes)');
+    console.log('   │   ├── color-semantics.css   (colors + effects variables)');
+    console.log('   │   ├── sizing-semantics.css  (density + breakpoints)');
+    console.log('   │   ├── utilities.css         (typography + effect classes)');
     console.log('   │   └── components/');
     console.log('   │       ├── {component}.css           (tokens)');
     console.log('   │       └── {component}-utilities.css (classes)');
